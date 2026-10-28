@@ -29,6 +29,15 @@
   --color-violet: #ad8cff;
   --color-observed: #a9bccb;
 
+  /*
+   * Chart series: steps of the same hues inside the dark lightness band (OKLCH L 0.48 to
+   * 0.67), checked with the dataviz palette validator against the surface for all pairs.
+   * The brighter accents above stay for text and controls.
+   */
+  --color-series-baseline: #6389ef;
+  --color-series-alt-a: #00ac8a;
+  --color-series-alt-b: #bd5ab6;
+
   /* Status: always paired with text and an icon */
   --color-warning: #ffc673;
   --color-negative: #ff8496;

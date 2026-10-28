@@ -182,6 +182,62 @@
       "title": "CausalStatus",
       "type": "string"
     },
+    "ChangeDistribution": {
+      "additionalProperties": false,
+      "description": "Distribution of one paired difference at the horizon (docs/08 delta distributions).",
+      "properties": {
+        "bins": {
+          "items": {
+            "$ref": "#/$defs/HistogramBin"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "mean": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "metric": {
+          "$ref": "#/$defs/ResultMetric"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "probability_above_zero": {
+          "description": "Share of paths where the alternate beats the baseline, under the model.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "scenario": {
+          "enum": [
+            "alt_a",
+            "alt_b"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "metric",
+        "scenario",
+        "period_end",
+        "bins",
+        "probability_above_zero",
+        "mean"
+      ],
+      "title": "ChangeDistribution",
+      "type": "object"
+    },
+    "ChangeUnit": {
+      "description": "Unit of a paired difference: dollars, or a fraction of the baseline value.",
+      "enum": [
+        "currency",
+        "fraction_of_baseline"
+      ],
+      "title": "ChangeUnit",
+      "type": "string"
+    },
     "Company": {
       "additionalProperties": false,
       "description": "Identity of a company. ``company_id`` stays the same through every rename and relisting.",
@@ -759,6 +815,32 @@
       "title": "FundingMix",
       "type": "object"
     },
+    "HistogramBin": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "high": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "low": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "count"
+      ],
+      "title": "HistogramBin",
+      "type": "object"
+    },
     "InterventionCatalog": {
       "additionalProperties": false,
       "properties": {
@@ -1119,6 +1201,52 @@
       "title": "MechanismEffect",
       "type": "object"
     },
+    "MetricResult": {
+      "additionalProperties": false,
+      "properties": {
+        "changes": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PairedChange"
+          },
+          "type": "array"
+        },
+        "definition": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "forecasts": {
+          "items": {
+            "$ref": "#/$defs/ScenarioSeries"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "metric": {
+          "$ref": "#/$defs/ResultMetric"
+        },
+        "observed": {
+          "items": {
+            "$ref": "#/$defs/ObservedPoint"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "metric",
+        "label",
+        "definition",
+        "observed",
+        "forecasts",
+        "changes"
+      ],
+      "title": "MetricResult",
+      "type": "object"
+    },
     "MetricValue": {
       "additionalProperties": false,
       "description": "One number shown to a user or passed between modules.\n\n``quantity`` is ``None`` when the value is missing. Missing is never zero:\na reason is mandatory (docs/04, PRD FR-CO-04).",
@@ -1200,6 +1328,73 @@
         "lineage"
       ],
       "title": "MetricValue",
+      "type": "object"
+    },
+    "ObservedPoint": {
+      "additionalProperties": false,
+      "description": "A reported quarter, public by the cutoff.",
+      "properties": {
+        "filed_at": {
+          "format": "date",
+          "type": "string"
+        },
+        "fiscal_label": {
+          "description": "For example 'FY2022 Q3'.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "period_end",
+        "fiscal_label",
+        "value",
+        "filed_at",
+        "source_id"
+      ],
+      "title": "ObservedPoint",
+      "type": "object"
+    },
+    "PairedChange": {
+      "additionalProperties": false,
+      "description": "Alternate minus baseline, computed path by path, as quantiles.",
+      "properties": {
+        "points": {
+          "items": {
+            "$ref": "#/$defs/QuantilePoint"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "scenario": {
+          "enum": [
+            "alt_a",
+            "alt_b"
+          ],
+          "type": "string"
+        },
+        "unit": {
+          "$ref": "#/$defs/ChangeUnit"
+        }
+      },
+      "required": [
+        "scenario",
+        "unit",
+        "points"
+      ],
+      "title": "PairedChange",
       "type": "object"
     },
     "ParameterSpec": {
@@ -1394,6 +1589,44 @@
       "title": "QualitySeverity",
       "type": "string"
     },
+    "QuantilePoint": {
+      "additionalProperties": false,
+      "description": "Quantiles across paths for one quarter. p10 <= p50 <= p90.",
+      "properties": {
+        "fiscal_label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "p10": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "p50": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "p90": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "period_end",
+        "fiscal_label",
+        "p10",
+        "p50",
+        "p90"
+      ],
+      "title": "QuantilePoint",
+      "type": "object"
+    },
     "Quantity": {
       "additionalProperties": false,
       "description": "A number together with its unit. Currency is required exactly when the unit is money.",
@@ -1519,6 +1752,41 @@
       "title": "ReproducibilityManifest",
       "type": "object"
     },
+    "ResultFailure": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "incident_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "incident_id"
+      ],
+      "title": "ResultFailure",
+      "type": "object"
+    },
+    "ResultMetric": {
+      "enum": [
+        "revenue",
+        "ebitda",
+        "fcf",
+        "net_debt",
+        "ev"
+      ],
+      "title": "ResultMetric",
+      "type": "string"
+    },
     "ResultMode": {
       "description": "Inference mode shown in the trust header of every result (PRD §6).",
       "enum": [
@@ -1528,6 +1796,14 @@
         "fictional_exploratory"
       ],
       "title": "ResultMode",
+      "type": "string"
+    },
+    "ResultStatus": {
+      "enum": [
+        "completed",
+        "failed"
+      ],
+      "title": "ResultStatus",
       "type": "string"
     },
     "RndChange": {
@@ -1663,6 +1939,245 @@
         "sensitivity"
       ],
       "title": "ScenarioDraft",
+      "type": "object"
+    },
+    "ScenarioResult": {
+      "additionalProperties": false,
+      "description": "One run: a baseline and its alternates for a company at a knowledge cutoff.",
+      "properties": {
+        "as_of": {
+          "format": "date",
+          "type": "string"
+        },
+        "calibrated": {
+          "type": "boolean"
+        },
+        "company_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "company_name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "currency": {
+          "description": "ISO 4217 currency code, for example 'USD'.",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "data_origin": {
+          "$ref": "#/$defs/DataOrigin"
+        },
+        "distributions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ChangeDistribution"
+          },
+          "type": "array"
+        },
+        "events": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TimelineEvent"
+          },
+          "type": "array"
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResultFailure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "horizon_quarters": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "manifest": {
+          "$ref": "#/$defs/ReproducibilityManifest"
+        },
+        "metrics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MetricResult"
+          },
+          "type": "array"
+        },
+        "mock": {
+          "description": "Generated without a model, for interface work only.",
+          "type": "boolean"
+        },
+        "mode": {
+          "$ref": "#/$defs/ResultMode"
+        },
+        "model": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "paths": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "result_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "scenarios": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ScenarioRun"
+          },
+          "type": "array"
+        },
+        "seed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "status": {
+          "$ref": "#/$defs/ResultStatus"
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "uncertainty_type": {
+          "$ref": "#/$defs/UncertaintyType"
+        },
+        "waterfalls": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Waterfall"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "result_id",
+        "title",
+        "status",
+        "mode",
+        "data_origin",
+        "mock",
+        "company_id",
+        "company_name",
+        "as_of",
+        "currency",
+        "horizon_quarters",
+        "paths",
+        "seed",
+        "model",
+        "uncertainty_type",
+        "calibrated",
+        "scenarios",
+        "metrics",
+        "distributions",
+        "waterfalls",
+        "events",
+        "failure",
+        "manifest",
+        "created_at"
+      ],
+      "title": "ScenarioResult",
+      "type": "object"
+    },
+    "ScenarioRun": {
+      "additionalProperties": false,
+      "properties": {
+        "decision": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "acquisition": "#/$defs/Acquisition",
+                  "capex_expansion": "#/$defs/CapexExpansion",
+                  "debt_refinance": "#/$defs/DebtRefinance",
+                  "divestiture": "#/$defs/Divestiture",
+                  "rnd_change": "#/$defs/RndChange",
+                  "workforce_restructure": "#/$defs/WorkforceRestructure"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/RndChange"
+                },
+                {
+                  "$ref": "#/$defs/WorkforceRestructure"
+                },
+                {
+                  "$ref": "#/$defs/Acquisition"
+                },
+                {
+                  "$ref": "#/$defs/Divestiture"
+                },
+                {
+                  "$ref": "#/$defs/CapexExpansion"
+                },
+                {
+                  "$ref": "#/$defs/DebtRefinance"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "key": {
+          "enum": [
+            "baseline",
+            "alt_a",
+            "alt_b"
+          ],
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "decision"
+      ],
+      "title": "ScenarioRun",
+      "type": "object"
+    },
+    "ScenarioSeries": {
+      "additionalProperties": false,
+      "properties": {
+        "points": {
+          "items": {
+            "$ref": "#/$defs/QuantilePoint"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "scenario": {
+          "enum": [
+            "baseline",
+            "alt_a",
+            "alt_b"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "scenario",
+        "points"
+      ],
+      "title": "ScenarioSeries",
       "type": "object"
     },
     "Sector": {
@@ -1818,6 +2333,53 @@
       "title": "TickerListing",
       "type": "object"
     },
+    "TimelineEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "cutoff",
+            "announcement",
+            "effective",
+            "effect_start",
+            "full_effect"
+          ],
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "on": {
+          "format": "date",
+          "type": "string"
+        },
+        "scenario": {
+          "anyOf": [
+            {
+              "enum": [
+                "baseline",
+                "alt_a",
+                "alt_b"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "on",
+        "label",
+        "kind",
+        "scenario"
+      ],
+      "title": "TimelineEvent",
+      "type": "object"
+    },
     "Timing": {
       "additionalProperties": false,
       "description": "When the decision is announced, takes effect, and how long its effect takes.",
@@ -1964,6 +2526,92 @@
       "title": "ValueUnit",
       "type": "string"
     },
+    "Waterfall": {
+      "additionalProperties": false,
+      "description": "Bridge from the baseline to an alternate. Means are used because means add up.",
+      "properties": {
+        "aggregation": {
+          "description": "The value in the quarter ending period_end, or the sum up to it.",
+          "enum": [
+            "quarter",
+            "cumulative"
+          ],
+          "type": "string"
+        },
+        "end": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "metric": {
+          "$ref": "#/$defs/ResultMetric"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "scenario": {
+          "enum": [
+            "alt_a",
+            "alt_b"
+          ],
+          "type": "string"
+        },
+        "start": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "statistic": {
+          "const": "mean",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/WaterfallStep"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "metric",
+        "scenario",
+        "period_end",
+        "aggregation",
+        "statistic",
+        "start",
+        "steps",
+        "end"
+      ],
+      "title": "Waterfall",
+      "type": "object"
+    },
+    "WaterfallStep": {
+      "additionalProperties": false,
+      "properties": {
+        "explanation": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "value",
+        "explanation"
+      ],
+      "title": "WaterfallStep",
+      "type": "object"
+    },
     "WorkforceRestructure": {
       "additionalProperties": false,
       "properties": {
@@ -2063,9 +2711,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.3.0",
+  "$id": "urn:multiverse:contracts:0.4.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.3.0"
+  "x-contracts-version": "0.4.0"
 }

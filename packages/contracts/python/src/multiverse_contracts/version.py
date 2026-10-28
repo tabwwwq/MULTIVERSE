@@ -8,6 +8,9 @@ flags, the company dossier and value lineage.
 
 0.3.0 (Stage 05): scenario draft with six decision types, distributions,
 sensitivity settings, and the intervention catalog.
+
+0.4.0 (Stage 06): scenario result with history, quantile paths, paired changes,
+change distributions, waterfalls, events and a failed state.
 """
 
-CONTRACTS_VERSION = "0.3.0"
+CONTRACTS_VERSION = "0.4.0"

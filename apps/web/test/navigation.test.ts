@@ -85,6 +85,12 @@ describe("breadcrumbs", () => {
     ]);
   });
 
+  it("name a single result under its section", () => {
+    expect(buildBreadcrumbs("/timeline/2d7c9e41-5b3a-4f6e-8c1d-9a0b7e6f5c34").at(-1)).toEqual({
+      label: "Result",
+    });
+  });
+
   it("fall back to the overview for unknown paths", () => {
     expect(buildBreadcrumbs("/nope")).toEqual([{ label: "Overview", href: "/" }]);
   });

@@ -29,6 +29,18 @@ export type MagnitudeUnit =
  */
 export type CausalStatus = "not_assessed" | "assumption_based" | "diagnostics_passed";
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ResultMetric".
+ */
+export type ResultMetric = "revenue" | "ebitda" | "fcf" | "net_debt" | "ev";
+/**
+ * Unit of a paired difference: dollars, or a fraction of the baseline value.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ChangeUnit".
+ */
+export type ChangeUnit = "currency" | "fraction_of_baseline";
+/**
  * Whether a number describes real reported data or synthetic demo data (PRD SYN-04).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -156,6 +168,11 @@ export type InterventionType =
  * via the `definition` "ResultMode".
  */
 export type ResultMode = "demo" | "empirical_forecast" | "causal_study" | "fictional_exploratory";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ResultStatus".
+ */
+export type ResultStatus = "completed" | "failed";
 
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -310,6 +327,44 @@ export interface CapexExpansion {
   type: "capex_expansion";
   useful_life_years: number;
   utilization: FixedValue | UniformRange | TriangularRange;
+}
+/**
+ * Distribution of one paired difference at the horizon (docs/08 delta distributions).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ChangeDistribution".
+ */
+export interface ChangeDistribution {
+  /**
+   * @minItems 1
+   */
+  bins: [HistogramBin, ...HistogramBin[]];
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  mean: string;
+  metric: ResultMetric;
+  period_end: string;
+  /**
+   * Share of paths where the alternate beats the baseline, under the model.
+   */
+  probability_above_zero: string;
+  scenario: "alt_a" | "alt_b";
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "HistogramBin".
+ */
+export interface HistogramBin {
+  count: number;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  high: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  low: string;
 }
 /**
  * Identity of a company. ``company_id`` stays the same through every rename and relisting.
@@ -731,6 +786,87 @@ export interface ShareMember {
   label: string;
 }
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MetricResult".
+ */
+export interface MetricResult {
+  changes: PairedChange[];
+  definition: string;
+  /**
+   * @minItems 1
+   */
+  forecasts: [ScenarioSeries, ...ScenarioSeries[]];
+  label: string;
+  metric: ResultMetric;
+  observed: ObservedPoint[];
+}
+/**
+ * Alternate minus baseline, computed path by path, as quantiles.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "PairedChange".
+ */
+export interface PairedChange {
+  /**
+   * @minItems 1
+   */
+  points: [QuantilePoint, ...QuantilePoint[]];
+  scenario: "alt_a" | "alt_b";
+  unit: ChangeUnit;
+}
+/**
+ * Quantiles across paths for one quarter. p10 <= p50 <= p90.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "QuantilePoint".
+ */
+export interface QuantilePoint {
+  fiscal_label: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  p10: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  p50: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  p90: string;
+  period_end: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ScenarioSeries".
+ */
+export interface ScenarioSeries {
+  /**
+   * @minItems 1
+   */
+  points: [QuantilePoint, ...QuantilePoint[]];
+  scenario: "baseline" | "alt_a" | "alt_b";
+}
+/**
+ * A reported quarter, public by the cutoff.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ObservedPoint".
+ */
+export interface ObservedPoint {
+  filed_at: string;
+  /**
+   * For example 'FY2022 Q3'.
+   */
+  fiscal_label: string;
+  period_end: string;
+  source_id: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  value: string;
+}
+/**
  * Identity card of one result. Two results with equal manifests must be identical.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -753,6 +889,15 @@ export interface ReproducibilityManifest {
   scenario_id: string;
   seed: number;
   source_ids: string[];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ResultFailure".
+ */
+export interface ResultFailure {
+  code: string;
+  incident_id: string;
+  message: string;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -816,4 +961,110 @@ export interface WorkforceRestructure {
 export interface SensitivitySettings {
   parameters: string[];
   points: number;
+}
+/**
+ * One run: a baseline and its alternates for a company at a knowledge cutoff.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ScenarioResult".
+ */
+export interface ScenarioResult {
+  as_of: string;
+  calibrated: boolean;
+  company_id: string;
+  company_name: string;
+  created_at: string;
+  /**
+   * ISO 4217 currency code, for example 'USD'.
+   */
+  currency: string;
+  data_origin: DataOrigin;
+  distributions: ChangeDistribution[];
+  events: TimelineEvent[];
+  failure: ResultFailure | null;
+  horizon_quarters: number;
+  manifest: ReproducibilityManifest;
+  metrics: MetricResult[];
+  /**
+   * Generated without a model, for interface work only.
+   */
+  mock: boolean;
+  mode: ResultMode;
+  model: string;
+  paths: number;
+  result_id: string;
+  scenarios: ScenarioRun[];
+  seed: number;
+  status: ResultStatus;
+  title: string;
+  uncertainty_type: UncertaintyType;
+  waterfalls: Waterfall[];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TimelineEvent".
+ */
+export interface TimelineEvent {
+  kind: "cutoff" | "announcement" | "effective" | "effect_start" | "full_effect";
+  label: string;
+  on: string;
+  scenario: ("baseline" | "alt_a" | "alt_b") | null;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ScenarioRun".
+ */
+export interface ScenarioRun {
+  decision:
+    | (
+        | RndChange
+        | WorkforceRestructure
+        | Acquisition
+        | Divestiture
+        | CapexExpansion
+        | DebtRefinance
+      )
+    | null;
+  key: "baseline" | "alt_a" | "alt_b";
+  label: string;
+}
+/**
+ * Bridge from the baseline to an alternate. Means are used because means add up.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Waterfall".
+ */
+export interface Waterfall {
+  /**
+   * The value in the quarter ending period_end, or the sum up to it.
+   */
+  aggregation: "quarter" | "cumulative";
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  end: string;
+  metric: ResultMetric;
+  period_end: string;
+  scenario: "alt_a" | "alt_b";
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  start: string;
+  statistic: "mean";
+  /**
+   * @minItems 1
+   */
+  steps: [WaterfallStep, ...WaterfallStep[]];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "WaterfallStep".
+ */
+export interface WaterfallStep {
+  explanation: string;
+  label: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  value: string;
 }

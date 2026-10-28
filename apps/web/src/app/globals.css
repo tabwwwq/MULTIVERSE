@@ -337,3 +337,49 @@ dialog::backdrop {
     outline-offset: 4px;
   }
 }
+
+/* Chart text wears text tokens, never the series colour (dataviz guidance). */
+.chart-label {
+  fill: var(--color-ink-muted);
+  font-size: 0.75rem;
+}
+
+.chart-label-strong {
+  fill: var(--color-ink);
+  font-size: 0.8125rem;
+}
+
+/* Persistent synthetic label on every chart (PRD SYN-02). */
+.chart-watermark {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid color-mix(in oklab, var(--color-warning) 50%, transparent);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-warning);
+  font-size: 0.75rem;
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 10;
+  inline-size: max-content;
+  max-inline-size: min(18rem, calc(100% - 1rem));
+  padding: 0.75rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-overlay);
+  pointer-events: none;
+}
+
+/* Static figures scale with their column; a larger base size keeps text legible at 390px. */
+.figure-label {
+  fill: var(--color-ink-muted);
+  font-size: 14px;
+}
+
+.figure-label-strong {
+  fill: var(--color-ink);
+  font-size: 15px;
+}

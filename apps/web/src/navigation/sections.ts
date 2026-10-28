@@ -175,8 +175,8 @@ export const SECTIONS: readonly Section[] = [
     icon: Rocket,
     summary: "Check data readiness, model version and run cost before starting a scenario.",
     status: "planned",
-    stage: 6,
-    stageName: "Timeline charts and comparison",
+    stage: 22,
+    stageName: "Monte Carlo engine",
     plans: [
       "Data readiness and model version check.",
       "Run size and cost estimate before anything starts.",
@@ -206,7 +206,7 @@ export const SECTIONS: readonly Section[] = [
     group: "analyse",
     icon: ChartSpline,
     summary: "Baseline and alternative paths with quantile bands and decision markers.",
-    status: "planned",
+    status: "available",
     stage: 6,
     stageName: "Timeline charts and comparison",
     plans: [
@@ -222,7 +222,7 @@ export const SECTIONS: readonly Section[] = [
     group: "analyse",
     icon: Columns2,
     summary: "Side-by-side comparison of scenarios with paired differences.",
-    status: "planned",
+    status: "available",
     stage: 6,
     stageName: "Timeline charts and comparison",
     plans: [

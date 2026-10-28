@@ -2,6 +2,7 @@
 
 import type { ScenarioDraft } from "@multiverse/contracts";
 import { Download, X } from "lucide-react";
+import Link from "next/link";
 import { useId, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -12,7 +13,7 @@ interface RunDialogProps {
 }
 
 /*
- * Runs arrive in Stage 06. Until then Run is enabled only for a fresh, valid decision
+ * Runs arrive with the Monte Carlo engine (Stage 22). Until then Run is enabled only for a fresh, valid decision
  * (US-05) and shows the exact scenario JSON a run will receive, in a native modal dialog.
  */
 export function RunDialog({ draft, blockedReason }: RunDialogProps) {
@@ -60,8 +61,13 @@ export function RunDialog({ draft, blockedReason }: RunDialogProps) {
             </button>
           </div>
           <p className="text-body text-ink-muted">
-            The simulation engine is not built yet: demo runs arrive in Stage 06. This decision
-            passed validation, and this is the scenario a run will receive.
+            The simulation engine is not built yet: runs of your own decision arrive with the Monte
+            Carlo engine (Stage 22). This decision passed validation, and this is the scenario a run
+            will receive. Fixed mock results are in the{" "}
+            <Link href="/timeline" className="text-mint underline underline-offset-4">
+              Timeline Explorer
+            </Link>
+            .
           </p>
           <pre
             tabIndex={0}

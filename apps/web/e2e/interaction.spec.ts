@@ -46,7 +46,7 @@ test.describe("desktop sidebar", () => {
       "aria-current",
       "page",
     );
-    await expect(nav.getByRole("link", { name: "Launch Center planned, Stage 06" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Launch Center planned, Stage 22" })).toBeVisible();
   });
 
   test("collapses, keeps labels for screen readers and remembers the choice", async ({ page }) => {

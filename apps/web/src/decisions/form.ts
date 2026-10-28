@@ -41,6 +41,8 @@ export interface DecisionForm {
 }
 
 export interface ScenarioForm {
+  /** Version of the contract the draft was written in; kept on a round trip (Stage 07 migrations). */
+  contracts_version: string;
   company_id: string;
   as_of: string;
   data_origin: DataOrigin;
@@ -118,6 +120,7 @@ export function defaultScenarioForm(
   dataOrigin: DataOrigin,
 ): ScenarioForm {
   return {
+    contracts_version: CATALOG.contracts_version,
     company_id: companyId,
     as_of: asOf,
     data_origin: dataOrigin,
@@ -290,7 +293,7 @@ export function toScenarioDraft(form: ScenarioForm, read: ReadForm): ScenarioDra
   for (const parameter of spec.parameters) ordered[parameter.key] = decision[parameter.key];
   if (spec.share_group) ordered[spec.share_group.key] = decision[spec.share_group.key];
   return {
-    contracts_version: CATALOG.contracts_version,
+    contracts_version: form.contracts_version,
     company_id: form.company_id,
     as_of: form.as_of,
     data_origin: form.data_origin,
@@ -328,6 +331,7 @@ export function scenarioFormFromDraft(draft: ScenarioDraft): ScenarioForm {
     }
   }
   return {
+    contracts_version: draft.contracts_version,
     company_id: draft.company_id,
     as_of: draft.as_of,
     data_origin: draft.data_origin,

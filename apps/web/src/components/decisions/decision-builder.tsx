@@ -107,6 +107,7 @@ export function DecisionBuilder({ context, initialAsOf, initialType }: DecisionB
   const decision = forms[type] ?? defaultDecisionForm(type, asOf);
   const scenario: ScenarioForm = useMemo(
     () => ({
+      contracts_version: CATALOG.contracts_version,
       company_id: context.companyId,
       as_of: asOf,
       data_origin: context.dataOrigin,

@@ -67,6 +67,15 @@ from multiverse_contracts.primitives import (
     UncertaintyType,
     ValueKind,
 )
+from multiverse_contracts.results import (
+    ChangeDistribution,
+    MetricResult,
+    QuantilePoint,
+    ResultMetric,
+    ResultStatus,
+    ScenarioResult,
+    Waterfall,
+)
 from multiverse_contracts.version import CONTRACTS_VERSION
 
 __version__ = "0.1.0"
@@ -78,6 +87,7 @@ __all__ = [
     "Acquisition",
     "CapexExpansion",
     "CausalStatus",
+    "ChangeDistribution",
     "Company",
     "CompanyDossier",
     "CompanyStatus",
@@ -106,17 +116,22 @@ __all__ = [
     "Magnitude",
     "MagnitudeUnit",
     "MeasureUnit",
+    "MetricResult",
     "MetricValue",
     "ParameterSpec",
     "Period",
     "PeriodType",
     "ProceedsAllocation",
     "QualitySeverity",
+    "QuantilePoint",
     "Quantity",
     "ReproducibilityManifest",
+    "ResultMetric",
     "ResultMode",
+    "ResultStatus",
     "RndChange",
     "ScenarioDraft",
+    "ScenarioResult",
     "Sector",
     "SensitivitySettings",
     "SupportStatus",
@@ -127,5 +142,6 @@ __all__ = [
     "UniformRange",
     "ValueKind",
     "ValueUnit",
+    "Waterfall",
     "WorkforceRestructure",
 ]

@@ -13,6 +13,8 @@ const EXTRA_PAGES: Record<string, string> = {
 /** Label of a page nested under a section, e.g. one company under the dossier. */
 const NESTED_LABELS: Record<string, string> = {
   "/dossier": "Company profile",
+  "/timeline": "Result",
+  "/compare": "Result",
 };
 
 /** Overview › Group › Page (› Detail) for a pathname. Unknown paths fall back to the overview. */

@@ -32,6 +32,23 @@ const PAGES = [
     heading: "Decision Builder",
   },
   { path: "/assumptions", name: "assumptions", heading: "Assumption Matrix" },
+  { path: "/timeline", name: "timeline-index", heading: "Timeline Explorer" },
+  {
+    path: "/timeline/2d7c9e41-5b3a-4f6e-8c1d-9a0b7e6f5c34",
+    name: "timeline",
+    heading: "Northwind R&D budget +20% and +40%",
+  },
+  {
+    path: "/timeline/6f1d2b8a-3c4e-4a5f-9b7d-1e2c3a4b5d6e",
+    name: "timeline-failed",
+    heading: "Halcyon debt refinancing (failed run)",
+  },
+  { path: "/compare", name: "compare-index", heading: "Universe Compare" },
+  {
+    path: "/compare/2d7c9e41-5b3a-4f6e-8c1d-9a0b7e6f5c34",
+    name: "compare",
+    heading: "Northwind R&D budget +20% and +40%",
+  },
 ] as const;
 
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
@@ -78,7 +95,7 @@ for (const target of PAGES) {
 
 test("every planned section shows an honest placeholder without data", async ({ page }) => {
   const planned = SECTIONS.filter((section) => section.status === "planned");
-  expect(planned.length).toBe(14);
+  expect(planned.length).toBe(12);
   for (const section of planned) {
     const response = await page.goto(section.href);
     expect(response?.status(), section.href).toBe(200);

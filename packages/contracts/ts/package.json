@@ -7,7 +7,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./demo": "./src/demo.ts",
-    "./interventions": "./src/interventions.ts"
+    "./interventions": "./src/interventions.ts",
+    "./mock-results": "./src/mock-results.ts"
   },
   "scripts": {
     "gen": "node scripts/generate.mjs",

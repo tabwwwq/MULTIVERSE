@@ -58,4 +58,9 @@ export const NON_TEXT_PAIRS: ReadonlyArray<readonly [foreground: string, backgro
   ["mint", "canvas"],
   ["mint", "surface"],
   ["mint", "inset"],
+  // Chart lines are graphical objects: 3:1 against the chart surface (WCAG 1.4.11).
+  ["observed", "surface"],
+  ["series-baseline", "surface"],
+  ["series-alt-a", "surface"],
+  ["series-alt-b", "surface"],
 ];

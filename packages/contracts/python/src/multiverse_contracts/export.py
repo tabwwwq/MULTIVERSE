@@ -18,6 +18,7 @@ from multiverse_contracts.decisions import ScenarioDraft
 from multiverse_contracts.interventions import InterventionCatalog
 from multiverse_contracts.manifest import ReproducibilityManifest
 from multiverse_contracts.metrics import MetricValue
+from multiverse_contracts.results import ScenarioResult
 from multiverse_contracts.version import CONTRACTS_VERSION
 
 # packages/contracts/python/src/multiverse_contracts/export.py -> packages/contracts/schemas/
@@ -30,6 +31,7 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     CompanyDossier,
     ScenarioDraft,
     InterventionCatalog,
+    ScenarioResult,
 )
 
 

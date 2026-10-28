@@ -4,8 +4,19 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-28 (Stage 06)
+
+- Contracts 0.4.0: `ScenarioResult` with reported history, p10/p50/p90 paths per scenario, paired changes computed path by path, change distributions, waterfalls on means, decision events, a manifest and a failed state (ADR-0014).
+- Mock result generator `python -m multiverse_contracts.mock_results`: deterministic paired paths on the synthetic dossiers, labelled demo and mock; one failed run.
+- Timeline Explorer (`/timeline`): SVG timeline with history and forecast, bands, decision marker, legend toggles, crosshair tooltip with units and sources, keyboard reading, absolute / change / percent, KPI cards, table view, CSV export with a synthetic warning, event timeline.
+- Universe Compare (`/compare`): side-by-side KPIs, waterfalls, distributions of paired differences, and a cross-result comparison that blocks different cutoffs, currencies or horizons.
+- Chart series tokens validated with the dataviz palette validator; honest axes that include zero.
+- Tests: 18 pytest, 24 vitest and 81 Playwright checks for chart and KPI consistency, paired changes, axes, rounding, CSV, compatibility, keyboard, failed and unknown results, accessibility.
+
 ### Changed — 2026-10-28
 
+- Launch Center moved to Stage 22 (Monte Carlo engine). The Decision Builder's Run dialog points to the mock results.
+- A scenario draft keeps its own contracts version on a JSON round trip.
 - Stage 05 accepted by the owner (CI run 40725947738 green).
 
 ### Added — 2026-10-28 (Stage 05)

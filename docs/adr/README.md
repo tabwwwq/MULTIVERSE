@@ -17,6 +17,7 @@
 | [0011](0011-versioning.md) | Версионирование кода, contracts, продукта и результатов | Accepted |
 | [0012](0012-company-repository.md) | Доступ к данным компаний через репозиторий (будущий API adapter) | Accepted |
 | [0013](0013-decision-catalog.md) | Каталог решений как единый источник, одинаковая валидация в Python и web | Accepted |
+| [0014](0014-result-model-and-charts.md) | Контракт результата с парными разностями, одна модель данных для графика, KPI, таблицы и CSV | Accepted |
 
 ADR-0001…0006 перечислены в `docs/03_SYSTEM_ARCHITECTURE.md` комплекта. ADR-0007…0011 приняты на Stage 02.
 

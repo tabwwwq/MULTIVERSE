@@ -117,7 +117,7 @@
 
 ### Known limitations
 
-- **CI не запускался:** репозиторий не опубликован на GitHub. Workflow написан, локально прогнаны те же команды. Версии actions (`checkout@v4`, `setup-uv@v6`, `setup-node@v4`, `gitleaks-action@v2`) нужно проверить при первом запуске.
+- **CI проверен на GitHub** после публикации (2026-10-28, run [40673439972](https://github.com/tabwwwq/MULTIVERSE/actions/runs/40673439972)): все 6 задач `success` — Python и TypeScript на ubuntu-latest и windows-latest, Contracts drift, Secret scan (gitleaks).
 - **gitleaks локально не установлен.** Локальный аналог — `tests/smoke/test_no_secrets.py`, он проще gitleaks.
 - **Starlette 1.10 предупреждает,** что `httpx` в `TestClient` устарел, и предлагает другой пакет. Этот пакет не проверен, поэтому оставлен `httpx`, а предупреждение отключено точечно в `pyproject.toml` с комментарием.
 - **mypy проверяет исходники пакетов, но не тесты.** Тесты проверяет ruff.
@@ -142,9 +142,9 @@ ADR-0007 (tooling), ADR-0008 (contracts), ADR-0009 (границы), ADR-0010 (�
 | Contracts, composition root, environment profiles, dependency boundaries, versioning, ADR | ADR-0007…0011, `create_app`, `Settings`, import-linter, `CONTRACTS_VERSION` | ✅ |
 | Root README, project tree, `env.example` без секретов | `README.md`, `.env.example`, тест сканера секретов | ✅ |
 | TypeScript strict, Python typing conventions, import rules, config validation, formatter | `tsconfig.base.json`, mypy strict, ruff, Prettier, ESLint, `conventions.md` | ✅ |
-| Basic CI, test commands, architecture decisions | `.github/workflows/ci.yml` (не запускался), `npm run check`, ADR | ✅, CI — с оговоркой |
+| Basic CI, test commands, architecture decisions | `.github/workflows/ci.yml` (зелёный на GitHub, run 40673439972), `npm run check`, ADR | ✅ |
 | Без больших зависимостей без нужды, optional ML dependencies | Next.js отложен, torch / LightGBM / scikit-learn — extras | ✅ |
-| Воспроизводимый старт Windows / Linux для новичка | README Quick start, проверен на Windows. Linux — только в CI-конфигурации | ✅ Windows, Linux не проверен вручную |
+| Воспроизводимый старт Windows / Linux для новичка | README Quick start, проверен вручную на Windows; на Linux и Windows — те же команды с чистой установкой в CI (`uv sync --locked`, `npm ci`) | ✅ |
 | Не перезаписывать постороннюю работу | До этапа в `multiverse/` были только Stage 00–01 docs и CHANGELOG, они сохранены | ✅ |
 | Smoke tests и quality gates | 46 + 4 теста, `npm run check` EXIT 0 | ✅ |
 | Нет секретов, contracts не дублируются, прямые границы модулей | Сканер, drift check, негативные пробы | ✅ |

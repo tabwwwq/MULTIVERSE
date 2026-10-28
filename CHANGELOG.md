@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-28
+
+- Stage 04 accepted by the owner (CI run 40713741194 green).
+
 ### Added — 2026-10-28 (Stage 04)
 
 - Contracts 0.2.0: company identity with ticker and name histories, filings, coverage, data quality flags, company dossier and value lineage; the JSON Schema is now exported in serialization mode.

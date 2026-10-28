@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 04 — Company Explorer и dossier |
 | Дата | 2026-10-28 |
-| Статус | REVIEW — ждёт приёмки владельцем |
+| Статус | ACCEPTED 2026-10-28 (CI run 40713741194: 7/7 задач зелёные) |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/04_COMPANY_EXPLORER.md` |
 | Основание | `docs/02` (Universe Explorer, Company Dossier), `docs/04` (metric mapping, identifiers), `docs/09` (Company, FinancialFact, endpoints), PRD FR-CO-01…05, FR-TM-01…02, FC-01…03, D-01, D-04 |
 

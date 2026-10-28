@@ -21,7 +21,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 | 02 | Monorepo foundation, contracts, quality gates, ADRs | Accepted |
 | 03 | Design system and application shell (`apps/web`) | Accepted |
 | 04 | Company explorer and dossier on synthetic fixtures | Accepted |
-| 05 | Decision builder: six decision types, validation, intervention catalog | Review |
+| 05 | Decision builder: six decision types, validation, intervention catalog | Accepted |
 | 06–26 | Timelines → data → ML → causal → finance → publication | Planned |
 
 ## Repository layout

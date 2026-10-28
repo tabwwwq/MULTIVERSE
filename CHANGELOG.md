@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-28
+
+- Stage 05 accepted by the owner (CI run 40725947738 green).
+
 ### Added — 2026-10-28 (Stage 05)
 
 - Contracts 0.3.0: `ScenarioDraft` with six decision types (R&D change, workforce restructuring, acquisition, divestiture, CAPEX expansion, debt refinancing), typed magnitudes with explicit units, timing, fixed / uniform / triangular distributions, financing or use-of-proceeds shares and sensitivity settings.

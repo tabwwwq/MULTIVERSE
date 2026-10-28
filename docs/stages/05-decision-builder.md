@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 05 — Decision Builder с финансово точными контролами |
 | Дата | 2026-10-28 |
-| Статус | REVIEW — ждёт приёмки владельцем |
+| Статус | ACCEPTED 2026-10-28 (CI run 40725947738: 7/7 задач зелёные) |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/05_DECISION_BUILDER.md` |
 | Основание | `docs/07` (intervention accounting, numerical invariants), `docs/08` (scenario definition), `docs/09` (`GET /interventions/types`, `POST /scenarios/validate`), `docs/16` (шаблон типа действия, первые шесть), PRD FR-DE-01…08, FR-TM-03, US-03…05, FC-01…03, FC-05, FC-06 |
 

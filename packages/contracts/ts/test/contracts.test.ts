@@ -30,6 +30,10 @@ describe("@multiverse/contracts", () => {
         fiscal_quarter: 4,
       },
       as_of: "2023-02-15T00:00:00Z",
+      missing_reason: null,
+      source_ids: [],
+      uncertainty_type: "none",
+      lineage: null,
     } satisfies MetricValue;
 
     expectTypeOf<NonNullable<MetricValue["quantity"]>["value"]>().toEqualTypeOf<string>();

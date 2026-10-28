@@ -1,5 +1,13 @@
 {
   "$defs": {
+    "AccountingStandard": {
+      "enum": [
+        "us_gaap",
+        "ifrs"
+      ],
+      "title": "AccountingStandard",
+      "type": "string"
+    },
     "CausalStatus": {
       "description": "Identification status of a result. Never raised automatically (PRD FR-CA-02).",
       "enum": [
@@ -10,6 +18,223 @@
       "title": "CausalStatus",
       "type": "string"
     },
+    "Company": {
+      "additionalProperties": false,
+      "description": "Identity of a company. ``company_id`` stays the same through every rename and relisting.",
+      "properties": {
+        "accounting_standard": {
+          "$ref": "#/$defs/AccountingStandard"
+        },
+        "cik": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SEC CIK, zero-padded."
+        },
+        "company_id": {
+          "description": "Stable ID. Never reused, never changes.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "country": {
+          "description": "ISO 3166-1 alpha-2 country code, e.g. 'US'.",
+          "pattern": "^[A-Z]{2}$",
+          "type": "string"
+        },
+        "data_origin": {
+          "$ref": "#/$defs/DataOrigin"
+        },
+        "fiscal_52_53_week": {
+          "default": false,
+          "type": "boolean"
+        },
+        "fiscal_year_end": {
+          "description": "MM-DD",
+          "pattern": "^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+          "type": "string"
+        },
+        "listings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TickerListing"
+          },
+          "type": "array"
+        },
+        "names": {
+          "items": {
+            "$ref": "#/$defs/DatedName"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "reporting_currency": {
+          "description": "ISO 4217 currency code, for example 'USD'.",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "sector": {
+          "$ref": "#/$defs/Sector"
+        },
+        "status": {
+          "$ref": "#/$defs/CompanyStatus",
+          "default": "active"
+        },
+        "status_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status_note": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "company_id",
+        "cik",
+        "names",
+        "listings",
+        "sector",
+        "country",
+        "reporting_currency",
+        "accounting_standard",
+        "fiscal_year_end",
+        "fiscal_52_53_week",
+        "status",
+        "status_date",
+        "status_note",
+        "data_origin"
+      ],
+      "title": "Company",
+      "type": "object"
+    },
+    "CompanyDossier": {
+      "additionalProperties": false,
+      "description": "Everything known about one company at a knowledge cutoff ``as_of``.",
+      "properties": {
+        "as_of": {
+          "description": "Snapshot cutoff: nothing filed later is included.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "company": {
+          "$ref": "#/$defs/Company"
+        },
+        "coverage": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CoverageEntry"
+          },
+          "type": "array"
+        },
+        "filings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FilingReference"
+          },
+          "type": "array"
+        },
+        "quality_flags": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/DataQualityFlag"
+          },
+          "type": "array"
+        },
+        "support_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "support_status": {
+          "$ref": "#/$defs/SupportStatus"
+        },
+        "values": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MetricValue"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "company",
+        "support_status",
+        "support_reason",
+        "as_of",
+        "filings",
+        "values",
+        "coverage",
+        "quality_flags"
+      ],
+      "title": "CompanyDossier",
+      "type": "object"
+    },
+    "CompanyStatus": {
+      "description": "Lifecycle of a listed company. Leavers stay in the data to avoid survivorship bias.",
+      "enum": [
+        "active",
+        "acquired",
+        "delisted",
+        "bankrupt"
+      ],
+      "title": "CompanyStatus",
+      "type": "string"
+    },
+    "CoverageEntry": {
+      "additionalProperties": false,
+      "description": "How many fiscal quarters have a valid value for one metric.",
+      "properties": {
+        "metric": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "quarters_expected": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "quarters_valid": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "metric",
+        "quarters_valid",
+        "quarters_expected"
+      ],
+      "title": "CoverageEntry",
+      "type": "object"
+    },
     "DataOrigin": {
       "description": "Whether a number describes real reported data or synthetic demo data (PRD SYN-04).",
       "enum": [
@@ -17,6 +242,186 @@
         "synthetic"
       ],
       "title": "DataOrigin",
+      "type": "string"
+    },
+    "DataQualityFlag": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "metric": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "severity": {
+          "$ref": "#/$defs/QualitySeverity"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message",
+        "metric"
+      ],
+      "title": "DataQualityFlag",
+      "type": "object"
+    },
+    "DatedName": {
+      "additionalProperties": false,
+      "description": "A legal name and the dates it was used. ``valid_to`` is null while it is current.",
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "valid_from": {
+          "format": "date",
+          "type": "string"
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name",
+        "valid_from",
+        "valid_to"
+      ],
+      "title": "DatedName",
+      "type": "object"
+    },
+    "FilingForm": {
+      "enum": [
+        "10-K",
+        "10-Q",
+        "10-K/A",
+        "10-Q/A",
+        "20-F"
+      ],
+      "title": "FilingForm",
+      "type": "string"
+    },
+    "FilingReference": {
+      "additionalProperties": false,
+      "description": "A filing that values come from. Synthetic filings never get a link (no invented sources).",
+      "properties": {
+        "accession_number": {
+          "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$",
+          "type": "string"
+        },
+        "data_origin": {
+          "$ref": "#/$defs/DataOrigin"
+        },
+        "filed_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "filing_id": {
+          "pattern": "^[a-z0-9][a-z0-9:_-]{2,63}$",
+          "type": "string"
+        },
+        "form": {
+          "$ref": "#/$defs/FilingForm"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "pattern": "^https://www\\.sec\\.gov/",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "filing_id",
+        "form",
+        "accession_number",
+        "period_end",
+        "filed_at",
+        "url",
+        "data_origin"
+      ],
+      "title": "FilingReference",
+      "type": "object"
+    },
+    "Lineage": {
+      "additionalProperties": false,
+      "description": "Where a number comes from inside its filings. Stage 11 extends this with full lineage.",
+      "properties": {
+        "concepts": {
+          "items": {
+            "description": "Taxonomy concept, e.g. 'us-gaap:Revenues'.",
+            "pattern": "^[a-z][a-z0-9-]*:[A-Za-z][A-Za-z0-9]*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "formula": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "method": {
+          "$ref": "#/$defs/LineageMethod"
+        }
+      },
+      "required": [
+        "concepts",
+        "method",
+        "formula"
+      ],
+      "title": "Lineage",
+      "type": "object"
+    },
+    "LineageMethod": {
+      "description": "How a quarterly number was derived from what the filing reports (docs/04).",
+      "enum": [
+        "reported",
+        "ytd_to_quarter",
+        "fy_minus_nine_months",
+        "calculated"
+      ],
+      "title": "LineageMethod",
       "type": "string"
     },
     "MeasureUnit": {
@@ -47,6 +452,17 @@
         },
         "kind": {
           "$ref": "#/$defs/ValueKind"
+        },
+        "lineage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Lineage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "metric": {
           "description": "Metric slug, e.g. 'revenue'.",
@@ -93,10 +509,14 @@
       "required": [
         "metric",
         "quantity",
+        "missing_reason",
         "kind",
         "data_origin",
         "period",
-        "as_of"
+        "as_of",
+        "source_ids",
+        "uncertainty_type",
+        "lineage"
       ],
       "title": "MetricValue",
       "type": "object"
@@ -141,7 +561,9 @@
       },
       "required": [
         "type",
-        "end_date"
+        "end_date",
+        "fiscal_year",
+        "fiscal_quarter"
       ],
       "title": "Period",
       "type": "object"
@@ -155,6 +577,15 @@
         "instant"
       ],
       "title": "PeriodType",
+      "type": "string"
+    },
+    "QualitySeverity": {
+      "enum": [
+        "info",
+        "warning",
+        "blocking"
+      ],
+      "title": "QualitySeverity",
       "type": "string"
     },
     "Quantity": {
@@ -185,7 +616,8 @@
       },
       "required": [
         "value",
-        "unit"
+        "unit",
+        "currency"
       ],
       "title": "Quantity",
       "type": "object"
@@ -269,9 +701,13 @@
         "revision",
         "mode",
         "data_origin",
+        "causal_status",
         "as_of",
         "seed",
         "code_version",
+        "dataset_snapshot_id",
+        "model_id",
+        "source_ids",
         "generated_at"
       ],
       "title": "ReproducibilityManifest",
@@ -287,6 +723,68 @@
       ],
       "title": "ResultMode",
       "type": "string"
+    },
+    "Sector": {
+      "enum": [
+        "semiconductors",
+        "software",
+        "medical_devices",
+        "utilities",
+        "logistics",
+        "instruments",
+        "industrial_machinery"
+      ],
+      "title": "Sector",
+      "type": "string"
+    },
+    "SupportStatus": {
+      "description": "Whether MULTIVERSE can work with a company (PRD FC-01, FC-02).",
+      "enum": [
+        "supported",
+        "insufficient_history",
+        "unsupported"
+      ],
+      "title": "SupportStatus",
+      "type": "string"
+    },
+    "TickerListing": {
+      "additionalProperties": false,
+      "description": "A ticker on an exchange for a period. Tickers are aliases, never identifiers.",
+      "properties": {
+        "exchange": {
+          "maxLength": 20,
+          "minLength": 2,
+          "type": "string"
+        },
+        "ticker": {
+          "pattern": "^[A-Z][A-Z0-9.\\-]{0,9}$",
+          "type": "string"
+        },
+        "valid_from": {
+          "format": "date",
+          "type": "string"
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "ticker",
+        "exchange",
+        "valid_from",
+        "valid_to"
+      ],
+      "title": "TickerListing",
+      "type": "object"
     },
     "UncertaintyType": {
       "description": "What an interval around a number means (PRD §6, docs/08).",
@@ -310,9 +808,9 @@
       "type": "string"
     }
   },
-  "$id": "urn:multiverse:contracts:0.1.0",
+  "$id": "urn:multiverse:contracts:0.2.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.1.0"
+  "x-contracts-version": "0.2.0"
 }

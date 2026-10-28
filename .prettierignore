@@ -10,3 +10,4 @@ packages/contracts/schemas
 package-lock.json
 uv.lock
 *.md
+packages/contracts/fixtures/demo

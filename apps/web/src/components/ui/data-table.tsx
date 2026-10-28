@@ -9,6 +9,8 @@ import { cn } from "@/lib/cn";
 
 export interface Column<Row> {
   key: keyof Row & string;
+  /** Unique column id when several columns render from the same key. Defaults to `key`. */
+  id?: string;
   header: string;
   /** Right-aligned with tabular figures. */
   numeric?: boolean;
@@ -47,7 +49,11 @@ export function DataTable<Row>({
         <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column.key} scope="col" className={cn(column.numeric && "is-numeric")}>
+              <th
+                key={column.id ?? column.key}
+                scope="col"
+                className={cn(column.numeric && "is-numeric")}
+              >
                 {column.header}
               </th>
             ))}
@@ -60,11 +66,11 @@ export function DataTable<Row>({
                 const content = column.render ? column.render(row) : String(row[column.key] ?? "");
                 const classes = cn(column.numeric && "is-numeric");
                 return column.rowHeader ? (
-                  <th key={column.key} scope="row" className={classes}>
+                  <th key={column.id ?? column.key} scope="row" className={classes}>
                     {content}
                   </th>
                 ) : (
-                  <td key={column.key} data-label={column.header} className={classes}>
+                  <td key={column.id ?? column.key} data-label={column.header} className={classes}>
                     {content}
                   </td>
                 );

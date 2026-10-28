@@ -92,7 +92,7 @@ export const SECTIONS: readonly Section[] = [
     group: "explore",
     icon: Search,
     summary: "Find a company by ticker, name or CIK and see its data coverage.",
-    status: "planned",
+    status: "available",
     stage: 4,
     stageName: "Company Explorer and dossier",
     plans: [
@@ -109,7 +109,7 @@ export const SECTIONS: readonly Section[] = [
     icon: Building2,
     summary:
       "Revenue, margins, cash flow and debt history with the original filings behind each value.",
-    status: "planned",
+    status: "available",
     stage: 4,
     stageName: "Company Explorer and dossier",
     plans: [
@@ -124,14 +124,14 @@ export const SECTIONS: readonly Section[] = [
     title: "Time Machine",
     group: "explore",
     icon: History,
-    summary: "Pick a historical cutoff and see only what was public on that date.",
+    summary: "Compare what was public about companies at different historical cutoffs.",
     status: "planned",
-    stage: 4,
-    stageName: "Company Explorer and dossier",
+    stage: 12,
+    stageName: "Point-in-time warehouse",
     plans: [
-      "Choose an as-of date; values filed later disappear.",
-      "See when each value became public.",
-      "Results built on another cutoff are marked stale.",
+      "Compare two cutoffs side by side and see which values became public in between.",
+      "Original, vintage and latest views of values that were later restated.",
+      "Coverage per cutoff for the whole universe. A single-company cutoff already exists in the Company Dossier.",
     ],
   },
   {

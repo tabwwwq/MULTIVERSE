@@ -2,9 +2,9 @@
 
 from datetime import date
 from enum import StrEnum
-from typing import Self
+from typing import Annotated, Self
 
-from pydantic import AwareDatetime, Field, model_validator
+from pydantic import AwareDatetime, Field, StringConstraints, model_validator
 
 from multiverse_contracts.primitives import (
     ContractModel,
@@ -44,6 +44,36 @@ class Period(ContractModel):
         return self
 
 
+ConceptName = Annotated[
+    str,
+    StringConstraints(pattern=r"^[a-z][a-z0-9-]*:[A-Za-z][A-Za-z0-9]*$"),
+    Field(description="Taxonomy concept, e.g. 'us-gaap:Revenues'."),
+]
+
+
+class LineageMethod(StrEnum):
+    """How a quarterly number was derived from what the filing reports (docs/04)."""
+
+    REPORTED = "reported"
+    YTD_TO_QUARTER = "ytd_to_quarter"
+    FY_MINUS_NINE_MONTHS = "fy_minus_nine_months"
+    CALCULATED = "calculated"
+
+
+class Lineage(ContractModel):
+    """Where a number comes from inside its filings. Stage 11 extends this with full lineage."""
+
+    concepts: tuple[ConceptName, ...] = Field(min_length=1)
+    method: LineageMethod
+    formula: str | None = Field(default=None, min_length=1)
+
+    @model_validator(mode="after")
+    def _calculated_needs_formula(self) -> Self:
+        if self.method is LineageMethod.CALCULATED and self.formula is None:
+            raise ValueError("a calculated value must state its formula")
+        return self
+
+
 class MetricValue(ContractModel):
     """One number shown to a user or passed between modules.
 
@@ -60,6 +90,7 @@ class MetricValue(ContractModel):
     as_of: AwareDatetime = Field(description="Knowledge cutoff: only facts published by then.")
     source_ids: tuple[str, ...] = ()
     uncertainty_type: UncertaintyType = UncertaintyType.NONE
+    lineage: Lineage | None = None
 
     @model_validator(mode="after")
     def _check_honesty_rules(self) -> Self:

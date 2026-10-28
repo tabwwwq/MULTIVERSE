@@ -29,7 +29,10 @@ export function NavLinks({ collapsed = false, onNavigate }: NavLinksProps) {
             </p>
             <ul className="flex flex-col gap-0.5">
               {sections.map((section) => {
-                const active = pathname === section.href;
+                const exact = pathname === section.href;
+                // A nested page (e.g. one company's dossier) keeps its section highlighted.
+                const active =
+                  exact || (section.href !== "/" && pathname.startsWith(`${section.href}/`));
                 const Icon = section.icon;
                 const planned = section.status === "planned";
                 return (
@@ -37,7 +40,7 @@ export function NavLinks({ collapsed = false, onNavigate }: NavLinksProps) {
                     <Link
                       href={section.href}
                       {...(onNavigate ? { onClick: onNavigate } : {})}
-                      aria-current={active ? "page" : undefined}
+                      aria-current={exact ? "page" : active ? "location" : undefined}
                       title={
                         planned
                           ? `${section.title}: planned for ${formatStage(section.stage)}`

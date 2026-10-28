@@ -8,11 +8,24 @@ const PAGES = [
   { path: "/", name: "overview", heading: "What if business took another path?" },
   { path: "/methodology", name: "methodology", heading: "Methodology" },
   { path: "/design-system", name: "design-system", heading: "Design system" },
-  { path: "/universe", name: "planned-section", heading: "Universe Explorer" },
+  { path: "/time-machine", name: "planned-section", heading: "Time Machine" },
+  { path: "/universe", name: "explorer", heading: "Universe Explorer" },
+  {
+    path: "/dossier/5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+    name: "dossier",
+    heading: "Northwind Semiconductors Inc.",
+  },
+  {
+    path: "/dossier/8d2c6e1a-4f9b-4b70-8e3d-c5a1f7b2e906",
+    name: "dossier-unsupported",
+    heading: "Valtrix AG",
+  },
 ] as const;
 
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
-const SCREENS_DIR = fileURLToPath(new URL("../../../docs/stages/03-screens/", import.meta.url));
+const SCREENS_DIR = fileURLToPath(
+  new URL(`../../../docs/stages/${process.env["SAVE_SCREENS"] ?? "screens"}/`, import.meta.url),
+);
 
 for (const target of PAGES) {
   test.describe(`page ${target.path}`, () => {
@@ -53,7 +66,7 @@ for (const target of PAGES) {
 
 test("every planned section shows an honest placeholder without data", async ({ page }) => {
   const planned = SECTIONS.filter((section) => section.status === "planned");
-  expect(planned.length).toBe(18);
+  expect(planned.length).toBe(16);
   for (const section of planned) {
     const response = await page.goto(section.href);
     expect(response?.status(), section.href).toBe(200);

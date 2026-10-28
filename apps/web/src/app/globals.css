@@ -168,6 +168,11 @@ dialog::backdrop {
       display: none;
     }
 
+    /* A table caption inside a block table shrinks to its narrowest word; make it a block too. */
+    & caption {
+      display: block;
+    }
+
     & tr {
       margin: 0.75rem;
       border: 1px solid var(--color-line);
@@ -276,4 +281,45 @@ dialog::backdrop {
     opacity: 1;
     rotate: 0deg;
   }
+}
+
+/* ------------------------------------------------------------------ lineage toggletip */
+
+.lineage-trigger {
+  border-radius: var(--radius-control);
+  padding: 0.125rem 0.25rem;
+  margin: -0.125rem -0.25rem;
+  text-decoration: underline dotted var(--color-line-strong);
+  text-underline-offset: 3px;
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+
+  &:hover {
+    background: var(--color-inset);
+    text-decoration-color: var(--color-ink-muted);
+  }
+}
+
+/* The UA popover style centres the panel in the viewport, which works on every screen size. */
+.lineage-popover {
+  /* Centre explicitly: the reset stylesheet removes the user-agent popover margins. */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  block-size: fit-content;
+  inline-size: min(28rem, calc(100vw - 2rem));
+  max-block-size: calc(100svh - 2rem);
+  overflow: auto;
+  padding: 1.25rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-panel);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-overlay);
+  text-align: start;
+  white-space: normal;
+}
+
+.lineage-popover::backdrop {
+  background: rgb(3 8 14 / 0.45);
 }

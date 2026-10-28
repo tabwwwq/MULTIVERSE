@@ -17,6 +17,8 @@
 5. Деньги и точные числа — строки decimal, не JSON floats. Даты — ISO 8601 с часовым поясом.
 6. Межполевые правила (missing ≠ 0, demo ⇔ synthetic, правила causal status) живут в валидаторах Pydantic. JSON Schema их не выражает, поэтому общие примеры лежат в `packages/contracts/fixtures/valid.json` и `invalid.json`. На Stage 05 эти же фикстуры проверяет UI-валидация.
 
+7. **Уточнение Stage 04:** схема экспортируется в режиме serialization, с `json_schema_serialization_defaults_required=True`. TypeScript-типы описывают то, что отправляют сервисы и получает web, поэтому поля с default (`source_ids`, `values`, `lineage`) в них обязательны. Если web начнёт отправлять данные (запросы сценариев, Stage 05), для них понадобятся отдельные типы в режиме validation.
+
 ## Как проверяется
 
 `npm run contracts:check`, `uv run pytest packages/contracts tests/contract`, типовые тесты в `packages/contracts/ts/test/`.

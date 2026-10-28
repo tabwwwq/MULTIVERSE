@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 03 — Design system и frontend shell |
 | Дата | 2026-10-28 |
-| Статус | REVIEW — ждёт приёмки владельцем |
+| Статус | ACCEPTED 2026-10-28 (CI run 40693709672: 7/7 задач зелёные, включая `web` на Linux) |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/03_VISUAL_FOUNDATION.md` |
 | Основание | `docs/02_USER_EXPERIENCE.md`, `docs/10_DESIGN_SYSTEM.md`, PRD (`docs/product/01-prd.md`), ADR-0007…0010 |
 

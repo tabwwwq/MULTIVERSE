@@ -5,6 +5,11 @@
  */
 
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "AccountingStandard".
+ */
+export type AccountingStandard = "us_gaap" | "ifrs";
+/**
  * Identification status of a result. Never raised automatically (PRD FR-CA-02).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -19,13 +24,41 @@ export type CausalStatus = "not_assessed" | "assumption_based" | "diagnostics_pa
  */
 export type DataOrigin = "empirical" | "synthetic";
 /**
- * Unit of a quantity. Percentages are fractions; changes of shares are percentage points.
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Sector".
+ */
+export type Sector =
+  | "semiconductors"
+  | "software"
+  | "medical_devices"
+  | "utilities"
+  | "logistics"
+  | "instruments"
+  | "industrial_machinery";
+/**
+ * Lifecycle of a listed company. Leavers stay in the data to avoid survivorship bias.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "MeasureUnit".
+ * via the `definition` "CompanyStatus".
  */
-export type MeasureUnit =
-  "currency" | "fraction" | "percentage_points" | "ratio" | "count" | "shares" | "quarters";
+export type CompanyStatus = "active" | "acquired" | "delisted" | "bankrupt";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "FilingForm".
+ */
+export type FilingForm = "10-K" | "10-Q" | "10-K/A" | "10-Q/A" | "20-F";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "QualitySeverity".
+ */
+export type QualitySeverity = "info" | "warning" | "blocking";
+/**
+ * Whether MULTIVERSE can work with a company (PRD FC-01, FC-02).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SupportStatus".
+ */
+export type SupportStatus = "supported" | "insufficient_history" | "unsupported";
 /**
  * Where a number comes from in time (PRD FR-RE-01).
  *
@@ -34,12 +67,27 @@ export type MeasureUnit =
  */
 export type ValueKind = "observed" | "forecast" | "simulated";
 /**
+ * How a quarterly number was derived from what the filing reports (docs/04).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "LineageMethod".
+ */
+export type LineageMethod = "reported" | "ytd_to_quarter" | "fy_minus_nine_months" | "calculated";
+/**
  * Flows cover a period (quarter, year, trailing twelve months); stocks are instant.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "PeriodType".
  */
 export type PeriodType = "fiscal_quarter" | "fiscal_year" | "ttm" | "instant";
+/**
+ * Unit of a quantity. Percentages are fractions; changes of shares are percentage points.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MeasureUnit".
+ */
+export type MeasureUnit =
+  "currency" | "fraction" | "percentage_points" | "ratio" | "count" | "shares" | "quarters";
 /**
  * What an interval around a number means (PRD §6, docs/08).
  *
@@ -57,6 +105,124 @@ export type UncertaintyType =
 export type ResultMode = "demo" | "empirical_forecast" | "causal_study" | "fictional_exploratory";
 
 /**
+ * Identity of a company. ``company_id`` stays the same through every rename and relisting.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Company".
+ */
+export interface Company {
+  accounting_standard: AccountingStandard;
+  /**
+   * SEC CIK, zero-padded.
+   */
+  cik: string | null;
+  /**
+   * Stable ID. Never reused, never changes.
+   */
+  company_id: string;
+  /**
+   * ISO 3166-1 alpha-2 country code, e.g. 'US'.
+   */
+  country: string;
+  data_origin: DataOrigin;
+  fiscal_52_53_week: boolean;
+  /**
+   * MM-DD
+   */
+  fiscal_year_end: string;
+  listings: TickerListing[];
+  /**
+   * @minItems 1
+   */
+  names: [DatedName, ...DatedName[]];
+  /**
+   * ISO 4217 currency code, for example 'USD'.
+   */
+  reporting_currency: string;
+  sector: Sector;
+  status: CompanyStatus;
+  status_date: string | null;
+  status_note: string | null;
+}
+/**
+ * A ticker on an exchange for a period. Tickers are aliases, never identifiers.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TickerListing".
+ */
+export interface TickerListing {
+  exchange: string;
+  ticker: string;
+  valid_from: string;
+  valid_to: string | null;
+}
+/**
+ * A legal name and the dates it was used. ``valid_to`` is null while it is current.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DatedName".
+ */
+export interface DatedName {
+  name: string;
+  valid_from: string;
+  valid_to: string | null;
+}
+/**
+ * Everything known about one company at a knowledge cutoff ``as_of``.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CompanyDossier".
+ */
+export interface CompanyDossier {
+  /**
+   * Snapshot cutoff: nothing filed later is included.
+   */
+  as_of: string;
+  company: Company;
+  coverage: CoverageEntry[];
+  filings: FilingReference[];
+  quality_flags: DataQualityFlag[];
+  support_reason: string | null;
+  support_status: SupportStatus;
+  values: MetricValue[];
+}
+/**
+ * How many fiscal quarters have a valid value for one metric.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CoverageEntry".
+ */
+export interface CoverageEntry {
+  metric: string;
+  quarters_expected: number;
+  quarters_valid: number;
+}
+/**
+ * A filing that values come from. Synthetic filings never get a link (no invented sources).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "FilingReference".
+ */
+export interface FilingReference {
+  accession_number: string;
+  data_origin: DataOrigin;
+  filed_at: string;
+  filing_id: string;
+  form: FilingForm;
+  period_end: string;
+  url: string | null;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DataQualityFlag".
+ */
+export interface DataQualityFlag {
+  code: string;
+  message: string;
+  metric: string | null;
+  severity: QualitySeverity;
+}
+/**
  * One number shown to a user or passed between modules.
  *
  * ``quantity`` is ``None`` when the value is missing. Missing is never zero:
@@ -72,15 +238,32 @@ export interface MetricValue {
   as_of: string;
   data_origin: DataOrigin;
   kind: ValueKind;
+  lineage: Lineage | null;
   /**
    * Metric slug, e.g. 'revenue'.
    */
   metric: string;
-  missing_reason?: string | null;
+  missing_reason: string | null;
   period: Period;
   quantity: Quantity | null;
-  source_ids?: string[];
-  uncertainty_type?: UncertaintyType;
+  source_ids: string[];
+  uncertainty_type: UncertaintyType;
+}
+/**
+ * Where a number comes from inside its filings. Stage 11 extends this with full lineage.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Lineage".
+ */
+export interface Lineage {
+  /**
+   * @minItems 1
+   *
+   * Items: Taxonomy concept, e.g. 'us-gaap:Revenues'.
+   */
+  concepts: [string, ...string[]];
+  formula: string | null;
+  method: LineageMethod;
 }
 /**
  * When a value applies. ``end_date`` is the period end, or the date of an instant value.
@@ -90,8 +273,8 @@ export interface MetricValue {
  */
 export interface Period {
   end_date: string;
-  fiscal_quarter?: number | null;
-  fiscal_year?: number | null;
+  fiscal_quarter: number | null;
+  fiscal_year: number | null;
   type: PeriodType;
 }
 /**
@@ -101,7 +284,7 @@ export interface Period {
  * via the `definition` "Quantity".
  */
 export interface Quantity {
-  currency?: string | null;
+  currency: string | null;
   unit: MeasureUnit;
   /**
    * Exact decimal number as a string, for example '4213587912' or '-0.25'.
@@ -116,19 +299,19 @@ export interface Quantity {
  */
 export interface ReproducibilityManifest {
   as_of: string;
-  causal_status?: CausalStatus;
+  causal_status: CausalStatus;
   /**
    * Git commit, or 'unversioned'.
    */
   code_version: string;
   contracts_version: string;
   data_origin: DataOrigin;
-  dataset_snapshot_id?: string | null;
+  dataset_snapshot_id: string | null;
   generated_at: string;
   mode: ResultMode;
-  model_id?: string | null;
+  model_id: string | null;
   revision: number;
   scenario_id: string;
   seed: number;
-  source_ids?: string[];
+  source_ids: string[];
 }

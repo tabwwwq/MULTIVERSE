@@ -13,6 +13,7 @@ from pathlib import Path
 from pydantic import BaseModel
 from pydantic.json_schema import models_json_schema
 
+from multiverse_contracts.companies import CompanyDossier
 from multiverse_contracts.manifest import ReproducibilityManifest
 from multiverse_contracts.metrics import MetricValue
 from multiverse_contracts.version import CONTRACTS_VERSION
@@ -21,7 +22,11 @@ from multiverse_contracts.version import CONTRACTS_VERSION
 SCHEMA_PATH = Path(__file__).resolve().parents[3] / "schemas" / "contracts.schema.json"
 
 # Top-level models. Nested models and enums are exported automatically through $defs.
-EXPORTED_MODELS: tuple[type[BaseModel], ...] = (MetricValue, ReproducibilityManifest)
+EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
+    MetricValue,
+    ReproducibilityManifest,
+    CompanyDossier,
+)
 
 
 def _strip_property_titles(node: object) -> None:
@@ -40,7 +45,9 @@ def _strip_property_titles(node: object) -> None:
 
 
 def build_schema() -> dict[str, object]:
-    _, schema = models_json_schema([(model, "validation") for model in EXPORTED_MODELS])
+    # Serialization mode: the schema describes what services send, which is what the web
+    # app consumes. Fields with defaults are therefore always present (ADR-0008).
+    _, schema = models_json_schema([(model, "serialization") for model in EXPORTED_MODELS])
     _strip_property_titles(schema)
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",

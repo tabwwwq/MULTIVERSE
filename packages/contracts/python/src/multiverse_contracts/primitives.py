@@ -26,7 +26,14 @@ CurrencyCode = Annotated[
 class ContractModel(BaseModel):
     """Base of every contract: strict types, no unknown fields, immutable instances."""
 
-    model_config = ConfigDict(strict=True, extra="forbid", frozen=True)
+    model_config = ConfigDict(
+        strict=True,
+        extra="forbid",
+        frozen=True,
+        # Serialized output always contains fields that have defaults, so consumers
+        # (the TypeScript types) can rely on them being present.
+        json_schema_serialization_defaults_required=True,
+    )
 
 
 class ValueKind(StrEnum):

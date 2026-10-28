@@ -76,6 +76,15 @@ describe("breadcrumbs", () => {
     ]);
   });
 
+  it("link back to the section from a nested page", () => {
+    expect(buildBreadcrumbs("/dossier/5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13")).toEqual([
+      { label: "Overview", href: "/" },
+      { label: "Explore" },
+      { label: "Company Dossier", href: "/dossier" },
+      { label: "Company profile" },
+    ]);
+  });
+
   it("fall back to the overview for unknown paths", () => {
     expect(buildBreadcrumbs("/nope")).toEqual([{ label: "Overview", href: "/" }]);
   });

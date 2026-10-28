@@ -5,7 +5,8 @@
   "description": "Generated TypeScript contracts. Source of truth: packages/contracts/python (ADR-0008).",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./demo": "./src/demo.ts"
   },
   "scripts": {
     "gen": "node scripts/generate.mjs",

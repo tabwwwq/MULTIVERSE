@@ -10,7 +10,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 - **Forecasts are not causal effects.** Predictive accuracy does not validate the effect of a decision. A result is labelled causal only after documented identification diagnostics.
 - **Intervals are model quantiles** until their coverage is measured on held-out companies and dates.
 - **No investment advice,** no share price prediction, no "fair market value".
-- **Current status: Stage 03.** The web app has a design system and a navigable shell; no section works with data yet, and there is no dataset or trained model. Nothing in this repository claims measured accuracy.
+- **Current status: Stage 04.** The Universe Explorer and Company Dossier work on seven clearly labelled fictional companies; there is no real dataset or trained model yet. Nothing in this repository claims measured accuracy.
 
 ## Status
 
@@ -19,8 +19,9 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 | 00 | Master orchestrator briefing, scientific risks | Accepted |
 | 01 | Product requirements (`docs/product/`) | Accepted |
 | 02 | Monorepo foundation, contracts, quality gates, ADRs | Accepted |
-| 03 | Design system and application shell (`apps/web`) | Review |
-| 04–26 | Company explorer → data → ML → causal → finance → publication | Planned |
+| 03 | Design system and application shell (`apps/web`) | Accepted |
+| 04 | Company explorer and dossier on synthetic fixtures | Review |
+| 05–26 | Decision builder → data → ML → causal → finance → publication | Planned |
 
 ## Repository layout
 
@@ -32,7 +33,7 @@ packages/contracts/    Shared contracts — single source of truth (ADR-0008)
   python/              Pydantic models (the source)
   schemas/             Generated JSON Schema
   ts/                  Generated TypeScript types (@multiverse/contracts)
-  fixtures/            Valid and invalid examples shared by tests
+  fixtures/            Valid and invalid examples shared by tests; demo/ holds the synthetic companies
 packages/config/       Validated settings and environment profiles (ADR-0010)
 packages/finance/      Pure financial formulas (Stage 21, 23)
 packages/causal/       Causal research tools (Stage 20)

@@ -10,7 +10,12 @@ const EXTRA_PAGES: Record<string, string> = {
   "/design-system": "Design system",
 };
 
-/** Overview › Group › Page for a pathname. Unknown paths fall back to the overview only. */
+/** Label of a page nested under a section, e.g. one company under the dossier. */
+const NESTED_LABELS: Record<string, string> = {
+  "/dossier": "Company profile",
+};
+
+/** Overview › Group › Page (› Detail) for a pathname. Unknown paths fall back to the overview. */
 export function buildBreadcrumbs(pathname: string): Crumb[] {
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
   const home: Crumb = { label: "Overview", href: "/" };
@@ -19,8 +24,19 @@ export function buildBreadcrumbs(pathname: string): Crumb[] {
   const extra = EXTRA_PAGES[path];
   if (extra) return [home, { label: extra }];
 
-  const section = SECTIONS.find((candidate) => candidate.href === path);
+  const exact = SECTIONS.find((candidate) => candidate.href === path);
+  const parent = exact
+    ? undefined
+    : SECTIONS.find((candidate) => candidate.href !== "/" && path.startsWith(`${candidate.href}/`));
+  const section = exact ?? parent;
   if (!section) return [home];
-  if (section.group === "overview") return [home, { label: section.title }];
-  return [home, { label: groupLabel(section.group) }, { label: section.title }];
+
+  const trail: Crumb[] =
+    section.group === "overview" ? [home] : [home, { label: groupLabel(section.group) }];
+  if (exact) return [...trail, { label: section.title }];
+  return [
+    ...trail,
+    { label: section.title, href: section.href },
+    { label: NESTED_LABELS[section.href] ?? "Details" },
+  ];
 }

@@ -2,7 +2,9 @@ import { mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { type Page, expect, test } from "@playwright/test";
 
-const SCREENS_DIR = fileURLToPath(new URL("../../../docs/stages/03-screens/", import.meta.url));
+const SCREENS_DIR = fileURLToPath(
+  new URL(`../../../docs/stages/${process.env["SAVE_SCREENS"] ?? "screens"}/`, import.meta.url),
+);
 
 async function saveScreen(page: Page, name: string): Promise<void> {
   if (!process.env["SAVE_SCREENS"]) return;

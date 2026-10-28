@@ -15,6 +15,7 @@
 | [0009](0009-module-boundaries.md) | Границы модулей и правила импорта | Accepted |
 | [0010](0010-config-and-profiles.md) | Профили окружения и валидация конфигурации | Accepted |
 | [0011](0011-versioning.md) | Версионирование кода, contracts, продукта и результатов | Accepted |
+| [0012](0012-company-repository.md) | Доступ к данным компаний через репозиторий (будущий API adapter) | Accepted |
 
 ADR-0001…0006 перечислены в `docs/03_SYSTEM_ARCHITECTURE.md` комплекта. ADR-0007…0011 приняты на Stage 02.
 

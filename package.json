@@ -1,0 +1,36 @@
+{
+  "name": "multiverse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MULTIVERSE — Financial Parallel Universe Engine (monorepo root).",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/contracts/ts"
+  ],
+  "scripts": {
+    "check": "npm run check:py && npm run check:ts && npm run contracts:check",
+    "check:py": "uv run ruff check . && uv run ruff format --check . && uv run mypy && uv run lint-imports && uv run pytest",
+    "check:ts": "npm run lint && npm run typecheck && npm run test:ts",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write . && uv run ruff format . && uv run ruff check --fix .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "uv run pytest && npm run test:ts",
+    "test:ts": "npm run test --workspaces --if-present",
+    "contracts:gen": "uv run python -m multiverse_contracts.export && npm run gen --workspace @multiverse/contracts",
+    "contracts:check": "uv run python -m multiverse_contracts.export --check && npm run gen:check --workspace @multiverse/contracts",
+    "dev:api": "uv run uvicorn multiverse_api.main:create_app --factory --reload --host 127.0.0.1 --port 8000",
+    "worker": "uv run multiverse-worker"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "json-schema-to-typescript": "^16.0.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.0.5"
+  }
+}

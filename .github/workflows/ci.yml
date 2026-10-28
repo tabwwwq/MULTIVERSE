@@ -1,0 +1,87 @@
+# Quality gate for every push and pull request (Stage 02, docs/11).
+# Runs the same commands as `npm run check` locally, on Linux and Windows.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install workspace (locked)
+        run: uv sync --all-packages --locked
+      - name: Lint and format
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: Type check (mypy strict)
+        run: uv run mypy
+      - name: Module boundaries
+        run: uv run lint-imports
+      - name: Tests
+        run: uv run pytest
+
+  typescript:
+    name: TypeScript (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install (locked)
+        run: npm ci
+      - name: Lint and format
+        run: npm run lint
+      - name: Type check (strict)
+        run: npm run typecheck
+      - name: Tests
+        run: npm run test:ts
+
+  contracts:
+    name: Contracts drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: uv sync --all-packages --locked
+      - run: npm ci
+      - name: Generated schema and TypeScript types match the Python source
+        run: npm run contracts:check
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

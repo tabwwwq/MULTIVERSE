@@ -1,0 +1,31 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.import_linter_cache/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.next/
+coverage/
+*.tsbuildinfo
+
+# Local data, downloads and artifacts: raw sources are never committed (docs/04, prompt 10)
+var/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

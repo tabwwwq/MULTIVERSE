@@ -1,0 +1,135 @@
+# Workspace root. It is not a package itself: every module has its own pyproject.toml.
+# Setup: `uv sync --all-packages` (see README.md).
+
+[tool.uv.workspace]
+members = [
+  "packages/contracts/python",
+  "packages/config",
+  "packages/finance",
+  "packages/causal",
+  "packages/forecast",
+  "pipelines",
+  "services/api",
+  "services/worker",
+]
+
+[tool.uv]
+# Supported platforms. macOS on Intel is excluded because PyTorch no longer ships wheels for it.
+environments = [
+  "sys_platform == 'win32'",
+  "sys_platform == 'linux'",
+  "sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+
+[dependency-groups]
+dev = [
+  "httpx>=0.27",
+  "import-linter>=2.1",
+  "mypy>=1.13",
+  "pytest>=8.3",
+  "ruff>=0.8",
+]
+
+# ---------------------------------------------------------------- ruff (lint + format)
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["var", "node_modules"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "B", "UP", "SIM", "PT", "RUF", "TID"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+# Absolute imports only: a module's dependencies are visible at a glance.
+ban-relative-imports = "all"
+
+[tool.ruff.lint.isort]
+known-first-party = [
+  "multiverse_api",
+  "multiverse_causal",
+  "multiverse_config",
+  "multiverse_contracts",
+  "multiverse_finance",
+  "multiverse_forecast",
+  "multiverse_pipelines",
+  "multiverse_worker",
+]
+
+# ---------------------------------------------------------------- mypy (strict typing)
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+packages = [
+  "multiverse_api",
+  "multiverse_causal",
+  "multiverse_config",
+  "multiverse_contracts",
+  "multiverse_finance",
+  "multiverse_forecast",
+  "multiverse_pipelines",
+  "multiverse_worker",
+]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+# ---------------------------------------------------------------- pytest
+
+[tool.pytest.ini_options]
+testpaths = ["packages", "pipelines", "services", "tests"]
+addopts = ["--import-mode=importlib", "-ra", "--strict-markers", "--strict-config"]
+xfail_strict = true
+filterwarnings = [
+  "error",
+  # Starlette 1.10 suggests replacing httpx in TestClient. The suggested package is not yet
+  # vetted for this project, so httpx stays; revisit when FastAPI documents the migration.
+  "ignore:Using `httpx` with `starlette.testclient` is deprecated:starlette.exceptions.StarletteDeprecationWarning",
+]
+
+# ---------------------------------------------------------------- import-linter (module boundaries, ADR-0009)
+
+[tool.importlinter]
+root_packages = [
+  "multiverse_api",
+  "multiverse_causal",
+  "multiverse_config",
+  "multiverse_contracts",
+  "multiverse_finance",
+  "multiverse_forecast",
+  "multiverse_pipelines",
+  "multiverse_worker",
+]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Layers: services -> domain packages -> base (siblings are independent)"
+type = "layers"
+layers = [
+  "multiverse_api | multiverse_worker",
+  "multiverse_finance | multiverse_causal | multiverse_forecast | multiverse_pipelines",
+  "multiverse_contracts | multiverse_config",
+]
+
+[[tool.importlinter.contracts]]
+name = "API never trains, forecasts or ingests inside an HTTP request (ADR-0003)"
+type = "forbidden"
+source_modules = ["multiverse_api"]
+forbidden_modules = ["multiverse_forecast", "multiverse_causal", "multiverse_pipelines"]
+
+[[tool.importlinter.contracts]]
+name = "Contracts and domain packages stay free of web frameworks"
+type = "forbidden"
+source_modules = [
+  "multiverse_contracts",
+  "multiverse_finance",
+  "multiverse_causal",
+  "multiverse_forecast",
+  "multiverse_pipelines",
+]
+forbidden_modules = ["fastapi", "starlette", "uvicorn"]

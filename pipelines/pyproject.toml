@@ -1,0 +1,15 @@
+[project]
+name = "multiverse-pipelines"
+version = "0.1.0"
+description = "Data pipelines: SEC, FRED, ECB and World Bank ingestion into immutable snapshots."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = ["multiverse-contracts", "multiverse-config"]
+
+[tool.uv.sources]
+multiverse-contracts = { workspace = true }
+multiverse-config = { workspace = true }
+
+[build-system]
+requires = ["uv_build>=0.8.0,<0.12"]
+build-backend = "uv_build"

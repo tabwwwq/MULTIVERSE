@@ -1,0 +1,318 @@
+{
+  "$defs": {
+    "CausalStatus": {
+      "description": "Identification status of a result. Never raised automatically (PRD FR-CA-02).",
+      "enum": [
+        "not_assessed",
+        "assumption_based",
+        "diagnostics_passed"
+      ],
+      "title": "CausalStatus",
+      "type": "string"
+    },
+    "DataOrigin": {
+      "description": "Whether a number describes real reported data or synthetic demo data (PRD SYN-04).",
+      "enum": [
+        "empirical",
+        "synthetic"
+      ],
+      "title": "DataOrigin",
+      "type": "string"
+    },
+    "MeasureUnit": {
+      "description": "Unit of a quantity. Percentages are fractions; changes of shares are percentage points.",
+      "enum": [
+        "currency",
+        "fraction",
+        "percentage_points",
+        "ratio",
+        "count",
+        "shares",
+        "quarters"
+      ],
+      "title": "MeasureUnit",
+      "type": "string"
+    },
+    "MetricValue": {
+      "additionalProperties": false,
+      "description": "One number shown to a user or passed between modules.\n\n``quantity`` is ``None`` when the value is missing. Missing is never zero:\na reason is mandatory (docs/04, PRD FR-CO-04).",
+      "properties": {
+        "as_of": {
+          "description": "Knowledge cutoff: only facts published by then.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "data_origin": {
+          "$ref": "#/$defs/DataOrigin"
+        },
+        "kind": {
+          "$ref": "#/$defs/ValueKind"
+        },
+        "metric": {
+          "description": "Metric slug, e.g. 'revenue'.",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "missing_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "period": {
+          "$ref": "#/$defs/Period"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "uncertainty_type": {
+          "$ref": "#/$defs/UncertaintyType",
+          "default": "none"
+        }
+      },
+      "required": [
+        "metric",
+        "quantity",
+        "kind",
+        "data_origin",
+        "period",
+        "as_of"
+      ],
+      "title": "MetricValue",
+      "type": "object"
+    },
+    "Period": {
+      "additionalProperties": false,
+      "description": "When a value applies. ``end_date`` is the period end, or the date of an instant value.",
+      "properties": {
+        "end_date": {
+          "format": "date",
+          "type": "string"
+        },
+        "fiscal_quarter": {
+          "anyOf": [
+            {
+              "maximum": 4,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fiscal_year": {
+          "anyOf": [
+            {
+              "maximum": 2200,
+              "minimum": 1900,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "type": {
+          "$ref": "#/$defs/PeriodType"
+        }
+      },
+      "required": [
+        "type",
+        "end_date"
+      ],
+      "title": "Period",
+      "type": "object"
+    },
+    "PeriodType": {
+      "description": "Flows cover a period (quarter, year, trailing twelve months); stocks are instant.",
+      "enum": [
+        "fiscal_quarter",
+        "fiscal_year",
+        "ttm",
+        "instant"
+      ],
+      "title": "PeriodType",
+      "type": "string"
+    },
+    "Quantity": {
+      "additionalProperties": false,
+      "description": "A number together with its unit. Currency is required exactly when the unit is money.",
+      "properties": {
+        "currency": {
+          "anyOf": [
+            {
+              "description": "ISO 4217 currency code, for example 'USD'.",
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "unit": {
+          "$ref": "#/$defs/MeasureUnit"
+        },
+        "value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Quantity",
+      "type": "object"
+    },
+    "ReproducibilityManifest": {
+      "additionalProperties": false,
+      "description": "Identity card of one result. Two results with equal manifests must be identical.",
+      "properties": {
+        "as_of": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "causal_status": {
+          "$ref": "#/$defs/CausalStatus",
+          "default": "not_assessed"
+        },
+        "code_version": {
+          "description": "Git commit, or 'unversioned'.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "contracts_version": {
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+          "type": "string"
+        },
+        "data_origin": {
+          "$ref": "#/$defs/DataOrigin"
+        },
+        "dataset_snapshot_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "generated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "mode": {
+          "$ref": "#/$defs/ResultMode"
+        },
+        "model_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "revision": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "scenario_id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "seed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "source_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "contracts_version",
+        "scenario_id",
+        "revision",
+        "mode",
+        "data_origin",
+        "as_of",
+        "seed",
+        "code_version",
+        "generated_at"
+      ],
+      "title": "ReproducibilityManifest",
+      "type": "object"
+    },
+    "ResultMode": {
+      "description": "Inference mode shown in the trust header of every result (PRD §6).",
+      "enum": [
+        "demo",
+        "empirical_forecast",
+        "causal_study",
+        "fictional_exploratory"
+      ],
+      "title": "ResultMode",
+      "type": "string"
+    },
+    "UncertaintyType": {
+      "description": "What an interval around a number means (PRD §6, docs/08).",
+      "enum": [
+        "none",
+        "predictive_quantiles",
+        "conditional_model_quantiles",
+        "calibrated_interval"
+      ],
+      "title": "UncertaintyType",
+      "type": "string"
+    },
+    "ValueKind": {
+      "description": "Where a number comes from in time (PRD FR-RE-01).",
+      "enum": [
+        "observed",
+        "forecast",
+        "simulated"
+      ],
+      "title": "ValueKind",
+      "type": "string"
+    }
+  },
+  "$id": "urn:multiverse:contracts:0.1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Generated from packages/contracts/python. Do not edit by hand.",
+  "title": "MultiverseContracts",
+  "x-contracts-version": "0.1.0"
+}

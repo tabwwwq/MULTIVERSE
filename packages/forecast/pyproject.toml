@@ -1,0 +1,19 @@
+[project]
+name = "multiverse-forecast"
+version = "0.1.0"
+description = "Forecasting research: baselines first, then temporal neural networks (optional ML extras)."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = ["multiverse-contracts"]
+
+[project.optional-dependencies]
+boosting = ["scikit-learn>=1.5", "lightgbm>=4.5"]
+ml = ["torch>=2.6"]
+
+[tool.uv.sources]
+multiverse-contracts = { workspace = true }
+multiverse-config = { workspace = true }
+
+[build-system]
+requires = ["uv_build>=0.8.0,<0.12"]
+build-backend = "uv_build"

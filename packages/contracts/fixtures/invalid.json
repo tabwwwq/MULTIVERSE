@@ -1,0 +1,145 @@
+[
+  {
+    "name": "missing value without a reason",
+    "model": "MetricValue",
+    "reason": "missing is never silently zero or blank",
+    "payload": {
+      "metric": "rnd_expense",
+      "quantity": null,
+      "kind": "observed",
+      "data_origin": "synthetic",
+      "period": { "type": "fiscal_year", "end_date": "2021-12-31", "fiscal_year": 2021 },
+      "as_of": "2022-03-01T00:00:00Z"
+    }
+  },
+  {
+    "name": "money as a JSON float",
+    "model": "MetricValue",
+    "reason": "money travels as a decimal string",
+    "payload": {
+      "metric": "revenue",
+      "quantity": { "value": 4213587912.5, "unit": "currency", "currency": "USD" },
+      "kind": "observed",
+      "data_origin": "synthetic",
+      "period": { "type": "fiscal_year", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "as_of": "2023-02-15T00:00:00Z"
+    }
+  },
+  {
+    "name": "currency unit without a currency code",
+    "model": "MetricValue",
+    "reason": "money needs ISO 4217",
+    "payload": {
+      "metric": "revenue",
+      "quantity": { "value": "100", "unit": "currency" },
+      "kind": "observed",
+      "data_origin": "synthetic",
+      "period": { "type": "fiscal_year", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "as_of": "2023-02-15T00:00:00Z"
+    }
+  },
+  {
+    "name": "observed empirical value without sources",
+    "model": "MetricValue",
+    "reason": "every real number cites a source",
+    "payload": {
+      "metric": "revenue",
+      "quantity": { "value": "100", "unit": "currency", "currency": "USD" },
+      "kind": "observed",
+      "data_origin": "empirical",
+      "period": { "type": "fiscal_year", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "as_of": "2023-02-15T00:00:00Z"
+    }
+  },
+  {
+    "name": "knowledge cutoff without a timezone",
+    "model": "MetricValue",
+    "reason": "dates are ISO 8601 with explicit timezone",
+    "payload": {
+      "metric": "revenue",
+      "quantity": { "value": "100", "unit": "currency", "currency": "USD" },
+      "kind": "forecast",
+      "data_origin": "synthetic",
+      "period": { "type": "fiscal_year", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "as_of": "2023-02-15T00:00:00"
+    }
+  },
+  {
+    "name": "unknown extra field",
+    "model": "MetricValue",
+    "reason": "contracts forbid unknown fields",
+    "payload": {
+      "metric": "revenue",
+      "quantity": { "value": "100", "unit": "currency", "currency": "USD" },
+      "kind": "observed",
+      "data_origin": "synthetic",
+      "period": { "type": "fiscal_year", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "as_of": "2023-02-15T00:00:00Z",
+      "accuracy": "99%"
+    }
+  },
+  {
+    "name": "fiscal quarter without a quarter number",
+    "model": "MetricValue",
+    "reason": "period fields must match the period type",
+    "payload": {
+      "metric": "revenue",
+      "quantity": { "value": "100", "unit": "currency", "currency": "USD" },
+      "kind": "observed",
+      "data_origin": "synthetic",
+      "period": { "type": "fiscal_quarter", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "as_of": "2023-02-15T00:00:00Z"
+    }
+  },
+  {
+    "name": "synthetic data labelled as an empirical forecast",
+    "model": "ReproducibilityManifest",
+    "reason": "synthetic data is always demo mode (PRD SYN-01)",
+    "payload": {
+      "contracts_version": "0.1.0",
+      "scenario_id": "x",
+      "revision": 1,
+      "mode": "empirical_forecast",
+      "data_origin": "synthetic",
+      "as_of": "2022-12-31T23:59:59Z",
+      "seed": 1,
+      "code_version": "unversioned",
+      "dataset_snapshot_id": "s",
+      "model_id": "m",
+      "generated_at": "2026-10-28T12:00:00Z"
+    }
+  },
+  {
+    "name": "causal diagnostics claimed outside a causal study",
+    "model": "ReproducibilityManifest",
+    "reason": "causal status is never raised automatically (PRD FR-CA-02)",
+    "payload": {
+      "contracts_version": "0.1.0",
+      "scenario_id": "x",
+      "revision": 1,
+      "mode": "demo",
+      "data_origin": "synthetic",
+      "causal_status": "diagnostics_passed",
+      "as_of": "2022-12-31T23:59:59Z",
+      "seed": 1,
+      "code_version": "unversioned",
+      "generated_at": "2026-10-28T12:00:00Z"
+    }
+  },
+  {
+    "name": "empirical forecast without dataset snapshot and model",
+    "model": "ReproducibilityManifest",
+    "reason": "empirical results must be reproducible",
+    "payload": {
+      "contracts_version": "0.1.0",
+      "scenario_id": "x",
+      "revision": 1,
+      "mode": "empirical_forecast",
+      "data_origin": "empirical",
+      "as_of": "2022-12-31T23:59:59Z",
+      "seed": 1,
+      "code_version": "abc1234",
+      "generated_at": "2026-10-28T12:00:00Z"
+    }
+  }
+]

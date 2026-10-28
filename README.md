@@ -1,1 +1,124 @@
-# MULTIVERSE
+# MULTIVERSE — Financial Parallel Universe Engine
+
+*What if business took another path?*
+
+MULTIVERSE is a research platform for counterfactual corporate scenarios. An analyst picks a company, a historical cutoff date and a precisely defined management decision (R&D, restructuring, M&A, divestiture, CAPEX, refinancing). The platform compares probabilistic scenario paths against a baseline for revenue, EBITDA, FCF, net debt and enterprise value. Every number shows where it came from, what was known at the cutoff, and what kind of uncertainty it carries.
+
+## Scientific limitations (read first)
+
+- **Scenarios are not proven history.** A counterfactual such as "this company without that acquisition" has no observed ground truth. Results are conditional on stated assumptions.
+- **Forecasts are not causal effects.** Predictive accuracy does not validate the effect of a decision. A result is labelled causal only after documented identification diagnostics.
+- **Intervals are model quantiles** until their coverage is measured on held-out companies and dates.
+- **No investment advice,** no share price prediction, no "fair market value".
+- **Current status: V0 / Stage 02.** There is no application, dataset or trained model yet. Nothing in this repository claims measured accuracy.
+
+## Status
+
+| Stage | Scope | Status |
+|---|---|---|
+| 00 | Master orchestrator briefing, scientific risks | Accepted |
+| 01 | Product requirements (`docs/product/`) | Accepted |
+| 02 | Monorepo foundation, contracts, quality gates, ADRs | Review |
+| 03–26 | Design system → data → ML → causal → finance → publication | Planned |
+
+## Repository layout
+
+```text
+apps/web/              Next.js web app (created in Stage 03)
+services/api/          FastAPI HTTP API — composition root: multiverse_api.main:create_app
+services/worker/       Background jobs: simulation and training (queue in Stage 18)
+packages/contracts/    Shared contracts — single source of truth (ADR-0008)
+  python/              Pydantic models (the source)
+  schemas/             Generated JSON Schema
+  ts/                  Generated TypeScript types (@multiverse/contracts)
+  fixtures/            Valid and invalid examples shared by tests
+packages/config/       Validated settings and environment profiles (ADR-0010)
+packages/finance/      Pure financial formulas (Stage 21, 23)
+packages/causal/       Causal research tools (Stage 20)
+packages/forecast/     Baselines and temporal neural nets; ML libraries are optional extras
+pipelines/             SEC, FRED, ECB, World Bank ingestion (Stage 09–13)
+data/schemas/          Normalized data definitions (Stage 11)
+configs/               Model and infrastructure parameters
+notebooks/research/    Research notebooks
+infra/                 Containers and deployment (later)
+tests/                 Cross-module tests: smoke, contract (later integration, backtesting, e2e)
+docs/                  Product requirements, ADRs, engineering conventions, stage reports
+```
+
+Module dependencies are enforced, not just documented: services → domain packages → base (`contracts`, `config`), siblings independent, and the API may not import forecasting, causal or pipeline code (ADR-0003, ADR-0009).
+
+## Prerequisites
+
+| Tool | Version | Install |
+|---|---|---|
+| uv | ≥ 0.8 (tested 0.11) | Windows: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 \| iex"` · Linux / macOS: `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| Node.js | ≥ 22 (tested 24) | <https://nodejs.org> (npm is included) |
+| Git | any recent | <https://git-scm.com> |
+
+You do not need to install Python yourself: uv downloads Python 3.12 automatically (pinned in `.python-version`).
+
+## Quick start
+
+The same commands work in Windows PowerShell and Linux / macOS bash. Run them from the repository root.
+
+```bash
+uv sync --all-packages
+```
+
+```bash
+npm install
+```
+
+```bash
+npm run check
+```
+
+`npm run check` is the full quality gate. It ends with `Generated TypeScript contracts are up to date.` when everything passes.
+
+Optional local configuration (only needed to change defaults):
+
+```bash
+cp .env.example .env
+```
+
+On Windows PowerShell use `Copy-Item .env.example .env` instead.
+
+Start the API and open <http://127.0.0.1:8000/api/v1/health> (interactive docs at `/api/docs`):
+
+```bash
+npm run dev:api
+```
+
+## Commands
+
+| Command | What it does |
+|---|---|
+| `npm run check` | Full gate: Python lint, format, mypy strict, module boundaries, tests; TypeScript lint, format, typecheck, tests; contracts drift |
+| `npm run check:py` | Python part of the gate |
+| `npm run check:ts` | TypeScript part of the gate |
+| `npm test` | All tests (pytest + vitest) |
+| `npm run format` | Auto-format Python and TypeScript |
+| `npm run contracts:gen` | Regenerate JSON Schema and TypeScript types after changing `packages/contracts/python` |
+| `npm run contracts:check` | Fail if generated contracts are stale |
+| `npm run dev:api` | Run the API with auto-reload on 127.0.0.1:8000 |
+| `npm run worker` | Run the worker (validates configuration; queue arrives in Stage 18) |
+| `uv sync --all-packages --extra boosting` | Add scikit-learn and LightGBM (Stage 15) |
+| `uv sync --all-packages --extra ml` | Add PyTorch (Stage 16) |
+
+## Configuration
+
+Settings come from `MULTIVERSE_*` environment variables or `.env` and are validated at startup (ADR-0010). Profiles: `local` (default), `test`, `ci`, `production`. Safe defaults: network downloads are off and the cloud spending limit is `0`. See `.env.example`. Never commit `.env`.
+
+## Documentation
+
+- Product requirements: `docs/product/` (PRD, personas, user stories, scope V0–V4, risks, metric definitions)
+- Architecture decisions: `docs/adr/`
+- Engineering conventions: `docs/engineering/conventions.md`
+- Stage reports: `docs/stages/`
+- Original specification: `../MULTIVERSE_Documentation_Kit/`
+
+## Author
+
+Maxim Leshchenko — Data Science, Protection & Security, Thomas More (Belgium).
+
+License: not chosen yet.

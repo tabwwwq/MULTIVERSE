@@ -1,0 +1,79 @@
+[
+  {
+    "name": "observed synthetic revenue for a demo company",
+    "model": "MetricValue",
+    "payload": {
+      "metric": "revenue",
+      "quantity": { "value": "4213587912", "unit": "currency", "currency": "USD" },
+      "kind": "observed",
+      "data_origin": "synthetic",
+      "period": {
+        "type": "fiscal_quarter",
+        "end_date": "2022-12-31",
+        "fiscal_year": 2022,
+        "fiscal_quarter": 4
+      },
+      "as_of": "2023-02-15T00:00:00Z"
+    }
+  },
+  {
+    "name": "missing R&D is null with a reason, not zero",
+    "model": "MetricValue",
+    "payload": {
+      "metric": "rnd_expense",
+      "quantity": null,
+      "missing_reason": "R&D is not tagged separately in this filing",
+      "kind": "observed",
+      "data_origin": "empirical",
+      "period": { "type": "fiscal_year", "end_date": "2021-12-31", "fiscal_year": 2021 },
+      "as_of": "2022-03-01T00:00:00Z",
+      "source_ids": ["sec:0000320193-22-000007"]
+    }
+  },
+  {
+    "name": "simulated EBITDA margin with conditional model quantiles",
+    "model": "MetricValue",
+    "payload": {
+      "metric": "ebitda_margin",
+      "quantity": { "value": "0.245", "unit": "fraction" },
+      "kind": "simulated",
+      "data_origin": "synthetic",
+      "period": { "type": "ttm", "end_date": "2024-12-31" },
+      "as_of": "2022-12-31T23:59:59Z",
+      "uncertainty_type": "conditional_model_quantiles"
+    }
+  },
+  {
+    "name": "demo manifest",
+    "model": "ReproducibilityManifest",
+    "payload": {
+      "contracts_version": "0.1.0",
+      "scenario_id": "demo-northwind-rnd",
+      "revision": 1,
+      "mode": "demo",
+      "data_origin": "synthetic",
+      "as_of": "2022-12-31T23:59:59Z",
+      "seed": 20261027,
+      "code_version": "unversioned",
+      "generated_at": "2026-10-28T12:00:00Z"
+    }
+  },
+  {
+    "name": "causal study manifest with assumption-based status",
+    "model": "ReproducibilityManifest",
+    "payload": {
+      "contracts_version": "0.1.0",
+      "scenario_id": "rnd-intensity-study",
+      "revision": 3,
+      "mode": "causal_study",
+      "data_origin": "empirical",
+      "causal_status": "assumption_based",
+      "as_of": "2021-12-31T23:59:59Z",
+      "seed": 7,
+      "code_version": "abc1234",
+      "dataset_snapshot_id": "snapshot-2026-01-01",
+      "model_id": "baseline-ridge-v1",
+      "generated_at": "2026-10-28T12:00:00Z"
+    }
+  }
+]

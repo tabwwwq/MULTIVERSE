@@ -1,0 +1,12 @@
+node_modules
+.venv
+var
+.import_linter_cache
+.mypy_cache
+.pytest_cache
+.ruff_cache
+**/generated/**
+packages/contracts/schemas
+package-lock.json
+uv.lock
+*.md

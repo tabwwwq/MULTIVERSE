@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 02 — Monorepo foundation |
 | Дата | 2026-10-28 |
-| Статус | REVIEW — ждёт приёмки владельцем |
+| Статус | ACCEPTED 2026-10-28 |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/02_REPOSITORY_FOUNDATION.md` |
 | Основание | `docs/03_SYSTEM_ARCHITECTURE.md`, `docs/11_VALIDATION_AND_TESTING.md`, Stage 01 (`docs/product/`) |
 

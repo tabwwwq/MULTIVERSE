@@ -1,0 +1,80 @@
+/*
+ * MULTIVERSE design tokens: the single source of truth for colour, type, radius,
+ * elevation and motion (docs/10_DESIGN_SYSTEM.md, Stage 03 design plan).
+ * Tailwind generates utilities from @theme. test/tokens.test.ts reads this file
+ * and checks WCAG contrast, so a token change that breaks contrast fails CI.
+ */
+
+@theme {
+  /* Only these colours exist: no ad-hoc Tailwind palette in components. */
+  --color-*: initial;
+
+  /* Surfaces, from deepest to raised */
+  --color-canvas: #07101b;
+  --color-surface: #0d1928;
+  --color-inset: #102536;
+
+  /* Lines: decorative separators vs. boundaries of interactive controls (needs 3:1) */
+  --color-line: #254255;
+  --color-line-strong: #5b7a90;
+
+  /* Text */
+  --color-ink: #eef6f7;
+  --color-ink-muted: #91aaba;
+
+  /* Accents with meaning (chart grammar): never decoration */
+  --color-mint: #5deec9;
+  --color-mint-strong: #8df4d9;
+  --color-blue: #6389ef;
+  --color-violet: #ad8cff;
+  --color-observed: #a9bccb;
+
+  /* Status: always paired with text and an icon */
+  --color-warning: #ffc673;
+  --color-negative: #ff8496;
+
+  /* Typography: Space Grotesk for display, DM Sans for text (loaded in app/layout.tsx) */
+  --font-*: initial;
+  --font-display: var(--font-space-grotesk), "Segoe UI", system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), "Segoe UI", system-ui, sans-serif;
+
+  /* Type scale 12 / 14 / 16 / 18 / 21 / 24 / 36 / 48 / 60 px */
+  --text-*: initial;
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.4;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.6;
+  --text-h4: 1.3125rem;
+  --text-h4--line-height: 1.35;
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 1.3;
+  --text-h2: 2.25rem;
+  --text-h2--line-height: 1.15;
+  --text-h1: 3rem;
+  --text-h1--line-height: 1.05;
+  --text-display: 3.75rem;
+  --text-display--line-height: 1;
+
+  /* Radius by hierarchy */
+  --radius-*: initial;
+  --radius-control: 6px;
+  --radius-panel: 10px;
+  --radius-frame: 16px;
+  --radius-pill: 999px;
+
+  /* Elevation: only top-layer surfaces cast a shadow; panels use surface + line */
+  --shadow-*: initial;
+  --shadow-overlay: 0 24px 64px -16px rgb(0 0 0 / 0.7);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1.15);
+
+  /* Layout */
+  --container-content: 1500px;
+  --container-prose: 72ch;
+}

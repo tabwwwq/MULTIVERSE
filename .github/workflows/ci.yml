@@ -75,6 +75,34 @@ jobs:
       - name: Generated schema and TypeScript types match the Python source
         run: npm run contracts:check
 
+  web:
+    name: Web (build, accessibility, viewports)
+    runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install (locked)
+        run: npm ci
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+        working-directory: apps/web
+      - name: Production build
+        run: npm run build:web
+      - name: Browser tests at 1440, 768 and 390 px (axe, keyboard, dialog, drawer, links)
+        run: npm run test:e2e
+      - name: Keep the Playwright report when tests fail
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report
+          retention-days: 7
+
   secrets:
     name: Secret scan
     runs-on: ubuntu-latest

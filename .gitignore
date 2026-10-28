@@ -12,8 +12,12 @@ __pycache__/
 node_modules/
 dist/
 .next/
+next-env.d.ts
 coverage/
 *.tsbuildinfo
+test-results/
+playwright-report/
+blob-report/
 
 # Local data, downloads and artifacts: raw sources are never committed (docs/04, prompt 10)
 var/

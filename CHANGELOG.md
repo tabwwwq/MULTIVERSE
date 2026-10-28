@@ -4,6 +4,19 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-28 (Stage 03)
+
+- `apps/web`: Next.js 16 + TypeScript strict + Tailwind CSS 4 web app with the MULTIVERSE design system.
+- Design tokens from `docs/10` in `src/tokens/tokens.css`, with WCAG contrast tested from the file itself.
+- Components: buttons, text / select / checkbox fields, native modal dialog, responsive data table, alerts, badges, skeleton; trust components for result mode, provenance, result header and "what this does not mean".
+- Application shell: skip link, collapsible sidebar, top bar with breadcrumbs, swipeable navigation drawer below 1024px, footer; 20 sections, 18 of them honest placeholders that name their stage.
+- Pages: Overview with the diverging-timelines hero, Methodology, Design system, 404.
+- Tests: vitest (tokens, navigation) and Playwright at 1440, 768 and 390 px (overflow, axe WCAG 2.2, keyboard, dialog, drawer, motion, table, links); new `web` CI job.
+
+### Changed — 2026-10-28
+
+- Stage 02 accepted by the owner.
+
 ### Added — 2026-10-28 (Stage 02)
 
 - Monorepo: uv workspace (8 Python packages, Python 3.12) and npm workspace (`@multiverse/contracts`), one command surface in `package.json`.

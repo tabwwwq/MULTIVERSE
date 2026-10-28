@@ -8,6 +8,6 @@ Unit tests live next to their module (`packages/*/tests`, `services/*/tests`). T
 | `contract/` | Generated contract artifacts match their single source | Stage 02 |
 | `integration/` | Source → parser → storage → PIT view → API; job → worker → artifact | Stage 10+ |
 | `backtesting/` | Rolling-origin and point-in-time leakage tests | Stage 12+ |
-| `e2e/` | Browser journeys (Playwright) | Stage 04+ |
+| `apps/web/e2e/` | Browser tests with Playwright, next to the web app they start | Stage 03 |
 
 Run everything with `npm run check`, or only Python tests with `uv run pytest`.

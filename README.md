@@ -10,7 +10,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 - **Forecasts are not causal effects.** Predictive accuracy does not validate the effect of a decision. A result is labelled causal only after documented identification diagnostics.
 - **Intervals are model quantiles** until their coverage is measured on held-out companies and dates.
 - **No investment advice,** no share price prediction, no "fair market value".
-- **Current status: V0 / Stage 02.** There is no application, dataset or trained model yet. Nothing in this repository claims measured accuracy.
+- **Current status: Stage 03.** The web app has a design system and a navigable shell; no section works with data yet, and there is no dataset or trained model. Nothing in this repository claims measured accuracy.
 
 ## Status
 
@@ -18,13 +18,14 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 |---|---|---|
 | 00 | Master orchestrator briefing, scientific risks | Accepted |
 | 01 | Product requirements (`docs/product/`) | Accepted |
-| 02 | Monorepo foundation, contracts, quality gates, ADRs | Review |
-| 03–26 | Design system → data → ML → causal → finance → publication | Planned |
+| 02 | Monorepo foundation, contracts, quality gates, ADRs | Accepted |
+| 03 | Design system and application shell (`apps/web`) | Review |
+| 04–26 | Company explorer → data → ML → causal → finance → publication | Planned |
 
 ## Repository layout
 
 ```text
-apps/web/              Next.js web app (created in Stage 03)
+apps/web/              Next.js web app: design system, shell for 20 screens (Stage 03)
 services/api/          FastAPI HTTP API — composition root: multiverse_api.main:create_app
 services/worker/       Background jobs: simulation and training (queue in Stage 18)
 packages/contracts/    Shared contracts — single source of truth (ADR-0008)
@@ -69,11 +70,23 @@ uv sync --all-packages
 npm install
 ```
 
+The browser tests need Chromium once per machine:
+
+```bash
+npx --workspace @multiverse/web playwright install chromium
+```
+
 ```bash
 npm run check
 ```
 
-`npm run check` is the full quality gate. It ends with `Generated TypeScript contracts are up to date.` when everything passes.
+`npm run check` is the full quality gate: Python, TypeScript, contracts drift, then a production build of the web app and the browser tests. It ends with Playwright's `passed` summary when everything passes.
+
+Start the web app and open <http://localhost:3000>:
+
+```bash
+npm run dev:web
+```
 
 Optional local configuration (only needed to change defaults):
 
@@ -100,6 +113,10 @@ npm run dev:api
 | `npm run format` | Auto-format Python and TypeScript |
 | `npm run contracts:gen` | Regenerate JSON Schema and TypeScript types after changing `packages/contracts/python` |
 | `npm run contracts:check` | Fail if generated contracts are stale |
+| `npm run check:web` | Production build of the web app and Playwright tests at 1440, 768 and 390 px |
+| `npm run dev:web` | Run the web app with hot reload on localhost:3000 |
+| `npm run build:web` | Production build of the web app |
+| `npm run test:e2e` | Browser tests (after `build:web`): overflow, axe WCAG 2.2, keyboard, dialog, drawer, links |
 | `npm run dev:api` | Run the API with auto-reload on 127.0.0.1:8000 |
 | `npm run worker` | Run the worker (validates configuration; queue arrives in Stage 18) |
 | `uv sync --all-packages --extra boosting` | Add scikit-learn and LightGBM (Stage 15) |

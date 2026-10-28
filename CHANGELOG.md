@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-28
+
+- Stage 06 accepted by the owner (CI run 40756212363 green).
+
 ### Added — 2026-10-28 (Stage 06)
 
 - Contracts 0.4.0: `ScenarioResult` with reported history, p10/p50/p90 paths per scenario, paired changes computed path by path, change distributions, waterfalls on means, decision events, a manifest and a failed state (ADR-0014).

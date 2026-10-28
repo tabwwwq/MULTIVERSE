@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 06 — Timeline charts и сравнение вселенных |
 | Дата | 2026-10-28 |
-| Статус | REVIEW — ждёт приёмки владельцем |
+| Статус | ACCEPTED 2026-10-28 (CI run 40756212363: 7/7 задач зелёные) |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/06_CHARTS_AND_COMPARISON.md` |
 | Основание | `docs/02` (Timeline Explorer, Universe Compare, страница сценария), `docs/08` (outputs, paired paths), `docs/09` (SimulationResult), `docs/10` (chart grammar, Trust UX), PRD FR-RE-01…07, FR-SI-06/07, SYN-01…07, FP-01…09, US-08, US-09, FC-09 |
 

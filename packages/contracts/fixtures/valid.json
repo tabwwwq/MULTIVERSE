@@ -4,7 +4,11 @@
     "model": "MetricValue",
     "payload": {
       "metric": "revenue",
-      "quantity": { "value": "4213587912", "unit": "currency", "currency": "USD" },
+      "quantity": {
+        "value": "4213587912",
+        "unit": "currency",
+        "currency": "USD"
+      },
       "kind": "observed",
       "data_origin": "synthetic",
       "period": {
@@ -25,7 +29,11 @@
       "missing_reason": "R&D is not tagged separately in this filing",
       "kind": "observed",
       "data_origin": "empirical",
-      "period": { "type": "fiscal_year", "end_date": "2021-12-31", "fiscal_year": 2021 },
+      "period": {
+        "type": "fiscal_year",
+        "end_date": "2021-12-31",
+        "fiscal_year": 2021
+      },
       "as_of": "2022-03-01T00:00:00Z",
       "source_ids": ["sec:0000320193-22-000007"]
     }
@@ -35,10 +43,16 @@
     "model": "MetricValue",
     "payload": {
       "metric": "ebitda_margin",
-      "quantity": { "value": "0.245", "unit": "fraction" },
+      "quantity": {
+        "value": "0.245",
+        "unit": "fraction"
+      },
       "kind": "simulated",
       "data_origin": "synthetic",
-      "period": { "type": "ttm", "end_date": "2024-12-31" },
+      "period": {
+        "type": "ttm",
+        "end_date": "2024-12-31"
+      },
       "as_of": "2022-12-31T23:59:59Z",
       "uncertainty_type": "conditional_model_quantiles"
     }
@@ -74,6 +88,355 @@
       "dataset_snapshot_id": "snapshot-2026-01-01",
       "model_id": "baseline-ridge-v1",
       "generated_at": "2026-10-28T12:00:00Z"
+    }
+  },
+  {
+    "name": "R&D +40% of the previous budget, sensitivity on the adoption delay",
+    "model": "ScenarioDraft",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "R&D +2 percentage points of revenue, funded half by debt",
+    "model": "ScenarioDraft",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "2",
+          "unit": "pp_of_revenue"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "0.5",
+          "debt": "0.5",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "R&D cut of 30% with a uniform adoption delay",
+    "model": "ScenarioDraft",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "-0.3",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "uniform",
+          "low": "2",
+          "high": "10"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "workforce reduction of 15%",
+    "model": "ScenarioDraft",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "workforce_restructure",
+        "magnitude": {
+          "value": "-0.15",
+          "unit": "fraction_of_headcount"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 1,
+          "ramp_quarters": 2
+        },
+        "payroll_to_revenue": "0.25",
+        "one_off_cost_months": {
+          "shape": "triangular",
+          "low": "2",
+          "mode": "4",
+          "high": "8"
+        },
+        "savings_realization": {
+          "shape": "triangular",
+          "low": "0.5",
+          "mode": "0.7",
+          "high": "0.9"
+        },
+        "productivity_loss": {
+          "shape": "triangular",
+          "low": "0",
+          "mode": "0.03",
+          "high": "0.1"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "acquisition financed 60% cash and 40% debt",
+    "model": "ScenarioDraft",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "acquisition",
+        "magnitude": {
+          "value": "1000000000",
+          "unit": "usd"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 2,
+          "ramp_quarters": 8
+        },
+        "target_revenue": "400000000",
+        "target_ebitda_margin": "0.15",
+        "deal_cost_fraction": "0.02",
+        "integration_cost_fraction": {
+          "shape": "triangular",
+          "low": "0.02",
+          "mode": "0.05",
+          "high": "0.1"
+        },
+        "cost_synergy_fraction": {
+          "shape": "triangular",
+          "low": "0",
+          "mode": "0.03",
+          "high": "0.06"
+        },
+        "completion_probability": "0.9",
+        "new_debt_interest_rate": "0.06",
+        "financing": {
+          "cash": "0.6",
+          "debt": "0.4",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "closure of a loss-making unit without a buyer",
+    "model": "ScenarioDraft",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "divestiture",
+        "magnitude": {
+          "value": "0.1",
+          "unit": "fraction_of_revenue"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 2,
+          "ramp_quarters": 2
+        },
+        "segment_ebitda_margin": "-0.1",
+        "disposal_proceeds": "0",
+        "separation_cost_fraction": "0.03",
+        "stranded_cost_fraction": {
+          "shape": "triangular",
+          "low": "0.1",
+          "mode": "0.25",
+          "high": "0.4"
+        },
+        "tax_rate_on_gain": "0.21",
+        "use_of_proceeds": {
+          "debt_paydown": "0.5",
+          "cash_retained": "0.5",
+          "shareholder_distribution": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "CAPEX program for 30% more capacity",
+    "model": "ScenarioDraft",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "capex_expansion",
+        "magnitude": {
+          "value": "500000000",
+          "unit": "usd"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 4,
+          "ramp_quarters": 4
+        },
+        "capacity_increase": "0.3",
+        "useful_life_years": 20,
+        "utilization": {
+          "shape": "triangular",
+          "low": "0.5",
+          "mode": "0.75",
+          "high": "0.9"
+        },
+        "new_debt_interest_rate": "0.06",
+        "financing": {
+          "cash": "0.5",
+          "debt": "0.5",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "refinancing at a fixed new rate",
+    "model": "ScenarioDraft",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "debt_refinance",
+        "magnitude": {
+          "value": "1000000000",
+          "unit": "usd"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 0
+        },
+        "current_interest_rate": "0.07",
+        "new_interest_rate": {
+          "shape": "fixed",
+          "value": "0.05"
+        },
+        "new_maturity_years": 7,
+        "refinancing_fee_fraction": "0.01"
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
     }
   }
 ]

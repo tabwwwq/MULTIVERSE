@@ -1,8 +1,9 @@
+import { GitBranchPlus } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SECTOR_LABELS } from "@/companies/labels";
 import { type RawParams, parseDossierParams } from "@/companies/params";
-import { buildDossierView, dateOnly } from "@/companies/pit";
+import { buildDossierView, cutoffChoices, dateOnly } from "@/companies/pit";
 import { getCompanyRepository } from "@/companies/repository";
 import { currentListing, currentName } from "@/companies/search";
 import {
@@ -22,6 +23,8 @@ import {
 import { NotClaims } from "@/components/trust/not-claims";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { ButtonLink } from "@/components/ui/button";
+import { decisionsHref } from "@/decisions/params";
 import { PageHeader, Section } from "@/layouts/page-header";
 
 interface PageProps {
@@ -93,6 +96,21 @@ export default async function CompanyDossierPage({ params, searchParams }: PageP
           </Alert>
         ) : null}
       </div>
+
+      {hasFinancials ? (
+        <div className="mb-10">
+          <ButtonLink
+            href={decisionsHref(
+              company.company_id,
+              asOf !== null && cutoffChoices(dossier).includes(asOf) ? asOf : null,
+            )}
+            variant="secondary"
+          >
+            <GitBranchPlus aria-hidden="true" />
+            Build a decision for this company
+          </ButtonLink>
+        </div>
+      ) : null}
 
       <Section id="identity" title="Identity">
         <IdentityList company={company} />

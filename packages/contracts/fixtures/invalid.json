@@ -8,7 +8,11 @@
       "quantity": null,
       "kind": "observed",
       "data_origin": "synthetic",
-      "period": { "type": "fiscal_year", "end_date": "2021-12-31", "fiscal_year": 2021 },
+      "period": {
+        "type": "fiscal_year",
+        "end_date": "2021-12-31",
+        "fiscal_year": 2021
+      },
       "as_of": "2022-03-01T00:00:00Z"
     }
   },
@@ -18,10 +22,18 @@
     "reason": "money travels as a decimal string",
     "payload": {
       "metric": "revenue",
-      "quantity": { "value": 4213587912.5, "unit": "currency", "currency": "USD" },
+      "quantity": {
+        "value": 4213587912.5,
+        "unit": "currency",
+        "currency": "USD"
+      },
       "kind": "observed",
       "data_origin": "synthetic",
-      "period": { "type": "fiscal_year", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "period": {
+        "type": "fiscal_year",
+        "end_date": "2022-12-31",
+        "fiscal_year": 2022
+      },
       "as_of": "2023-02-15T00:00:00Z"
     }
   },
@@ -31,10 +43,17 @@
     "reason": "money needs ISO 4217",
     "payload": {
       "metric": "revenue",
-      "quantity": { "value": "100", "unit": "currency" },
+      "quantity": {
+        "value": "100",
+        "unit": "currency"
+      },
       "kind": "observed",
       "data_origin": "synthetic",
-      "period": { "type": "fiscal_year", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "period": {
+        "type": "fiscal_year",
+        "end_date": "2022-12-31",
+        "fiscal_year": 2022
+      },
       "as_of": "2023-02-15T00:00:00Z"
     }
   },
@@ -44,10 +63,18 @@
     "reason": "every real number cites a source",
     "payload": {
       "metric": "revenue",
-      "quantity": { "value": "100", "unit": "currency", "currency": "USD" },
+      "quantity": {
+        "value": "100",
+        "unit": "currency",
+        "currency": "USD"
+      },
       "kind": "observed",
       "data_origin": "empirical",
-      "period": { "type": "fiscal_year", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "period": {
+        "type": "fiscal_year",
+        "end_date": "2022-12-31",
+        "fiscal_year": 2022
+      },
       "as_of": "2023-02-15T00:00:00Z"
     }
   },
@@ -57,10 +84,18 @@
     "reason": "dates are ISO 8601 with explicit timezone",
     "payload": {
       "metric": "revenue",
-      "quantity": { "value": "100", "unit": "currency", "currency": "USD" },
+      "quantity": {
+        "value": "100",
+        "unit": "currency",
+        "currency": "USD"
+      },
       "kind": "forecast",
       "data_origin": "synthetic",
-      "period": { "type": "fiscal_year", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "period": {
+        "type": "fiscal_year",
+        "end_date": "2022-12-31",
+        "fiscal_year": 2022
+      },
       "as_of": "2023-02-15T00:00:00"
     }
   },
@@ -70,10 +105,18 @@
     "reason": "contracts forbid unknown fields",
     "payload": {
       "metric": "revenue",
-      "quantity": { "value": "100", "unit": "currency", "currency": "USD" },
+      "quantity": {
+        "value": "100",
+        "unit": "currency",
+        "currency": "USD"
+      },
       "kind": "observed",
       "data_origin": "synthetic",
-      "period": { "type": "fiscal_year", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "period": {
+        "type": "fiscal_year",
+        "end_date": "2022-12-31",
+        "fiscal_year": 2022
+      },
       "as_of": "2023-02-15T00:00:00Z",
       "accuracy": "99%"
     }
@@ -84,10 +127,18 @@
     "reason": "period fields must match the period type",
     "payload": {
       "metric": "revenue",
-      "quantity": { "value": "100", "unit": "currency", "currency": "USD" },
+      "quantity": {
+        "value": "100",
+        "unit": "currency",
+        "currency": "USD"
+      },
       "kind": "observed",
       "data_origin": "synthetic",
-      "period": { "type": "fiscal_quarter", "end_date": "2022-12-31", "fiscal_year": 2022 },
+      "period": {
+        "type": "fiscal_quarter",
+        "end_date": "2022-12-31",
+        "fiscal_year": 2022
+      },
       "as_of": "2023-02-15T00:00:00Z"
     }
   },
@@ -140,6 +191,786 @@
       "seed": 1,
       "code_version": "abc1234",
       "generated_at": "2026-10-28T12:00:00Z"
+    }
+  },
+  {
+    "name": "acquisition financing that adds up to 95%",
+    "model": "ScenarioDraft",
+    "reason": "the financing mix must be exactly 100% and is never normalized silently",
+    "code": "shares_sum",
+    "path": "decision.financing",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "acquisition",
+        "magnitude": {
+          "value": "1000000000",
+          "unit": "usd"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 2,
+          "ramp_quarters": 8
+        },
+        "target_revenue": "400000000",
+        "target_ebitda_margin": "0.15",
+        "deal_cost_fraction": "0.02",
+        "integration_cost_fraction": {
+          "shape": "triangular",
+          "low": "0.02",
+          "mode": "0.05",
+          "high": "0.1"
+        },
+        "cost_synergy_fraction": {
+          "shape": "triangular",
+          "low": "0",
+          "mode": "0.03",
+          "high": "0.06"
+        },
+        "completion_probability": "0.9",
+        "new_debt_interest_rate": "0.06",
+        "financing": {
+          "cash": "0.6",
+          "debt": "0.3",
+          "equity": "0.05"
+        }
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "decision size without a unit",
+    "model": "ScenarioDraft",
+    "reason": "a bare 40 is ambiguous: share of the budget or percentage points of revenue",
+    "code": "missing",
+    "path": "decision.magnitude.unit",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "R&D change measured in dollars",
+    "model": "ScenarioDraft",
+    "reason": "each decision type lists its own units",
+    "code": "unit_not_allowed",
+    "path": "decision.magnitude.unit",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "usd"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "R&D +600% of the previous budget",
+    "model": "ScenarioDraft",
+    "reason": "above the hard limit of +500%",
+    "code": "out_of_range",
+    "path": "decision.magnitude.value",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "6",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "workforce change of 0%",
+    "model": "ScenarioDraft",
+    "reason": "a decision of size 0 is the baseline",
+    "code": "zero_magnitude",
+    "path": "decision.magnitude.value",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "workforce_restructure",
+        "magnitude": {
+          "value": "0",
+          "unit": "fraction_of_headcount"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 1,
+          "ramp_quarters": 2
+        },
+        "payroll_to_revenue": "0.25",
+        "one_off_cost_months": {
+          "shape": "triangular",
+          "low": "2",
+          "mode": "4",
+          "high": "8"
+        },
+        "savings_realization": {
+          "shape": "triangular",
+          "low": "0.5",
+          "mode": "0.7",
+          "high": "0.9"
+        },
+        "productivity_loss": {
+          "shape": "triangular",
+          "low": "0",
+          "mode": "0.03",
+          "high": "0.1"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "money as a JSON number",
+    "model": "ScenarioDraft",
+    "reason": "amounts travel as decimal strings",
+    "code": "string_type",
+    "path": "decision.magnitude.value",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "acquisition",
+        "magnitude": {
+          "value": 1000000000,
+          "unit": "usd"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 2,
+          "ramp_quarters": 8
+        },
+        "target_revenue": "400000000",
+        "target_ebitda_margin": "0.15",
+        "deal_cost_fraction": "0.02",
+        "integration_cost_fraction": {
+          "shape": "triangular",
+          "low": "0.02",
+          "mode": "0.05",
+          "high": "0.1"
+        },
+        "cost_synergy_fraction": {
+          "shape": "triangular",
+          "low": "0",
+          "mode": "0.03",
+          "high": "0.06"
+        },
+        "completion_probability": "0.9",
+        "new_debt_interest_rate": "0.06",
+        "financing": {
+          "cash": "0.5",
+          "debt": "0.5",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "announcement before the knowledge cutoff",
+    "model": "ScenarioDraft",
+    "reason": "a decision made at the cutoff cannot be announced earlier",
+    "code": "announcement_before_cutoff",
+    "path": "decision.timing.announcement_date",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-30",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "effective before the announcement",
+    "model": "ScenarioDraft",
+    "reason": "effective date >= announcement date >= cutoff",
+    "code": "effective_before_announcement",
+    "path": "decision.timing.effective_date",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2023-02-01",
+          "effective_date": "2023-01-15",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "effective date after the horizon",
+    "model": "ScenarioDraft",
+    "reason": "the effect must start inside the horizon",
+    "code": "effect_after_horizon",
+    "path": "decision.timing.effective_date",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2028-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "adoption delay with the mode below low",
+    "model": "ScenarioDraft",
+    "reason": "low <= mode <= high",
+    "code": "distribution_order",
+    "path": "decision.adoption_delay_quarters",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "8",
+          "mode": "4",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "adoption delay above its allowed range",
+    "model": "ScenarioDraft",
+    "reason": "every point of a distribution stays inside the allowed range",
+    "code": "out_of_range",
+    "path": "decision.adoption_delay_quarters.high",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "50"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "new debt at a 0% interest rate",
+    "model": "ScenarioDraft",
+    "reason": "debt financing needs an interest rate",
+    "code": "rate_required",
+    "path": "decision.new_debt_interest_rate",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "capex_expansion",
+        "magnitude": {
+          "value": "500000000",
+          "unit": "usd"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 4,
+          "ramp_quarters": 4
+        },
+        "capacity_increase": "0.3",
+        "useful_life_years": 20,
+        "utilization": {
+          "shape": "triangular",
+          "low": "0.5",
+          "mode": "0.75",
+          "high": "0.9"
+        },
+        "new_debt_interest_rate": "0",
+        "financing": {
+          "cash": "0.5",
+          "debt": "0.5",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": [],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "sensitivity on a parameter with a fixed value",
+    "model": "ScenarioDraft",
+    "reason": "a fixed value has no range to vary",
+    "code": "sensitivity_fixed",
+    "path": "sensitivity.parameters",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "fixed",
+          "value": "8"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "sensitivity on a parameter that is not uncertain",
+    "model": "ScenarioDraft",
+    "reason": "only uncertain parameters can be varied",
+    "code": "sensitivity_unknown",
+    "path": "sensitivity.parameters",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["capitalized_fraction"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "horizon of two quarters",
+    "model": "ScenarioDraft",
+    "reason": "the horizon is 4 to 40 quarters",
+    "code": "out_of_range",
+    "path": "horizon_quarters",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 2,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "unknown decision type",
+    "model": "ScenarioDraft",
+    "reason": "only the six catalogued types exist",
+    "code": "union_tag_invalid",
+    "path": "decision.type",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "price_increase",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        }
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
+    }
+  },
+  {
+    "name": "unknown field in a decision",
+    "model": "ScenarioDraft",
+    "reason": "contracts reject fields they do not define",
+    "code": "extra_forbidden",
+    "path": "decision.synergy_bonus",
+    "payload": {
+      "contracts_version": "0.3.0",
+      "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+      "as_of": "2022-12-31",
+      "data_origin": "synthetic",
+      "horizon_quarters": 20,
+      "seed": 20261027,
+      "decision": {
+        "type": "rnd_change",
+        "magnitude": {
+          "value": "0.4",
+          "unit": "fraction_of_previous_rnd_budget"
+        },
+        "timing": {
+          "announcement_date": "2022-12-31",
+          "effective_date": "2023-01-01",
+          "lag_quarters": 0,
+          "ramp_quarters": 2
+        },
+        "capitalized_fraction": "0",
+        "adoption_delay_quarters": {
+          "shape": "triangular",
+          "low": "4",
+          "mode": "8",
+          "high": "12"
+        },
+        "financing": {
+          "cash": "1",
+          "debt": "0",
+          "equity": "0"
+        },
+        "synergy_bonus": "0.1"
+      },
+      "sensitivity": {
+        "parameters": ["adoption_delay_quarters"],
+        "points": 5
+      }
     }
   }
 ]

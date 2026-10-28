@@ -10,7 +10,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 - **Forecasts are not causal effects.** Predictive accuracy does not validate the effect of a decision. A result is labelled causal only after documented identification diagnostics.
 - **Intervals are model quantiles** until their coverage is measured on held-out companies and dates.
 - **No investment advice,** no share price prediction, no "fair market value".
-- **Current status: Stage 04.** The Universe Explorer and Company Dossier work on seven clearly labelled fictional companies; there is no real dataset or trained model yet. Nothing in this repository claims measured accuracy.
+- **Current status: Stage 05.** The Universe Explorer, Company Dossier and Decision Builder work on seven clearly labelled fictional companies; there is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
 
 ## Status
 
@@ -21,12 +21,13 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 | 02 | Monorepo foundation, contracts, quality gates, ADRs | Accepted |
 | 03 | Design system and application shell (`apps/web`) | Accepted |
 | 04 | Company explorer and dossier on synthetic fixtures | Accepted |
-| 05–26 | Decision builder → data → ML → causal → finance → publication | Planned |
+| 05 | Decision builder: six decision types, validation, intervention catalog | Review |
+| 06–26 | Timelines → data → ML → causal → finance → publication | Planned |
 
 ## Repository layout
 
 ```text
-apps/web/              Next.js web app: design system, shell for 20 screens (Stage 03)
+apps/web/              Next.js web app: design system, shell, explorer, dossier, decision builder
 services/api/          FastAPI HTTP API — composition root: multiverse_api.main:create_app
 services/worker/       Background jobs: simulation and training (queue in Stage 18)
 packages/contracts/    Shared contracts — single source of truth (ADR-0008)
@@ -34,6 +35,7 @@ packages/contracts/    Shared contracts — single source of truth (ADR-0008)
   schemas/             Generated JSON Schema
   ts/                  Generated TypeScript types (@multiverse/contracts)
   fixtures/            Valid and invalid examples shared by tests; demo/ holds the synthetic companies
+  catalog/             Generated intervention catalog: units, ranges, defaults (ADR-0013)
 packages/config/       Validated settings and environment profiles (ADR-0010)
 packages/finance/      Pure financial formulas (Stage 21, 23)
 packages/causal/       Causal research tools (Stage 20)
@@ -112,7 +114,7 @@ npm run dev:api
 | `npm run check:ts` | TypeScript part of the gate |
 | `npm test` | All tests (pytest + vitest) |
 | `npm run format` | Auto-format Python and TypeScript |
-| `npm run contracts:gen` | Regenerate JSON Schema and TypeScript types after changing `packages/contracts/python` |
+| `npm run contracts:gen` | Regenerate JSON Schema, demo fixtures, the intervention catalog and TypeScript types after changing `packages/contracts/python` |
 | `npm run contracts:check` | Fail if generated contracts are stale |
 | `npm run check:web` | Production build of the web app and Playwright tests at 1440, 768 and 390 px |
 | `npm run dev:web` | Run the web app with hot reload on localhost:3000 |

@@ -8,6 +8,170 @@
       "title": "AccountingStandard",
       "type": "string"
     },
+    "Acquisition": {
+      "additionalProperties": false,
+      "properties": {
+        "completion_probability": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "cost_synergy_fraction": {
+          "discriminator": {
+            "mapping": {
+              "fixed": "#/$defs/FixedValue",
+              "triangular": "#/$defs/TriangularRange",
+              "uniform": "#/$defs/UniformRange"
+            },
+            "propertyName": "shape"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FixedValue"
+            },
+            {
+              "$ref": "#/$defs/UniformRange"
+            },
+            {
+              "$ref": "#/$defs/TriangularRange"
+            }
+          ]
+        },
+        "deal_cost_fraction": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "financing": {
+          "$ref": "#/$defs/FundingMix"
+        },
+        "integration_cost_fraction": {
+          "discriminator": {
+            "mapping": {
+              "fixed": "#/$defs/FixedValue",
+              "triangular": "#/$defs/TriangularRange",
+              "uniform": "#/$defs/UniformRange"
+            },
+            "propertyName": "shape"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FixedValue"
+            },
+            {
+              "$ref": "#/$defs/UniformRange"
+            },
+            {
+              "$ref": "#/$defs/TriangularRange"
+            }
+          ]
+        },
+        "magnitude": {
+          "$ref": "#/$defs/Magnitude"
+        },
+        "new_debt_interest_rate": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "target_ebitda_margin": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "target_revenue": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "timing": {
+          "$ref": "#/$defs/Timing"
+        },
+        "type": {
+          "const": "acquisition",
+          "type": "string"
+        }
+      },
+      "required": [
+        "magnitude",
+        "timing",
+        "type",
+        "target_revenue",
+        "target_ebitda_margin",
+        "deal_cost_fraction",
+        "integration_cost_fraction",
+        "cost_synergy_fraction",
+        "completion_probability",
+        "new_debt_interest_rate",
+        "financing"
+      ],
+      "title": "Acquisition",
+      "type": "object"
+    },
+    "CapexExpansion": {
+      "additionalProperties": false,
+      "properties": {
+        "capacity_increase": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "financing": {
+          "$ref": "#/$defs/FundingMix"
+        },
+        "magnitude": {
+          "$ref": "#/$defs/Magnitude"
+        },
+        "new_debt_interest_rate": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "timing": {
+          "$ref": "#/$defs/Timing"
+        },
+        "type": {
+          "const": "capex_expansion",
+          "type": "string"
+        },
+        "useful_life_years": {
+          "type": "integer"
+        },
+        "utilization": {
+          "discriminator": {
+            "mapping": {
+              "fixed": "#/$defs/FixedValue",
+              "triangular": "#/$defs/TriangularRange",
+              "uniform": "#/$defs/UniformRange"
+            },
+            "propertyName": "shape"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FixedValue"
+            },
+            {
+              "$ref": "#/$defs/UniformRange"
+            },
+            {
+              "$ref": "#/$defs/TriangularRange"
+            }
+          ]
+        }
+      },
+      "required": [
+        "magnitude",
+        "timing",
+        "type",
+        "capacity_increase",
+        "useful_life_years",
+        "utilization",
+        "new_debt_interest_rate",
+        "financing"
+      ],
+      "title": "CapexExpansion",
+      "type": "object"
+    },
     "CausalStatus": {
       "description": "Identification status of a result. Never raised automatically (PRD FR-CA-02).",
       "enum": [
@@ -314,6 +478,167 @@
       "title": "DatedName",
       "type": "object"
     },
+    "DebtRefinance": {
+      "additionalProperties": false,
+      "properties": {
+        "current_interest_rate": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "magnitude": {
+          "$ref": "#/$defs/Magnitude"
+        },
+        "new_interest_rate": {
+          "discriminator": {
+            "mapping": {
+              "fixed": "#/$defs/FixedValue",
+              "triangular": "#/$defs/TriangularRange",
+              "uniform": "#/$defs/UniformRange"
+            },
+            "propertyName": "shape"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FixedValue"
+            },
+            {
+              "$ref": "#/$defs/UniformRange"
+            },
+            {
+              "$ref": "#/$defs/TriangularRange"
+            }
+          ]
+        },
+        "new_maturity_years": {
+          "type": "integer"
+        },
+        "refinancing_fee_fraction": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "timing": {
+          "$ref": "#/$defs/Timing"
+        },
+        "type": {
+          "const": "debt_refinance",
+          "type": "string"
+        }
+      },
+      "required": [
+        "magnitude",
+        "timing",
+        "type",
+        "current_interest_rate",
+        "new_interest_rate",
+        "new_maturity_years",
+        "refinancing_fee_fraction"
+      ],
+      "title": "DebtRefinance",
+      "type": "object"
+    },
+    "DefaultSource": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/DefaultSourceKind"
+        },
+        "note": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "note"
+      ],
+      "title": "DefaultSource",
+      "type": "object"
+    },
+    "DefaultSourceKind": {
+      "description": "Where a default comes from. Only the first two are facts.",
+      "enum": [
+        "accounting_rule",
+        "statutory_rate",
+        "design_default",
+        "placeholder"
+      ],
+      "title": "DefaultSourceKind",
+      "type": "string"
+    },
+    "Divestiture": {
+      "additionalProperties": false,
+      "properties": {
+        "disposal_proceeds": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "magnitude": {
+          "$ref": "#/$defs/Magnitude"
+        },
+        "segment_ebitda_margin": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "separation_cost_fraction": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "stranded_cost_fraction": {
+          "discriminator": {
+            "mapping": {
+              "fixed": "#/$defs/FixedValue",
+              "triangular": "#/$defs/TriangularRange",
+              "uniform": "#/$defs/UniformRange"
+            },
+            "propertyName": "shape"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FixedValue"
+            },
+            {
+              "$ref": "#/$defs/UniformRange"
+            },
+            {
+              "$ref": "#/$defs/TriangularRange"
+            }
+          ]
+        },
+        "tax_rate_on_gain": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "timing": {
+          "$ref": "#/$defs/Timing"
+        },
+        "type": {
+          "const": "divestiture",
+          "type": "string"
+        },
+        "use_of_proceeds": {
+          "$ref": "#/$defs/ProceedsAllocation"
+        }
+      },
+      "required": [
+        "magnitude",
+        "timing",
+        "type",
+        "segment_ebitda_margin",
+        "disposal_proceeds",
+        "separation_cost_fraction",
+        "stranded_cost_fraction",
+        "tax_rate_on_gain",
+        "use_of_proceeds"
+      ],
+      "title": "Divestiture",
+      "type": "object"
+    },
     "FilingForm": {
       "enum": [
         "10-K",
@@ -376,6 +701,202 @@
       "title": "FilingReference",
       "type": "object"
     },
+    "FinancialStatement": {
+      "enum": [
+        "income_statement",
+        "cash_flow",
+        "balance_sheet"
+      ],
+      "title": "FinancialStatement",
+      "type": "string"
+    },
+    "FixedValue": {
+      "additionalProperties": false,
+      "description": "No uncertainty: the parameter takes exactly this value.",
+      "properties": {
+        "shape": {
+          "const": "fixed",
+          "type": "string"
+        },
+        "value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shape",
+        "value"
+      ],
+      "title": "FixedValue",
+      "type": "object"
+    },
+    "FundingMix": {
+      "additionalProperties": false,
+      "description": "Shares of the funding need; they add up to exactly 1.",
+      "properties": {
+        "cash": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "debt": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "equity": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cash",
+        "debt",
+        "equity"
+      ],
+      "title": "FundingMix",
+      "type": "object"
+    },
+    "InterventionCatalog": {
+      "additionalProperties": false,
+      "properties": {
+        "contracts_version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "type": "string"
+        },
+        "default_seed": {
+          "maximum": 2147483647,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "default_sensitivity_points": {
+          "type": "integer"
+        },
+        "horizon_quarters": {
+          "$ref": "#/$defs/ParameterSpec"
+        },
+        "interventions": {
+          "items": {
+            "$ref": "#/$defs/InterventionSpec"
+          },
+          "type": "array"
+        },
+        "planning_range_note": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "sensitivity_max_parameters": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "sensitivity_points": {
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "contracts_version",
+        "planning_range_note",
+        "horizon_quarters",
+        "default_seed",
+        "sensitivity_max_parameters",
+        "sensitivity_points",
+        "default_sensitivity_points",
+        "interventions"
+      ],
+      "title": "InterventionCatalog",
+      "type": "object"
+    },
+    "InterventionSpec": {
+      "additionalProperties": false,
+      "description": "Definition of one decision type, following the template of docs/16.",
+      "properties": {
+        "does_not_mean": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "evidence": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "lag_quarters": {
+          "$ref": "#/$defs/ParameterSpec"
+        },
+        "magnitude": {
+          "$ref": "#/$defs/MagnitudeSpec"
+        },
+        "mechanism": {
+          "items": {
+            "$ref": "#/$defs/MechanismEffect"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "parameters": {
+          "items": {
+            "$ref": "#/$defs/ParameterSpec"
+          },
+          "type": "array"
+        },
+        "ramp_quarters": {
+          "$ref": "#/$defs/ParameterSpec"
+        },
+        "share_group": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ShareGroupSpec"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "summary": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/InterventionType"
+        }
+      },
+      "required": [
+        "type",
+        "label",
+        "summary",
+        "magnitude",
+        "parameters",
+        "share_group",
+        "lag_quarters",
+        "ramp_quarters",
+        "mechanism",
+        "does_not_mean",
+        "evidence"
+      ],
+      "title": "InterventionSpec",
+      "type": "object"
+    },
+    "InterventionType": {
+      "description": "The six decision types of V1 (PRD FR-DE-01, docs/16 \"recommended first six\").",
+      "enum": [
+        "rnd_change",
+        "workforce_restructure",
+        "acquisition",
+        "divestiture",
+        "capex_expansion",
+        "debt_refinance"
+      ],
+      "title": "InterventionType",
+      "type": "string"
+    },
     "Lineage": {
       "additionalProperties": false,
       "description": "Where a number comes from inside its filings. Stage 11 extends this with full lineage.",
@@ -424,6 +945,148 @@
       "title": "LineageMethod",
       "type": "string"
     },
+    "Magnitude": {
+      "additionalProperties": false,
+      "description": "Size of a decision. The unit is required: 0.4 alone could mean four different things.",
+      "properties": {
+        "unit": {
+          "$ref": "#/$defs/MagnitudeUnit"
+        },
+        "value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "unit"
+      ],
+      "title": "Magnitude",
+      "type": "object"
+    },
+    "MagnitudeBase": {
+      "description": "Company figure a relative magnitude refers to, read at the knowledge cutoff.",
+      "enum": [
+        "previous_rnd_budget",
+        "revenue",
+        "headcount",
+        "none"
+      ],
+      "title": "MagnitudeBase",
+      "type": "string"
+    },
+    "MagnitudeSpec": {
+      "additionalProperties": false,
+      "description": "Size of the decision. Several units mean several different decisions.",
+      "properties": {
+        "default_source": {
+          "$ref": "#/$defs/DefaultSource"
+        },
+        "default_unit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MagnitudeUnit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "None when the user must choose: the unit changes what the number means."
+        },
+        "explanation": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "units": {
+          "items": {
+            "$ref": "#/$defs/MagnitudeUnitSpec"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "label",
+        "explanation",
+        "units",
+        "default_unit",
+        "default_source"
+      ],
+      "title": "MagnitudeSpec",
+      "type": "object"
+    },
+    "MagnitudeUnit": {
+      "description": "What the size of a decision is measured against (PRD FR-DE-02).",
+      "enum": [
+        "fraction_of_previous_rnd_budget",
+        "pp_of_revenue",
+        "fraction_of_headcount",
+        "fraction_of_revenue",
+        "usd"
+      ],
+      "title": "MagnitudeUnit",
+      "type": "string"
+    },
+    "MagnitudeUnitSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed": {
+          "$ref": "#/$defs/ValueRange"
+        },
+        "base": {
+          "$ref": "#/$defs/MagnitudeBase"
+        },
+        "default_value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "label": {
+          "description": "Shown after the number, e.g. '% of revenue'.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "planning": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ValueRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "step": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "unit": {
+          "$ref": "#/$defs/MagnitudeUnit"
+        },
+        "value_unit": {
+          "$ref": "#/$defs/ValueUnit"
+        }
+      },
+      "required": [
+        "unit",
+        "label",
+        "value_unit",
+        "base",
+        "allowed",
+        "planning",
+        "step",
+        "default_value"
+      ],
+      "title": "MagnitudeUnitSpec",
+      "type": "object"
+    },
     "MeasureUnit": {
       "description": "Unit of a quantity. Percentages are fractions; changes of shares are percentage points.",
       "enum": [
@@ -437,6 +1100,24 @@
       ],
       "title": "MeasureUnit",
       "type": "string"
+    },
+    "MechanismEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "effect": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "statement": {
+          "$ref": "#/$defs/FinancialStatement"
+        }
+      },
+      "required": [
+        "statement",
+        "effect"
+      ],
+      "title": "MechanismEffect",
+      "type": "object"
     },
     "MetricValue": {
       "additionalProperties": false,
@@ -521,6 +1202,103 @@
       "title": "MetricValue",
       "type": "object"
     },
+    "ParameterSpec": {
+      "additionalProperties": false,
+      "description": "One input of a decision. ``uncertain`` parameters take a distribution.",
+      "properties": {
+        "allowed": {
+          "$ref": "#/$defs/ValueRange"
+        },
+        "default": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "discriminator": {
+                "mapping": {
+                  "fixed": "#/$defs/FixedValue",
+                  "triangular": "#/$defs/TriangularRange",
+                  "uniform": "#/$defs/UniformRange"
+                },
+                "propertyName": "shape"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/FixedValue"
+                },
+                {
+                  "$ref": "#/$defs/UniformRange"
+                },
+                {
+                  "$ref": "#/$defs/TriangularRange"
+                }
+              ]
+            }
+          ]
+        },
+        "default_source": {
+          "$ref": "#/$defs/DefaultSource"
+        },
+        "explanation": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "integer": {
+          "default": false,
+          "type": "boolean"
+        },
+        "key": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "planning": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ValueRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Values outside it are flagged out of distribution."
+        },
+        "step": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "uncertain": {
+          "default": false,
+          "type": "boolean"
+        },
+        "unit": {
+          "$ref": "#/$defs/ValueUnit"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "explanation",
+        "unit",
+        "integer",
+        "uncertain",
+        "allowed",
+        "planning",
+        "step",
+        "default",
+        "default_source"
+      ],
+      "title": "ParameterSpec",
+      "type": "object"
+    },
     "Period": {
       "additionalProperties": false,
       "description": "When a value applies. ``end_date`` is the period end, or the date of an instant value.",
@@ -578,6 +1356,34 @@
       ],
       "title": "PeriodType",
       "type": "string"
+    },
+    "ProceedsAllocation": {
+      "additionalProperties": false,
+      "description": "Shares of the net proceeds of a divestiture; they add up to exactly 1.",
+      "properties": {
+        "cash_retained": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "debt_paydown": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "shareholder_distribution": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "debt_paydown",
+        "cash_retained",
+        "shareholder_distribution"
+      ],
+      "title": "ProceedsAllocation",
+      "type": "object"
     },
     "QualitySeverity": {
       "enum": [
@@ -724,6 +1530,141 @@
       "title": "ResultMode",
       "type": "string"
     },
+    "RndChange": {
+      "additionalProperties": false,
+      "properties": {
+        "adoption_delay_quarters": {
+          "discriminator": {
+            "mapping": {
+              "fixed": "#/$defs/FixedValue",
+              "triangular": "#/$defs/TriangularRange",
+              "uniform": "#/$defs/UniformRange"
+            },
+            "propertyName": "shape"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FixedValue"
+            },
+            {
+              "$ref": "#/$defs/UniformRange"
+            },
+            {
+              "$ref": "#/$defs/TriangularRange"
+            }
+          ]
+        },
+        "capitalized_fraction": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "financing": {
+          "$ref": "#/$defs/FundingMix"
+        },
+        "magnitude": {
+          "$ref": "#/$defs/Magnitude"
+        },
+        "timing": {
+          "$ref": "#/$defs/Timing"
+        },
+        "type": {
+          "const": "rnd_change",
+          "type": "string"
+        }
+      },
+      "required": [
+        "magnitude",
+        "timing",
+        "type",
+        "capitalized_fraction",
+        "adoption_delay_quarters",
+        "financing"
+      ],
+      "title": "RndChange",
+      "type": "object"
+    },
+    "ScenarioDraft": {
+      "additionalProperties": false,
+      "description": "A decision for one company at one knowledge cutoff, ready to validate and run.\n\n``as_of`` is a date: the knowledge cutoff is the end of that day in UTC, as in the\ndossier (ADR-0002). A decision made at the cutoff can be announced on the cutoff\nday at the earliest.",
+      "properties": {
+        "as_of": {
+          "format": "date",
+          "type": "string"
+        },
+        "company_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "contracts_version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "type": "string"
+        },
+        "data_origin": {
+          "$ref": "#/$defs/DataOrigin"
+        },
+        "decision": {
+          "discriminator": {
+            "mapping": {
+              "acquisition": "#/$defs/Acquisition",
+              "capex_expansion": "#/$defs/CapexExpansion",
+              "debt_refinance": "#/$defs/DebtRefinance",
+              "divestiture": "#/$defs/Divestiture",
+              "rnd_change": "#/$defs/RndChange",
+              "workforce_restructure": "#/$defs/WorkforceRestructure"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/RndChange"
+            },
+            {
+              "$ref": "#/$defs/WorkforceRestructure"
+            },
+            {
+              "$ref": "#/$defs/Acquisition"
+            },
+            {
+              "$ref": "#/$defs/Divestiture"
+            },
+            {
+              "$ref": "#/$defs/CapexExpansion"
+            },
+            {
+              "$ref": "#/$defs/DebtRefinance"
+            }
+          ]
+        },
+        "horizon_quarters": {
+          "type": "integer"
+        },
+        "seed": {
+          "maximum": 2147483647,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/SensitivitySettings",
+          "default": {
+            "parameters": [],
+            "points": 5
+          }
+        }
+      },
+      "required": [
+        "contracts_version",
+        "company_id",
+        "as_of",
+        "data_origin",
+        "horizon_quarters",
+        "seed",
+        "decision",
+        "sensitivity"
+      ],
+      "title": "ScenarioDraft",
+      "type": "object"
+    },
     "Sector": {
       "enum": [
         "semiconductors",
@@ -736,6 +1677,97 @@
       ],
       "title": "Sector",
       "type": "string"
+    },
+    "SensitivitySettings": {
+      "additionalProperties": false,
+      "description": "One-at-a-time sensitivity over uncertain parameters of the decision.",
+      "properties": {
+        "parameters": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "points": {
+          "default": 5,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "parameters",
+        "points"
+      ],
+      "title": "SensitivitySettings",
+      "type": "object"
+    },
+    "ShareGroupSpec": {
+      "additionalProperties": false,
+      "description": "Shares that must add up to exactly 100 % (PRD FR-DE-04, docs/07).",
+      "properties": {
+        "default_source": {
+          "$ref": "#/$defs/DefaultSource"
+        },
+        "defaults": {
+          "items": {
+            "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+            "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "explanation": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "key": {
+          "enum": [
+            "financing",
+            "use_of_proceeds"
+          ],
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "members": {
+          "items": {
+            "$ref": "#/$defs/ShareMember"
+          },
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "explanation",
+        "members",
+        "defaults",
+        "default_source"
+      ],
+      "title": "ShareGroupSpec",
+      "type": "object"
+    },
+    "ShareMember": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "title": "ShareMember",
+      "type": "object"
     },
     "SupportStatus": {
       "description": "Whether MULTIVERSE can work with a company (PRD FC-01, FC-02).",
@@ -786,6 +1818,69 @@
       "title": "TickerListing",
       "type": "object"
     },
+    "Timing": {
+      "additionalProperties": false,
+      "description": "When the decision is announced, takes effect, and how long its effect takes.",
+      "properties": {
+        "announcement_date": {
+          "format": "date",
+          "type": "string"
+        },
+        "effective_date": {
+          "format": "date",
+          "type": "string"
+        },
+        "lag_quarters": {
+          "description": "Quarters from the effective date to the first effect.",
+          "type": "integer"
+        },
+        "ramp_quarters": {
+          "description": "Quarters from the start until the full effect.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "announcement_date",
+        "effective_date",
+        "lag_quarters",
+        "ramp_quarters"
+      ],
+      "title": "Timing",
+      "type": "object"
+    },
+    "TriangularRange": {
+      "additionalProperties": false,
+      "description": "Values between ``low`` and ``high``, most likely around ``mode``.",
+      "properties": {
+        "high": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "low": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "mode": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "shape": {
+          "const": "triangular",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shape",
+        "low",
+        "mode",
+        "high"
+      ],
+      "title": "TriangularRange",
+      "type": "object"
+    },
     "UncertaintyType": {
       "description": "What an interval around a number means (PRD §6, docs/08).",
       "enum": [
@@ -797,6 +1892,33 @@
       "title": "UncertaintyType",
       "type": "string"
     },
+    "UniformRange": {
+      "additionalProperties": false,
+      "description": "Every value between ``low`` and ``high`` is equally likely.",
+      "properties": {
+        "high": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "low": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "shape": {
+          "const": "uniform",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shape",
+        "low",
+        "high"
+      ],
+      "title": "UniformRange",
+      "type": "object"
+    },
     "ValueKind": {
       "description": "Where a number comes from in time (PRD FR-RE-01).",
       "enum": [
@@ -806,11 +1928,144 @@
       ],
       "title": "ValueKind",
       "type": "string"
+    },
+    "ValueRange": {
+      "additionalProperties": false,
+      "description": "Inclusive range of decimal values.",
+      "properties": {
+        "max": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "min": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "min",
+        "max"
+      ],
+      "title": "ValueRange",
+      "type": "object"
+    },
+    "ValueUnit": {
+      "description": "Unit of a parameter value. Fractions are shares: 0.25 means 25 %.",
+      "enum": [
+        "fraction",
+        "percentage_points",
+        "usd",
+        "quarters",
+        "years",
+        "months_of_salary"
+      ],
+      "title": "ValueUnit",
+      "type": "string"
+    },
+    "WorkforceRestructure": {
+      "additionalProperties": false,
+      "properties": {
+        "financing": {
+          "$ref": "#/$defs/FundingMix"
+        },
+        "magnitude": {
+          "$ref": "#/$defs/Magnitude"
+        },
+        "one_off_cost_months": {
+          "discriminator": {
+            "mapping": {
+              "fixed": "#/$defs/FixedValue",
+              "triangular": "#/$defs/TriangularRange",
+              "uniform": "#/$defs/UniformRange"
+            },
+            "propertyName": "shape"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FixedValue"
+            },
+            {
+              "$ref": "#/$defs/UniformRange"
+            },
+            {
+              "$ref": "#/$defs/TriangularRange"
+            }
+          ]
+        },
+        "payroll_to_revenue": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "productivity_loss": {
+          "discriminator": {
+            "mapping": {
+              "fixed": "#/$defs/FixedValue",
+              "triangular": "#/$defs/TriangularRange",
+              "uniform": "#/$defs/UniformRange"
+            },
+            "propertyName": "shape"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FixedValue"
+            },
+            {
+              "$ref": "#/$defs/UniformRange"
+            },
+            {
+              "$ref": "#/$defs/TriangularRange"
+            }
+          ]
+        },
+        "savings_realization": {
+          "discriminator": {
+            "mapping": {
+              "fixed": "#/$defs/FixedValue",
+              "triangular": "#/$defs/TriangularRange",
+              "uniform": "#/$defs/UniformRange"
+            },
+            "propertyName": "shape"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/FixedValue"
+            },
+            {
+              "$ref": "#/$defs/UniformRange"
+            },
+            {
+              "$ref": "#/$defs/TriangularRange"
+            }
+          ]
+        },
+        "timing": {
+          "$ref": "#/$defs/Timing"
+        },
+        "type": {
+          "const": "workforce_restructure",
+          "type": "string"
+        }
+      },
+      "required": [
+        "magnitude",
+        "timing",
+        "type",
+        "payroll_to_revenue",
+        "one_off_cost_months",
+        "savings_realization",
+        "productivity_loss",
+        "financing"
+      ],
+      "title": "WorkforceRestructure",
+      "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.2.0",
+  "$id": "urn:multiverse:contracts:0.3.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.2.0"
+  "x-contracts-version": "0.3.0"
 }

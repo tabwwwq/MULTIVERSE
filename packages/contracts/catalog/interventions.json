@@ -1,0 +1,1329 @@
+{
+  "contracts_version": "0.3.0",
+  "planning_range_note": "Planning ranges are design defaults, not measured historical ranges. Stage 14 replaces them with ranges measured on real data. A value outside the planning range is flagged out of distribution: any result for it would be fictional exploratory.",
+  "horizon_quarters": {
+    "key": "horizon_quarters",
+    "label": "Horizon",
+    "explanation": "Quarters after the knowledge cutoff that a run will cover.",
+    "unit": "quarters",
+    "integer": true,
+    "uncertain": false,
+    "allowed": {
+      "min": "4",
+      "max": "40"
+    },
+    "planning": {
+      "min": "4",
+      "max": "20"
+    },
+    "step": "1",
+    "default": "20",
+    "default_source": {
+      "kind": "design_default",
+      "note": "Five years, as in the API example of docs/09."
+    }
+  },
+  "default_seed": 20261027,
+  "sensitivity_max_parameters": 3,
+  "sensitivity_points": [
+    3,
+    5,
+    7
+  ],
+  "default_sensitivity_points": 5,
+  "interventions": [
+    {
+      "type": "rnd_change",
+      "label": "R&D budget change",
+      "summary": "Raise or cut research and development spending.",
+      "magnitude": {
+        "label": "R&D change",
+        "explanation": "How much yearly R&D spending changes. A change of the budget and a change of R&D intensity are different decisions: +40% of a USD 400m budget is USD 160m a year, while +40 percentage points of a USD 4bn revenue would be USD 1.6bn.",
+        "units": [
+          {
+            "unit": "fraction_of_previous_rnd_budget",
+            "label": "% of the previous R&D budget",
+            "value_unit": "fraction",
+            "base": "previous_rnd_budget",
+            "allowed": {
+              "min": "-0.9",
+              "max": "5"
+            },
+            "planning": {
+              "min": "-0.5",
+              "max": "1.2"
+            },
+            "step": "0.01",
+            "default_value": "0.2"
+          },
+          {
+            "unit": "pp_of_revenue",
+            "label": "percentage points of revenue",
+            "value_unit": "percentage_points",
+            "base": "revenue",
+            "allowed": {
+              "min": "-20",
+              "max": "20"
+            },
+            "planning": {
+              "min": "-5",
+              "max": "5"
+            },
+            "step": "0.1",
+            "default_value": "1"
+          }
+        ],
+        "default_unit": null,
+        "default_source": {
+          "kind": "design_default",
+          "note": "A neutral starting value. The unit has no default on purpose: it changes what the number means."
+        }
+      },
+      "parameters": [
+        {
+          "key": "capitalized_fraction",
+          "label": "Share capitalized",
+          "explanation": "Part of the extra R&D recorded as an asset and depreciated instead of expensed at once. It moves cost from EBITDA to depreciation; the cash spent is the same.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0",
+            "max": "1"
+          },
+          "planning": {
+            "min": "0",
+            "max": "0.5"
+          },
+          "step": "0.05",
+          "default": "0",
+          "default_source": {
+            "kind": "accounting_rule",
+            "note": "US GAAP (ASC 730) expenses most R&D as incurred. Software development and some acquired R&D are exceptions."
+          }
+        },
+        {
+          "key": "adoption_delay_quarters",
+          "label": "Adoption delay",
+          "explanation": "Time from the spending to the first revenue it could produce. The cost hits EBIT at once; any revenue comes later and is uncertain.",
+          "unit": "quarters",
+          "integer": false,
+          "uncertain": true,
+          "allowed": {
+            "min": "0",
+            "max": "40"
+          },
+          "planning": {
+            "min": "0",
+            "max": "16"
+          },
+          "step": "1",
+          "default": {
+            "shape": "triangular",
+            "low": "4",
+            "mode": "8",
+            "high": "12"
+          },
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Placeholder until the causal study (Stage 20) estimates how long R&D takes to reach revenue."
+          }
+        }
+      ],
+      "share_group": {
+        "key": "financing",
+        "label": "Financing",
+        "explanation": "How the cash needed for the decision is raised. Shares add up to exactly 100%; new equity dilutes existing shareholders.",
+        "members": [
+          {
+            "key": "cash",
+            "label": "Cash on hand"
+          },
+          {
+            "key": "debt",
+            "label": "New debt"
+          },
+          {
+            "key": "equity",
+            "label": "New equity"
+          }
+        ],
+        "defaults": [
+          "1",
+          "0",
+          "0"
+        ],
+        "default_source": {
+          "kind": "design_default",
+          "note": "Funded from cash on hand."
+        }
+      },
+      "lag_quarters": {
+        "key": "lag_quarters",
+        "label": "Lag",
+        "explanation": "Quarters from the effective date until spending changes.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "12"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "0",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "ramp_quarters": {
+        "key": "ramp_quarters",
+        "label": "Ramp to full effect",
+        "explanation": "Quarters until spending reaches the new level.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "20"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "2",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "mechanism": [
+        {
+          "statement": "income_statement",
+          "effect": "R&D expense changes by the incremental spending, minus any capitalized share, so EBIT and EBITDA move by the same amount from the effective date."
+        },
+        {
+          "statement": "cash_flow",
+          "effect": "Operating cash flow changes by the full spending; a capitalized share is reported in investing cash flow instead."
+        },
+        {
+          "statement": "balance_sheet",
+          "effect": "Cash falls, or debt or equity rises, by the funded amount. A capitalized share becomes an intangible asset."
+        }
+      ],
+      "does_not_mean": "Higher R&D does not guarantee more revenue. Any revenue effect is an assumption with a delay, not an observed return.",
+      "evidence": "Unsupported hypothetical. No causal estimate exists for this decision type yet; the causal pipeline (Stage 20) studies R&D intensity first (decision D-03)."
+    },
+    {
+      "type": "workforce_restructure",
+      "label": "Workforce restructuring",
+      "summary": "Reduce or grow headcount.",
+      "magnitude": {
+        "label": "Headcount change",
+        "explanation": "Change of headcount as a share of current employees. −15% means 15 of every 100 employees leave; it does not mean operating costs fall by 15%.",
+        "units": [
+          {
+            "unit": "fraction_of_headcount",
+            "label": "% of headcount",
+            "value_unit": "fraction",
+            "base": "headcount",
+            "allowed": {
+              "min": "-0.6",
+              "max": "0.5"
+            },
+            "planning": {
+              "min": "-0.25",
+              "max": "0.2"
+            },
+            "step": "0.01",
+            "default_value": "-0.1"
+          }
+        ],
+        "default_unit": "fraction_of_headcount",
+        "default_source": {
+          "kind": "design_default",
+          "note": "A neutral starting value for the form."
+        }
+      },
+      "parameters": [
+        {
+          "key": "payroll_to_revenue",
+          "label": "Payroll as a share of revenue",
+          "explanation": "Turns a headcount share into dollars. Payroll means wages, salaries and benefits of all employees.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0.01",
+            "max": "0.9"
+          },
+          "planning": {
+            "min": "0.05",
+            "max": "0.5"
+          },
+          "step": "0.01",
+          "default": "0.25",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Total payroll is not in the demo data. Replace it with the company's own figure when known."
+          }
+        },
+        {
+          "key": "one_off_cost_months",
+          "label": "One-off cost per affected employee",
+          "explanation": "Severance and restructuring charges for a reduction, or hiring and onboarding costs for an increase, in months of salary.",
+          "unit": "months_of_salary",
+          "integer": false,
+          "uncertain": true,
+          "allowed": {
+            "min": "0",
+            "max": "24"
+          },
+          "planning": {
+            "min": "0",
+            "max": "12"
+          },
+          "step": "0.5",
+          "default": {
+            "shape": "triangular",
+            "low": "2",
+            "mode": "4",
+            "high": "8"
+          },
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Severance depends on country, contract and seniority; this range is a placeholder."
+          }
+        },
+        {
+          "key": "savings_realization",
+          "label": "Payroll change realized",
+          "explanation": "Share of the gross payroll change that shows up in costs, after retention bonuses, contractors and rehiring.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": true,
+          "allowed": {
+            "min": "0",
+            "max": "1"
+          },
+          "planning": {
+            "min": "0.3",
+            "max": "1"
+          },
+          "step": "0.05",
+          "default": {
+            "shape": "triangular",
+            "low": "0.5",
+            "mode": "0.7",
+            "high": "0.9"
+          },
+          "default_source": {
+            "kind": "placeholder",
+            "note": "No estimate exists yet; placeholder range."
+          }
+        },
+        {
+          "key": "productivity_loss",
+          "label": "Productivity loss",
+          "explanation": "Temporary loss of output among remaining employees during the ramp: lost knowledge, handovers, morale. It lowers revenue capacity.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": true,
+          "allowed": {
+            "min": "0",
+            "max": "0.5"
+          },
+          "planning": {
+            "min": "0",
+            "max": "0.2"
+          },
+          "step": "0.01",
+          "default": {
+            "shape": "triangular",
+            "low": "0",
+            "mode": "0.03",
+            "high": "0.1"
+          },
+          "default_source": {
+            "kind": "placeholder",
+            "note": "No estimate exists yet; placeholder range."
+          }
+        }
+      ],
+      "share_group": {
+        "key": "financing",
+        "label": "Financing",
+        "explanation": "How the cash needed for the decision is raised. Shares add up to exactly 100%; new equity dilutes existing shareholders.",
+        "members": [
+          {
+            "key": "cash",
+            "label": "Cash on hand"
+          },
+          {
+            "key": "debt",
+            "label": "New debt"
+          },
+          {
+            "key": "equity",
+            "label": "New equity"
+          }
+        ],
+        "defaults": [
+          "1",
+          "0",
+          "0"
+        ],
+        "default_source": {
+          "kind": "design_default",
+          "note": "One-off costs paid from cash on hand."
+        }
+      },
+      "lag_quarters": {
+        "key": "lag_quarters",
+        "label": "Lag",
+        "explanation": "Quarters from the effective date until headcount changes.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "8"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "1",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "ramp_quarters": {
+        "key": "ramp_quarters",
+        "label": "Ramp to full effect",
+        "explanation": "Quarters until the new headcount is fully in place.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "12"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "2",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "mechanism": [
+        {
+          "statement": "income_statement",
+          "effect": "Payroll cost changes by the realized share of the gross change. A one-off restructuring charge is recorded when the plan is committed."
+        },
+        {
+          "statement": "cash_flow",
+          "effect": "Severance is paid in cash; recurring savings or costs follow payroll."
+        },
+        {
+          "statement": "balance_sheet",
+          "effect": "A restructuring liability is recognized and then paid, lowering cash."
+        }
+      ],
+      "does_not_mean": "Cutting 15% of staff does not cut operating costs by 15%. Savings are partial, arrive with a delay and come with a one-off charge and execution risk.",
+      "evidence": "Unsupported hypothetical. No causal estimate exists for this decision type yet; the causal pipeline (Stage 20) studies R&D intensity first (decision D-03)."
+    },
+    {
+      "type": "acquisition",
+      "label": "Acquisition",
+      "summary": "Buy another company and fund the deal.",
+      "magnitude": {
+        "label": "Purchase price",
+        "explanation": "Enterprise value paid for the target. The buyer does not gain the price as value: what matters is what the target earns, the synergies and the cost of funding.",
+        "units": [
+          {
+            "unit": "usd",
+            "label": "USD",
+            "value_unit": "usd",
+            "base": "none",
+            "allowed": {
+              "min": "1000000",
+              "max": "1000000000000"
+            },
+            "planning": {
+              "min": "10000000",
+              "max": "50000000000"
+            },
+            "step": "1000000",
+            "default_value": "1000000000"
+          }
+        ],
+        "default_unit": "usd",
+        "default_source": {
+          "kind": "design_default",
+          "note": "An illustrative deal size for the form."
+        }
+      },
+      "parameters": [
+        {
+          "key": "target_revenue",
+          "label": "Target revenue per year",
+          "explanation": "Revenue the target adds per year after closing.",
+          "unit": "usd",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0",
+            "max": "1000000000000"
+          },
+          "planning": null,
+          "step": "1000000",
+          "default": "400000000",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Illustrative target. Enter the target's reported revenue."
+          }
+        },
+        {
+          "key": "target_ebitda_margin",
+          "label": "Target EBITDA margin",
+          "explanation": "EBITDA of the target as a share of its revenue.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "-1",
+            "max": "0.8"
+          },
+          "planning": {
+            "min": "-0.2",
+            "max": "0.5"
+          },
+          "step": "0.01",
+          "default": "0.15",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Illustrative margin. Enter the target's own."
+          }
+        },
+        {
+          "key": "deal_cost_fraction",
+          "label": "Deal costs",
+          "explanation": "Advisory, legal and financing fees as a share of the purchase price. They are expensed and funded together with the price.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0",
+            "max": "0.1"
+          },
+          "planning": {
+            "min": "0",
+            "max": "0.05"
+          },
+          "step": "0.005",
+          "default": "0.02",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Placeholder share of the price."
+          }
+        },
+        {
+          "key": "integration_cost_fraction",
+          "label": "Integration cost",
+          "explanation": "One-off cost to combine systems, sites and teams, as a share of the purchase price, spread over the ramp.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": true,
+          "allowed": {
+            "min": "0",
+            "max": "0.3"
+          },
+          "planning": {
+            "min": "0",
+            "max": "0.15"
+          },
+          "step": "0.005",
+          "default": {
+            "shape": "triangular",
+            "low": "0.02",
+            "mode": "0.05",
+            "high": "0.1"
+          },
+          "default_source": {
+            "kind": "placeholder",
+            "note": "No estimate exists yet; placeholder range."
+          }
+        },
+        {
+          "key": "cost_synergy_fraction",
+          "label": "Cost synergies",
+          "explanation": "Yearly cost savings at full integration, as a share of target revenue. They arrive at the end of the ramp, if at all.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": true,
+          "allowed": {
+            "min": "0",
+            "max": "0.3"
+          },
+          "planning": {
+            "min": "0",
+            "max": "0.1"
+          },
+          "step": "0.005",
+          "default": {
+            "shape": "triangular",
+            "low": "0",
+            "mode": "0.03",
+            "high": "0.06"
+          },
+          "default_source": {
+            "kind": "placeholder",
+            "note": "No estimate exists yet; placeholder range."
+          }
+        },
+        {
+          "key": "completion_probability",
+          "label": "Chance the deal closes",
+          "explanation": "Probability that the deal completes, for example after antitrust review. If it fails, deal costs are still spent.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0.05",
+            "max": "1"
+          },
+          "planning": {
+            "min": "0.5",
+            "max": "1"
+          },
+          "step": "0.05",
+          "default": "0.9",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Placeholder probability."
+          }
+        },
+        {
+          "key": "new_debt_interest_rate",
+          "label": "Interest rate on new debt",
+          "explanation": "Annual interest rate on the debt raised for this decision.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0",
+            "max": "0.25"
+          },
+          "planning": {
+            "min": "0.01",
+            "max": "0.12"
+          },
+          "step": "0.0025",
+          "default": "0.06",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Illustrative annual rate. The real rate depends on the market at the decision date and on the company's credit."
+          }
+        }
+      ],
+      "share_group": {
+        "key": "financing",
+        "label": "Financing",
+        "explanation": "How the cash needed for the decision is raised. Shares add up to exactly 100%; new equity dilutes existing shareholders.",
+        "members": [
+          {
+            "key": "cash",
+            "label": "Cash on hand"
+          },
+          {
+            "key": "debt",
+            "label": "New debt"
+          },
+          {
+            "key": "equity",
+            "label": "New equity"
+          }
+        ],
+        "defaults": [
+          "0.5",
+          "0.5",
+          "0"
+        ],
+        "default_source": {
+          "kind": "design_default",
+          "note": "An illustrative even split of cash and debt."
+        }
+      },
+      "lag_quarters": {
+        "key": "lag_quarters",
+        "label": "Lag",
+        "explanation": "Quarters from the effective date until the deal closes.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "8"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "2",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "ramp_quarters": {
+        "key": "ramp_quarters",
+        "label": "Ramp to full effect",
+        "explanation": "Quarters of integration until synergies are complete.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "20"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "8",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "mechanism": [
+        {
+          "statement": "income_statement",
+          "effect": "Target revenue and EBITDA are added from closing. Deal and integration costs are expensed. Interest on new debt and amortization of acquired intangibles lower net income."
+        },
+        {
+          "statement": "cash_flow",
+          "effect": "The cash part of the price and the deal costs flow out at closing; new debt flows in. Synergies improve operating cash flow after the ramp."
+        },
+        {
+          "statement": "balance_sheet",
+          "effect": "Goodwill and acquired intangibles appear. Debt rises by the debt share; new equity dilutes existing shareholders."
+        }
+      ],
+      "does_not_mean": "Paying USD 1bn does not add USD 1bn of value. Value depends on the target's cash flows, synergies, integration cost and the price of funding.",
+      "evidence": "Unsupported hypothetical. No causal estimate exists for this decision type yet; the causal pipeline (Stage 20) studies R&D intensity first (decision D-03)."
+    },
+    {
+      "type": "divestiture",
+      "label": "Divestiture or segment exit",
+      "summary": "Sell or close part of the business.",
+      "magnitude": {
+        "label": "Revenue divested",
+        "explanation": "Share of the company's revenue that leaves with the sold or closed unit.",
+        "units": [
+          {
+            "unit": "fraction_of_revenue",
+            "label": "% of revenue",
+            "value_unit": "fraction",
+            "base": "revenue",
+            "allowed": {
+              "min": "0.01",
+              "max": "0.9"
+            },
+            "planning": {
+              "min": "0.01",
+              "max": "0.5"
+            },
+            "step": "0.01",
+            "default_value": "0.1"
+          }
+        ],
+        "default_unit": "fraction_of_revenue",
+        "default_source": {
+          "kind": "design_default",
+          "note": "A neutral starting value for the form."
+        }
+      },
+      "parameters": [
+        {
+          "key": "segment_ebitda_margin",
+          "label": "EBITDA margin of the unit",
+          "explanation": "EBITDA margin of the unit that leaves. A negative margin means a loss-making unit; exiting it raises the group margin.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "-1",
+            "max": "0.8"
+          },
+          "planning": {
+            "min": "-0.3",
+            "max": "0.5"
+          },
+          "step": "0.01",
+          "default": "0.05",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Segment figures are not in the demo data; segment reporting arrives with XBRL normalization (Stage 11)."
+          }
+        },
+        {
+          "key": "disposal_proceeds",
+          "label": "Sale proceeds",
+          "explanation": "Cash received from a buyer. Zero means the unit is closed.",
+          "unit": "usd",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0",
+            "max": "1000000000000"
+          },
+          "planning": null,
+          "step": "1000000",
+          "default": "0",
+          "default_source": {
+            "kind": "design_default",
+            "note": "Zero: a closure without a buyer."
+          }
+        },
+        {
+          "key": "separation_cost_fraction",
+          "label": "Separation cost",
+          "explanation": "One-off cost to separate or close the unit (contracts, systems, sites), as a share of the unit's yearly revenue.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0",
+            "max": "0.5"
+          },
+          "planning": {
+            "min": "0",
+            "max": "0.1"
+          },
+          "step": "0.005",
+          "default": "0.03",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Placeholder share."
+          }
+        },
+        {
+          "key": "stranded_cost_fraction",
+          "label": "Stranded overhead",
+          "explanation": "Shared overhead that stays with the company after the unit leaves, as a share of the overhead the unit carried.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": true,
+          "allowed": {
+            "min": "0",
+            "max": "1"
+          },
+          "planning": {
+            "min": "0",
+            "max": "0.6"
+          },
+          "step": "0.05",
+          "default": {
+            "shape": "triangular",
+            "low": "0.1",
+            "mode": "0.25",
+            "high": "0.4"
+          },
+          "default_source": {
+            "kind": "placeholder",
+            "note": "No estimate exists yet; placeholder range."
+          }
+        },
+        {
+          "key": "tax_rate_on_gain",
+          "label": "Tax rate on the gain",
+          "explanation": "Tax paid on the gain from a sale.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0",
+            "max": "0.5"
+          },
+          "planning": null,
+          "step": "0.01",
+          "default": "0.21",
+          "default_source": {
+            "kind": "statutory_rate",
+            "note": "US federal corporate income tax rate since 2018 (Tax Cuts and Jobs Act). State taxes and the tax basis of the unit are not modelled."
+          }
+        }
+      ],
+      "share_group": {
+        "key": "use_of_proceeds",
+        "label": "Use of proceeds",
+        "explanation": "Where the net proceeds go. Shares add up to exactly 100%.",
+        "members": [
+          {
+            "key": "debt_paydown",
+            "label": "Pay down debt"
+          },
+          {
+            "key": "cash_retained",
+            "label": "Keep as cash"
+          },
+          {
+            "key": "shareholder_distribution",
+            "label": "Return to shareholders"
+          }
+        ],
+        "defaults": [
+          "0.5",
+          "0.5",
+          "0"
+        ],
+        "default_source": {
+          "kind": "design_default",
+          "note": "An illustrative even split."
+        }
+      },
+      "lag_quarters": {
+        "key": "lag_quarters",
+        "label": "Lag",
+        "explanation": "Quarters from the effective date until the unit leaves.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "8"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "2",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "ramp_quarters": {
+        "key": "ramp_quarters",
+        "label": "Ramp to full effect",
+        "explanation": "Quarters until stranded costs settle.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "12"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "2",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "mechanism": [
+        {
+          "statement": "income_statement",
+          "effect": "Revenue and EBITDA of the unit leave; stranded overhead stays. A gain or loss on sale and separation costs are one-off items."
+        },
+        {
+          "statement": "cash_flow",
+          "effect": "Proceeds flow in, less tax on the gain and separation costs. The unit's operating cash flow stops."
+        },
+        {
+          "statement": "balance_sheet",
+          "effect": "The unit's assets and liabilities leave. Proceeds pay down debt, stay as cash or go to shareholders."
+        }
+      ],
+      "does_not_mean": "Selling a unit with 10% of revenue does not cut costs by 10%. Shared overhead stays behind, and margins improve only if the unit earned less than the rest.",
+      "evidence": "Unsupported hypothetical. No causal estimate exists for this decision type yet; the causal pipeline (Stage 20) studies R&D intensity first (decision D-03)."
+    },
+    {
+      "type": "capex_expansion",
+      "label": "CAPEX expansion",
+      "summary": "Invest in new capacity.",
+      "magnitude": {
+        "label": "Investment",
+        "explanation": "Total capital expenditure of the program.",
+        "units": [
+          {
+            "unit": "usd",
+            "label": "USD",
+            "value_unit": "usd",
+            "base": "none",
+            "allowed": {
+              "min": "1000000",
+              "max": "500000000000"
+            },
+            "planning": {
+              "min": "10000000",
+              "max": "20000000000"
+            },
+            "step": "1000000",
+            "default_value": "500000000"
+          }
+        ],
+        "default_unit": "usd",
+        "default_source": {
+          "kind": "design_default",
+          "note": "An illustrative program size for the form."
+        }
+      },
+      "parameters": [
+        {
+          "key": "capacity_increase",
+          "label": "Capacity increase",
+          "explanation": "Extra capacity as a share of current capacity. Capacity is not revenue: revenue follows only as far as the new capacity is used and sold.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0.01",
+            "max": "2"
+          },
+          "planning": {
+            "min": "0.01",
+            "max": "0.5"
+          },
+          "step": "0.01",
+          "default": "0.3",
+          "default_source": {
+            "kind": "design_default",
+            "note": "Example from the scenario library (docs/16: new plant, +30% capacity)."
+          }
+        },
+        {
+          "key": "useful_life_years",
+          "label": "Useful life",
+          "explanation": "Years over which the investment is depreciated, straight-line.",
+          "unit": "years",
+          "integer": true,
+          "uncertain": false,
+          "allowed": {
+            "min": "3",
+            "max": "50"
+          },
+          "planning": {
+            "min": "5",
+            "max": "40"
+          },
+          "step": "1",
+          "default": "20",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Illustrative life; buildings last longer than equipment."
+          }
+        },
+        {
+          "key": "utilization",
+          "label": "Utilization after the ramp",
+          "explanation": "Share of the new capacity in use. Idle capacity still depreciates.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": true,
+          "allowed": {
+            "min": "0",
+            "max": "1"
+          },
+          "planning": {
+            "min": "0.3",
+            "max": "1"
+          },
+          "step": "0.05",
+          "default": {
+            "shape": "triangular",
+            "low": "0.5",
+            "mode": "0.75",
+            "high": "0.9"
+          },
+          "default_source": {
+            "kind": "placeholder",
+            "note": "No estimate exists yet; placeholder range."
+          }
+        },
+        {
+          "key": "new_debt_interest_rate",
+          "label": "Interest rate on new debt",
+          "explanation": "Annual interest rate on the debt raised for this decision.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0",
+            "max": "0.25"
+          },
+          "planning": {
+            "min": "0.01",
+            "max": "0.12"
+          },
+          "step": "0.0025",
+          "default": "0.06",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Illustrative annual rate. The real rate depends on the market at the decision date and on the company's credit."
+          }
+        }
+      ],
+      "share_group": {
+        "key": "financing",
+        "label": "Financing",
+        "explanation": "How the cash needed for the decision is raised. Shares add up to exactly 100%; new equity dilutes existing shareholders.",
+        "members": [
+          {
+            "key": "cash",
+            "label": "Cash on hand"
+          },
+          {
+            "key": "debt",
+            "label": "New debt"
+          },
+          {
+            "key": "equity",
+            "label": "New equity"
+          }
+        ],
+        "defaults": [
+          "0.5",
+          "0.5",
+          "0"
+        ],
+        "default_source": {
+          "kind": "design_default",
+          "note": "An illustrative even split of cash and debt."
+        }
+      },
+      "lag_quarters": {
+        "key": "lag_quarters",
+        "label": "Lag",
+        "explanation": "Quarters of construction before the capacity is ready.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "16"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "4",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "ramp_quarters": {
+        "key": "ramp_quarters",
+        "label": "Ramp to full effect",
+        "explanation": "Quarters until utilization reaches its level.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "20"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "4",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "mechanism": [
+        {
+          "statement": "income_statement",
+          "effect": "Depreciation starts when the asset is in use. Revenue and costs from the new capacity follow utilization."
+        },
+        {
+          "statement": "cash_flow",
+          "effect": "Investing cash flow falls by the investment during construction, so free cash flow drops before any return."
+        },
+        {
+          "statement": "balance_sheet",
+          "effect": "Property, plant and equipment rises; cash falls or debt rises."
+        }
+      ],
+      "does_not_mean": "+30% capacity does not mean +30% revenue. Revenue depends on demand, price and the ramp; idle capacity is a cost.",
+      "evidence": "Unsupported hypothetical. No causal estimate exists for this decision type yet; the causal pipeline (Stage 20) studies R&D intensity first (decision D-03)."
+    },
+    {
+      "type": "debt_refinance",
+      "label": "Debt refinancing",
+      "summary": "Replace existing debt with new debt.",
+      "magnitude": {
+        "label": "Amount refinanced",
+        "explanation": "Principal of existing debt replaced by new debt.",
+        "units": [
+          {
+            "unit": "usd",
+            "label": "USD",
+            "value_unit": "usd",
+            "base": "none",
+            "allowed": {
+              "min": "1000000",
+              "max": "500000000000"
+            },
+            "planning": {
+              "min": "10000000",
+              "max": "20000000000"
+            },
+            "step": "1000000",
+            "default_value": "1000000000"
+          }
+        ],
+        "default_unit": "usd",
+        "default_source": {
+          "kind": "design_default",
+          "note": "An illustrative amount for the form."
+        }
+      },
+      "parameters": [
+        {
+          "key": "current_interest_rate",
+          "label": "Current interest rate",
+          "explanation": "Annual rate on the debt that is replaced.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0",
+            "max": "0.3"
+          },
+          "planning": {
+            "min": "0.005",
+            "max": "0.15"
+          },
+          "step": "0.0025",
+          "default": "0.07",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Debt terms are not in the demo data. Enter the rate of the debt being replaced."
+          }
+        },
+        {
+          "key": "new_interest_rate",
+          "label": "New interest rate",
+          "explanation": "Annual rate on the new debt. Market rates at the decision date are uncertain.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": true,
+          "allowed": {
+            "min": "0",
+            "max": "0.3"
+          },
+          "planning": {
+            "min": "0.005",
+            "max": "0.15"
+          },
+          "step": "0.0025",
+          "default": {
+            "shape": "triangular",
+            "low": "0.045",
+            "mode": "0.055",
+            "high": "0.07"
+          },
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Placeholder range."
+          }
+        },
+        {
+          "key": "new_maturity_years",
+          "label": "New maturity",
+          "explanation": "Years until the new debt must be repaid.",
+          "unit": "years",
+          "integer": true,
+          "uncertain": false,
+          "allowed": {
+            "min": "1",
+            "max": "40"
+          },
+          "planning": {
+            "min": "2",
+            "max": "15"
+          },
+          "step": "1",
+          "default": "7",
+          "default_source": {
+            "kind": "design_default",
+            "note": "A common maturity for corporate bonds; adjust."
+          }
+        },
+        {
+          "key": "refinancing_fee_fraction",
+          "label": "Fees",
+          "explanation": "Fees and any prepayment penalty, as a share of the amount refinanced.",
+          "unit": "fraction",
+          "integer": false,
+          "uncertain": false,
+          "allowed": {
+            "min": "0",
+            "max": "0.05"
+          },
+          "planning": {
+            "min": "0",
+            "max": "0.02"
+          },
+          "step": "0.0025",
+          "default": "0.01",
+          "default_source": {
+            "kind": "placeholder",
+            "note": "Placeholder share."
+          }
+        }
+      ],
+      "share_group": null,
+      "lag_quarters": {
+        "key": "lag_quarters",
+        "label": "Lag",
+        "explanation": "Quarters from the effective date until the new debt is drawn.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "4"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "0",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "ramp_quarters": {
+        "key": "ramp_quarters",
+        "label": "Ramp to full effect",
+        "explanation": "Quarters until all old debt is replaced.",
+        "unit": "quarters",
+        "integer": true,
+        "uncertain": false,
+        "allowed": {
+          "min": "0",
+          "max": "4"
+        },
+        "planning": null,
+        "step": "1",
+        "default": "0",
+        "default_source": {
+          "kind": "design_default",
+          "note": "Typical timing for this kind of decision; adjust it."
+        }
+      },
+      "mechanism": [
+        {
+          "statement": "income_statement",
+          "effect": "Interest expense changes by the amount times the rate difference. Fees and any write-off of old issuance costs are one-off."
+        },
+        {
+          "statement": "cash_flow",
+          "effect": "Interest payments change; fees are paid at closing. Principal is replaced."
+        },
+        {
+          "statement": "balance_sheet",
+          "effect": "Debt stays about the same; its rate and maturity change."
+        }
+      ],
+      "does_not_mean": "A lower rate does not create value by itself if fees, a shorter maturity or covenants offset it. Past rates were set by the market, not chosen by the company.",
+      "evidence": "Unsupported hypothetical. No causal estimate exists for this decision type yet; the causal pipeline (Stage 20) studies R&D intensity first (decision D-03)."
+    }
+  ]
+}

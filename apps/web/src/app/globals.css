@@ -323,3 +323,17 @@ dialog::backdrop {
 .lineage-popover::backdrop {
   background: rgb(3 8 14 / 0.45);
 }
+
+/* Native range input next to a numeric field (slider guidance): brand colour only. */
+.decision-slider {
+  inline-size: 100%;
+  block-size: 2.5rem;
+  margin: 0;
+  accent-color: var(--color-mint);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-mint);
+    outline-offset: 4px;
+  }
+}

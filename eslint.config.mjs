@@ -63,7 +63,11 @@ export default defineConfig(
   },
   {
     // The entry point is the one place allowed to re-export generated files.
-    files: ["packages/contracts/ts/src/index.ts", "packages/contracts/ts/src/demo.ts"],
+    files: [
+      "packages/contracts/ts/src/index.ts",
+      "packages/contracts/ts/src/demo.ts",
+      "packages/contracts/ts/src/interventions.ts",
+    ],
     rules: { "no-restricted-imports": "off" },
   },
 );

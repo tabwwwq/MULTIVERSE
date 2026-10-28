@@ -141,7 +141,7 @@ export const SECTIONS: readonly Section[] = [
     group: "build",
     icon: GitBranchPlus,
     summary: "Define a management decision with its size, unit, timing, cost and financing.",
-    status: "planned",
+    status: "available",
     stage: 5,
     stageName: "Decision Builder",
     plans: [
@@ -157,14 +157,14 @@ export const SECTIONS: readonly Section[] = [
     group: "build",
     icon: SlidersHorizontal,
     summary:
-      "Edit the ranges and distributions behind a scenario, with the source of every default.",
-    status: "planned",
+      "Every parameter of every decision type, with its unit, ranges, default and the source of that default.",
+    status: "available",
     stage: 5,
     stageName: "Decision Builder",
     plans: [
-      "Controllable parameters with ranges and distributions.",
+      "Controllable parameters with allowed and planning ranges.",
       "The source of every default value.",
-      "Locked parameters for fair comparisons.",
+      "Locking parameters for paired comparisons arrives with the Monte Carlo engine (Stage 22).",
     ],
   },
   {

@@ -1,4 +1,4 @@
-import { ChevronDown, CircleAlert } from "lucide-react";
+import { ChevronDown, CircleAlert, TriangleAlert } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
  * text (never colour alone), 16px text and 48px targets, native elements only.
  */
 
-const CONTROL =
+export const CONTROL =
   "min-h-12 w-full rounded-control border border-line-strong bg-inset px-3 text-body text-ink " +
   "placeholder:text-ink-muted disabled:cursor-not-allowed disabled:border-line disabled:text-ink-muted " +
   "aria-invalid:border-negative user-invalid:border-negative";
@@ -18,16 +18,57 @@ interface FieldShellProps {
   label: string;
   hint?: string | undefined;
   error?: string | undefined;
+  /** A non-blocking note, e.g. "outside the planning range". */
+  warning?: string | undefined;
   required?: boolean | undefined;
   children: ReactNode;
 }
 
-function describedBy(id: string, hint?: string, error?: string): string | undefined {
-  const ids = [hint ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean);
+export function describedBy(
+  id: string,
+  hint?: string,
+  error?: string,
+  warning?: string,
+): string | undefined {
+  const ids = [
+    hint ? `${id}-hint` : null,
+    error ? `${id}-error` : null,
+    warning ? `${id}-warning` : null,
+  ].filter(Boolean);
   return ids.length > 0 ? ids.join(" ") : undefined;
 }
 
-function FieldShell({ id, label, hint, error, required, children }: FieldShellProps) {
+/** Field message with an icon and text, never colour alone. */
+export function FieldMessage({
+  id,
+  tone,
+  children,
+}: {
+  id: string;
+  tone: "error" | "warning";
+  children: ReactNode;
+}) {
+  const Icon = tone === "error" ? CircleAlert : TriangleAlert;
+  return (
+    <p
+      id={id}
+      className={`flex items-start gap-1.5 text-small ${tone === "error" ? "text-negative" : "text-warning"}`}
+    >
+      <Icon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+      <span>{children}</span>
+    </p>
+  );
+}
+
+export function FieldShell({
+  id,
+  label,
+  hint,
+  error,
+  warning,
+  required,
+  children,
+}: FieldShellProps) {
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-small font-medium text-ink">
@@ -41,10 +82,14 @@ function FieldShell({ id, label, hint, error, required, children }: FieldShellPr
         </p>
       ) : null}
       {error ? (
-        <p id={`${id}-error`} className="flex items-start gap-1.5 text-small text-negative">
-          <CircleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-          <span>{error}</span>
-        </p>
+        <FieldMessage id={`${id}-error`} tone="error">
+          {error}
+        </FieldMessage>
+      ) : null}
+      {warning ? (
+        <FieldMessage id={`${id}-warning`} tone="warning">
+          {warning}
+        </FieldMessage>
       ) : null}
     </div>
   );
@@ -53,8 +98,9 @@ function FieldShell({ id, label, hint, error, required, children }: FieldShellPr
 type InputProps = Omit<ComponentProps<"input">, "id"> & {
   id: string;
   label: string;
-  hint?: string;
-  error?: string;
+  hint?: string | undefined;
+  error?: string | undefined;
+  warning?: string | undefined;
   /** Unit shown after the value, e.g. "USD m" or "%". */
   unit?: string;
 };
@@ -64,19 +110,27 @@ export function TextField({
   label,
   hint,
   error,
+  warning,
   unit,
   required,
   className,
   ...props
 }: InputProps) {
   return (
-    <FieldShell id={id} label={label} hint={hint} error={error} required={required}>
+    <FieldShell
+      id={id}
+      label={label}
+      hint={hint}
+      error={error}
+      warning={warning}
+      required={required}
+    >
       <div className="flex items-stretch">
         <input
           id={id}
           required={required}
           aria-invalid={error ? true : undefined}
-          aria-describedby={describedBy(id, hint, error)}
+          aria-describedby={describedBy(id, hint, error, warning)}
           className={cn(CONTROL, unit && "rounded-r-none", className)}
           {...props}
         />
@@ -96,8 +150,9 @@ export function TextField({
 type SelectProps = Omit<ComponentProps<"select">, "id"> & {
   id: string;
   label: string;
-  hint?: string;
-  error?: string;
+  hint?: string | undefined;
+  error?: string | undefined;
+  warning?: string | undefined;
 };
 
 export function SelectField({
@@ -105,19 +160,27 @@ export function SelectField({
   label,
   hint,
   error,
+  warning,
   required,
   className,
   children,
   ...props
 }: SelectProps) {
   return (
-    <FieldShell id={id} label={label} hint={hint} error={error} required={required}>
+    <FieldShell
+      id={id}
+      label={label}
+      hint={hint}
+      error={error}
+      warning={warning}
+      required={required}
+    >
       <div className="relative">
         <select
           id={id}
           required={required}
           aria-invalid={error ? true : undefined}
-          aria-describedby={describedBy(id, hint, error)}
+          aria-describedby={describedBy(id, hint, error, warning)}
           className={cn(CONTROL, "appearance-none pr-10", className)}
           {...props}
         >

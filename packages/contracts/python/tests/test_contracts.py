@@ -7,12 +7,13 @@ from typing import Any
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from multiverse_contracts import MetricValue, ReproducibilityManifest
+from multiverse_contracts import MetricValue, ReproducibilityManifest, ScenarioDraft
 
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures"
 MODELS: dict[str, type[BaseModel]] = {
     "MetricValue": MetricValue,
     "ReproducibilityManifest": ReproducibilityManifest,
+    "ScenarioDraft": ScenarioDraft,
 }
 
 
@@ -35,8 +36,13 @@ def test_valid_payload_roundtrips(case: dict[str, Any]) -> None:
 def test_invalid_payload_is_rejected(case: dict[str, Any]) -> None:
     model = MODELS[case["model"]]
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValidationError) as caught:
         model.model_validate_json(json.dumps(case["payload"]))
+
+    # Decision cases name the rule they break; the web validator reports the same code.
+    if "code" in case:
+        codes = {error["type"] for error in caught.value.errors()}
+        assert f"[{case['code']}]" in str(caught.value) or case["code"] in codes
 
 
 def test_contracts_are_immutable() -> None:

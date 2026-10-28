@@ -11,3 +11,4 @@ package-lock.json
 uv.lock
 *.md
 packages/contracts/fixtures/demo
+packages/contracts/catalog

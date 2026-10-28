@@ -10,6 +10,18 @@
  */
 export type AccountingStandard = "us_gaap" | "ifrs";
 /**
+ * What the size of a decision is measured against (PRD FR-DE-02).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MagnitudeUnit".
+ */
+export type MagnitudeUnit =
+  | "fraction_of_previous_rnd_budget"
+  | "pp_of_revenue"
+  | "fraction_of_headcount"
+  | "fraction_of_revenue"
+  | "usd";
+/**
  * Identification status of a result. Never raised automatically (PRD FR-CA-02).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -97,6 +109,47 @@ export type MeasureUnit =
 export type UncertaintyType =
   "none" | "predictive_quantiles" | "conditional_model_quantiles" | "calibrated_interval";
 /**
+ * Where a default comes from. Only the first two are facts.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DefaultSourceKind".
+ */
+export type DefaultSourceKind =
+  "accounting_rule" | "statutory_rate" | "design_default" | "placeholder";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "FinancialStatement".
+ */
+export type FinancialStatement = "income_statement" | "cash_flow" | "balance_sheet";
+/**
+ * Unit of a parameter value. Fractions are shares: 0.25 means 25 %.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ValueUnit".
+ */
+export type ValueUnit =
+  "fraction" | "percentage_points" | "usd" | "quarters" | "years" | "months_of_salary";
+/**
+ * Company figure a relative magnitude refers to, read at the knowledge cutoff.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MagnitudeBase".
+ */
+export type MagnitudeBase = "previous_rnd_budget" | "revenue" | "headcount" | "none";
+/**
+ * The six decision types of V1 (PRD FR-DE-01, docs/16 "recommended first six").
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "InterventionType".
+ */
+export type InterventionType =
+  | "rnd_change"
+  | "workforce_restructure"
+  | "acquisition"
+  | "divestiture"
+  | "capex_expansion"
+  | "debt_refinance";
+/**
  * Inference mode shown in the trust header of every result (PRD §6).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -104,6 +157,160 @@ export type UncertaintyType =
  */
 export type ResultMode = "demo" | "empirical_forecast" | "causal_study" | "fictional_exploratory";
 
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Acquisition".
+ */
+export interface Acquisition {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  completion_probability: string;
+  cost_synergy_fraction: FixedValue | UniformRange | TriangularRange;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  deal_cost_fraction: string;
+  financing: FundingMix;
+  integration_cost_fraction: FixedValue | UniformRange | TriangularRange;
+  magnitude: Magnitude;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  new_debt_interest_rate: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  target_ebitda_margin: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  target_revenue: string;
+  timing: Timing;
+  type: "acquisition";
+}
+/**
+ * No uncertainty: the parameter takes exactly this value.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "FixedValue".
+ */
+export interface FixedValue {
+  shape: "fixed";
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  value: string;
+}
+/**
+ * Every value between ``low`` and ``high`` is equally likely.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "UniformRange".
+ */
+export interface UniformRange {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  high: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  low: string;
+  shape: "uniform";
+}
+/**
+ * Values between ``low`` and ``high``, most likely around ``mode``.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TriangularRange".
+ */
+export interface TriangularRange {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  high: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  low: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  mode: string;
+  shape: "triangular";
+}
+/**
+ * Shares of the funding need; they add up to exactly 1.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "FundingMix".
+ */
+export interface FundingMix {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  cash: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  debt: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  equity: string;
+}
+/**
+ * Size of a decision. The unit is required: 0.4 alone could mean four different things.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Magnitude".
+ */
+export interface Magnitude {
+  unit: MagnitudeUnit;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  value: string;
+}
+/**
+ * When the decision is announced, takes effect, and how long its effect takes.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Timing".
+ */
+export interface Timing {
+  announcement_date: string;
+  effective_date: string;
+  /**
+   * Quarters from the effective date to the first effect.
+   */
+  lag_quarters: number;
+  /**
+   * Quarters from the start until the full effect.
+   */
+  ramp_quarters: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CapexExpansion".
+ */
+export interface CapexExpansion {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  capacity_increase: string;
+  financing: FundingMix;
+  magnitude: Magnitude;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  new_debt_interest_rate: string;
+  timing: Timing;
+  type: "capex_expansion";
+  useful_life_years: number;
+  utilization: FixedValue | UniformRange | TriangularRange;
+}
 /**
  * Identity of a company. ``company_id`` stays the same through every rename and relisting.
  *
@@ -292,6 +499,238 @@ export interface Quantity {
   value: string;
 }
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DebtRefinance".
+ */
+export interface DebtRefinance {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  current_interest_rate: string;
+  magnitude: Magnitude;
+  new_interest_rate: FixedValue | UniformRange | TriangularRange;
+  new_maturity_years: number;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  refinancing_fee_fraction: string;
+  timing: Timing;
+  type: "debt_refinance";
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DefaultSource".
+ */
+export interface DefaultSource {
+  kind: DefaultSourceKind;
+  note: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Divestiture".
+ */
+export interface Divestiture {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  disposal_proceeds: string;
+  magnitude: Magnitude;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  segment_ebitda_margin: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  separation_cost_fraction: string;
+  stranded_cost_fraction: FixedValue | UniformRange | TriangularRange;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  tax_rate_on_gain: string;
+  timing: Timing;
+  type: "divestiture";
+  use_of_proceeds: ProceedsAllocation;
+}
+/**
+ * Shares of the net proceeds of a divestiture; they add up to exactly 1.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ProceedsAllocation".
+ */
+export interface ProceedsAllocation {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  cash_retained: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  debt_paydown: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  shareholder_distribution: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "InterventionCatalog".
+ */
+export interface InterventionCatalog {
+  contracts_version: string;
+  default_seed: number;
+  default_sensitivity_points: number;
+  horizon_quarters: ParameterSpec;
+  interventions: InterventionSpec[];
+  planning_range_note: string;
+  sensitivity_max_parameters: number;
+  /**
+   * @minItems 1
+   */
+  sensitivity_points: [number, ...number[]];
+}
+/**
+ * One input of a decision. ``uncertain`` parameters take a distribution.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ParameterSpec".
+ */
+export interface ParameterSpec {
+  allowed: ValueRange;
+  default: string | (FixedValue | UniformRange | TriangularRange);
+  default_source: DefaultSource;
+  explanation: string;
+  integer: boolean;
+  key: string;
+  label: string;
+  /**
+   * Values outside it are flagged out of distribution.
+   */
+  planning: ValueRange | null;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  step: string;
+  uncertain: boolean;
+  unit: ValueUnit;
+}
+/**
+ * Inclusive range of decimal values.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ValueRange".
+ */
+export interface ValueRange {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  max: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  min: string;
+}
+/**
+ * Definition of one decision type, following the template of docs/16.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "InterventionSpec".
+ */
+export interface InterventionSpec {
+  does_not_mean: string;
+  evidence: string;
+  label: string;
+  lag_quarters: ParameterSpec;
+  magnitude: MagnitudeSpec;
+  /**
+   * @minItems 1
+   */
+  mechanism: [MechanismEffect, ...MechanismEffect[]];
+  parameters: ParameterSpec[];
+  ramp_quarters: ParameterSpec;
+  share_group: ShareGroupSpec | null;
+  summary: string;
+  type: InterventionType;
+}
+/**
+ * Size of the decision. Several units mean several different decisions.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MagnitudeSpec".
+ */
+export interface MagnitudeSpec {
+  default_source: DefaultSource;
+  /**
+   * None when the user must choose: the unit changes what the number means.
+   */
+  default_unit: MagnitudeUnit | null;
+  explanation: string;
+  label: string;
+  /**
+   * @minItems 1
+   */
+  units: [MagnitudeUnitSpec, ...MagnitudeUnitSpec[]];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MagnitudeUnitSpec".
+ */
+export interface MagnitudeUnitSpec {
+  allowed: ValueRange;
+  base: MagnitudeBase;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  default_value: string;
+  /**
+   * Shown after the number, e.g. '% of revenue'.
+   */
+  label: string;
+  planning: ValueRange | null;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  step: string;
+  unit: MagnitudeUnit;
+  value_unit: ValueUnit;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MechanismEffect".
+ */
+export interface MechanismEffect {
+  effect: string;
+  statement: FinancialStatement;
+}
+/**
+ * Shares that must add up to exactly 100 % (PRD FR-DE-04, docs/07).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ShareGroupSpec".
+ */
+export interface ShareGroupSpec {
+  default_source: DefaultSource;
+  /**
+   * Items: Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  defaults: string[];
+  explanation: string;
+  key: "financing" | "use_of_proceeds";
+  label: string;
+  /**
+   * @minItems 2
+   */
+  members: [ShareMember, ShareMember, ...ShareMember[]];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ShareMember".
+ */
+export interface ShareMember {
+  key: string;
+  label: string;
+}
+/**
  * Identity card of one result. Two results with equal manifests must be identical.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -314,4 +753,67 @@ export interface ReproducibilityManifest {
   scenario_id: string;
   seed: number;
   source_ids: string[];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RndChange".
+ */
+export interface RndChange {
+  adoption_delay_quarters: FixedValue | UniformRange | TriangularRange;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  capitalized_fraction: string;
+  financing: FundingMix;
+  magnitude: Magnitude;
+  timing: Timing;
+  type: "rnd_change";
+}
+/**
+ * A decision for one company at one knowledge cutoff, ready to validate and run.
+ *
+ * ``as_of`` is a date: the knowledge cutoff is the end of that day in UTC, as in the
+ * dossier (ADR-0002). A decision made at the cutoff can be announced on the cutoff
+ * day at the earliest.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ScenarioDraft".
+ */
+export interface ScenarioDraft {
+  as_of: string;
+  company_id: string;
+  contracts_version: string;
+  data_origin: DataOrigin;
+  decision:
+    RndChange | WorkforceRestructure | Acquisition | Divestiture | CapexExpansion | DebtRefinance;
+  horizon_quarters: number;
+  seed: number;
+  sensitivity: SensitivitySettings;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "WorkforceRestructure".
+ */
+export interface WorkforceRestructure {
+  financing: FundingMix;
+  magnitude: Magnitude;
+  one_off_cost_months: FixedValue | UniformRange | TriangularRange;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  payroll_to_revenue: string;
+  productivity_loss: FixedValue | UniformRange | TriangularRange;
+  savings_realization: FixedValue | UniformRange | TriangularRange;
+  timing: Timing;
+  type: "workforce_restructure";
+}
+/**
+ * One-at-a-time sensitivity over uncertain parameters of the decision.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SensitivitySettings".
+ */
+export interface SensitivitySettings {
+  parameters: string[];
+  points: number;
 }

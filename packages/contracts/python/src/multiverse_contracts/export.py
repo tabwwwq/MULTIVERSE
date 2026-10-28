@@ -14,6 +14,8 @@ from pydantic import BaseModel
 from pydantic.json_schema import models_json_schema
 
 from multiverse_contracts.companies import CompanyDossier
+from multiverse_contracts.decisions import ScenarioDraft
+from multiverse_contracts.interventions import InterventionCatalog
 from multiverse_contracts.manifest import ReproducibilityManifest
 from multiverse_contracts.metrics import MetricValue
 from multiverse_contracts.version import CONTRACTS_VERSION
@@ -26,6 +28,8 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     MetricValue,
     ReproducibilityManifest,
     CompanyDossier,
+    ScenarioDraft,
+    InterventionCatalog,
 )
 
 

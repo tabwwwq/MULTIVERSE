@@ -6,7 +6,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./demo": "./src/demo.ts"
+    "./demo": "./src/demo.ts",
+    "./interventions": "./src/interventions.ts"
   },
   "scripts": {
     "gen": "node scripts/generate.mjs",

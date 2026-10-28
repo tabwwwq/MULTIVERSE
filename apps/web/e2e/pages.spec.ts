@@ -20,6 +20,18 @@ const PAGES = [
     name: "dossier-unsupported",
     heading: "Valtrix AG",
   },
+  { path: "/decisions", name: "decisions-index", heading: "Decision Builder" },
+  {
+    path: "/decisions?company=5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13&type=acquisition",
+    name: "decision-builder",
+    heading: "Decision Builder",
+  },
+  {
+    path: "/decisions?company=8d2c6e1a-4f9b-4b70-8e3d-c5a1f7b2e906",
+    name: "decision-unsupported",
+    heading: "Decision Builder",
+  },
+  { path: "/assumptions", name: "assumptions", heading: "Assumption Matrix" },
 ] as const;
 
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
@@ -66,7 +78,7 @@ for (const target of PAGES) {
 
 test("every planned section shows an honest placeholder without data", async ({ page }) => {
   const planned = SECTIONS.filter((section) => section.status === "planned");
-  expect(planned.length).toBe(16);
+  expect(planned.length).toBe(14);
   for (const section of planned) {
     const response = await page.goto(section.href);
     expect(response?.status(), section.href).toBe(200);

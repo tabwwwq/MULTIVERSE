@@ -10,7 +10,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 - **Forecasts are not causal effects.** Predictive accuracy does not validate the effect of a decision. A result is labelled causal only after documented identification diagnostics.
 - **Intervals are model quantiles** until their coverage is measured on held-out companies and dates.
 - **No investment advice,** no share price prediction, no "fair market value".
-- **Current status: V1 interactive prototype, Gate A passed (Stage 08).** The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
+- **Current status: Stage 09 (source policy and Data Catalog) in review.** The Data Catalog describes the official sources (SEC EDGAR, FRED/ALFRED, ECB, World Bank) as metadata only; no data has been downloaded. The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
 
 ## Status
 
@@ -25,12 +25,13 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 | 06 | Timeline charts and scenario comparison on mock results | Accepted |
 | 07 | Research notebook: saved scenarios, revisions, reports, on this device only | Accepted |
 | 08 | Gate A: frontend audit, V1 release note (`docs/releases/`) | Accepted |
-| 09–26 | Data → ML → causal → finance → publication | Planned |
+| 09 | Source policy and Data Catalog: licences, rate limits, risk register, acquisition plan (metadata only) | Review |
+| 10–26 | Data → ML → causal → finance → publication | Planned |
 
 ## Repository layout
 
 ```text
-apps/web/              Next.js web app: design system, shell, explorer, dossier, decision builder, timelines, compare, notebook
+apps/web/              Next.js web app: design system, shell, explorer, dossier, decision builder, timelines, compare, notebook, data catalog
 services/api/          FastAPI HTTP API — composition root: multiverse_api.main:create_app
 services/worker/       Background jobs: simulation and training (queue in Stage 18)
 packages/contracts/    Shared contracts — single source of truth (ADR-0008)
@@ -38,7 +39,7 @@ packages/contracts/    Shared contracts — single source of truth (ADR-0008)
   schemas/             Generated JSON Schema
   ts/                  Generated TypeScript types (@multiverse/contracts)
   fixtures/            Valid and invalid examples shared by tests; demo/ holds the synthetic companies
-  catalog/             Generated intervention catalog: units, ranges, defaults (ADR-0013)
+  catalog/             Generated intervention catalog (ADR-0013) and source catalog: licences, limits, risks, plan (ADR-0016)
   fixtures/mock/       Generated mock scenario results for the charts (ADR-0014), not forecasts
   fixtures/notebook/   A valid notebook export shared by the Python and web tests (ADR-0015)
 packages/config/       Validated settings and environment profiles (ADR-0010)
@@ -119,7 +120,7 @@ npm run dev:api
 | `npm run check:ts` | TypeScript part of the gate |
 | `npm test` | All tests (pytest + vitest) |
 | `npm run format` | Auto-format Python and TypeScript |
-| `npm run contracts:gen` | Regenerate JSON Schema, demo fixtures, the intervention catalog, mock results and TypeScript types after changing `packages/contracts/python` |
+| `npm run contracts:gen` | Regenerate JSON Schema, demo fixtures, the intervention and source catalogs, mock results and TypeScript types after changing `packages/contracts/python` |
 | `npm run contracts:check` | Fail if generated contracts are stale |
 | `npm run check:web` | Production build of the web app and Playwright tests at 1440, 768 and 390 px |
 | `npm run dev:web` | Run the web app with hot reload on localhost:3000 |

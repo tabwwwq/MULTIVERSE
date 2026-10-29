@@ -1,0 +1,2359 @@
+{
+  "contracts_version": "0.6.0",
+  "verified_on": "2026-10-29",
+  "automatic_downloads": "disabled",
+  "sources": [
+    {
+      "source_id": "sec-edgar",
+      "name": "SEC EDGAR",
+      "publisher": "U.S. Securities and Exchange Commission",
+      "region": "United States",
+      "priority": 1,
+      "access": "public_access",
+      "authentication": "declared_user_agent",
+      "key_status": "not_required",
+      "licence": {
+        "name": "SEC.gov website dissemination policy",
+        "summary": "Information on sec.gov is public information and may be copied or further distributed; the SEC asks for citation as the source and forbids use of its seal and logos. Resale is not addressed, so it is not treated as granted.",
+        "redistribution": "public_information",
+        "resale": "not_granted",
+        "attribution": "Source: U.S. Securities and Exchange Commission, EDGAR.",
+        "exceptions": "The SEC cannot guarantee the accuracy of the financial statement data sets; they do not replace the filings."
+      },
+      "rate_limit": {
+        "documented": "No more than 10 requests per second in total, regardless of the number of machines; the SEC may limit request rates and block IP addresses that submit excessive requests.",
+        "documented_requests_per_second": "10",
+        "chosen_requests_per_second": "2"
+      },
+      "request_rules": [
+        "Declare a User-Agent with an organisation name and a contact email; the app refuses to start downloads without MULTIVERSE_SEC_USER_AGENT containing '@'.",
+        "Send Accept-Encoding: gzip, deflate.",
+        "Download only what is needed: history from bulk files, not API loops.",
+        "One request at a time through a token bucket of 2 requests per second for the whole process.",
+        "No crawling of sec.gov pages; only the documented API and bulk file addresses."
+      ],
+      "retry_policy": "Retry only 429, 500, 502, 503 and 504, at most 3 times, with exponential backoff from 10 seconds plus jitter and Retry-After when sent. Stop the whole run on 403: it means the access policy was violated.",
+      "checksum_policy": "The SEC publishes no checksums for these files, so MULTIVERSE computes SHA-256 on receipt, stores it with Last-Modified and ETag, and never overwrites a raw file: a changed file is a new snapshot.",
+      "official_hosts": [
+        "www.sec.gov",
+        "data.sec.gov"
+      ],
+      "docs": [
+        {
+          "title": "EDGAR application programming interfaces",
+          "url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+          "kind": "api_reference"
+        },
+        {
+          "title": "Accessing EDGAR data (fair access)",
+          "url": "https://www.sec.gov/search-filings/edgar-search-assistance/accessing-edgar-data",
+          "kind": "access_policy"
+        },
+        {
+          "title": "SEC.gov privacy and security policy: website dissemination and internet security",
+          "url": "https://www.sec.gov/privacy",
+          "kind": "terms"
+        }
+      ],
+      "datasets": [
+        {
+          "dataset_id": "sec-submissions",
+          "title": "Submissions (filing history)",
+          "description": "Per company: current name, former names with dates, tickers, exchanges, SIC, fiscal year end, filer category and the list of filings.",
+          "endpoints": [
+            "https://data.sec.gov/submissions/CIK{cik10}.json",
+            "https://www.sec.gov/Archives/edgar/daily-index/bulkdata/submissions.zip"
+          ],
+          "formats": [
+            "json",
+            "zip"
+          ],
+          "update_frequency": "API in real time (typical delay under a second); the ZIP is recompiled nightly at about 03:00 ET.",
+          "knowledge_time": "acceptanceDateTime of each filing, with filingDate as the official date; the time zone of acceptanceDateTime is checked against the filing index in Stage 10 before it is used for leakage rules.",
+          "revision_semantics": "Company fields show the current state (current tickers only); history comes from formerNames and from the filings themselves. Amendments are separate filings such as 10-K/A.",
+          "coverage": "Every EDGAR filer. The recent block holds at least one year or 1,000 filings; older filings are in linked files.",
+          "identifiers": [
+            "CIK, 10 digits with leading zeros",
+            "Accession number",
+            "Ticker"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "cik",
+              "type": "string",
+              "role": "identifier",
+              "description": "Central Index Key, the stable company identifier."
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "role": "metadata",
+              "description": "Current registered name."
+            },
+            {
+              "name": "formerNames",
+              "type": "array",
+              "role": "metadata",
+              "description": "Earlier names with from and to."
+            },
+            {
+              "name": "tickers",
+              "type": "array",
+              "role": "identifier",
+              "description": "Current tickers only; reused over time."
+            },
+            {
+              "name": "exchanges",
+              "type": "array",
+              "role": "metadata",
+              "description": "Current listing exchanges."
+            },
+            {
+              "name": "sic",
+              "type": "code",
+              "role": "metadata",
+              "description": "Standard Industrial Classification code."
+            },
+            {
+              "name": "fiscalYearEnd",
+              "type": "code",
+              "role": "period",
+              "description": "Month and day, for example 1231."
+            },
+            {
+              "name": "category",
+              "type": "string",
+              "role": "metadata",
+              "description": "Filer category, for example large accelerated."
+            },
+            {
+              "name": "filings.recent.accessionNumber",
+              "type": "string",
+              "role": "identifier",
+              "description": "Identifier of a filing."
+            },
+            {
+              "name": "filings.recent.form",
+              "type": "code",
+              "role": "metadata",
+              "description": "Form type: 10-K, 10-Q, 8-K, 10-K/A."
+            },
+            {
+              "name": "filings.recent.reportDate",
+              "type": "date",
+              "role": "period",
+              "description": "Period the filing reports on."
+            },
+            {
+              "name": "filings.recent.filingDate",
+              "type": "date",
+              "role": "knowledge_time",
+              "description": "Official filing date."
+            },
+            {
+              "name": "filings.recent.acceptanceDateTime",
+              "type": "datetime",
+              "role": "knowledge_time",
+              "description": "When EDGAR accepted it."
+            },
+            {
+              "name": "filings.recent.isXBRL",
+              "type": "boolean",
+              "role": "metadata",
+              "description": "Whether the filing has XBRL data."
+            }
+          ],
+          "size": null,
+          "docs": [
+            {
+              "title": "EDGAR application programming interfaces",
+              "url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+              "kind": "api_reference"
+            }
+          ]
+        },
+        {
+          "dataset_id": "sec-companyfacts",
+          "title": "XBRL company facts and frames",
+          "description": "All XBRL facts of a company from standard taxonomies (us-gaap, ifrs-full, dei, srt) that apply to the whole filing entity, one array per unit.",
+          "endpoints": [
+            "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik10}.json",
+            "https://data.sec.gov/api/xbrl/companyconcept/CIK{cik10}/{taxonomy}/{tag}.json",
+            "https://data.sec.gov/api/xbrl/frames/{taxonomy}/{tag}/{unit}/{period}.json",
+            "https://www.sec.gov/Archives/edgar/daily-index/xbrl/companyfacts.zip"
+          ],
+          "formats": [
+            "json",
+            "zip"
+          ],
+          "update_frequency": "API typically within a minute of dissemination; the ZIP is recompiled nightly at about 03:00 ET.",
+          "knowledge_time": "filed (date of the filing that reported the fact), with accn.",
+          "revision_semantics": "The same period can appear several times: in later filings, restated, or as comparatives. Facts are kept with their accession and filing date; the original value is the earliest filed one, the latest is the newest.",
+          "coverage": "Forms 10-Q, 10-K, 8-K, 20-F, 40-F, 6-K and variants; only non-custom taxonomies, so company extension tags are missing.",
+          "identifiers": [
+            "CIK",
+            "Taxonomy and tag",
+            "Unit",
+            "Accession number (accn)"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "cik",
+              "type": "integer",
+              "role": "identifier",
+              "description": "Company identifier."
+            },
+            {
+              "name": "entityName",
+              "type": "string",
+              "role": "metadata",
+              "description": "Company name."
+            },
+            {
+              "name": "facts.{taxonomy}.{tag}",
+              "type": "object",
+              "role": "identifier",
+              "description": "Concept, with label and description."
+            },
+            {
+              "name": "units.{unit}",
+              "type": "array",
+              "role": "unit",
+              "description": "Unit, for example USD or shares."
+            },
+            {
+              "name": "start",
+              "type": "date",
+              "role": "period",
+              "description": "Start of a duration; absent for instants."
+            },
+            {
+              "name": "end",
+              "type": "date",
+              "role": "period",
+              "description": "End of the duration or the instant."
+            },
+            {
+              "name": "val",
+              "type": "decimal",
+              "role": "value",
+              "description": "Reported value in the unit, not scaled."
+            },
+            {
+              "name": "accn",
+              "type": "string",
+              "role": "revision",
+              "description": "Accession number of the filing that reported it."
+            },
+            {
+              "name": "fy",
+              "type": "integer",
+              "role": "period",
+              "description": "Fiscal year of the filing, not of the fact."
+            },
+            {
+              "name": "fp",
+              "type": "code",
+              "role": "period",
+              "description": "Fiscal period of the filing: FY, Q1, Q2, Q3."
+            },
+            {
+              "name": "form",
+              "type": "code",
+              "role": "metadata",
+              "description": "Form of the filing."
+            },
+            {
+              "name": "filed",
+              "type": "date",
+              "role": "knowledge_time",
+              "description": "Filing date of the reporting filing."
+            },
+            {
+              "name": "frame",
+              "type": "code",
+              "role": "period",
+              "description": "Calendar frame such as CY2019Q1I, when assigned."
+            }
+          ],
+          "size": "The size of companyfacts.zip is read with one HEAD request after the owner's decision; it is not assumed here.",
+          "docs": [
+            {
+              "title": "EDGAR application programming interfaces",
+              "url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+              "kind": "api_reference"
+            }
+          ]
+        },
+        {
+          "dataset_id": "sec-financial-statement-data-sets",
+          "title": "Financial Statement Data Sets",
+          "description": "Numbers from the face financial statements of every XBRL filing, quarterly, presented without change from the reports as filed.",
+          "endpoints": [
+            "https://www.sec.gov/files/dera/data/financial-statement-data-sets/{yyyy}q{q}.zip"
+          ],
+          "formats": [
+            "zip",
+            "tsv"
+          ],
+          "update_frequency": "Quarterly; a filing made after a quarter's last business day appears in the next quarter's file.",
+          "knowledge_time": "filed and accepted of the submission (SUB table).",
+          "revision_semantics": "As filed: an amendment or a later filing is a new submission; nothing is overwritten, which makes these files the source of original vintages.",
+          "coverage": "January 2009 to September 2026 (71 quarterly files at the check date).",
+          "identifiers": [
+            "adsh (accession number)",
+            "CIK",
+            "Tag and taxonomy version"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "sub.adsh",
+              "type": "string",
+              "role": "identifier",
+              "description": "Accession number, key of the submission."
+            },
+            {
+              "name": "sub.cik",
+              "type": "integer",
+              "role": "identifier",
+              "description": "Company identifier."
+            },
+            {
+              "name": "sub.form",
+              "type": "code",
+              "role": "metadata",
+              "description": "Form type."
+            },
+            {
+              "name": "sub.period",
+              "type": "date",
+              "role": "period",
+              "description": "Balance sheet date of the report."
+            },
+            {
+              "name": "sub.fy",
+              "type": "integer",
+              "role": "period",
+              "description": "Fiscal year."
+            },
+            {
+              "name": "sub.fp",
+              "type": "code",
+              "role": "period",
+              "description": "Fiscal period."
+            },
+            {
+              "name": "sub.filed",
+              "type": "date",
+              "role": "knowledge_time",
+              "description": "Filing date."
+            },
+            {
+              "name": "sub.accepted",
+              "type": "datetime",
+              "role": "knowledge_time",
+              "description": "Acceptance date and time."
+            },
+            {
+              "name": "sub.prevrpt",
+              "type": "boolean",
+              "role": "revision",
+              "description": "Whether a later filing amended this one."
+            },
+            {
+              "name": "num.tag",
+              "type": "string",
+              "role": "identifier",
+              "description": "Concept name."
+            },
+            {
+              "name": "num.version",
+              "type": "string",
+              "role": "identifier",
+              "description": "Taxonomy, or the accession for custom tags."
+            },
+            {
+              "name": "num.ddate",
+              "type": "date",
+              "role": "period",
+              "description": "End date of the value."
+            },
+            {
+              "name": "num.qtrs",
+              "type": "integer",
+              "role": "period",
+              "description": "Duration in quarters; 0 for an instant."
+            },
+            {
+              "name": "num.uom",
+              "type": "code",
+              "role": "unit",
+              "description": "Unit of measure."
+            },
+            {
+              "name": "num.segments",
+              "type": "string",
+              "role": "metadata",
+              "description": "Segment of the value; empty when consolidated."
+            },
+            {
+              "name": "num.coreg",
+              "type": "string",
+              "role": "metadata",
+              "description": "Co-registrant; empty for the filer itself."
+            },
+            {
+              "name": "num.value",
+              "type": "decimal",
+              "role": "value",
+              "description": "Value as reported."
+            }
+          ],
+          "size": "From 13.22 KB (2009 Q1) to 121.92 MB (2025 Q3) per quarterly ZIP.",
+          "docs": [
+            {
+              "title": "Financial Statement Data Sets",
+              "url": "https://www.sec.gov/data-research/sec-markets-data/financial-statement-data-sets",
+              "kind": "dataset_page"
+            },
+            {
+              "title": "Financial Statement Data Sets: scope, organisation and table definitions",
+              "url": "https://www.sec.gov/files/financial-statement-data-sets.pdf",
+              "kind": "documentation"
+            }
+          ]
+        },
+        {
+          "dataset_id": "sec-financial-statement-notes-data-sets",
+          "title": "Financial Statement and Notes Data Sets",
+          "description": "Text and numbers from all financial statements and their notes, flattened; needed where a metric is only disclosed in a note.",
+          "endpoints": [
+            "https://www.sec.gov/files/dera/data/financial-statement-notes-data-sets/{yyyy}_{mm}_notes.zip",
+            "https://www.sec.gov/files/dera/data/financial-statement-notes-data-sets/{yyyy}q{q}_notes.zip"
+          ],
+          "formats": [
+            "zip",
+            "tsv"
+          ],
+          "update_frequency": "Monthly since November 2020, quarterly before; monthly files are consolidated into quarterly files after a year.",
+          "knowledge_time": "filed and accepted of the submission.",
+          "revision_semantics": "As filed, like the Financial Statement Data Sets.",
+          "coverage": "January 2009 to September 2026.",
+          "identifiers": [
+            "adsh (accession number)",
+            "CIK",
+            "Tag and taxonomy version"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "adsh",
+              "type": "string",
+              "role": "identifier",
+              "description": "Accession number."
+            },
+            {
+              "name": "tag",
+              "type": "string",
+              "role": "identifier",
+              "description": "Concept name."
+            },
+            {
+              "name": "value",
+              "type": "decimal",
+              "role": "value",
+              "description": "Numeric value; text facts are in a separate table."
+            }
+          ],
+          "size": "From 27.41 KB (2009 Q1) to 810.44 MB (2021 Q1) per file.",
+          "docs": [
+            {
+              "title": "Financial Statement and Notes Data Sets",
+              "url": "https://www.sec.gov/data-research/sec-markets-data/financial-statement-notes-data-sets",
+              "kind": "dataset_page"
+            },
+            {
+              "title": "The Financial Statement and Notes Data: table definitions",
+              "url": "https://www.sec.gov/files/aqfsn_1.pdf",
+              "kind": "documentation"
+            }
+          ]
+        },
+        {
+          "dataset_id": "sec-filing-documents",
+          "title": "Filing documents (EDGAR archives)",
+          "description": "The filings themselves: 10-K, 10-Q and 8-K documents, the evidence for decision events in the event registry.",
+          "endpoints": [
+            "https://www.sec.gov/Archives/edgar/data/{cik}/{accession_no_dashes}/"
+          ],
+          "formats": [
+            "html",
+            "xml"
+          ],
+          "update_frequency": "As filed.",
+          "knowledge_time": "Acceptance date and time of the filing.",
+          "revision_semantics": "Never changed; amendments are new filings.",
+          "coverage": "All EDGAR filings.",
+          "identifiers": [
+            "CIK",
+            "Accession number",
+            "Primary document name"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "primaryDocument",
+              "type": "string",
+              "role": "identifier",
+              "description": "File name of the main document."
+            },
+            {
+              "name": "items",
+              "type": "string",
+              "role": "metadata",
+              "description": "8-K item numbers, for example 2.01 for an acquisition."
+            }
+          ],
+          "size": null,
+          "docs": [
+            {
+              "title": "Accessing EDGAR data (fair access)",
+              "url": "https://www.sec.gov/search-filings/edgar-search-assistance/accessing-edgar-data",
+              "kind": "access_policy"
+            }
+          ]
+        }
+      ],
+      "verified_on": "2026-10-29",
+      "download": {
+        "status": "awaiting_owner_decision",
+        "decided_on": null,
+        "note": "No automatic download until the owner approves this source (Stage 10 or later)."
+      },
+      "notes": [
+        "data.sec.gov does not support CORS: requests come from the server, never the browser.",
+        "The SEC offers no technical support for scripted downloads."
+      ]
+    },
+    {
+      "source_id": "fred-alfred",
+      "name": "FRED and ALFRED",
+      "publisher": "Federal Reserve Bank of St. Louis",
+      "region": "United States",
+      "priority": 2,
+      "access": "api_key",
+      "authentication": "api_key",
+      "key_status": "owner_must_register",
+      "licence": {
+        "name": "FRED API terms of use",
+        "summary": "A registered key is required. Series owned by third parties need the owner's permission for anything beyond personal use; they carry 'Copyright' in their notes. Applications must show that they use the FRED API without endorsement.",
+        "redistribution": "permission_required",
+        "resale": "not_granted",
+        "attribution": "This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.",
+        "exceptions": "Free access does not grant permission for third-party series; terms may change without notice."
+      },
+      "rate_limit": {
+        "documented": "No number is published; the Bank may limit bandwidth or transactions and forbids an unreasonable amount of bandwidth.",
+        "documented_requests_per_second": null,
+        "chosen_requests_per_second": "1"
+      },
+      "request_rules": [
+        "The key comes from MULTIVERSE_FRED_API_KEY (a secret, never logged, never in the browser or the repository).",
+        "Request vintages explicitly (realtime_start, realtime_end or vintage_dates); never use today's values for history.",
+        "Check each series' notes for 'Copyright' before storing it."
+      ],
+      "retry_policy": "Retry 429 and 5xx at most 3 times with exponential backoff from 5 seconds; stop on 400 or 401, which mean a bad request or key.",
+      "checksum_policy": "No checksums are published: SHA-256 of each response, stored with the series last_updated and the requested real-time period.",
+      "official_hosts": [
+        "fred.stlouisfed.org",
+        "api.stlouisfed.org",
+        "alfred.stlouisfed.org"
+      ],
+      "docs": [
+        {
+          "title": "fred/series/observations",
+          "url": "https://fred.stlouisfed.org/docs/api/fred/series_observations.html",
+          "kind": "api_reference"
+        },
+        {
+          "title": "FRED API terms of use",
+          "url": "https://fred.stlouisfed.org/docs/api/terms_of_use.html",
+          "kind": "terms"
+        },
+        {
+          "title": "Real-time periods",
+          "url": "https://fred.stlouisfed.org/docs/api/fred/realtime_period.html",
+          "kind": "documentation"
+        }
+      ],
+      "datasets": [
+        {
+          "dataset_id": "fred-series-observations",
+          "title": "Series observations with vintages",
+          "description": "Values of a series as known in a real-time period or on vintage dates.",
+          "endpoints": [
+            "https://api.stlouisfed.org/fred/series/observations?series_id={id}"
+          ],
+          "formats": [
+            "json",
+            "xml",
+            "csv",
+            "xlsx"
+          ],
+          "update_frequency": "With each release of the series.",
+          "knowledge_time": "realtime_start of the observation: the date it became known. Dates only, no time of day.",
+          "revision_semantics": "Real-time periods mark when a value was true; output_type 2 gives values by vintage date, 4 gives the initial release only. The default is today's values, which must not be used for history.",
+          "coverage": "Real-time dates from 1776-07-04 to 9999-12-31 as API bounds.",
+          "identifiers": [
+            "series_id",
+            "realtime_start",
+            "date"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "realtime_start",
+              "type": "date",
+              "role": "knowledge_time",
+              "description": "First date the value was known."
+            },
+            {
+              "name": "realtime_end",
+              "type": "date",
+              "role": "revision",
+              "description": "Last date the value was current."
+            },
+            {
+              "name": "date",
+              "type": "date",
+              "role": "period",
+              "description": "Observation period."
+            },
+            {
+              "name": "value",
+              "type": "decimal",
+              "role": "value",
+              "description": "Value as text; '.' marks a missing value."
+            }
+          ],
+          "size": "At most 100,000 observations per request; vintage downloads are capped lower.",
+          "docs": [
+            {
+              "title": "fred/series/observations",
+              "url": "https://fred.stlouisfed.org/docs/api/fred/series_observations.html",
+              "kind": "api_reference"
+            }
+          ]
+        },
+        {
+          "dataset_id": "fred-series-vintagedates",
+          "title": "Vintage dates of a series",
+          "description": "Dates on which a series was revised or newly released.",
+          "endpoints": [
+            "https://api.stlouisfed.org/fred/series/vintagedates?series_id={id}"
+          ],
+          "formats": [
+            "json",
+            "xml"
+          ],
+          "update_frequency": "With each release of the series.",
+          "knowledge_time": "Each vintage date is a date the data changed.",
+          "revision_semantics": "Lists every vintage; use it to fetch each one explicitly.",
+          "coverage": "From the first vintage stored in ALFRED for the series.",
+          "identifiers": [
+            "series_id",
+            "vintage date"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "vintage_dates",
+              "type": "array",
+              "role": "knowledge_time",
+              "description": "Dates of revisions or releases."
+            }
+          ],
+          "size": null,
+          "docs": [
+            {
+              "title": "fred/series/vintagedates",
+              "url": "https://fred.stlouisfed.org/docs/api/fred/series_vintagedates.html",
+              "kind": "api_reference"
+            }
+          ]
+        },
+        {
+          "dataset_id": "fred-release-dates",
+          "title": "Release dates",
+          "description": "Calendar of the dates a release published data.",
+          "endpoints": [
+            "https://api.stlouisfed.org/fred/release/dates?release_id={id}"
+          ],
+          "formats": [
+            "json",
+            "xml"
+          ],
+          "update_frequency": "With the release calendar.",
+          "knowledge_time": "Release date only, no time of day: a value is used from the next day unless the agency's release time is documented (Stage 13).",
+          "revision_semantics": "A calendar, not values.",
+          "coverage": "From 1776-07-04 as the earliest API bound.",
+          "identifiers": [
+            "release_id",
+            "date"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "release_id",
+              "type": "integer",
+              "role": "identifier",
+              "description": "Release identifier."
+            },
+            {
+              "name": "date",
+              "type": "date",
+              "role": "knowledge_time",
+              "description": "Release date without time."
+            }
+          ],
+          "size": null,
+          "docs": [
+            {
+              "title": "fred/release/dates",
+              "url": "https://fred.stlouisfed.org/docs/api/fred/release_dates.html",
+              "kind": "api_reference"
+            }
+          ]
+        },
+        {
+          "dataset_id": "fred-series",
+          "title": "Series metadata",
+          "description": "Title, units, frequency, seasonal adjustment and notes of a series.",
+          "endpoints": [
+            "https://api.stlouisfed.org/fred/series?series_id={id}"
+          ],
+          "formats": [
+            "json",
+            "xml"
+          ],
+          "update_frequency": "When the series changes.",
+          "knowledge_time": "last_updated, a timestamp with a UTC offset.",
+          "revision_semantics": "Metadata also has real-time periods.",
+          "coverage": "Every FRED series.",
+          "identifiers": [
+            "series_id"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "role": "identifier",
+              "description": "Series identifier, for example FEDFUNDS."
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "role": "metadata",
+              "description": "Series title."
+            },
+            {
+              "name": "frequency",
+              "type": "code",
+              "role": "period",
+              "description": "Observation frequency."
+            },
+            {
+              "name": "units",
+              "type": "string",
+              "role": "unit",
+              "description": "Units of the values."
+            },
+            {
+              "name": "seasonal_adjustment",
+              "type": "code",
+              "role": "metadata",
+              "description": "Seasonal adjustment."
+            },
+            {
+              "name": "last_updated",
+              "type": "datetime",
+              "role": "revision",
+              "description": "Last update with UTC offset."
+            },
+            {
+              "name": "notes",
+              "type": "string",
+              "role": "metadata",
+              "description": "Notes; 'Copyright' marks third-party data."
+            }
+          ],
+          "size": null,
+          "docs": [
+            {
+              "title": "fred/series",
+              "url": "https://fred.stlouisfed.org/docs/api/fred/series.html",
+              "kind": "api_reference"
+            }
+          ]
+        }
+      ],
+      "verified_on": "2026-10-29",
+      "download": {
+        "status": "awaiting_owner_decision",
+        "decided_on": null,
+        "note": "No automatic download until the owner approves this source (Stage 10 or later)."
+      },
+      "notes": [
+        "Creating the FRED account and key is the owner's step; the assistant never creates accounts.",
+        "ALFRED is the same API with real-time parameters."
+      ]
+    },
+    {
+      "source_id": "ecb-data-portal",
+      "name": "ECB Data Portal (SDMX)",
+      "publisher": "European Central Bank",
+      "region": "Euro area",
+      "priority": 3,
+      "access": "public_access",
+      "authentication": "none",
+      "key_status": "not_required",
+      "licence": {
+        "name": "ESCB statistics usage policy",
+        "summary": "Free access and free reuse of public ESCB statistics, for commercial or non-commercial use, if the source is quoted and the statistics and metadata are not modified.",
+        "redistribution": "reuse_with_conditions",
+        "resale": "allowed_by_licence",
+        "attribution": "Source: ECB statistics.",
+        "exceptions": "Third-party data needs the originator's prior permission."
+      },
+      "rate_limit": {
+        "documented": "No limit is published in the API help pages.",
+        "documented_requests_per_second": null,
+        "chosen_requests_per_second": "1"
+      },
+      "request_rules": [
+        "HTTPS only, entry point data-api.ecb.europa.eu/service/.",
+        "Refresh with updatedAfter or If-Modified-Since instead of full downloads.",
+        "Derived series are labelled as derived and keep the original next to them."
+      ],
+      "retry_policy": "Retry 429 and 5xx at most 3 times with exponential backoff from 5 seconds.",
+      "checksum_policy": "SHA-256 of each response, stored with the query and updatedAfter used.",
+      "official_hosts": [
+        "data.ecb.europa.eu",
+        "data-api.ecb.europa.eu",
+        "www.ecb.europa.eu"
+      ],
+      "docs": [
+        {
+          "title": "ECB Data Portal web services: overview",
+          "url": "https://data.ecb.europa.eu/help/api/overview",
+          "kind": "documentation"
+        },
+        {
+          "title": "ECB Data Portal web service: data queries",
+          "url": "https://data.ecb.europa.eu/help/api/data",
+          "kind": "api_reference"
+        },
+        {
+          "title": "Usage policy of ESCB statistics",
+          "url": "https://www.ecb.europa.eu/stats/ecb_statistics/governance_and_quality_framework/html/usage_policy.en.html",
+          "kind": "terms"
+        }
+      ],
+      "datasets": [
+        {
+          "dataset_id": "ecb-series",
+          "title": "Statistical series by dataflow and key",
+          "description": "Any series of the portal, for example exchange rates (dataflow EXR, key D.USD.EUR.SP00.A); dataflows are listed by a metadata query.",
+          "endpoints": [
+            "https://data-api.ecb.europa.eu/service/data/{flowRef}/{key}",
+            "https://data-api.ecb.europa.eu/service/dataflow"
+          ],
+          "formats": [
+            "sdmx_ml",
+            "json",
+            "csv"
+          ],
+          "update_frequency": "Depends on the series; updatedAfter returns the changes.",
+          "knowledge_time": "With includeHistory=true each version shows when data were released, revised or deleted.",
+          "revision_semantics": "Default is the version in production; includeHistory=true returns all previous versions; updatedAfter returns added, revised and deleted observations.",
+          "coverage": "Depends on the dataflow.",
+          "identifiers": [
+            "flowRef (agency, dataflow, version)",
+            "Series key",
+            "TIME_PERIOD"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "KEY",
+              "type": "string",
+              "role": "identifier",
+              "description": "Series key, dimensions joined with dots."
+            },
+            {
+              "name": "TIME_PERIOD",
+              "type": "string",
+              "role": "period",
+              "description": "Period in ISO 8601 or SDMX form."
+            },
+            {
+              "name": "OBS_VALUE",
+              "type": "decimal",
+              "role": "value",
+              "description": "Observation value."
+            },
+            {
+              "name": "OBS_STATUS",
+              "type": "code",
+              "role": "metadata",
+              "description": "Status of the observation."
+            }
+          ],
+          "size": null,
+          "docs": [
+            {
+              "title": "ECB Data Portal web service: data queries",
+              "url": "https://data.ecb.europa.eu/help/api/data",
+              "kind": "api_reference"
+            }
+          ]
+        }
+      ],
+      "verified_on": "2026-10-29",
+      "download": {
+        "status": "awaiting_owner_decision",
+        "decided_on": null,
+        "note": "No automatic download until the owner approves this source (Stage 10 or later)."
+      },
+      "notes": [
+        "V2 covers USD reporters only (decision D-04), so ECB series start with FX and euro rates as macro context, low priority."
+      ]
+    },
+    {
+      "source_id": "world-bank",
+      "name": "World Bank Indicators API v2",
+      "publisher": "World Bank",
+      "region": "Global",
+      "priority": 4,
+      "access": "public_access",
+      "authentication": "none",
+      "key_status": "not_required",
+      "licence": {
+        "name": "World Bank Terms of Use for Datasets (CC BY 4.0 unless labelled otherwise)",
+        "summary": "Datasets are under CC BY 4.0 with additional terms, unless labelled otherwise; credit the source and indicate changes; no implied endorsement.",
+        "redistribution": "open_licence",
+        "resale": "allowed_by_licence",
+        "attribution": "Source: World Bank, World Development Indicators (CC BY 4.0).",
+        "exceptions": "Some indicators come from third parties and may not be redistributed without their consent; each dataset's metadata states its terms."
+      },
+      "rate_limit": {
+        "documented": "No rate limit is published; at most 60 indicators per request and 4,000 characters per URL.",
+        "documented_requests_per_second": null,
+        "chosen_requests_per_second": "1"
+      },
+      "request_rules": [
+        "Use format=json and page through results (50 per page by default).",
+        "Check each indicator's source and licence in its metadata before storing it."
+      ],
+      "retry_policy": "Retry 5xx at most 3 times with exponential backoff from 5 seconds.",
+      "checksum_policy": "SHA-256 of each response, stored with lastupdated of the source.",
+      "official_hosts": [
+        "datahelpdesk.worldbank.org",
+        "api.worldbank.org",
+        "www.worldbank.org",
+        "datacatalog.worldbank.org",
+        "datatopics.worldbank.org"
+      ],
+      "docs": [
+        {
+          "title": "Indicators API documentation",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+          "kind": "api_reference"
+        },
+        {
+          "title": "API basic call structures",
+          "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures",
+          "kind": "documentation"
+        },
+        {
+          "title": "Terms of Use for Datasets",
+          "url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+          "kind": "terms"
+        },
+        {
+          "title": "Data catalog licences",
+          "url": "https://datacatalog.worldbank.org/public-licenses",
+          "kind": "terms"
+        }
+      ],
+      "datasets": [
+        {
+          "dataset_id": "wb-wdi",
+          "title": "World Development Indicators (current version)",
+          "description": "Annual structural indicators by country, for example GDP growth.",
+          "endpoints": [
+            "https://api.worldbank.org/v2/country/{iso}/indicator/{indicator}?format=json"
+          ],
+          "formats": [
+            "json",
+            "xml",
+            "json_stat"
+          ],
+          "update_frequency": "With WDI releases.",
+          "knowledge_time": "Not per value: the current API returns the latest version only, so a value is usable only from the release that published it (WDI archives).",
+          "revision_semantics": "Latest values only; earlier versions are in the WDI archives.",
+          "coverage": "Countries and aggregates; most series annual.",
+          "identifiers": [
+            "Indicator code",
+            "ISO3 country code",
+            "date"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "indicator.id",
+              "type": "code",
+              "role": "identifier",
+              "description": "Indicator code."
+            },
+            {
+              "name": "countryiso3code",
+              "type": "code",
+              "role": "identifier",
+              "description": "ISO 3166 alpha-3 country code."
+            },
+            {
+              "name": "date",
+              "type": "string",
+              "role": "period",
+              "description": "Year or period."
+            },
+            {
+              "name": "value",
+              "type": "decimal",
+              "role": "value",
+              "description": "Value; null when missing."
+            },
+            {
+              "name": "lastupdated",
+              "type": "date",
+              "role": "revision",
+              "description": "Last update of the source, in the page header."
+            }
+          ],
+          "size": null,
+          "docs": [
+            {
+              "title": "Indicators API documentation",
+              "url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
+              "kind": "api_reference"
+            }
+          ]
+        },
+        {
+          "dataset_id": "wb-wdi-archives",
+          "title": "WDI database archives (vintages)",
+          "description": "Earlier WDI versions, with version as a fourth dimension (YYYYMM).",
+          "endpoints": [
+            "https://api.worldbank.org/v2/sources/57"
+          ],
+          "formats": [
+            "json",
+            "xml",
+            "xlsx"
+          ],
+          "update_frequency": "A new version with each WDI release.",
+          "knowledge_time": "The version (YYYYMM) is the release a value was public in.",
+          "revision_semantics": "Series codes were reused with different base years or currencies across versions: compare versions with care.",
+          "coverage": "Electronic WDI releases back to 1989.",
+          "identifiers": [
+            "Version (YYYYMM)",
+            "Indicator code",
+            "Country code"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the bytes as received",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "version",
+              "type": "code",
+              "role": "knowledge_time",
+              "description": "WDI release, YYYYMM."
+            }
+          ],
+          "size": null,
+          "docs": [
+            {
+              "title": "WDI archives",
+              "url": "https://datatopics.worldbank.org/world-development-indicators/wdi-archives.html",
+              "kind": "dataset_page"
+            }
+          ]
+        }
+      ],
+      "verified_on": "2026-10-29",
+      "download": {
+        "status": "awaiting_owner_decision",
+        "decided_on": null,
+        "note": "No automatic download until the owner approves this source (Stage 10 or later)."
+      },
+      "notes": [
+        "Annual values are never spread over quarters before their release (docs/04)."
+      ]
+    }
+  ],
+  "licensed_needs": [
+    {
+      "need_id": "market-prices",
+      "title": "Share prices with delisted companies and corporate actions",
+      "why": "Return-based checks and any price per share need survivorship-free prices with splits, dividends and delistings.",
+      "without_it": "Valuation is a DCF estimate without a share price (docs/04); no return-based validation.",
+      "requirement": "Written licence terms covering storage, derived outputs and publication.",
+      "earliest_version": "V3",
+      "status": "not_selected"
+    },
+    {
+      "need_id": "earnings-transcripts",
+      "title": "Earnings call transcripts",
+      "why": "Management commentary as evidence for decision events.",
+      "without_it": "Evidence comes from SEC filings only (8-K, 10-K, 10-Q).",
+      "requirement": "Terms checked before any use (docs/12).",
+      "earliest_version": "V3",
+      "status": "not_selected"
+    }
+  ],
+  "risks": [
+    {
+      "risk_id": "R-01",
+      "title": "Unsupported region or accounting standard",
+      "category": "region_and_gaap",
+      "description": "Foreign private issuers file 20-F or 40-F, often under IFRS, and companyfacts mixes ifrs-full and us-gaap facts.",
+      "sources": [
+        "sec-edgar"
+      ],
+      "likelihood": "high",
+      "impact": "medium",
+      "mitigation": "V2 accepts domestic 10-K and 10-Q filers reporting in USD under US GAAP; others are shown as unsupported with the reason (decision D-04).",
+      "detection": "Form types and taxonomy per company in the coverage report.",
+      "stage": 11
+    },
+    {
+      "risk_id": "R-02",
+      "title": "Survivorship bias",
+      "category": "survivorship",
+      "description": "A universe built from today's tickers drops acquired, merged and bankrupt companies and makes history look better.",
+      "sources": [
+        "sec-edgar"
+      ],
+      "likelihood": "high",
+      "impact": "high",
+      "mitigation": "Build the universe from historical filers by CIK, including companies without a current ticker; the first ten include one acquired company.",
+      "detection": "Coverage report counts companies whose filings stop, by year.",
+      "stage": 11
+    },
+    {
+      "risk_id": "R-03",
+      "title": "Missing or changing XBRL tags",
+      "category": "missing_tags",
+      "description": "R&D is not tagged separately by many filers, extension tags are absent from companyfacts, and concepts change, for example revenue concepts after ASC 606.",
+      "sources": [
+        "sec-edgar"
+      ],
+      "likelihood": "high",
+      "impact": "high",
+      "mitigation": "An ordered concept map per metric with the concept used in the lineage; a missing value stays missing, never zero.",
+      "detection": "Coverage by company, metric and quarter; concept switches flagged.",
+      "stage": 11
+    },
+    {
+      "risk_id": "R-04",
+      "title": "Quarterization errors",
+      "category": "quarterization",
+      "description": "10-Q income and cash-flow values are often year-to-date; Q4 exists only as FY minus nine months; 52/53-week years shift period ends.",
+      "sources": [
+        "sec-edgar"
+      ],
+      "likelihood": "high",
+      "impact": "high",
+      "mitigation": "Reconstruct quarters from start, end and duration (qtrs), derive Q4 only when definitions match, never quarterize balance sheet instants; the first ten have calendar fiscal years.",
+      "detection": "Unit tests on YTD fixtures; quarters summing to the fiscal year (DATA-03).",
+      "stage": 11
+    },
+    {
+      "risk_id": "R-05",
+      "title": "Restatements and amendments",
+      "category": "restatement",
+      "description": "The same period is reported again in 10-K/A or recast after discontinued operations; companyfacts keeps several values for one period.",
+      "sources": [
+        "sec-edgar"
+      ],
+      "likelihood": "medium",
+      "impact": "high",
+      "mitigation": "Keep every value with its accession and filing date; original, vintage and latest views; point-in-time picks the latest value filed before the cutoff.",
+      "detection": "Count of periods with more than one value; differences above a threshold.",
+      "stage": 12
+    },
+    {
+      "risk_id": "R-06",
+      "title": "Time to publication and leakage",
+      "category": "time_to_publication",
+      "description": "A quarter ends weeks before its filing; macro data are revised; FRED gives release dates without a time of day.",
+      "sources": [
+        "sec-edgar",
+        "fred-alfred",
+        "world-bank"
+      ],
+      "likelihood": "high",
+      "impact": "high",
+      "mitigation": "Knowledge time is the acceptance time of the filing; macro values count from the day after release unless the release time is documented.",
+      "detection": "A deliberately future-dated fixture must stay invisible (DATA-02).",
+      "stage": 12
+    },
+    {
+      "risk_id": "R-07",
+      "title": "Currency, unit and scale errors",
+      "category": "currency_and_scale",
+      "description": "Facts come in several units (USD, other currencies, shares, USD per share); a company may change reporting currency; tagging errors shift magnitudes.",
+      "sources": [
+        "sec-edgar"
+      ],
+      "likelihood": "medium",
+      "impact": "high",
+      "mitigation": "Unit allowlist per metric; non-USD values are not converted in V2; jumps of an order of magnitude against neighbouring quarters are flagged.",
+      "detection": "Unit and magnitude checks in normalization (DATA-04).",
+      "stage": 11
+    },
+    {
+      "risk_id": "R-08",
+      "title": "Ticker and name changes",
+      "category": "identifiers",
+      "description": "Tickers are reused by other companies; submissions show only current tickers.",
+      "sources": [
+        "sec-edgar"
+      ],
+      "likelihood": "medium",
+      "impact": "medium",
+      "mitigation": "CIK is the key; ticker and name histories are dated (contracts 0.2.0).",
+      "detection": "Search by a former ticker resolves to the right CIK and dates.",
+      "stage": 11
+    },
+    {
+      "risk_id": "R-09",
+      "title": "Segment and co-registrant values mixed with consolidated ones",
+      "category": "data_errors",
+      "description": "Data set rows can belong to a segment or a co-registrant.",
+      "sources": [
+        "sec-edgar"
+      ],
+      "likelihood": "medium",
+      "impact": "medium",
+      "mitigation": "Use only rows with empty segments and co-registrant for consolidated values.",
+      "detection": "Totals compared with companyfacts for the same accession.",
+      "stage": 11
+    },
+    {
+      "risk_id": "R-10",
+      "title": "Terms of use and redistribution",
+      "category": "terms_of_use",
+      "description": "FRED third-party series need permission; ECB statistics must stay unmodified; some World Bank indicators belong to third parties; free access is not resale.",
+      "sources": [
+        "sec-edgar",
+        "fred-alfred",
+        "ecb-data-portal",
+        "world-bank"
+      ],
+      "likelihood": "medium",
+      "impact": "high",
+      "mitigation": "Licence and terms version stored with every raw file; raw bytes never committed; per-series check of FRED notes and World Bank metadata; attribution shown.",
+      "detection": "Catalog tests: every source has terms, key status and resale status.",
+      "stage": 10
+    },
+    {
+      "risk_id": "R-11",
+      "title": "Access blocked by the provider",
+      "category": "access",
+      "description": "Exceeding SEC fair access or an invalid FRED key blocks requests; an IP block stops every job.",
+      "sources": [
+        "sec-edgar",
+        "fred-alfred"
+      ],
+      "likelihood": "low",
+      "impact": "high",
+      "mitigation": "Token bucket at 2 requests per second, declared User-Agent enforced by settings, bulk files for history, stop on 403.",
+      "detection": "Request log with status codes; a 403 fails the run.",
+      "stage": 10
+    },
+    {
+      "risk_id": "R-12",
+      "title": "Errors in the source data",
+      "category": "data_errors",
+      "description": "The SEC does not guarantee the accuracy of extracted data; XBRL facts can have wrong signs or scale.",
+      "sources": [
+        "sec-edgar"
+      ],
+      "likelihood": "medium",
+      "impact": "medium",
+      "mitigation": "Accounting identity checks (assets equal liabilities plus equity), sign checks, anomaly flags shown in the dossier.",
+      "detection": "Data quality flags per company and quarter.",
+      "stage": 11
+    },
+    {
+      "risk_id": "R-13",
+      "title": "Macro revisions used as if known",
+      "category": "revisions",
+      "description": "Using today's macro values for past dates leaks later revisions.",
+      "sources": [
+        "fred-alfred",
+        "ecb-data-portal",
+        "world-bank"
+      ],
+      "likelihood": "high",
+      "impact": "high",
+      "mitigation": "ALFRED vintages, ECB includeHistory, WDI archives; as-of joins only.",
+      "detection": "Tests compare as-of values with a known vintage.",
+      "stage": 13
+    },
+    {
+      "risk_id": "R-14",
+      "title": "Documentation and endpoints change",
+      "category": "access",
+      "description": "Providers change endpoints and terms without notice.",
+      "sources": [
+        "sec-edgar",
+        "fred-alfred",
+        "ecb-data-portal",
+        "world-bank"
+      ],
+      "likelihood": "medium",
+      "impact": "medium",
+      "mitigation": "verified_on per source; documentation re-read before the first download of each source; contract tests on saved sample responses.",
+      "detection": "Schema validation of every raw response.",
+      "stage": 10
+    },
+    {
+      "risk_id": "R-15",
+      "title": "Volume and storage",
+      "category": "volume",
+      "description": "Quarterly data set files reach 122 MB and notes files 810 MB compressed; history adds up to gigabytes.",
+      "sources": [
+        "sec-edgar"
+      ],
+      "likelihood": "medium",
+      "impact": "low",
+      "mitigation": "Start with ten companies through the API; bulk files only after the owner agrees on a disk budget; raw files live in var/ and never in git.",
+      "detection": "Disk use reported by each run.",
+      "stage": 10
+    }
+  ],
+  "sectors": [
+    {
+      "sector": "Semiconductors",
+      "sic_codes": [
+        "3674"
+      ],
+      "priority": "p1",
+      "rationale": "R&D and capex are large and reported; manufacturing statements are standard.",
+      "decisions": [
+        "rnd_change",
+        "capex_expansion",
+        "acquisition"
+      ]
+    },
+    {
+      "sector": "Medical instruments and devices",
+      "sic_codes": [
+        "3841-3845"
+      ],
+      "priority": "p1",
+      "rationale": "R&D-intensive with frequent acquisitions; standard industrial statements.",
+      "decisions": [
+        "rnd_change",
+        "acquisition",
+        "divestiture"
+      ]
+    },
+    {
+      "sector": "Industrial instruments and electronic components",
+      "sic_codes": [
+        "3670-3679",
+        "3820-3829"
+      ],
+      "priority": "p1",
+      "rationale": "Steady acquirers with capex and R&D; few financial-services segments.",
+      "decisions": [
+        "acquisition",
+        "capex_expansion",
+        "rnd_change"
+      ]
+    },
+    {
+      "sector": "Railroads and trucking",
+      "sic_codes": [
+        "4011",
+        "4213"
+      ],
+      "priority": "p1",
+      "rationale": "Capex-heavy, long stable histories, simple revenue lines.",
+      "decisions": [
+        "capex_expansion",
+        "debt_refinance",
+        "workforce_restructure"
+      ]
+    },
+    {
+      "sector": "Refuse and environmental services",
+      "sic_codes": [
+        "4953"
+      ],
+      "priority": "p1",
+      "rationale": "Roll-up acquisitions and capex with clear cash flows.",
+      "decisions": [
+        "acquisition",
+        "capex_expansion",
+        "debt_refinance"
+      ]
+    },
+    {
+      "sector": "Software and IT services",
+      "sic_codes": [
+        "7370-7379",
+        "7389"
+      ],
+      "priority": "p2",
+      "rationale": "R&D-heavy, but capitalised software, deferred revenue and stock compensation complicate capex and margins.",
+      "decisions": [
+        "rnd_change",
+        "acquisition"
+      ]
+    },
+    {
+      "sector": "Regulated utilities",
+      "sic_codes": [
+        "4911-4941"
+      ],
+      "priority": "p2",
+      "rationale": "Capex and refinancing are frequent, but regulated rates drive revenue and filings often combine several registrants.",
+      "decisions": [
+        "capex_expansion",
+        "debt_refinance"
+      ]
+    },
+    {
+      "sector": "Pharmaceutical preparations with revenue",
+      "sic_codes": [
+        "2834"
+      ],
+      "priority": "p2",
+      "rationale": "Large R&D and acquisitions, but acquired in-process R&D and patent cliffs break continuity.",
+      "decisions": [
+        "rnd_change",
+        "acquisition",
+        "divestiture"
+      ]
+    },
+    {
+      "sector": "Oil and gas, retail with 52/53-week years, airlines",
+      "sic_codes": [
+        "1311",
+        "5311-5399",
+        "4512"
+      ],
+      "priority": "p3",
+      "rationale": "Commodity prices, impairments, shifting fiscal weeks or lease accounting dominate the effect of a single decision.",
+      "decisions": []
+    },
+    {
+      "sector": "Banks, insurers, REITs, asset managers, blank-check companies",
+      "sic_codes": [
+        "6020-6036",
+        "6200-6282",
+        "6311-6411",
+        "6770",
+        "6798"
+      ],
+      "priority": "excluded",
+      "rationale": "Financial statements of another kind: EBITDA, capex and free cash flow are not meaningful, and blank-check companies have no operations.",
+      "decisions": []
+    }
+  ],
+  "rubric": [
+    {
+      "criterion_id": "C1",
+      "title": "Domestic filer under US GAAP (10-K and 10-Q, no 20-F or 40-F)",
+      "weight": 3,
+      "how_checked": "Forms in the SEC submissions file."
+    },
+    {
+      "criterion_id": "C2",
+      "title": "Calendar fiscal year (ends 31 December)",
+      "weight": 2,
+      "how_checked": "fiscalYearEnd in the SEC submissions file."
+    },
+    {
+      "criterion_id": "C3",
+      "title": "Long XBRL history expected (large accelerated filer, listed before 2009)",
+      "weight": 2,
+      "how_checked": "Filer category verified; quarters counted in Stage 11."
+    },
+    {
+      "criterion_id": "C4",
+      "title": "Sector priority (P1 = 2, P2 = 1, P3 = 0)",
+      "weight": 2,
+      "how_checked": "SIC code in the SEC submissions file against the sector table."
+    },
+    {
+      "criterion_id": "C5",
+      "title": "At least two of the six decision types plausible",
+      "weight": 2,
+      "how_checked": "Business model; confirmed with filing evidence in the event registry."
+    },
+    {
+      "criterion_id": "C6",
+      "title": "Simple statements (no captive finance or insurance arm, no continuity break)",
+      "weight": 1,
+      "how_checked": "Read in the 10-K segment note during Stage 11."
+    },
+    {
+      "criterion_id": "C7",
+      "title": "Covers survivorship (company acquired or delisted)",
+      "weight": 1,
+      "how_checked": "No current ticker and filings that stop, in the submissions file."
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "name": "Texas Instruments Inc.",
+      "cik": "0000097476",
+      "ticker": "TXN",
+      "sic": "3674",
+      "sic_description": "Semiconductors & Related Devices",
+      "sector_priority": "p1",
+      "fiscal_year_end": "1231",
+      "filer_category": "Large accelerated filer",
+      "status": "listed",
+      "verified_on": "2026-10-29",
+      "decisions": [
+        "rnd_change",
+        "capex_expansion"
+      ],
+      "scores": [
+        {
+          "criterion_id": "C1",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "10-K and 10-Q filer, no 20-F."
+        },
+        {
+          "criterion_id": "C2",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "Fiscal year ends 1231."
+        },
+        {
+          "criterion_id": "C3",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Large accelerated filer; history counted in Stage 11."
+        },
+        {
+          "criterion_id": "C4",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "SIC 3674, P1."
+        },
+        {
+          "criterion_id": "C5",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "R&D and capex."
+        },
+        {
+          "criterion_id": "C6",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "No finance arm expected; checked in Stage 11."
+        },
+        {
+          "criterion_id": "C7",
+          "points": 0,
+          "evidence": "verified",
+          "basis": "Listed today."
+        }
+      ],
+      "total": 24,
+      "concerns": [
+        "Separate R&D and capex tags are expected, not yet checked."
+      ]
+    },
+    {
+      "rank": 2,
+      "name": "Stryker Corp.",
+      "cik": "0000310764",
+      "ticker": "SYK",
+      "sic": "3841",
+      "sic_description": "Surgical & Medical Instruments & Apparatus",
+      "sector_priority": "p1",
+      "fiscal_year_end": "1231",
+      "filer_category": "Large accelerated filer",
+      "status": "listed",
+      "verified_on": "2026-10-29",
+      "decisions": [
+        "rnd_change",
+        "acquisition"
+      ],
+      "scores": [
+        {
+          "criterion_id": "C1",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "10-K and 10-Q filer, no 20-F."
+        },
+        {
+          "criterion_id": "C2",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "Fiscal year ends 1231."
+        },
+        {
+          "criterion_id": "C3",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Large accelerated filer; history counted in Stage 11."
+        },
+        {
+          "criterion_id": "C4",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "SIC 3841, P1."
+        },
+        {
+          "criterion_id": "C5",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "R&D and acquisitions."
+        },
+        {
+          "criterion_id": "C6",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "No finance arm expected; checked in Stage 11."
+        },
+        {
+          "criterion_id": "C7",
+          "points": 0,
+          "evidence": "verified",
+          "basis": "Listed today."
+        }
+      ],
+      "total": 24,
+      "concerns": [
+        "Frequent acquisitions: goodwill and acquired R&D need care."
+      ]
+    },
+    {
+      "rank": 3,
+      "name": "AMETEK Inc.",
+      "cik": "0001037868",
+      "ticker": "AME",
+      "sic": "3823",
+      "sic_description": "Industrial Instruments For Measurement, Display, and Control",
+      "sector_priority": "p1",
+      "fiscal_year_end": "1231",
+      "filer_category": "Large accelerated filer",
+      "status": "listed",
+      "verified_on": "2026-10-29",
+      "decisions": [
+        "acquisition",
+        "rnd_change"
+      ],
+      "scores": [
+        {
+          "criterion_id": "C1",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "10-K and 10-Q filer, no 20-F."
+        },
+        {
+          "criterion_id": "C2",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "Fiscal year ends 1231."
+        },
+        {
+          "criterion_id": "C3",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Large accelerated filer; history counted in Stage 11."
+        },
+        {
+          "criterion_id": "C4",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "SIC 3823, P1."
+        },
+        {
+          "criterion_id": "C5",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Acquisitions and R&D."
+        },
+        {
+          "criterion_id": "C6",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "No finance arm expected; checked in Stage 11."
+        },
+        {
+          "criterion_id": "C7",
+          "points": 0,
+          "evidence": "verified",
+          "basis": "Listed today."
+        }
+      ],
+      "total": 24,
+      "concerns": [
+        "Many small acquisitions: the effect of one deal may be small."
+      ]
+    },
+    {
+      "rank": 4,
+      "name": "Union Pacific Corp.",
+      "cik": "0000100885",
+      "ticker": "UNP",
+      "sic": "4011",
+      "sic_description": "Railroads, Line-Haul Operating",
+      "sector_priority": "p1",
+      "fiscal_year_end": "1231",
+      "filer_category": "Large accelerated filer",
+      "status": "listed",
+      "verified_on": "2026-10-29",
+      "decisions": [
+        "capex_expansion",
+        "debt_refinance"
+      ],
+      "scores": [
+        {
+          "criterion_id": "C1",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "10-K and 10-Q filer, no 20-F."
+        },
+        {
+          "criterion_id": "C2",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "Fiscal year ends 1231."
+        },
+        {
+          "criterion_id": "C3",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Large accelerated filer; history counted in Stage 11."
+        },
+        {
+          "criterion_id": "C4",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "SIC 4011, P1."
+        },
+        {
+          "criterion_id": "C5",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Capex and refinancing."
+        },
+        {
+          "criterion_id": "C6",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "No finance arm expected; checked in Stage 11."
+        },
+        {
+          "criterion_id": "C7",
+          "points": 0,
+          "evidence": "verified",
+          "basis": "Listed today."
+        }
+      ],
+      "total": 24,
+      "concerns": [
+        "Little R&D; corporate events are checked in the event registry (Stage 19)."
+      ]
+    },
+    {
+      "rank": 5,
+      "name": "Waste Management Inc.",
+      "cik": "0000823768",
+      "ticker": "WM",
+      "sic": "4953",
+      "sic_description": "Refuse Systems",
+      "sector_priority": "p1",
+      "fiscal_year_end": "1231",
+      "filer_category": "Large accelerated filer",
+      "status": "listed",
+      "verified_on": "2026-10-29",
+      "decisions": [
+        "acquisition",
+        "capex_expansion"
+      ],
+      "scores": [
+        {
+          "criterion_id": "C1",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "10-K and 10-Q filer, no 20-F."
+        },
+        {
+          "criterion_id": "C2",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "Fiscal year ends 1231."
+        },
+        {
+          "criterion_id": "C3",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Large accelerated filer; history counted in Stage 11."
+        },
+        {
+          "criterion_id": "C4",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "SIC 4953, P1."
+        },
+        {
+          "criterion_id": "C5",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Acquisitions and capex."
+        },
+        {
+          "criterion_id": "C6",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "No finance arm expected; checked in Stage 11."
+        },
+        {
+          "criterion_id": "C7",
+          "points": 0,
+          "evidence": "verified",
+          "basis": "Listed today."
+        }
+      ],
+      "total": 24,
+      "concerns": [
+        "Former name USA Waste Services Inc.: name history must be dated."
+      ]
+    },
+    {
+      "rank": 6,
+      "name": "Celgene Corp.",
+      "cik": "0000816284",
+      "ticker": null,
+      "sic": "2834",
+      "sic_description": "Pharmaceutical Preparations",
+      "sector_priority": "p2",
+      "fiscal_year_end": "1231",
+      "filer_category": "Large accelerated filer",
+      "status": "acquired",
+      "verified_on": "2026-10-29",
+      "decisions": [
+        "rnd_change",
+        "acquisition"
+      ],
+      "scores": [
+        {
+          "criterion_id": "C1",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "10-K and 10-Q filer, no 20-F."
+        },
+        {
+          "criterion_id": "C2",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "Fiscal year ends 1231."
+        },
+        {
+          "criterion_id": "C3",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Large accelerated filer; history counted in Stage 11."
+        },
+        {
+          "criterion_id": "C4",
+          "points": 1,
+          "evidence": "verified",
+          "basis": "SIC 2834, P2."
+        },
+        {
+          "criterion_id": "C5",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "R&D and acquisitions."
+        },
+        {
+          "criterion_id": "C6",
+          "points": 1,
+          "evidence": "expected",
+          "basis": "Acquired in-process R&D breaks R&D continuity."
+        },
+        {
+          "criterion_id": "C7",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "No ticker; last 10-K filed 2019-02-26."
+        }
+      ],
+      "total": 23,
+      "concerns": [
+        "Acquired in 2019: tests survivorship and the end of a company's history."
+      ]
+    },
+    {
+      "rank": 7,
+      "name": "Hubbell Inc.",
+      "cik": "0000048898",
+      "ticker": "HUBB",
+      "sic": "3670",
+      "sic_description": "Electronic Components & Accessories",
+      "sector_priority": "p1",
+      "fiscal_year_end": "1231",
+      "filer_category": "Large accelerated filer",
+      "status": "listed",
+      "verified_on": "2026-10-29",
+      "decisions": [
+        "acquisition",
+        "capex_expansion"
+      ],
+      "scores": [
+        {
+          "criterion_id": "C1",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "10-K and 10-Q filer, no 20-F."
+        },
+        {
+          "criterion_id": "C2",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "Fiscal year ends 1231."
+        },
+        {
+          "criterion_id": "C3",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Large accelerated filer; history counted in Stage 11."
+        },
+        {
+          "criterion_id": "C4",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "SIC 3670, P1."
+        },
+        {
+          "criterion_id": "C5",
+          "points": 1,
+          "evidence": "expected",
+          "basis": "Acquisitions; R&D small."
+        },
+        {
+          "criterion_id": "C6",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "No finance arm expected; checked in Stage 11."
+        },
+        {
+          "criterion_id": "C7",
+          "points": 0,
+          "evidence": "verified",
+          "basis": "Listed today."
+        }
+      ],
+      "total": 22,
+      "concerns": [
+        "SIC says electronic components; segments are checked in Stage 11."
+      ]
+    },
+    {
+      "rank": 8,
+      "name": "Old Dominion Freight Line Inc.",
+      "cik": "0000878927",
+      "ticker": "ODFL",
+      "sic": "4213",
+      "sic_description": "Trucking (No Local)",
+      "sector_priority": "p1",
+      "fiscal_year_end": "1231",
+      "filer_category": "Large accelerated filer",
+      "status": "listed",
+      "verified_on": "2026-10-29",
+      "decisions": [
+        "capex_expansion"
+      ],
+      "scores": [
+        {
+          "criterion_id": "C1",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "10-K and 10-Q filer, no 20-F."
+        },
+        {
+          "criterion_id": "C2",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "Fiscal year ends 1231."
+        },
+        {
+          "criterion_id": "C3",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Large accelerated filer; history counted in Stage 11."
+        },
+        {
+          "criterion_id": "C4",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "SIC 4213, P1."
+        },
+        {
+          "criterion_id": "C5",
+          "points": 1,
+          "evidence": "expected",
+          "basis": "Mostly capex."
+        },
+        {
+          "criterion_id": "C6",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "No finance arm expected; checked in Stage 11."
+        },
+        {
+          "criterion_id": "C7",
+          "points": 0,
+          "evidence": "verified",
+          "basis": "Listed today."
+        }
+      ],
+      "total": 22,
+      "concerns": [
+        "Mostly capex decisions; little debt or M&A expected."
+      ]
+    },
+    {
+      "rank": 9,
+      "name": "American Water Works Company Inc.",
+      "cik": "0001410636",
+      "ticker": "AWK",
+      "sic": "4941",
+      "sic_description": "Water Supply",
+      "sector_priority": "p2",
+      "fiscal_year_end": "1231",
+      "filer_category": "Large accelerated filer",
+      "status": "listed",
+      "verified_on": "2026-10-29",
+      "decisions": [
+        "capex_expansion",
+        "debt_refinance"
+      ],
+      "scores": [
+        {
+          "criterion_id": "C1",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "10-K and 10-Q filer, no 20-F."
+        },
+        {
+          "criterion_id": "C2",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "Fiscal year ends 1231."
+        },
+        {
+          "criterion_id": "C3",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Large accelerated filer; history counted in Stage 11."
+        },
+        {
+          "criterion_id": "C4",
+          "points": 1,
+          "evidence": "verified",
+          "basis": "SIC 4941, P2."
+        },
+        {
+          "criterion_id": "C5",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Capex and refinancing."
+        },
+        {
+          "criterion_id": "C6",
+          "points": 1,
+          "evidence": "expected",
+          "basis": "Regulated rates drive revenue."
+        },
+        {
+          "criterion_id": "C7",
+          "points": 0,
+          "evidence": "verified",
+          "basis": "Listed today."
+        }
+      ],
+      "total": 21,
+      "concerns": [
+        "Listed since 2008: the first XBRL quarters are checked in Stage 11."
+      ]
+    },
+    {
+      "rank": 10,
+      "name": "Akamai Technologies Inc.",
+      "cik": "0001086222",
+      "ticker": "AKAM",
+      "sic": "7389",
+      "sic_description": "Services-Business Services, NEC",
+      "sector_priority": "p2",
+      "fiscal_year_end": "1231",
+      "filer_category": "Large accelerated filer",
+      "status": "listed",
+      "verified_on": "2026-10-29",
+      "decisions": [
+        "rnd_change",
+        "acquisition"
+      ],
+      "scores": [
+        {
+          "criterion_id": "C1",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "10-K and 10-Q filer, no 20-F."
+        },
+        {
+          "criterion_id": "C2",
+          "points": 2,
+          "evidence": "verified",
+          "basis": "Fiscal year ends 1231."
+        },
+        {
+          "criterion_id": "C3",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "Large accelerated filer; history counted in Stage 11."
+        },
+        {
+          "criterion_id": "C4",
+          "points": 1,
+          "evidence": "verified",
+          "basis": "SIC 7389, P2."
+        },
+        {
+          "criterion_id": "C5",
+          "points": 2,
+          "evidence": "expected",
+          "basis": "R&D and acquisitions."
+        },
+        {
+          "criterion_id": "C6",
+          "points": 1,
+          "evidence": "expected",
+          "basis": "Capitalised software and convertible notes."
+        },
+        {
+          "criterion_id": "C7",
+          "points": 0,
+          "evidence": "verified",
+          "basis": "Listed today."
+        }
+      ],
+      "total": 21,
+      "concerns": [
+        "Capitalised software counts as capex: definitions must be shown."
+      ]
+    }
+  ],
+  "acquisition_plan": [
+    {
+      "step": 1,
+      "title": "Owner decision for SEC downloads",
+      "sources": [
+        "sec-edgar"
+      ],
+      "scope": "Approve the sec-edgar source, set MULTIVERSE_SEC_USER_AGENT (name and contact email) in .env, agree on a disk budget for var/raw.",
+      "volume": "None.",
+      "storage": ".env stays out of git.",
+      "checks": [
+        "Settings refuse downloads without a User-Agent containing '@'."
+      ],
+      "owner_decision": "Approve SEC downloads and give the User-Agent.",
+      "stage": 10
+    },
+    {
+      "step": 2,
+      "title": "Submissions of the ten candidates",
+      "sources": [
+        "sec-edgar"
+      ],
+      "scope": "10 API requests for submissions, at 2 requests per second.",
+      "volume": "10 JSON files.",
+      "storage": "var/raw/sec/submissions/, immutable, with SHA-256 and headers.",
+      "checks": [
+        "Response validated against a schema.",
+        "CIK, SIC and fiscal year end match the catalog."
+      ],
+      "owner_decision": null,
+      "stage": 10
+    },
+    {
+      "step": 3,
+      "title": "Company facts of the ten candidates",
+      "sources": [
+        "sec-edgar"
+      ],
+      "scope": "10 API requests for companyfacts. The size of companyfacts.zip is read with one HEAD request to decide whether bulk is worth it later.",
+      "volume": "10 JSON files.",
+      "storage": "var/raw/sec/companyfacts/, immutable.",
+      "checks": [
+        "Schema validation; SHA-256 recorded; re-run produces no duplicate file."
+      ],
+      "owner_decision": null,
+      "stage": 10
+    },
+    {
+      "step": 4,
+      "title": "Coverage report on the ten",
+      "sources": [
+        "sec-edgar"
+      ],
+      "scope": "Normalize revenue, operating income, R&D, CFO, capex, debt and cash; quarters from year-to-date values; count valid quarters per metric.",
+      "volume": "No download.",
+      "storage": "Normalized tables in var/data/.",
+      "checks": [
+        "Coverage at 8, 20 and 40 quarters; concept used per value (DATA-04, DATA-05)."
+      ],
+      "owner_decision": null,
+      "stage": 11
+    },
+    {
+      "step": 5,
+      "title": "Financial Statement Data Sets for original vintages",
+      "sources": [
+        "sec-edgar"
+      ],
+      "scope": "Quarterly files 2009 Q1 to 2026 Q3, only if step 4 shows that companyfacts lacks original values. One file per run, outside US business hours.",
+      "volume": "71 files of 13 KB to 122 MB each.",
+      "storage": "var/raw/sec/fsds/, immutable.",
+      "checks": [
+        "SHA-256 per file; row counts per table; filed dates within the quarter."
+      ],
+      "owner_decision": "Approve the volume after step 4.",
+      "stage": 11
+    },
+    {
+      "step": 6,
+      "title": "FRED key and a first set of macro series",
+      "sources": [
+        "fred-alfred"
+      ],
+      "scope": "The owner registers a FRED account and key. Candidate series: FEDFUNDS, CPIAUCSL, UNRATE, GDPC1, DGS10, USREC, each with its vintages.",
+      "volume": "About 6 series with their vintage dates.",
+      "storage": "var/raw/fred/, immutable, with requested real-time periods.",
+      "checks": [
+        "Notes of each series checked for 'Copyright' before storing.",
+        "As-of value equals the value of the matching vintage."
+      ],
+      "owner_decision": "Register the key and approve the series list.",
+      "stage": 13
+    },
+    {
+      "step": 7,
+      "title": "ECB and World Bank context series",
+      "sources": [
+        "ecb-data-portal",
+        "world-bank"
+      ],
+      "scope": "EUR/USD reference rate with history; a few WDI indicators with archive versions, only if a model needs them.",
+      "volume": "A few series.",
+      "storage": "var/raw/ecb/ and var/raw/worldbank/.",
+      "checks": [
+        "Unmodified originals kept; attribution recorded."
+      ],
+      "owner_decision": "Approve after the macro feature plan of Stage 13.",
+      "stage": 13
+    }
+  ]
+}

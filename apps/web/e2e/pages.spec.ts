@@ -97,7 +97,7 @@ for (const target of PAGES) {
 
 test("every planned section shows an honest placeholder without data", async ({ page }) => {
   const planned = SECTIONS.filter((section) => section.status === "planned");
-  expect(planned.length).toBe(10);
+  expect(planned.length).toBe(9);
   for (const section of planned) {
     const response = await page.goto(section.href);
     expect(response?.status(), section.href).toBe(200);

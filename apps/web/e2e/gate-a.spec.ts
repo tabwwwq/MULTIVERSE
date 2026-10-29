@@ -25,6 +25,14 @@ const COMPANIES = (fixture("demo/companies.json") as { company: { company_id: st
 const RESULTS = (fixture("mock/results.json") as { result_id: string }[]).map(
   (result) => result.result_id,
 );
+const SOURCE_IDS = (
+  JSON.parse(
+    readFileSync(
+      fileURLToPath(new URL("../../../packages/contracts/catalog/sources.json", import.meta.url)),
+      "utf8",
+    ),
+  ) as { sources: { source_id: string }[] }
+).sources.map((source) => source.source_id);
 const NOTEBOOK_TEXT = JSON.stringify(fixture("notebook/valid-export.json"));
 const NORTHWIND = "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13";
 const RND_RESULT = "2d7c9e41-5b3a-4f6e-8c1d-9a0b7e6f5c34";
@@ -36,6 +44,9 @@ const ROUTES = [
   ...COMPANIES.map((id) => `/decisions?company=${id}`),
   ...RESULTS.map((id) => `/timeline/${id}`),
   ...RESULTS.map((id) => `/compare/${id}`),
+  ...SOURCE_IDS.map((id) => `/data-catalog/${id}`),
+  "/data-catalog/plan",
+  "/data-catalog?q=vintage",
 ];
 
 /** Errors a visitor would never see but that signal a broken page (TC-16). */

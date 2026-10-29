@@ -14,6 +14,9 @@ change distributions, waterfalls, events and a failed state.
 
 0.5.0 (Stage 07): saved scenarios with immutable revisions, report snapshots
 and the notebook export file.
+
+0.6.0 (Stage 09): source catalog with licences, rate limits, data dictionaries,
+risk register, company candidates and the acquisition plan (metadata only).
 """
 
-CONTRACTS_VERSION = "0.5.0"
+CONTRACTS_VERSION = "0.6.0"

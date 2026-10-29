@@ -8,7 +8,8 @@
     ".": "./src/index.ts",
     "./demo": "./src/demo.ts",
     "./interventions": "./src/interventions.ts",
-    "./mock-results": "./src/mock-results.ts"
+    "./mock-results": "./src/mock-results.ts",
+    "./sources": "./src/sources.ts"
   },
   "scripts": {
     "gen": "node scripts/generate.mjs",

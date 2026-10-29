@@ -94,4 +94,9 @@ describe("breadcrumbs", () => {
   it("fall back to the overview for unknown paths", () => {
     expect(buildBreadcrumbs("/nope")).toEqual([{ label: "Overview", href: "/" }]);
   });
+
+  it("name the pages nested under the Data Catalog", () => {
+    expect(buildBreadcrumbs("/data-catalog/sec-edgar").at(-1)).toEqual({ label: "Source" });
+    expect(buildBreadcrumbs("/data-catalog/plan").at(-1)).toEqual({ label: "Acquisition plan" });
+  });
 });

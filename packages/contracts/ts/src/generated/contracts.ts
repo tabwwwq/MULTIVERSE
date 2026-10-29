@@ -5,6 +5,13 @@
  */
 
 /**
+ * How a source is reached. A free endpoint is still not a licence (docs/12).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "AccessCategory".
+ */
+export type AccessCategory = "public_access" | "api_key" | "licensed";
+/**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "AccountingStandard".
  */
@@ -21,6 +28,11 @@ export type MagnitudeUnit =
   | "fraction_of_headcount"
   | "fraction_of_revenue"
   | "usd";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Authentication".
+ */
+export type Authentication = "none" | "declared_user_agent" | "api_key" | "contract";
 /**
  * Identification status of a result. Never raised automatically (PRD FR-CA-02).
  *
@@ -66,6 +78,26 @@ export type Sector =
  * via the `definition` "CompanyStatus".
  */
 export type CompanyStatus = "active" | "acquired" | "delisted" | "bankrupt";
+/**
+ * The six decision types of V1 (PRD FR-DE-01, docs/16 "recommended first six").
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "InterventionType".
+ */
+export type InterventionType =
+  | "rnd_change"
+  | "workforce_restructure"
+  | "acquisition"
+  | "divestiture"
+  | "capex_expansion"
+  | "debt_refinance";
+/**
+ * Whether a score rests on a checked fact or on an expectation still to be checked.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Evidence".
+ */
+export type Evidence = "verified" | "expected";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "FilingForm".
@@ -121,6 +153,63 @@ export type MeasureUnit =
 export type UncertaintyType =
   "none" | "predictive_quantiles" | "conditional_model_quantiles" | "calibrated_interval";
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DataFormat".
+ */
+export type DataFormat =
+  "json" | "csv" | "xml" | "sdmx_ml" | "tsv" | "zip" | "xlsx" | "json_stat" | "html";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DocKind".
+ */
+export type DocKind =
+  "api_reference" | "access_policy" | "terms" | "dataset_page" | "documentation";
+/**
+ * What a field means for point-in-time use (docs/04).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "FieldRole".
+ */
+export type FieldRole =
+  "identifier" | "period" | "knowledge_time" | "value" | "unit" | "revision" | "metadata";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "FieldType".
+ */
+export type FieldType =
+  "string" | "integer" | "decimal" | "date" | "datetime" | "code" | "boolean" | "object" | "array";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DecisionStatus".
+ */
+export type DecisionStatus = "awaiting_owner_decision" | "approved" | "declined";
+/**
+ * Whether a key is needed and who has to obtain it.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "KeyStatus".
+ */
+export type KeyStatus = "not_required" | "owner_must_register" | "contract_required";
+/**
+ * What the terms say about passing the data on.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Redistribution".
+ */
+export type Redistribution =
+  | "public_information"
+  | "open_licence"
+  | "reuse_with_conditions"
+  | "permission_required"
+  | "not_allowed";
+/**
+ * Selling the data itself. Not granted unless a licence says so explicitly.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Resale".
+ */
+export type Resale = "not_granted" | "allowed_by_licence" | "prohibited";
+/**
  * Where a default comes from. Only the first two are facts.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -149,18 +238,10 @@ export type ValueUnit =
  */
 export type MagnitudeBase = "previous_rnd_budget" | "revenue" | "headcount" | "none";
 /**
- * The six decision types of V1 (PRD FR-DE-01, docs/16 "recommended first six").
- *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "InterventionType".
+ * via the `definition` "Level".
  */
-export type InterventionType =
-  | "rnd_change"
-  | "workforce_restructure"
-  | "acquisition"
-  | "divestiture"
-  | "capex_expansion"
-  | "debt_refinance";
+export type Level = "low" | "medium" | "high";
 /**
  * Inference mode shown in the trust header of every result (PRD §6).
  *
@@ -173,6 +254,24 @@ export type ResultMode = "demo" | "empirical_forecast" | "causal_study" | "ficti
  * via the `definition` "ResultStatus".
  */
 export type ResultStatus = "completed" | "failed";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RiskCategory".
+ */
+export type RiskCategory =
+  | "region_and_gaap"
+  | "survivorship"
+  | "missing_tags"
+  | "quarterization"
+  | "restatement"
+  | "time_to_publication"
+  | "currency_and_scale"
+  | "identifiers"
+  | "terms_of_use"
+  | "access"
+  | "data_errors"
+  | "revisions"
+  | "volume";
 
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -310,6 +409,32 @@ export interface Timing {
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "AcquisitionStep".
+ */
+export interface AcquisitionStep {
+  /**
+   * @minItems 1
+   */
+  checks: [string, ...string[]];
+  /**
+   * What the owner has to decide before this step may run.
+   */
+  owner_decision: string | null;
+  scope: string;
+  /**
+   * @minItems 1
+   *
+   * Items: Lowercase identifier with dashes, for example 'sec-edgar'.
+   */
+  sources: [string, ...string[]];
+  stage: number;
+  step: number;
+  storage: string;
+  title: string;
+  volume: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "CapexExpansion".
  */
 export interface CapexExpansion {
@@ -428,6 +553,48 @@ export interface DatedName {
   name: string;
   valid_from: string;
   valid_to: string | null;
+}
+/**
+ * A real company proposed for the first acquisition. Only the verified fields are facts.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CompanyCandidate".
+ */
+export interface CompanyCandidate {
+  /**
+   * SEC Central Index Key, zero-padded to 10 digits.
+   */
+  cik: string;
+  concerns: string[];
+  /**
+   * @minItems 1
+   */
+  decisions: [InterventionType, ...InterventionType[]];
+  filer_category: string;
+  fiscal_year_end: string;
+  name: string;
+  rank: number;
+  /**
+   * @minItems 1
+   */
+  scores: [Score, ...Score[]];
+  sector_priority: "p1" | "p2" | "p3";
+  sic: string;
+  sic_description: string;
+  status: "listed" | "acquired";
+  ticker: string | null;
+  total: number;
+  verified_on: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Score".
+ */
+export interface Score {
+  basis: string;
+  criterion_id: string;
+  evidence: Evidence;
+  points: number;
 }
 /**
  * Everything known about one company at a knowledge cutoff ``as_of``.
@@ -552,6 +719,174 @@ export interface Quantity {
    * Exact decimal number as a string, for example '4213587912' or '-0.25'.
    */
   value: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Criterion".
+ */
+export interface Criterion {
+  criterion_id: string;
+  how_checked: string;
+  title: string;
+  weight: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DataSource".
+ */
+export interface DataSource {
+  access: AccessCategory;
+  authentication: Authentication;
+  checksum_policy: string;
+  /**
+   * @minItems 1
+   */
+  datasets: [Dataset, ...Dataset[]];
+  /**
+   * @minItems 2
+   */
+  docs: [DocLink, DocLink, ...DocLink[]];
+  download: DownloadDecision;
+  key_status: KeyStatus;
+  licence: Licence;
+  name: string;
+  notes: string[];
+  /**
+   * @minItems 1
+   */
+  official_hosts: [string, ...string[]];
+  /**
+   * Source-of-truth order of docs/04.
+   */
+  priority: number;
+  publisher: string;
+  rate_limit: RateLimit;
+  region: string;
+  /**
+   * @minItems 1
+   */
+  request_rules: [string, ...string[]];
+  retry_policy: string;
+  /**
+   * Lowercase identifier with dashes, for example 'sec-edgar'.
+   */
+  source_id: string;
+  verified_on: string;
+}
+/**
+ * One product of a source, with its data dictionary and revision behaviour.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Dataset".
+ */
+export interface Dataset {
+  coverage: string;
+  /**
+   * Lowercase identifier with dashes, for example 'sec-edgar'.
+   */
+  dataset_id: string;
+  description: string;
+  /**
+   * @minItems 1
+   */
+  docs: [DocLink, ...DocLink[]];
+  /**
+   * URL patterns; placeholders such as {cik} are not real values.
+   *
+   * @minItems 1
+   */
+  endpoints: [string, ...string[]];
+  /**
+   * @minItems 1
+   */
+  fields: [DictionaryField, ...DictionaryField[]];
+  /**
+   * @minItems 1
+   */
+  formats: [DataFormat, ...DataFormat[]];
+  /**
+   * @minItems 1
+   */
+  identifiers: [string, ...string[]];
+  /**
+   * How to tell when a value became public.
+   */
+  knowledge_time: string;
+  /**
+   * What is recorded with every raw file.
+   *
+   * @minItems 1
+   */
+  provenance: [string, ...string[]];
+  revision_semantics: string;
+  size: string | null;
+  title: string;
+  update_frequency: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DocLink".
+ */
+export interface DocLink {
+  kind: DocKind;
+  title: string;
+  /**
+   * Absolute HTTPS address without credentials or port.
+   */
+  url: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DictionaryField".
+ */
+export interface DictionaryField {
+  description: string;
+  name: string;
+  role: FieldRole;
+  type: FieldType;
+}
+/**
+ * The owner's decision about automatic downloads from a source.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DownloadDecision".
+ */
+export interface DownloadDecision {
+  decided_on: string | null;
+  note: string;
+  status: DecisionStatus;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Licence".
+ */
+export interface Licence {
+  /**
+   * Wording the terms ask for.
+   */
+  attribution: string | null;
+  /**
+   * Parts of the source the general terms do not cover.
+   */
+  exceptions: string | null;
+  name: string;
+  redistribution: Redistribution;
+  resale: Resale;
+  summary: string;
+}
+/**
+ * What the provider documents, and the slower rate MULTIVERSE will use.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RateLimit".
+ */
+export interface RateLimit {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  chosen_requests_per_second: string;
+  documented: string;
+  documented_requests_per_second: string | null;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -784,6 +1119,27 @@ export interface ShareGroupSpec {
 export interface ShareMember {
   key: string;
   label: string;
+}
+/**
+ * Data that only a licensed provider can supply. No provider is chosen in V2.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "LicensedNeed".
+ */
+export interface LicensedNeed {
+  earliest_version: "V2" | "V3" | "V4";
+  /**
+   * Lowercase identifier with dashes, for example 'sec-edgar'.
+   */
+  need_id: string;
+  requirement: string;
+  status: "not_selected";
+  title: string;
+  why: string;
+  /**
+   * What the platform does while the data is missing.
+   */
+  without_it: string;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -1051,6 +1407,33 @@ export interface ResultFailure {
   message: string;
 }
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Risk".
+ */
+export interface Risk {
+  category: RiskCategory;
+  description: string;
+  /**
+   * The check or test that shows the risk materialised.
+   */
+  detection: string;
+  impact: Level;
+  likelihood: Level;
+  mitigation: string;
+  risk_id: string;
+  /**
+   * @minItems 1
+   *
+   * Items: Lowercase identifier with dashes, for example 'sec-edgar'.
+   */
+  sources: [string, ...string[]];
+  /**
+   * Stage that implements the mitigation.
+   */
+  stage: number;
+  title: string;
+}
+/**
  * One run: a baseline and its alternates for a company at a knowledge cutoff.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -1155,4 +1538,57 @@ export interface WaterfallStep {
    * Exact decimal number as a string, for example '4213587912' or '-0.25'.
    */
   value: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SectorPriority".
+ */
+export interface SectorPriority {
+  decisions: InterventionType[];
+  priority: "p1" | "p2" | "p3" | "excluded";
+  rationale: string;
+  sector: string;
+  /**
+   * @minItems 1
+   */
+  sic_codes: [string, ...string[]];
+}
+/**
+ * Every source, risk and planned step, checked as one document.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SourceCatalog".
+ */
+export interface SourceCatalog {
+  /**
+   * @minItems 1
+   */
+  acquisition_plan: [AcquisitionStep, ...AcquisitionStep[]];
+  /**
+   * No code downloads anything in Stage 09; Stage 10 needs the owner's decision.
+   */
+  automatic_downloads: "disabled";
+  /**
+   * @maxItems 10
+   */
+  candidates: CompanyCandidate[];
+  contracts_version: string;
+  licensed_needs: LicensedNeed[];
+  /**
+   * @minItems 1
+   */
+  risks: [Risk, ...Risk[]];
+  /**
+   * @minItems 1
+   */
+  rubric: [Criterion, ...Criterion[]];
+  /**
+   * @minItems 1
+   */
+  sectors: [SectorPriority, ...SectorPriority[]];
+  /**
+   * @minItems 1
+   */
+  sources: [DataSource, ...DataSource[]];
+  verified_on: string;
 }

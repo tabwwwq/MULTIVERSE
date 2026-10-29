@@ -5,11 +5,19 @@
 
 const ALLOWED_HOSTS = new Set([
   "www.sec.gov",
+  "data.sec.gov",
   "fred.stlouisfed.org",
   "alfred.stlouisfed.org",
+  "api.stlouisfed.org",
   "data.ecb.europa.eu",
+  "data-api.ecb.europa.eu",
+  "www.ecb.europa.eu",
   "data.worldbank.org",
   "api.worldbank.org",
+  "www.worldbank.org",
+  "datahelpdesk.worldbank.org",
+  "datacatalog.worldbank.org",
+  "datatopics.worldbank.org",
 ]);
 
 export function safeExternalUrl(raw: string | null | undefined): string | null {

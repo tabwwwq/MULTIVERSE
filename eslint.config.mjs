@@ -68,6 +68,7 @@ export default defineConfig(
       "packages/contracts/ts/src/demo.ts",
       "packages/contracts/ts/src/interventions.ts",
       "packages/contracts/ts/src/mock-results.ts",
+      "packages/contracts/ts/src/sources.ts",
     ],
     rules: { "no-restricted-imports": "off" },
   },

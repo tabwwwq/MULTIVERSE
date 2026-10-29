@@ -15,6 +15,12 @@ const NESTED_LABELS: Record<string, string> = {
   "/dossier": "Company profile",
   "/timeline": "Result",
   "/compare": "Result",
+  "/data-catalog": "Source",
+};
+
+/** Fixed pages nested under a section, named on their own. */
+const NESTED_PAGES: Record<string, string> = {
+  "/data-catalog/plan": "Acquisition plan",
 };
 
 /** Overview › Group › Page (› Detail) for a pathname. Unknown paths fall back to the overview. */
@@ -39,6 +45,6 @@ export function buildBreadcrumbs(pathname: string): Crumb[] {
   return [
     ...trail,
     { label: section.title, href: section.href },
-    { label: NESTED_LABELS[section.href] ?? "Details" },
+    { label: NESTED_PAGES[path] ?? NESTED_LABELS[section.href] ?? "Details" },
   ];
 }

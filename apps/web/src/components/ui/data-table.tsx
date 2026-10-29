@@ -16,6 +16,8 @@ export interface Column<Row> {
   numeric?: boolean;
   /** Renders the cell as the row header (<th scope="row">). Use for exactly one column. */
   rowHeader?: boolean;
+  /** Lets long text wrap inside a minimum width instead of widening the table. */
+  wrap?: boolean;
   render?: (row: Row) => ReactNode;
 }
 
@@ -52,7 +54,7 @@ export function DataTable<Row>({
               <th
                 key={column.id ?? column.key}
                 scope="col"
-                className={cn(column.numeric && "is-numeric")}
+                className={cn(column.numeric && "is-numeric", column.wrap && "is-wrap")}
               >
                 {column.header}
               </th>
@@ -64,7 +66,7 @@ export function DataTable<Row>({
             <tr key={rowKey(row)}>
               {columns.map((column) => {
                 const content = column.render ? column.render(row) : String(row[column.key] ?? "");
-                const classes = cn(column.numeric && "is-numeric");
+                const classes = cn(column.numeric && "is-numeric", column.wrap && "is-wrap");
                 return column.rowHeader ? (
                   <th key={column.id ?? column.key} scope="row" className={classes}>
                     {content}

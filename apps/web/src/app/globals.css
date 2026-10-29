@@ -129,6 +129,11 @@ dialog::backdrop {
     text-align: end;
   }
 
+  & .is-wrap {
+    white-space: normal;
+    min-inline-size: 14rem;
+  }
+
   & thead {
     position: sticky;
     inset-block-start: 0;

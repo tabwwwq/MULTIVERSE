@@ -350,14 +350,14 @@ export const SECTIONS: readonly Section[] = [
     title: "Data Catalog",
     group: "platform",
     icon: Database,
-    summary: "Sources, coverage, freshness, lineage and licences.",
-    status: "planned",
+    summary: "Official sources with their terms, keys, request limits and data dictionaries.",
+    status: "available",
     stage: 9,
     stageName: "Source policy and data catalog",
     plans: [
       "Official sources with their licences and access rules.",
-      "Coverage and missingness by company, metric and period.",
-      "Lineage from the original filing to every number.",
+      "Coverage and missingness by company, metric and period (Stage 11).",
+      "Lineage from the original filing to every number (Stage 11).",
     ],
   },
   {

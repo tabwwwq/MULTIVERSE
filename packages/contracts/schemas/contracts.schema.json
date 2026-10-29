@@ -1,5 +1,15 @@
 {
   "$defs": {
+    "AccessCategory": {
+      "description": "How a source is reached. A free endpoint is still not a licence (docs/12).",
+      "enum": [
+        "public_access",
+        "api_key",
+        "licensed"
+      ],
+      "title": "AccessCategory",
+      "type": "string"
+    },
     "AccountingStandard": {
       "enum": [
         "us_gaap",
@@ -107,6 +117,96 @@
       ],
       "title": "Acquisition",
       "type": "object"
+    },
+    "AcquisitionStep": {
+      "additionalProperties": false,
+      "properties": {
+        "checks": {
+          "items": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "owner_decision": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the owner has to decide before this step may run."
+        },
+        "scope": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "description": "Lowercase identifier with dashes, for example 'sec-edgar'.",
+            "maxLength": 64,
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "stage": {
+          "maximum": 26,
+          "minimum": 9,
+          "type": "integer"
+        },
+        "step": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "storage": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "volume": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "step",
+        "title",
+        "sources",
+        "scope",
+        "volume",
+        "storage",
+        "checks",
+        "owner_decision",
+        "stage"
+      ],
+      "title": "AcquisitionStep",
+      "type": "object"
+    },
+    "Authentication": {
+      "enum": [
+        "none",
+        "declared_user_agent",
+        "api_key",
+        "contract"
+      ],
+      "title": "Authentication",
+      "type": "string"
     },
     "CapexExpansion": {
       "additionalProperties": false,
@@ -350,6 +450,121 @@
       "title": "Company",
       "type": "object"
     },
+    "CompanyCandidate": {
+      "additionalProperties": false,
+      "description": "A real company proposed for the first acquisition. Only the verified fields are facts.",
+      "properties": {
+        "cik": {
+          "description": "SEC Central Index Key, zero-padded to 10 digits.",
+          "pattern": "^[0-9]{10}$",
+          "type": "string"
+        },
+        "concerns": {
+          "default": [],
+          "items": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "decisions": {
+          "items": {
+            "$ref": "#/$defs/InterventionType"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "filer_category": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "fiscal_year_end": {
+          "pattern": "^(0[1-9]|1[0-2])[0-3][0-9]$",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rank": {
+          "maximum": 10,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "scores": {
+          "items": {
+            "$ref": "#/$defs/Score"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "sector_priority": {
+          "enum": [
+            "p1",
+            "p2",
+            "p3"
+          ],
+          "type": "string"
+        },
+        "sic": {
+          "pattern": "^[0-9]{4}$",
+          "type": "string"
+        },
+        "sic_description": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "listed",
+            "acquired"
+          ],
+          "type": "string"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z.]{1,6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "verified_on": {
+          "format": "date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rank",
+        "name",
+        "cik",
+        "ticker",
+        "sic",
+        "sic_description",
+        "sector_priority",
+        "fiscal_year_end",
+        "filer_category",
+        "status",
+        "verified_on",
+        "decisions",
+        "scores",
+        "total",
+        "concerns"
+      ],
+      "title": "CompanyCandidate",
+      "type": "object"
+    },
     "CompanyDossier": {
       "additionalProperties": false,
       "description": "Everything known about one company at a knowledge cutoff ``as_of``.",
@@ -455,6 +670,53 @@
       "title": "CoverageEntry",
       "type": "object"
     },
+    "Criterion": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion_id": {
+          "pattern": "^C[0-9]$",
+          "type": "string"
+        },
+        "how_checked": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "weight": {
+          "maximum": 3,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "title",
+        "weight",
+        "how_checked"
+      ],
+      "title": "Criterion",
+      "type": "object"
+    },
+    "DataFormat": {
+      "enum": [
+        "json",
+        "csv",
+        "xml",
+        "sdmx_ml",
+        "tsv",
+        "zip",
+        "xlsx",
+        "json_stat",
+        "html"
+      ],
+      "title": "DataFormat",
+      "type": "string"
+    },
     "DataOrigin": {
       "description": "Whether a number describes real reported data or synthetic demo data (PRD SYN-04).",
       "enum": [
@@ -498,6 +760,256 @@
         "metric"
       ],
       "title": "DataQualityFlag",
+      "type": "object"
+    },
+    "DataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "access": {
+          "$ref": "#/$defs/AccessCategory"
+        },
+        "authentication": {
+          "$ref": "#/$defs/Authentication"
+        },
+        "checksum_policy": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "datasets": {
+          "items": {
+            "$ref": "#/$defs/Dataset"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "docs": {
+          "items": {
+            "$ref": "#/$defs/DocLink"
+          },
+          "minItems": 2,
+          "type": "array"
+        },
+        "download": {
+          "$ref": "#/$defs/DownloadDecision"
+        },
+        "key_status": {
+          "$ref": "#/$defs/KeyStatus"
+        },
+        "licence": {
+          "$ref": "#/$defs/Licence"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "notes": {
+          "default": [],
+          "items": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "official_hosts": {
+          "items": {
+            "pattern": "^[a-z0-9.-]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "priority": {
+          "description": "Source-of-truth order of docs/04.",
+          "maximum": 6,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "publisher": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rate_limit": {
+          "$ref": "#/$defs/RateLimit"
+        },
+        "region": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "request_rules": {
+          "items": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "retry_policy": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Lowercase identifier with dashes, for example 'sec-edgar'.",
+          "maxLength": 64,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        "verified_on": {
+          "format": "date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "name",
+        "publisher",
+        "region",
+        "priority",
+        "access",
+        "authentication",
+        "key_status",
+        "licence",
+        "rate_limit",
+        "request_rules",
+        "retry_policy",
+        "checksum_policy",
+        "official_hosts",
+        "docs",
+        "datasets",
+        "verified_on",
+        "download",
+        "notes"
+      ],
+      "title": "DataSource",
+      "type": "object"
+    },
+    "Dataset": {
+      "additionalProperties": false,
+      "description": "One product of a source, with its data dictionary and revision behaviour.",
+      "properties": {
+        "coverage": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "dataset_id": {
+          "description": "Lowercase identifier with dashes, for example 'sec-edgar'.",
+          "maxLength": 64,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "docs": {
+          "items": {
+            "$ref": "#/$defs/DocLink"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "endpoints": {
+          "description": "URL patterns; placeholders such as {cik} are not real values.",
+          "items": {
+            "pattern": "^https://\\S+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/DictionaryField"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "formats": {
+          "items": {
+            "$ref": "#/$defs/DataFormat"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "identifiers": {
+          "items": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "knowledge_time": {
+          "description": "How to tell when a value became public.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "provenance": {
+          "description": "What is recorded with every raw file.",
+          "items": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "revision_semantics": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "update_frequency": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "title",
+        "description",
+        "endpoints",
+        "formats",
+        "update_frequency",
+        "knowledge_time",
+        "revision_semantics",
+        "coverage",
+        "identifiers",
+        "provenance",
+        "fields",
+        "size",
+        "docs"
+      ],
+      "title": "Dataset",
       "type": "object"
     },
     "DatedName": {
@@ -594,6 +1106,15 @@
       "title": "DebtRefinance",
       "type": "object"
     },
+    "DecisionStatus": {
+      "enum": [
+        "awaiting_owner_decision",
+        "approved",
+        "declined"
+      ],
+      "title": "DecisionStatus",
+      "type": "string"
+    },
     "DefaultSource": {
       "additionalProperties": false,
       "properties": {
@@ -622,6 +1143,35 @@
       ],
       "title": "DefaultSourceKind",
       "type": "string"
+    },
+    "DictionaryField": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/FieldRole"
+        },
+        "type": {
+          "$ref": "#/$defs/FieldType"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "role",
+        "description"
+      ],
+      "title": "DictionaryField",
+      "type": "object"
     },
     "Divestiture": {
       "additionalProperties": false,
@@ -694,6 +1244,114 @@
       ],
       "title": "Divestiture",
       "type": "object"
+    },
+    "DocKind": {
+      "enum": [
+        "api_reference",
+        "access_policy",
+        "terms",
+        "dataset_page",
+        "documentation"
+      ],
+      "title": "DocKind",
+      "type": "string"
+    },
+    "DocLink": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/DocKind"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "url": {
+          "description": "Absolute HTTPS address without credentials or port.",
+          "maxLength": 500,
+          "pattern": "^https://[a-z0-9.-]+(/\\S*)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "kind"
+      ],
+      "title": "DocLink",
+      "type": "object"
+    },
+    "DownloadDecision": {
+      "additionalProperties": false,
+      "description": "The owner's decision about automatic downloads from a source.",
+      "properties": {
+        "decided_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "note": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionStatus"
+        }
+      },
+      "required": [
+        "status",
+        "decided_on",
+        "note"
+      ],
+      "title": "DownloadDecision",
+      "type": "object"
+    },
+    "Evidence": {
+      "description": "Whether a score rests on a checked fact or on an expectation still to be checked.",
+      "enum": [
+        "verified",
+        "expected"
+      ],
+      "title": "Evidence",
+      "type": "string"
+    },
+    "FieldRole": {
+      "description": "What a field means for point-in-time use (docs/04).",
+      "enum": [
+        "identifier",
+        "period",
+        "knowledge_time",
+        "value",
+        "unit",
+        "revision",
+        "metadata"
+      ],
+      "title": "FieldRole",
+      "type": "string"
+    },
+    "FieldType": {
+      "enum": [
+        "string",
+        "integer",
+        "decimal",
+        "date",
+        "datetime",
+        "code",
+        "boolean",
+        "object",
+        "array"
+      ],
+      "title": "FieldType",
+      "type": "string"
     },
     "FilingForm": {
       "enum": [
@@ -978,6 +1636,140 @@
       ],
       "title": "InterventionType",
       "type": "string"
+    },
+    "KeyStatus": {
+      "description": "Whether a key is needed and who has to obtain it.",
+      "enum": [
+        "not_required",
+        "owner_must_register",
+        "contract_required"
+      ],
+      "title": "KeyStatus",
+      "type": "string"
+    },
+    "Level": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "Level",
+      "type": "string"
+    },
+    "Licence": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wording the terms ask for."
+        },
+        "exceptions": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parts of the source the general terms do not cover."
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "redistribution": {
+          "$ref": "#/$defs/Redistribution"
+        },
+        "resale": {
+          "$ref": "#/$defs/Resale"
+        },
+        "summary": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "summary",
+        "redistribution",
+        "resale",
+        "attribution",
+        "exceptions"
+      ],
+      "title": "Licence",
+      "type": "object"
+    },
+    "LicensedNeed": {
+      "additionalProperties": false,
+      "description": "Data that only a licensed provider can supply. No provider is chosen in V2.",
+      "properties": {
+        "earliest_version": {
+          "enum": [
+            "V2",
+            "V3",
+            "V4"
+          ],
+          "type": "string"
+        },
+        "need_id": {
+          "description": "Lowercase identifier with dashes, for example 'sec-edgar'.",
+          "maxLength": 64,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        "requirement": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "const": "not_selected",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "why": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "without_it": {
+          "description": "What the platform does while the data is missing.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "need_id",
+        "title",
+        "why",
+        "without_it",
+        "requirement",
+        "earliest_version",
+        "status"
+      ],
+      "title": "LicensedNeed",
+      "type": "object"
     },
     "Lineage": {
       "additionalProperties": false,
@@ -1707,6 +2499,54 @@
       "title": "Quantity",
       "type": "object"
     },
+    "RateLimit": {
+      "additionalProperties": false,
+      "description": "What the provider documents, and the slower rate MULTIVERSE will use.",
+      "properties": {
+        "chosen_requests_per_second": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "documented": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "documented_requests_per_second": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "documented",
+        "documented_requests_per_second",
+        "chosen_requests_per_second"
+      ],
+      "title": "RateLimit",
+      "type": "object"
+    },
+    "Redistribution": {
+      "description": "What the terms say about passing the data on.",
+      "enum": [
+        "public_information",
+        "open_licence",
+        "reuse_with_conditions",
+        "permission_required",
+        "not_allowed"
+      ],
+      "title": "Redistribution",
+      "type": "string"
+    },
     "ReportSnapshot": {
       "additionalProperties": false,
       "description": "One exported report. Never edited, never replaced (PRD FR-RP-02, FR-RP-03).",
@@ -1846,6 +2686,16 @@
       "title": "ReproducibilityManifest",
       "type": "object"
     },
+    "Resale": {
+      "description": "Selling the data itself. Not granted unless a licence says so explicitly.",
+      "enum": [
+        "not_granted",
+        "allowed_by_licence",
+        "prohibited"
+      ],
+      "title": "Resale",
+      "type": "string"
+    },
     "ResultFailure": {
       "additionalProperties": false,
       "properties": {
@@ -1919,6 +2769,94 @@
       ],
       "title": "RevisionRef",
       "type": "object"
+    },
+    "Risk": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/RiskCategory"
+        },
+        "description": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "detection": {
+          "description": "The check or test that shows the risk materialised.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "impact": {
+          "$ref": "#/$defs/Level"
+        },
+        "likelihood": {
+          "$ref": "#/$defs/Level"
+        },
+        "mitigation": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "risk_id": {
+          "pattern": "^R-[0-9]{2}$",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "description": "Lowercase identifier with dashes, for example 'sec-edgar'.",
+            "maxLength": 64,
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "stage": {
+          "description": "Stage that implements the mitigation.",
+          "maximum": 26,
+          "minimum": 9,
+          "type": "integer"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "risk_id",
+        "title",
+        "category",
+        "description",
+        "sources",
+        "likelihood",
+        "impact",
+        "mitigation",
+        "detection",
+        "stage"
+      ],
+      "title": "Risk",
+      "type": "object"
+    },
+    "RiskCategory": {
+      "enum": [
+        "region_and_gaap",
+        "survivorship",
+        "missing_tags",
+        "quarterization",
+        "restatement",
+        "time_to_publication",
+        "currency_and_scale",
+        "identifiers",
+        "terms_of_use",
+        "access",
+        "data_errors",
+        "revisions",
+        "volume"
+      ],
+      "title": "RiskCategory",
+      "type": "string"
     },
     "RndChange": {
       "additionalProperties": false,
@@ -2436,6 +3374,36 @@
       "title": "ScenarioSeries",
       "type": "object"
     },
+    "Score": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "criterion_id": {
+          "pattern": "^C[0-9]$",
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "points": {
+          "maximum": 2,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "points",
+        "evidence",
+        "basis"
+      ],
+      "title": "Score",
+      "type": "object"
+    },
     "Sector": {
       "enum": [
         "semiconductors",
@@ -2448,6 +3416,54 @@
       ],
       "title": "Sector",
       "type": "string"
+    },
+    "SectorPriority": {
+      "additionalProperties": false,
+      "properties": {
+        "decisions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/InterventionType"
+          },
+          "type": "array"
+        },
+        "priority": {
+          "enum": [
+            "p1",
+            "p2",
+            "p3",
+            "excluded"
+          ],
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sector": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sic_codes": {
+          "items": {
+            "pattern": "^[0-9]{4}(-[0-9]{4})?$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "sector",
+        "sic_codes",
+        "priority",
+        "rationale",
+        "decisions"
+      ],
+      "title": "SectorPriority",
+      "type": "object"
     },
     "SensitivitySettings": {
       "additionalProperties": false,
@@ -2538,6 +3554,88 @@
         "label"
       ],
       "title": "ShareMember",
+      "type": "object"
+    },
+    "SourceCatalog": {
+      "additionalProperties": false,
+      "description": "Every source, risk and planned step, checked as one document.",
+      "properties": {
+        "acquisition_plan": {
+          "items": {
+            "$ref": "#/$defs/AcquisitionStep"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "automatic_downloads": {
+          "const": "disabled",
+          "description": "No code downloads anything in Stage 09; Stage 10 needs the owner's decision.",
+          "type": "string"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/CompanyCandidate"
+          },
+          "maxItems": 10,
+          "type": "array"
+        },
+        "contracts_version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "type": "string"
+        },
+        "licensed_needs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/LicensedNeed"
+          },
+          "type": "array"
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Risk"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "rubric": {
+          "items": {
+            "$ref": "#/$defs/Criterion"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "sectors": {
+          "items": {
+            "$ref": "#/$defs/SectorPriority"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/DataSource"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "verified_on": {
+          "format": "date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contracts_version",
+        "verified_on",
+        "automatic_downloads",
+        "sources",
+        "licensed_needs",
+        "risks",
+        "sectors",
+        "rubric",
+        "candidates",
+        "acquisition_plan"
+      ],
+      "title": "SourceCatalog",
       "type": "object"
     },
     "SupportStatus": {
@@ -2967,9 +4065,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.5.0",
+  "$id": "urn:multiverse:contracts:0.6.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.5.0"
+  "x-contracts-version": "0.6.0"
 }

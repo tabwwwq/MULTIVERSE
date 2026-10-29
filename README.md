@@ -10,7 +10,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 - **Forecasts are not causal effects.** Predictive accuracy does not validate the effect of a decision. A result is labelled causal only after documented identification diagnostics.
 - **Intervals are model quantiles** until their coverage is measured on held-out companies and dates.
 - **No investment advice,** no share price prediction, no "fair market value".
-- **Current status: Stage 09 (source policy and Data Catalog) in review.** The Data Catalog describes the official sources (SEC EDGAR, FRED/ALFRED, ECB, World Bank) as metadata only; no data has been downloaded. The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
+- **Current status: Stage 09 (source policy and Data Catalog) accepted; Phase B has started.** The Data Catalog describes the official sources (SEC EDGAR, FRED/ALFRED, ECB, World Bank) as metadata only; no data has been downloaded. The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
 
 ## Status
 
@@ -25,7 +25,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 | 06 | Timeline charts and scenario comparison on mock results | Accepted |
 | 07 | Research notebook: saved scenarios, revisions, reports, on this device only | Accepted |
 | 08 | Gate A: frontend audit, V1 release note (`docs/releases/`) | Accepted |
-| 09 | Source policy and Data Catalog: licences, rate limits, risk register, acquisition plan (metadata only) | Review |
+| 09 | Source policy and Data Catalog: licences, rate limits, risk register, acquisition plan (metadata only) | Accepted |
 | 10–26 | Data → ML → causal → finance → publication | Planned |
 
 ## Repository layout

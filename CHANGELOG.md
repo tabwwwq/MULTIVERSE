@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-29 (Stage 09 accepted)
+
+- Stage 09 (source policy and Data Catalog) accepted by the owner (CI run 40916903384 green). Metadata only: no data downloaded; automatic downloads stay disabled until decisions D-09 to D-12.
+- Overview: the build progress shows phase B as in progress, with no data yet; the status line can wrap on narrow screens.
+
 ### Added — 2026-10-29 (Stage 09)
 
 - Contracts 0.6.0: `SourceCatalog` with sources, datasets and data dictionaries, licences with separate redistribution and resale status, key status, documented and chosen request rates, retry and checksum rules, download decisions, risk register, sector priorities, scoring rubric, company candidates and the acquisition plan (ADR-0016).

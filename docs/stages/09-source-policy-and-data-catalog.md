@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 09 — Source policy и Data Catalog |
 | Дата | 2026-10-29 |
-| Статус | REVIEW |
+| Статус | ACCEPTED 2026-10-29 (CI run 40916903384: 7/7 задач зелёные). Только метаданные: данные не загружены, решения D-09…D-12 за владельцем |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/09_SOURCE_POLICY_AND_DATA_CATALOG.md` |
 | Основание | `docs/04` (источники, слои, SEC operational contract), `docs/12` (licence management, data card), `docs/09`, PRD FR-MO-01 (Data Catalog: coverage, freshness, lineage, license), NFR-SEC-01, `17_ACCEPTANCE_MATRIX` DATA-05 |
 

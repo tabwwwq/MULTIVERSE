@@ -40,7 +40,7 @@ const PHASES: ReadonlyArray<{ name: string; stages: string; status: string }> = 
   {
     name: "Point-in-time data from SEC, FRED, ECB and World Bank",
     stages: "Stages 09 to 14",
-    status: "Planned",
+    status: "In progress, no data yet",
   },
   {
     name: "Baselines, temporal neural networks and calibration",
@@ -150,7 +150,7 @@ export default function OverviewPage() {
                   <span className="sr-only">Phase {String.fromCharCode(65 + index)}: </span>
                   {phase.name}
                 </span>
-                <span className="text-small whitespace-nowrap text-ink-muted tabular-nums">
+                <span className="text-small text-ink-muted tabular-nums md:whitespace-nowrap">
                   {phase.stages}, {phase.status.toLowerCase()}
                 </span>
               </div>

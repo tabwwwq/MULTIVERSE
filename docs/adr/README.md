@@ -21,6 +21,7 @@
 | [0015](0015-local-notebook.md) | Notebook на устройстве: неизменяемые revisions и отчёты, импорт без перезаписи | Accepted |
 | [0016](0016-source-catalog.md) | Каталог источников как contract: загрузки только по решению владельца, бесплатный доступ ≠ лицензия | Accepted |
 | [0017](0017-sec-raw-archive.md) | Сырой архив SEC: неизменяемые файлы по SHA-256, append-only индекс, загрузки только явной командой | Accepted |
+| [0018](0018-canonical-xbrl-values.md) | Канонические значения из XBRL: иерархия concepts, квартализация по одному concept, две ревизии, пропуск не равен нулю | Accepted |
 
 ADR-0001…0006 перечислены в `docs/03_SYSTEM_ARCHITECTURE.md` комплекта. ADR-0007…0011 приняты на Stage 02.
 

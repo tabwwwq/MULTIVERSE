@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-29 (Stage 11)
+
+- XBRL normalization (`python -m multiverse_pipelines.xbrl normalize | show`, ADR-0018): canonical values of 14 metrics (revenue, COGS, operating income, net income, R&D, D&A, CFO, capex, cash, three debt measures, diluted shares, shares outstanding) plus free cash flow and EBITDA (not adjusted) with their formula.
+- Concept map with relations (primary, equivalent, narrower, broader); one concept per company and fiscal year; other candidates kept as reconciliation evidence, with a flag when equivalents disagree.
+- Fiscal calendar from each company's 10-K periods (52/53-week years, year labels from the filing); quarters as reported, from year-to-date differences, or Q4 as fiscal year minus nine months or three quarters, never mixing concepts. Averages and instant values are never derived.
+- Two revisions per value (as first filed, as last filed) with restatement and amendment flags; checks for units, currencies, scale, rounding, negative expenses, duplicates and conflicting values in one filing.
+- Contracts 0.8.0: `NormalizedValue` with source facts and signs, method, knowledge date, quality and flags; the value must equal the signed sum of its sources, and missing is never zero. `LineageMethod` gains `fy_minus_three_quarters`.
+- Standardized tables in `var/data/normalized/sec/` (JSONL, CSV, schema, coverage data card, manifest with input checksums).
+- 40 new tests; manual reconciliation of Texas Instruments, Union Pacific and AMETEK for fiscal 2025 against the original filings: 75 of 75 values match.
+
 ### Changed — 2026-10-29 (Stage 10 accepted)
 
 - Stage 10 (SEC raw ingestion) accepted by the owner (CI run 40951293218 green).

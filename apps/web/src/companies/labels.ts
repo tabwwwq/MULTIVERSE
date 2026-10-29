@@ -42,6 +42,7 @@ export const METHOD_LABELS: Record<LineageMethod, string> = {
   reported: "Reported for the quarter",
   ytd_to_quarter: "Year-to-date figure converted to the quarter",
   fy_minus_nine_months: "Fiscal year minus the first nine months",
+  fy_minus_three_quarters: "Fiscal year minus the first three quarters",
   calculated: "Calculated from reported items",
 };
 

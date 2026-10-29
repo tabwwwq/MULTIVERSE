@@ -128,7 +128,8 @@ export type ValueKind = "observed" | "forecast" | "simulated";
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "LineageMethod".
  */
-export type LineageMethod = "reported" | "ytd_to_quarter" | "fy_minus_nine_months" | "calculated";
+export type LineageMethod =
+  "reported" | "ytd_to_quarter" | "fy_minus_nine_months" | "fy_minus_three_quarters" | "calculated";
 /**
  * Flows cover a period (quarter, year, trailing twelve months); stocks are instant.
  *
@@ -152,6 +153,13 @@ export type MeasureUnit =
  */
 export type UncertaintyType =
   "none" | "predictive_quantiles" | "conditional_model_quantiles" | "calibrated_interval";
+/**
+ * How a candidate concept relates to the metric (the concept hierarchy).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ConceptRelation".
+ */
+export type ConceptRelation = "primary" | "equivalent" | "narrower" | "broader";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "DataFormat".
@@ -230,6 +238,11 @@ export type DefaultSourceKind =
  */
 export type FinancialStatement = "income_statement" | "cash_flow" | "balance_sheet";
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "FiscalPeriod".
+ */
+export type FiscalPeriod = "Q1" | "Q2" | "Q3" | "Q4" | "FY";
+/**
  * Unit of a parameter value. Fractions are shares: 0.25 means 25 %.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -249,6 +262,39 @@ export type MagnitudeBase = "previous_rnd_budget" | "revenue" | "headcount" | "n
  * via the `definition` "Level".
  */
 export type Level = "low" | "medium" | "high";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "QualityFlag".
+ */
+export type QualityFlag =
+  | "restated"
+  | "from_amendment"
+  | "negative_expense"
+  | "negative_derived"
+  | "concept_fallback"
+  | "broader_concept"
+  | "narrower_concept"
+  | "includes_noncontrolling"
+  | "concept_disagreement"
+  | "conflict_in_filing"
+  | "non_usd"
+  | "fifty_three_weeks"
+  | "mixed_rounding"
+  | "scale_mismatch";
+/**
+ * Flows cover a period; balance sheet items and share counts are instant values.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "PeriodKind".
+ */
+export type PeriodKind = "duration" | "instant";
+/**
+ * Which filing's number is used when a later filing reports the same period again.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Revision".
+ */
+export type Revision = "original" | "latest";
 /**
  * Inference mode shown in the trust header of every result (PRD §6).
  *
@@ -726,6 +772,27 @@ export interface Period {
 export interface Quantity {
   currency: string | null;
   unit: MeasureUnit;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  value: string;
+}
+/**
+ * Reconciliation evidence: another candidate concept reported for the same period.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ConceptCheck".
+ */
+export interface ConceptCheck {
+  /**
+   * Taxonomy concept, e.g. 'us-gaap:Revenues'.
+   */
+  concept: string;
+  /**
+   * Chosen value minus this value.
+   */
+  difference: string;
+  relation: ConceptRelation;
   /**
    * Exact decimal number as a string, for example '4213587912' or '-0.25'.
    */
@@ -1232,6 +1299,72 @@ export interface ObservedPoint {
   fiscal_label: string;
   period_end: string;
   source_id: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  value: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "NormalizedValue".
+ */
+export interface NormalizedValue {
+  /**
+   * The filing that made the value knowable: its latest source.
+   */
+  accession: string | null;
+  alternatives: ConceptCheck[];
+  cik: string;
+  /**
+   * The concept chosen for the metric; empty for calculated values.
+   */
+  concept: string | null;
+  currency: string | null;
+  /**
+   * Knowledge date: latest source filed.
+   */
+  filed: string | null;
+  fiscal_period: FiscalPeriod;
+  fiscal_year: number;
+  flags: QualityFlag[];
+  formula: string | null;
+  method: LineageMethod | null;
+  metric: string;
+  missing_reason: string | null;
+  /**
+   * On a restated latest value: the value as first filed.
+   */
+  original_value: string | null;
+  period_end: string;
+  period_kind: PeriodKind;
+  /**
+   * Empty for instant values.
+   */
+  period_start: string | null;
+  quality: QualitySeverity;
+  revision: Revision;
+  sources: SourceFact[];
+  unit: string | null;
+  value: string | null;
+}
+/**
+ * One XBRL fact as filed, and the sign with which it enters the value.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SourceFact".
+ */
+export interface SourceFact {
+  accession: string;
+  /**
+   * Taxonomy concept, e.g. 'us-gaap:Revenues'.
+   */
+  concept: string;
+  filed: string;
+  form: string;
+  period_end: string;
+  period_start: string | null;
+  sign: 1 | -1;
+  unit: string;
   /**
    * Exact decimal number as a string, for example '4213587912' or '-0.25'.
    */

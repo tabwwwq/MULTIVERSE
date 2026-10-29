@@ -18,6 +18,7 @@ from multiverse_contracts.decisions import ScenarioDraft
 from multiverse_contracts.interventions import InterventionCatalog
 from multiverse_contracts.manifest import ReproducibilityManifest
 from multiverse_contracts.metrics import MetricValue
+from multiverse_contracts.normalized import NormalizedValue
 from multiverse_contracts.notebook import NotebookExport
 from multiverse_contracts.results import ScenarioResult
 from multiverse_contracts.sources import SourceCatalog
@@ -36,6 +37,7 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     ScenarioResult,
     NotebookExport,
     SourceCatalog,
+    NormalizedValue,
 )
 
 

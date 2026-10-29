@@ -5,7 +5,7 @@ Data pipelines for SEC, FRED, ECB and World Bank (`docs/04`). They read the sour
 | Stage | Pipeline | Status |
 |---|---|---|
 | 10 | SEC raw ingestion: Submissions API, Company Facts API, bulk ZIPs (ADR-0017) | **Done** |
-| 11 | XBRL normalization | Planned |
+| 11 | XBRL normalization: canonical values with lineage, revisions and quality (ADR-0018) | **Done** |
 | 12 | Point-in-time warehouse | Planned |
 | 13 | Macro vintages | Planned |
 
@@ -62,3 +62,31 @@ Files are read-only and named by their SHA-256. The same bytes are never stored 
 - **Tickers change and are reused.** They are an observation with a date (`tickers` in submissions), never a key. Celgene, acquired in 2019, has no ticker today.
 - **US-GAAP and IFRS:** domestic filers report in `us-gaap` on 10-K and 10-Q. Foreign private issuers file 20-F or 40-F and may report in `ifrs-full`. The V2 universe is domestic US-GAAP filers; the coverage report counts taxonomies and foreign forms instead of assuming them.
 - **Access:** EDGAR data needs no account. EDGAR Next filer accounts are for submitting filings and are never used here. The only identity sent is the User-Agent.
+
+## XBRL normalization
+
+Reads only the local raw archive; no network. Run from the repository root:
+
+| Command | What it does |
+|---|---|
+| `uv run python -m multiverse_pipelines.xbrl normalize` | All archived candidates (or `--cik`, repeatable) into `var/data/normalized/sec/` (`--out` for another folder) |
+| `uv run python -m multiverse_pipelines.xbrl show --cik 97476 --fiscal-year 2025 [--revision original]` | One company and year as a table: values in millions with the method of each, for reconciliation with the filings |
+
+Output (never committed):
+
+| File | Content |
+|---|---|
+| `values.jsonl` | One `NormalizedValue` (contracts 0.8.0) per line: the reference format with full lineage |
+| `values.csv` | The same rows flattened; `sources` and `alternatives` as text |
+| `schema.json` | JSON Schema of the row |
+| `coverage.json`, `coverage.md` | Valid quarters in the last 8 / 20 / 40 per company and metric, concepts and methods used (data card) |
+| `manifest.json` | Input raw files with SHA-256, contracts version, row counts |
+
+One row is one metric of one company for one fiscal period (Q1 to Q4, FY) under one revision:
+
+- `original`: each fact as first filed;
+- `latest`: as last filed, amendments and restatements included.
+
+Each row names its concept, its method and the source facts with their signs. It also names the accession and date of the filing that made it knowable, and the other candidate concepts with their differences. Missing values carry a reason, never zero.
+
+Metrics: `revenue`, `cogs`, `operating_income`, `net_income`, `rnd`, `depreciation_amortization`, `cfo`, `capex`, `cash`, `long_term_debt`, `long_term_debt_noncurrent`, `debt_current`, `shares_diluted`, `shares_outstanding`; calculated `free_cash_flow` (CFO − capex) and `ebitda` (operating income + D&A, not adjusted). The concept map with relations is `multiverse_pipelines/xbrl/concepts.py`.

@@ -57,6 +57,7 @@ class LineageMethod(StrEnum):
     REPORTED = "reported"
     YTD_TO_QUARTER = "ytd_to_quarter"
     FY_MINUS_NINE_MONTHS = "fy_minus_nine_months"
+    FY_MINUS_THREE_QUARTERS = "fy_minus_three_quarters"
     CALCULATED = "calculated"
 
 

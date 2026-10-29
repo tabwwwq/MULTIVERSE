@@ -659,6 +659,49 @@
       "title": "CompanyStatus",
       "type": "string"
     },
+    "ConceptCheck": {
+      "additionalProperties": false,
+      "description": "Reconciliation evidence: another candidate concept reported for the same period.",
+      "properties": {
+        "concept": {
+          "description": "Taxonomy concept, e.g. 'us-gaap:Revenues'.",
+          "pattern": "^[a-z][a-z0-9-]*:[A-Za-z][A-Za-z0-9]*$",
+          "type": "string"
+        },
+        "difference": {
+          "description": "Chosen value minus this value.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "relation": {
+          "$ref": "#/$defs/ConceptRelation"
+        },
+        "value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "concept",
+        "relation",
+        "value",
+        "difference"
+      ],
+      "title": "ConceptCheck",
+      "type": "object"
+    },
+    "ConceptRelation": {
+      "description": "How a candidate concept relates to the metric (the concept hierarchy).",
+      "enum": [
+        "primary",
+        "equivalent",
+        "narrower",
+        "broader"
+      ],
+      "title": "ConceptRelation",
+      "type": "string"
+    },
     "CoverageEntry": {
       "additionalProperties": false,
       "description": "How many fiscal quarters have a valid value for one metric.",
@@ -1460,6 +1503,17 @@
       "title": "FinancialStatement",
       "type": "string"
     },
+    "FiscalPeriod": {
+      "enum": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "FY"
+      ],
+      "title": "FiscalPeriod",
+      "type": "string"
+    },
     "FixedValue": {
       "additionalProperties": false,
       "description": "No uncertainty: the parameter takes exactly this value.",
@@ -1850,6 +1904,7 @@
         "reported",
         "ytd_to_quarter",
         "fy_minus_nine_months",
+        "fy_minus_three_quarters",
         "calculated"
       ],
       "title": "LineageMethod",
@@ -2158,6 +2213,229 @@
       "title": "MetricValue",
       "type": "object"
     },
+    "NormalizedValue": {
+      "additionalProperties": false,
+      "properties": {
+        "accession": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The filing that made the value knowable: its latest source."
+        },
+        "alternatives": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ConceptCheck"
+          },
+          "type": "array"
+        },
+        "cik": {
+          "pattern": "^[0-9]{10}$",
+          "type": "string"
+        },
+        "concept": {
+          "anyOf": [
+            {
+              "description": "Taxonomy concept, e.g. 'us-gaap:Revenues'.",
+              "pattern": "^[a-z][a-z0-9-]*:[A-Za-z][A-Za-z0-9]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The concept chosen for the metric; empty for calculated values."
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "description": "ISO 4217 currency code, for example 'USD'.",
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "filed": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Knowledge date: latest source filed."
+        },
+        "fiscal_period": {
+          "$ref": "#/$defs/FiscalPeriod"
+        },
+        "fiscal_year": {
+          "maximum": 2200,
+          "minimum": 1990,
+          "type": "integer"
+        },
+        "flags": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/QualityFlag"
+          },
+          "type": "array"
+        },
+        "formula": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LineageMethod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "metric": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "missing_reason": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "original_value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "On a restated latest value: the value as first filed."
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "period_kind": {
+          "$ref": "#/$defs/PeriodKind"
+        },
+        "period_start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Empty for instant values."
+        },
+        "quality": {
+          "$ref": "#/$defs/QualitySeverity"
+        },
+        "revision": {
+          "$ref": "#/$defs/Revision"
+        },
+        "sources": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SourceFact"
+          },
+          "type": "array"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "cik",
+        "metric",
+        "fiscal_year",
+        "fiscal_period",
+        "period_kind",
+        "period_start",
+        "period_end",
+        "revision",
+        "value",
+        "missing_reason",
+        "unit",
+        "currency",
+        "concept",
+        "method",
+        "formula",
+        "accession",
+        "filed",
+        "sources",
+        "alternatives",
+        "original_value",
+        "quality",
+        "flags"
+      ],
+      "title": "NormalizedValue",
+      "type": "object"
+    },
     "NotebookExport": {
       "additionalProperties": false,
       "description": "The JSON file a notebook is exported to and imported from (PRD FR-LB-03).",
@@ -2415,6 +2693,15 @@
       "title": "Period",
       "type": "object"
     },
+    "PeriodKind": {
+      "description": "Flows cover a period; balance sheet items and share counts are instant values.",
+      "enum": [
+        "duration",
+        "instant"
+      ],
+      "title": "PeriodKind",
+      "type": "string"
+    },
     "PeriodType": {
       "description": "Flows cover a period (quarter, year, trailing twelve months); stocks are instant.",
       "enum": [
@@ -2453,6 +2740,26 @@
       ],
       "title": "ProceedsAllocation",
       "type": "object"
+    },
+    "QualityFlag": {
+      "enum": [
+        "restated",
+        "from_amendment",
+        "negative_expense",
+        "negative_derived",
+        "concept_fallback",
+        "broader_concept",
+        "narrower_concept",
+        "includes_noncontrolling",
+        "concept_disagreement",
+        "conflict_in_filing",
+        "non_usd",
+        "fifty_three_weeks",
+        "mixed_rounding",
+        "scale_mismatch"
+      ],
+      "title": "QualityFlag",
+      "type": "string"
     },
     "QualitySeverity": {
       "enum": [
@@ -2784,6 +3091,15 @@
         "failed"
       ],
       "title": "ResultStatus",
+      "type": "string"
+    },
+    "Revision": {
+      "description": "Which filing's number is used when a later filing reports the same period again.",
+      "enum": [
+        "original",
+        "latest"
+      ],
+      "title": "Revision",
       "type": "string"
     },
     "RevisionRef": {
@@ -3674,6 +3990,77 @@
       "title": "SourceCatalog",
       "type": "object"
     },
+    "SourceFact": {
+      "additionalProperties": false,
+      "description": "One XBRL fact as filed, and the sign with which it enters the value.",
+      "properties": {
+        "accession": {
+          "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$",
+          "type": "string"
+        },
+        "concept": {
+          "description": "Taxonomy concept, e.g. 'us-gaap:Revenues'.",
+          "pattern": "^[a-z][a-z0-9-]*:[A-Za-z][A-Za-z0-9]*$",
+          "type": "string"
+        },
+        "filed": {
+          "format": "date",
+          "type": "string"
+        },
+        "form": {
+          "maxLength": 12,
+          "minLength": 2,
+          "type": "string"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "period_start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sign": {
+          "default": 1,
+          "enum": [
+            1,
+            -1
+          ],
+          "type": "integer"
+        },
+        "unit": {
+          "maxLength": 40,
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "concept",
+        "unit",
+        "period_start",
+        "period_end",
+        "value",
+        "accession",
+        "form",
+        "filed",
+        "sign"
+      ],
+      "title": "SourceFact",
+      "type": "object"
+    },
     "SupportStatus": {
       "description": "Whether MULTIVERSE can work with a company (PRD FC-01, FC-02).",
       "enum": [
@@ -4101,9 +4488,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.7.0",
+  "$id": "urn:multiverse:contracts:0.8.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.7.0"
+  "x-contracts-version": "0.8.0"
 }

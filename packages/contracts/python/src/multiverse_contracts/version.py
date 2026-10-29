@@ -20,6 +20,10 @@ risk register, company candidates and the acquisition plan (metadata only).
 
 0.7.0 (Stage 10): the scope of an owner's download approval (sample or bulk)
 and the date an acquisition step's owner decision was taken.
+
+0.8.0 (Stage 11): normalized values from SEC XBRL facts with source facts,
+method, revision, knowledge date and quality flags; Q4 as fiscal year minus
+three reported quarters.
 """
 
-CONTRACTS_VERSION = "0.7.0"
+CONTRACTS_VERSION = "0.8.0"

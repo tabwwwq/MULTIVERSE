@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-29
+
+- Stage 07 accepted by the owner (CI run 40848057488 green).
+
 ### Added — 2026-10-29 (Stage 07)
 
 - Contracts 0.5.0: `ScenarioRecord` with append-only revisions, `ReportSnapshot` with a SHA-256 of its content and a manifest, and the `NotebookExport` file with a schema version (ADR-0015).

@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 07 — Research notebook и ревизии сценариев |
 | Дата | 2026-10-28 |
-| Статус | REVIEW — ждёт приёмки владельцем |
+| Статус | ACCEPTED 2026-10-29 (CI run 40848057488: 7/7 задач зелёные) |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/07_EXPERIMENT_LIBRARY.md` |
 | Основание | `docs/09` (ScenarioRevision, `GET /scenarios/{id}/revisions`), `docs/12` (privacy), PRD FR-LB-01…03, FR-RP-01…04, FR-ST-02, SP-02, NFR-PRIV-01, US-11, US-12, FC-09, FC-10 |
 

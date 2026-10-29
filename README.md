@@ -23,7 +23,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 | 04 | Company explorer and dossier on synthetic fixtures | Accepted |
 | 05 | Decision builder: six decision types, validation, intervention catalog | Accepted |
 | 06 | Timeline charts and scenario comparison on mock results | Accepted |
-| 07 | Research notebook: saved scenarios, revisions, reports, on this device only | Review |
+| 07 | Research notebook: saved scenarios, revisions, reports, on this device only | Accepted |
 | 08–26 | Frontend gate → data → ML → causal → finance → publication | Planned |
 
 ## Repository layout

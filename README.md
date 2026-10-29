@@ -10,7 +10,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 - **Forecasts are not causal effects.** Predictive accuracy does not validate the effect of a decision. A result is labelled causal only after documented identification diagnostics.
 - **Intervals are model quantiles** until their coverage is measured on held-out companies and dates.
 - **No investment advice,** no share price prediction, no "fair market value".
-- **Current status: Stage 11 (XBRL normalization) in review.** The Data Catalog describes the official sources (SEC EDGAR, FRED/ALFRED, ECB, World Bank). With the owner's approval (decision D-09), a sample of raw SEC files for ten companies was downloaded into a local, immutable archive (`var/raw`, never committed) and normalized into canonical quarterly values with full lineage (`var/data`, never committed); the app shows none of it. The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
+- **Current status: Stage 11 (XBRL normalization) accepted.** The Data Catalog describes the official sources (SEC EDGAR, FRED/ALFRED, ECB, World Bank). With the owner's approval (decision D-09), a sample of raw SEC files for ten companies was downloaded into a local, immutable archive (`var/raw`, never committed) and normalized into canonical quarterly values with full lineage (`var/data`, never committed); the app shows none of it. The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
 
 ## Status
 
@@ -27,7 +27,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 | 08 | Gate A: frontend audit, V1 release note (`docs/releases/`) | Accepted |
 | 09 | Source policy and Data Catalog: licences, rate limits, risk register, acquisition plan (metadata only) | Accepted |
 | 10 | SEC raw ingestion: immutable archive, metadata index, audit manifests, sample of ten companies (`pipelines/`) | Accepted |
-| 11 | XBRL normalization: concept map, quarters, revisions, quality flags, manual reconciliation of three companies | Review |
+| 11 | XBRL normalization: concept map, quarters, revisions, quality flags, manual reconciliation of three companies | Accepted |
 | 12–26 | Data → ML → causal → finance → publication | Planned |
 
 ## Repository layout

@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-30 (Stage 11 accepted)
+
+- Stage 11 (XBRL normalization) accepted by the owner (CI run 40956130754 green).
+
 ### Added — 2026-10-29 (Stage 11)
 
 - XBRL normalization (`python -m multiverse_pipelines.xbrl normalize | show`, ADR-0018): canonical values of 14 metrics (revenue, COGS, operating income, net income, R&D, D&A, CFO, capex, cash, three debt measures, diluted shares, shares outstanding) plus free cash flow and EBITDA (not adjusted) with their formula.

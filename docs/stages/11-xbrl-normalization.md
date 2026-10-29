@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 11 — нормализация XBRL в канонические финансовые значения |
 | Дата | 2026-10-29 |
-| Статус | REVIEW |
+| Статус | ACCEPTED 2026-10-30 (CI run 40956130754: 7/7 задач зелёные; владелец: «Принять Stage 11») |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/11_XBRL_NORMALIZATION.md` |
 | Основание | `docs/04` (minimum viable metric mapping, слой silver), `docs/09` (FinancialFact), `17_ACCEPTANCE_MATRIX` DATA-03, DATA-04, DATA-05; команда владельца 2026-10-29: «делай некст шаг, все разрешаю» |
 | Решение | ADR-0018 — канонические значения из XBRL |

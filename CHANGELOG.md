@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-29 (Stage 10 accepted)
+
+- Stage 10 (SEC raw ingestion) accepted by the owner (CI run 40951293218 green).
+
 ### Added — 2026-10-29 (Stage 10)
 
 - SEC raw ingestion (`python -m multiverse_pipelines.sec`, ADR-0017): connectors for the Submissions API (with the older-filing pages it lists), the Company Facts API and bulk ZIPs (`companyfacts.zip`, `submissions.zip`, quarterly Financial Statement Data Sets). Commands `status`, `sample`, `probe`, `bulk`, `verify`, `coverage`.

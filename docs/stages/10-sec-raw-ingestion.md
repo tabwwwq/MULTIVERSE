@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 10 — SEC raw ingestion и source archive |
 | Дата | 2026-10-29 |
-| Статус | REVIEW |
+| Статус | ACCEPTED 2026-10-29 (CI run 40951293218: 7/7 задач зелёные; владелец: «делай некст шаг, все разрешаю») |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/10_SEC_RAW_INGESTION.md` |
 | Основание | `docs/04` (SEC operational contract, слой raw), `docs/12` (provenance, licence), ADR-0005, ADR-0016, решение владельца **D-09** от 2026-10-29 |
 | Решение | ADR-0017 — сырой архив SEC |

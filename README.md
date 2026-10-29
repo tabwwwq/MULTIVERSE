@@ -10,7 +10,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 - **Forecasts are not causal effects.** Predictive accuracy does not validate the effect of a decision. A result is labelled causal only after documented identification diagnostics.
 - **Intervals are model quantiles** until their coverage is measured on held-out companies and dates.
 - **No investment advice,** no share price prediction, no "fair market value".
-- **Current status: Stage 08, Gate A (frontend audit) in review.** The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
+- **Current status: V1 interactive prototype, Gate A passed (Stage 08).** The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
 
 ## Status
 
@@ -24,7 +24,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 | 05 | Decision builder: six decision types, validation, intervention catalog | Accepted |
 | 06 | Timeline charts and scenario comparison on mock results | Accepted |
 | 07 | Research notebook: saved scenarios, revisions, reports, on this device only | Accepted |
-| 08 | Gate A: frontend audit, V1 release note (`docs/releases/`) | Review |
+| 08 | Gate A: frontend audit, V1 release note (`docs/releases/`) | Accepted |
 | 09–26 | Data → ML → causal → finance → publication | Planned |
 
 ## Repository layout

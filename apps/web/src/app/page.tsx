@@ -35,7 +35,7 @@ const PHASES: ReadonlyArray<{ name: string; stages: string; status: string }> = 
   {
     name: "Product and interface foundation",
     stages: "Stages 01 to 08",
-    status: "Final review",
+    status: "Done on synthetic data",
   },
   {
     name: "Point-in-time data from SEC, FRED, ECB and World Bank",

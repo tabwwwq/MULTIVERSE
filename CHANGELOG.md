@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-29 (Stage 08 accepted)
+
+- Stage 08 (Gate A) accepted by the owner (CI run 40904304678 green). V1 Interactive prototype is complete; no tag or GitHub release.
+- Overview: the build progress shows phase A as done on synthetic data.
+
 ### Added — 2026-10-29 (Stage 08, Gate A)
 
 - Gate A frontend audit: 20 formal test cases with actual results; all P0 pass (`docs/stages/08-frontend-test-gate.md`).

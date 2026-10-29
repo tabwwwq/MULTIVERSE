@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 08 — Gate A: quality audit frontend |
 | Дата | 2026-10-29 |
-| Статус | REVIEW. Gate A по тест-кейсам: **PASS** (20 из 20, все P0). Открыто 2 пункта матрицы, где нужен человек: проверка со screen reader (UX-03) и user study (REP-02) |
+| Статус | ACCEPTED 2026-10-29 (CI run 40904304678: 7/7 задач зелёные). Gate A по тест-кейсам: **PASS** (20 из 20, все P0). Открыто 2 пункта матрицы, где нужен человек: проверка со screen reader (UX-03) и user study (REP-02) |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/08_FRONTEND_TEST_GATE.md` |
 | Основание | `docs/10` (design spec, prototype acceptance), `docs/11`, `docs/14` (Gate A), `17_ACCEPTANCE_MATRIX` (UX-01…04, SIM-03, REP-02), PRD NFR-A11Y, NFR-RESP, NFR-PERF-01…03, SYN-01…08, FP-01…09 |
 | Release note | `docs/releases/v1-interactive-prototype.md` |

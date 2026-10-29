@@ -70,13 +70,13 @@ export function PrivacySettings() {
           Delete everything
         </h2>
         <p className="text-body text-ink-muted">
-          Removes the notebook, its reports and the display settings of this app from this browser.
-          Other sites are not affected. Export the notebook first if you want a copy.
+          Removes the notebook, its reports and the sidebar preference of this app from this
+          browser. Other sites are not affected. Export the notebook first if you want a copy.
         </p>
         <div>
           <Modal
             title="Delete all MULTIVERSE data on this device?"
-            description="Saved scenarios, revisions, reports and settings are removed from this browser. This cannot be undone."
+            description="Saved scenarios, revisions, reports and the sidebar preference are removed from this browser. This cannot be undone."
             triggerLabel="Delete all data on this device"
             triggerVariant="danger"
             cancelLabel="Keep my data"
@@ -106,7 +106,8 @@ export function PrivacySettings() {
           <li>No accounts and no analytics in this version (decision D-07).</li>
           <li>Nothing you enter is sent to a server: scenarios stay in this browser.</li>
           <li>
-            Display settings for amounts and number formats are planned with Gate A (Stage 08).
+            There is no setting for amount scale or number format yet: every number shows its unit,
+            and the Company Dossier has its own amount scale.
           </li>
         </ul>
       </section>

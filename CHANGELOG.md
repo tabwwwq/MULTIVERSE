@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-29 (Stage 08, Gate A)
+
+- Gate A frontend audit: 20 formal test cases with actual results; all P0 pass (`docs/stages/08-frontend-test-gate.md`).
+- `e2e/gate-a.spec.ts`: every route at 1440, 768 and 390 px (status, console errors, overflow, one heading, demo labels, copy audit, axe WCAG 2.2), internal links, the whole journey from search to exported report, keyboard only, focus rings, reduced motion, refresh, unit conversion and data consistency.
+- `e2e/performance.spec.ts`: load and interaction observations on request (`OBSERVE_PERF=1`).
+- Release note for V1 Interactive prototype (`docs/releases/v1-interactive-prototype.md`); no tag or GitHub release.
+- Tests: 160 Playwright checks.
+
+### Fixed — 2026-10-29 (Stage 08)
+
+- Universe Explorer: a result clicked within 300 ms of typing was replaced by the pending search.
+- Overview: the disabled "Launch a scenario" button and its "arrives in Stage 05" note are replaced by a link to the Decision Builder; the build progress no longer says Stage 03.
+- Settings & Privacy no longer promises display settings with Gate A and no longer says it deletes display settings that do not exist.
+- Design system example badge no longer names a finished stage.
+
 ### Changed — 2026-10-29
 
 - Stage 07 accepted by the owner (CI run 40848057488 green).

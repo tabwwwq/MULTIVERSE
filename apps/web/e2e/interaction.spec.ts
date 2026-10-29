@@ -23,11 +23,10 @@ test.describe("keyboard", () => {
     await expect(page.locator("#main")).toBeFocused();
   });
 
-  test("the scenario launch button is disabled and explains why", async ({ page }) => {
+  test("the scenario link opens the Decision Builder", async ({ page }) => {
     await page.goto("/");
-    const launch = page.getByRole("button", { name: "Launch a scenario" });
-    await expect(launch).toBeDisabled();
-    await expect(launch).toHaveAccessibleDescription(/not built yet/);
+    await page.getByRole("link", { name: "Build a scenario" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Decision Builder" })).toBeVisible();
   });
 });
 

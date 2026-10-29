@@ -373,7 +373,7 @@ export const SECTIONS: readonly Section[] = [
     plans: [
       "List of everything stored on this device.",
       "Delete everything stored on this device.",
-      "Display scale and number format arrive with Gate A (Stage 08).",
+      "Display scale and number format settings are in the backlog (FR-ST-01).",
     ],
   },
 ];

@@ -26,11 +26,17 @@ export function ExplorerForm({ query, facets }: ExplorerFormProps) {
 
   const submitNow = () => {
     window.clearTimeout(timer.current);
+    timer.current = undefined;
     formRef.current?.requestSubmit();
   };
   const submitSoon = () => {
     window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => formRef.current?.requestSubmit(), 300);
+    timer.current = window.setTimeout(submitNow, 300);
+  };
+  // A search still waiting when focus leaves the field runs now, so it cannot
+  // replace a result link the visitor clicks in the meantime.
+  const submitPending = () => {
+    if (timer.current !== undefined) submitNow();
   };
 
   return (
@@ -58,6 +64,7 @@ export function ExplorerForm({ query, facets }: ExplorerFormProps) {
           spellCheck={false}
           enterKeyHint="search"
           onChange={submitSoon}
+          onBlur={submitPending}
         />
       </div>
       <SelectField

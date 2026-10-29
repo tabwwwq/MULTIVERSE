@@ -242,7 +242,7 @@ export default function DesignSystemPage() {
           </div>
           <div className="flex flex-wrap gap-2">
             <Badge>Neutral</Badge>
-            <Badge tone="blue">Planned for Stage 05</Badge>
+            <Badge tone="blue">Planned for Stage 22</Badge>
             <Badge tone="negative">Stale, requires rerun</Badge>
           </div>
         </div>

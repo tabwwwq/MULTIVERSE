@@ -3,7 +3,7 @@ import { TimelineMotif } from "@/components/brand/timeline-motif";
 import { ChartLegend } from "@/components/charts/chart-legend";
 import { SourceBadge } from "@/components/trust/source-badge";
 import { TrustHeader } from "@/components/trust/trust-header";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { Section } from "@/layouts/page-header";
 
 const VALUE_KINDS: ReadonlyArray<{ kind: ValueKind; origin: DataOrigin; text: string }> = [
@@ -35,7 +35,7 @@ const PHASES: ReadonlyArray<{ name: string; stages: string; status: string }> = 
   {
     name: "Product and interface foundation",
     stages: "Stages 01 to 08",
-    status: "In progress, Stage 03",
+    status: "Final review",
   },
   {
     name: "Point-in-time data from SEC, FRED, ECB and World Bank",
@@ -76,13 +76,13 @@ export default function OverviewPage() {
           </p>
           <div className="flex flex-wrap gap-3">
             <ButtonLink href="/methodology">Read the methodology</ButtonLink>
-            <Button variant="secondary" disabled aria-describedby="launch-note">
-              Launch a scenario
-            </Button>
+            <ButtonLink href="/decisions" variant="secondary">
+              Build a scenario
+            </ButtonLink>
           </div>
-          <p id="launch-note" className="text-small text-ink-muted">
-            The scenario builder is not built yet; it arrives in Stage 05. No page on this site uses
-            real company data so far.
+          <p className="text-small text-ink-muted">
+            This prototype runs on fictional companies and fixed mock results; the simulation engine
+            arrives in Stage 22. No page on this site uses real company data so far.
           </p>
         </div>
         <figure className="rounded-frame border border-line bg-surface p-4 md:p-6">

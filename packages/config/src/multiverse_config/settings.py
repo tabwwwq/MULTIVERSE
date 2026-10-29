@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     env: Environment = Environment.LOCAL
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
     data_dir: Path = Path("var/data")
+    # Raw source files (Stage 10): immutable, never committed, within a disk budget.
+    raw_dir: Path = Path("var/raw")
+    raw_budget_mb: int = Field(default=200, ge=1)
     api_host: str = "127.0.0.1"
     api_port: int = Field(default=8000, ge=1, le=65535)
     # Downloads from SEC, FRED and others stay off until the owner enables them (Stage 09-10).

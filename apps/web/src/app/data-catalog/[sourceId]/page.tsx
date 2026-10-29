@@ -123,7 +123,7 @@ export default async function SourcePage({ params }: PageProps) {
         }
       />
       <div className="mb-6 max-w-3xl">
-        <Alert tone="info" title="Metadata only">
+        <Alert tone="info" title="The app shows metadata only">
           {source.download.note} Documentation checked on {source.verified_on}.
         </Alert>
       </div>

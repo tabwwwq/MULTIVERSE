@@ -98,3 +98,17 @@ def test_secret_never_appears_in_repr(monkeypatch: pytest.MonkeyPatch) -> None:
     assert fake_value not in settings.model_dump_json()
     assert settings.fred_api_key is not None
     assert settings.fred_api_key.get_secret_value() == fake_value
+
+
+def test_raw_archive_has_a_disk_budget() -> None:
+    settings = Settings(_env_file=None)
+
+    assert settings.raw_dir == Path("var/raw")
+    assert settings.raw_budget_mb == 200
+
+
+def test_a_raw_budget_of_zero_is_refused(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("MULTIVERSE_RAW_BUDGET_MB", "0")
+
+    with pytest.raises(ValidationError, match="raw_budget_mb"):
+        Settings(_env_file=None)

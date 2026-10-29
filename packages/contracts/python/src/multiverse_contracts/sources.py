@@ -131,6 +131,13 @@ class DecisionStatus(StrEnum):
     DECLINED = "declined"
 
 
+class DownloadScope(StrEnum):
+    """What an approval covers: a named sample through the API, or bulk files as well."""
+
+    SAMPLE = "sample"
+    BULK = "bulk"
+
+
 class Level(StrEnum):
     LOW = "low"
     MEDIUM = "medium"
@@ -237,12 +244,17 @@ class DownloadDecision(ContractModel):
 
     status: DecisionStatus
     decided_on: date | None = None
+    scope: DownloadScope | None = Field(
+        default=None, description="What the approval covers; set exactly when approved."
+    )
     note: Text
 
     @model_validator(mode="after")
     def _dated_when_decided(self) -> Self:
         if (self.status is DecisionStatus.AWAITING_OWNER) != (self.decided_on is None):
             raise ValueError("a decision has a date exactly when it is no longer awaited")
+        if (self.status is DecisionStatus.APPROVED) != (self.scope is not None):
+            raise ValueError("an approval states its scope, and only an approval has one")
         return self
 
 
@@ -388,7 +400,16 @@ class AcquisitionStep(ContractModel):
     owner_decision: Text | None = Field(
         default=None, description="What the owner has to decide before this step may run."
     )
+    decided_on: date | None = Field(
+        default=None, description="When the owner took that decision; empty while it is open."
+    )
     stage: int = Field(ge=9, le=26)
+
+    @model_validator(mode="after")
+    def _decided_only_if_asked(self) -> Self:
+        if self.decided_on is not None and self.owner_decision is None:
+            raise ValueError("only a step that needs an owner decision can record one")
+        return self
 
 
 class SourceCatalog(ContractModel):
@@ -397,7 +418,10 @@ class SourceCatalog(ContractModel):
     contracts_version: Annotated[str, StringConstraints(pattern=r"^\d+\.\d+\.\d+$")]
     verified_on: date
     automatic_downloads: Literal["disabled"] = Field(
-        description="No code downloads anything in Stage 09; Stage 10 needs the owner's decision."
+        description=(
+            "Nothing is scheduled: downloads run only as explicit commands, and only from a "
+            "source the owner approved."
+        )
     )
     sources: tuple[DataSource, ...] = Field(min_length=1)
     licensed_needs: tuple[LicensedNeed, ...] = ()

@@ -34,10 +34,11 @@ export default async function DataCatalogPage({ searchParams }: PageProps) {
         }
       />
       <div className="mb-6 flex max-w-3xl flex-col gap-3">
-        <Alert tone="info" title="No data has been downloaded">
-          This catalog describes sources; it holds none of their data. Each source stays off until
-          the owner approves it. Documentation was checked on {SOURCE_CATALOG.verified_on}; free
-          access is not treated as a licence to resell.
+        <Alert tone="info" title="The catalog shows no source data">
+          This catalog describes sources; the app holds none of their data. Each source stays off
+          until the owner approves it, and what was downloaded stays in the local raw archive,
+          outside the app and out of git. Documentation was checked on {SOURCE_CATALOG.verified_on};
+          free access is not treated as a licence to resell.
         </Alert>
         {ignored.length > 0 ? (
           <Alert tone="info" title="Some filters in the link were ignored">

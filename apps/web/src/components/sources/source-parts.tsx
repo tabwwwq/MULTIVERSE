@@ -10,6 +10,7 @@ import {
   ACCESS_LABELS,
   DECISION_LABELS,
   DOC_KIND_LABELS,
+  DOWNLOAD_SCOPE_LABELS,
   KEY_LABELS,
   RESALE_LABELS,
 } from "@/sources/catalog";
@@ -24,12 +25,14 @@ export function AccessBadge({ access }: { access: DataSource["access"] }) {
   return <Badge tone={ACCESS_TONES[access]}>{ACCESS_LABELS[access]}</Badge>;
 }
 
-/** Downloads stay off until the owner decides; the badge says so on every source. */
+/** Downloads stay off until the owner decides; an approval also says what it covers. */
 export function DownloadBadge({ source }: { source: DataSource }) {
-  const off = source.download.status !== "approved";
+  const { status, scope } = source.download;
+  const off = status !== "approved";
   return (
     <Badge tone={off ? "warning" : "mint"} {...(off ? { icon: PowerOff } : {})}>
-      {DECISION_LABELS[source.download.status]}
+      {DECISION_LABELS[status]}
+      {scope ? `: ${DOWNLOAD_SCOPE_LABELS[scope]}` : null}
     </Badge>
   );
 }

@@ -4,6 +4,7 @@ import type {
   DataFormat,
   DecisionStatus,
   DocKind,
+  DownloadScope,
   Evidence,
   FieldRole,
   FieldType,
@@ -108,6 +109,11 @@ export const DECISION_LABELS: Record<DecisionStatus, string> = {
   awaiting_owner_decision: "Downloads off, awaiting the owner's decision",
   approved: "Downloads approved by the owner",
   declined: "Downloads declined by the owner",
+};
+
+export const DOWNLOAD_SCOPE_LABELS: Record<DownloadScope, string> = {
+  sample: "sample only",
+  bulk: "sample and bulk files",
 };
 
 export const LEVEL_LABELS: Record<Level, string> = { low: "Low", medium: "Medium", high: "High" };

@@ -4,6 +4,22 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-29 (Stage 10)
+
+- SEC raw ingestion (`python -m multiverse_pipelines.sec`, ADR-0017): connectors for the Submissions API (with the older-filing pages it lists), the Company Facts API and bulk ZIPs (`companyfacts.zip`, `submissions.zip`, quarterly Financial Statement Data Sets). Commands `status`, `sample`, `probe`, `bulk`, `verify`, `coverage`.
+- Three locks before any download: `MULTIVERSE_ALLOW_NETWORK_DOWNLOADS=true` for one command, a User-Agent with a name and contact email, and the owner's approval in the source catalog; bulk files need a bulk approval.
+- HTTP client: official hosts over HTTPS only (redirects included), one throttle at 2 requests per second, retries for 429, 5xx, cut connections and short bodies with exponential backoff or Retry-After, stop on 403, size limit from the disk budget.
+- Immutable raw archive in `var/raw/sec/`: read-only files named by SHA-256, append-only metadata index, an audit manifest per run, freshness and stale-response rules, recovery after interruption, `verify`. JSON and ZIP files are checked before they are kept.
+- Settings `MULTIVERSE_RAW_DIR` and `MULTIVERSE_RAW_BUDGET_MB` (200).
+- Contracts 0.7.0: the scope of an owner's download approval (sample or bulk) and the date of an acquisition step's decision.
+- 74 new tests on synthetic fixtures through a fake SEC; the real network is blocked in tests.
+
+### Changed — 2026-10-29 (Stage 10)
+
+- Decision D-09: the owner approved an SEC sample (ten candidates, submissions and company facts, one HEAD request for `companyfacts.zip`, 200 MB budget). The catalog records it; bulk files still wait for decision D-10.
+- Data Catalog: the SEC badge says "sample only", the plan marks step 1 as decided, and the texts say the app shows no source data.
+- Sample downloaded locally: 34 requests, 34 files, 37.5 MiB; raw files are not committed.
+
 ### Changed — 2026-10-29 (Stage 09 accepted)
 
 - Stage 09 (source policy and Data Catalog) accepted by the owner (CI run 40916903384 green). Metadata only: no data downloaded; automatic downloads stay disabled until decisions D-09 to D-12.

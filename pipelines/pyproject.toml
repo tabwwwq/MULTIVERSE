@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Data pipelines: SEC, FRED, ECB and World Bank ingestion into immutable snapshots."
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
-dependencies = ["multiverse-contracts", "multiverse-config"]
+dependencies = ["httpx>=0.28", "multiverse-config", "multiverse-contracts", "pydantic>=2.9"]
 
 [tool.uv.sources]
 multiverse-contracts = { workspace = true }

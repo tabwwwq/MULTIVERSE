@@ -130,6 +130,19 @@
           "minItems": 1,
           "type": "array"
         },
+        "decided_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the owner took that decision; empty while it is open."
+        },
         "owner_decision": {
           "anyOf": [
             {
@@ -193,6 +206,7 @@
         "storage",
         "checks",
         "owner_decision",
+        "decided_on",
         "stage"
       ],
       "title": "AcquisitionStep",
@@ -1303,6 +1317,18 @@
           "minLength": 1,
           "type": "string"
         },
+        "scope": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DownloadScope"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the approval covers; set exactly when approved."
+        },
         "status": {
           "$ref": "#/$defs/DecisionStatus"
         }
@@ -1310,10 +1336,20 @@
       "required": [
         "status",
         "decided_on",
+        "scope",
         "note"
       ],
       "title": "DownloadDecision",
       "type": "object"
+    },
+    "DownloadScope": {
+      "description": "What an approval covers: a named sample through the API, or bulk files as well.",
+      "enum": [
+        "sample",
+        "bulk"
+      ],
+      "title": "DownloadScope",
+      "type": "string"
     },
     "Evidence": {
       "description": "Whether a score rests on a checked fact or on an expectation still to be checked.",
@@ -3569,7 +3605,7 @@
         },
         "automatic_downloads": {
           "const": "disabled",
-          "description": "No code downloads anything in Stage 09; Stage 10 needs the owner's decision.",
+          "description": "Nothing is scheduled: downloads run only as explicit commands, and only from a source the owner approved.",
           "type": "string"
         },
         "candidates": {
@@ -4065,9 +4101,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.6.0",
+  "$id": "urn:multiverse:contracts:0.7.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.6.0"
+  "x-contracts-version": "0.7.0"
 }

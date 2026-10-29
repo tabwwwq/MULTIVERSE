@@ -17,6 +17,9 @@ and the notebook export file.
 
 0.6.0 (Stage 09): source catalog with licences, rate limits, data dictionaries,
 risk register, company candidates and the acquisition plan (metadata only).
+
+0.7.0 (Stage 10): the scope of an owner's download approval (sample or bulk)
+and the date an acquisition step's owner decision was taken.
 """
 
-CONTRACTS_VERSION = "0.6.0"
+CONTRACTS_VERSION = "0.7.0"

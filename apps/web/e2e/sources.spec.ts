@@ -21,15 +21,18 @@ async function expectNoViolations(page: Page): Promise<void> {
 }
 
 test.describe("Data Catalog", () => {
-  test("lists the sources by access category with downloads off", async ({ page }) => {
+  test("lists the sources by access category with downloads off or sample-only", async ({
+    page,
+  }) => {
     await page.goto("/data-catalog");
     await expect(page.getByRole("heading", { level: 1, name: "Data Catalog" })).toBeVisible();
     await expect(page.getByRole("status")).toHaveText("4 of 4 sources");
     await expect(page.getByRole("heading", { level: 3, name: "Public access" })).toBeVisible();
     await expect(page.getByRole("heading", { level: 3, name: "Free API key" })).toBeVisible();
-    await expect(page.getByText("Downloads off, awaiting the owner's decision")).toHaveCount(4);
+    await expect(page.getByText("Downloads off, awaiting the owner's decision")).toHaveCount(3);
+    await expect(page.getByText("Downloads approved by the owner: sample only")).toHaveCount(1);
     await expect(page.getByRole("heading", { name: "Licensed data" })).toBeVisible();
-    await expect(page.getByText("No data has been downloaded")).toBeVisible();
+    await expect(page.getByText("The catalog shows no source data")).toBeVisible();
     await saveScreen(page, "data-catalog");
     await expectNoViolations(page);
   });
@@ -102,8 +105,9 @@ test.describe("Data Catalog", () => {
   test("shows the plan, the risk register and the first ten companies", async ({ page }) => {
     await page.goto("/data-catalog/plan");
     await expect(page.getByRole("heading", { level: 1, name: "Acquisition plan" })).toBeVisible();
-    await expect(page.getByText("Real companies, no data yet")).toBeVisible();
-    await expect(page.getByText("Owner decision needed").first()).toBeVisible();
+    await expect(page.getByText("Real companies, no figures shown")).toBeVisible();
+    await expect(page.getByText("Owner decided on 2026-10-29")).toHaveCount(1);
+    await expect(page.getByText("Owner decision needed")).toHaveCount(3);
     const risks = page.getByRole("region", { name: "15 risks" });
     await expect(risks.locator("tbody tr")).toHaveCount(15);
     const candidates = page.getByRole("region", { name: "Candidates for the first acquisition" });

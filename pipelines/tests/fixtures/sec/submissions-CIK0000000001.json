@@ -1,0 +1,32 @@
+{
+  "cik": "1",
+  "entityType": "operating",
+  "sic": "3674",
+  "sicDescription": "Semiconductors & Related Devices",
+  "name": "SYNTHETIC FIXTURE CORP",
+  "tickers": ["SYNF"],
+  "exchanges": ["Nasdaq"],
+  "fiscalYearEnd": "1231",
+  "filings": {
+    "recent": {
+      "accessionNumber": ["0000000001-25-000003", "0000000001-25-000002", "0000000001-25-000001"],
+      "filingDate": ["2025-04-25", "2025-02-14", "2025-01-30"],
+      "reportDate": ["2025-03-31", "2024-12-31", ""],
+      "acceptanceDateTime": [
+        "2025-04-25T16:05:11.000Z",
+        "2025-02-14T08:30:02.000Z",
+        "2025-01-30T17:01:44.000Z"
+      ],
+      "form": ["10-Q", "10-K", "8-K"],
+      "primaryDocument": ["synf-20250331.htm", "synf-20241231.htm", "synf-8k.htm"]
+    },
+    "files": [
+      {
+        "name": "CIK0000000001-submissions-001.json",
+        "filingCount": 2,
+        "filingFrom": "2009-04-30",
+        "filingTo": "2009-10-30"
+      }
+    ]
+  }
+}

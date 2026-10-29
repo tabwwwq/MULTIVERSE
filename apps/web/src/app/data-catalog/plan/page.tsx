@@ -155,7 +155,11 @@ export default function AcquisitionPlanPage() {
                 </h3>
                 <span className="flex flex-wrap gap-2">
                   <Badge>Stage {String(step.stage).padStart(2, "0")}</Badge>
-                  {step.owner_decision ? <Badge tone="warning">Owner decision needed</Badge> : null}
+                  {step.decided_on ? (
+                    <Badge tone="mint">Owner decided on {step.decided_on}</Badge>
+                  ) : step.owner_decision ? (
+                    <Badge tone="warning">Owner decision needed</Badge>
+                  ) : null}
                 </span>
               </div>
               <Facts
@@ -209,11 +213,12 @@ export default function AcquisitionPlanPage() {
         intro={`Ranked by a scoring rubric (at most ${MAX_SCORE} points). Ties keep the sectors varied.`}
       >
         <div className="mb-6 max-w-3xl">
-          <Alert tone="warning" title="Real companies, no data yet">
-            These are real public companies proposed for the first download. MULTIVERSE shows no
-            figures about them. CIK, SIC, fiscal year end, filer category and tickers were checked
-            on the SEC submissions pages on {catalog.verified_on}; the other scores are expectations
-            that Stages 10 and 11 confirm or correct.
+          <Alert tone="warning" title="Real companies, no figures shown">
+            These are real public companies chosen for the first download. Their raw SEC files stay
+            in the local archive, and MULTIVERSE shows no figures about them. CIK, SIC, fiscal year
+            end, filer category and tickers were checked on the SEC submissions pages on{" "}
+            {catalog.verified_on}; the other scores are expectations that Stages 10 and 11 confirm
+            or correct.
           </Alert>
         </div>
         <div className="flex flex-col gap-8">

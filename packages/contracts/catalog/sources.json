@@ -1,5 +1,5 @@
 {
-  "contracts_version": "0.6.0",
+  "contracts_version": "0.7.0",
   "verified_on": "2026-10-29",
   "automatic_downloads": "disabled",
   "sources": [
@@ -81,7 +81,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -207,7 +207,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -323,7 +323,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -469,7 +469,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -530,7 +530,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -559,9 +559,10 @@
       ],
       "verified_on": "2026-10-29",
       "download": {
-        "status": "awaiting_owner_decision",
-        "decided_on": null,
-        "note": "No automatic download until the owner approves this source (Stage 10 or later)."
+        "status": "approved",
+        "decided_on": "2026-10-29",
+        "scope": "sample",
+        "note": "Decision D-09: the owner approved a sample of the ten candidates (submissions with their older-filing pages and company facts, through the API) and one HEAD request for companyfacts.zip, within 200 MB on disk. Bulk files wait for decision D-10."
       },
       "notes": [
         "data.sec.gov does not support CORS: requests come from the server, never the browser.",
@@ -646,7 +647,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -707,7 +708,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -750,7 +751,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -798,7 +799,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -859,6 +860,7 @@
       "download": {
         "status": "awaiting_owner_decision",
         "decided_on": null,
+        "scope": null,
         "note": "No automatic download until the owner approves this source (Stage 10 or later)."
       },
       "notes": [
@@ -944,7 +946,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -987,6 +989,7 @@
       "download": {
         "status": "awaiting_owner_decision",
         "decided_on": null,
+        "scope": null,
         "note": "No automatic download until the owner approves this source (Stage 10 or later)."
       },
       "notes": [
@@ -1076,7 +1079,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -1145,7 +1148,7 @@
             "Request URL and the User-Agent or key reference used (never the key itself)",
             "downloaded_at in UTC",
             "HTTP status, Content-Length, Last-Modified and ETag when present",
-            "SHA-256 of the bytes as received",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
             "Licence name and terms version in force on the download date"
           ],
           "fields": [
@@ -1170,6 +1173,7 @@
       "download": {
         "status": "awaiting_owner_decision",
         "decided_on": null,
+        "scope": null,
         "note": "No automatic download until the owner approves this source (Stage 10 or later)."
       },
       "notes": [
@@ -2260,6 +2264,7 @@
         "Settings refuse downloads without a User-Agent containing '@'."
       ],
       "owner_decision": "Approve SEC downloads and give the User-Agent.",
+      "decided_on": "2026-10-29",
       "stage": 10
     },
     {
@@ -2268,14 +2273,15 @@
       "sources": [
         "sec-edgar"
       ],
-      "scope": "10 API requests for submissions, at 2 requests per second.",
-      "volume": "10 JSON files.",
+      "scope": "10 API requests for submissions, plus the older-filing pages each one lists, at 2 requests per second.",
+      "volume": "10 JSON files and their older-filing pages.",
       "storage": "var/raw/sec/submissions/, immutable, with SHA-256 and headers.",
       "checks": [
         "Response validated against a schema.",
         "CIK, SIC and fiscal year end match the catalog."
       ],
       "owner_decision": null,
+      "decided_on": null,
       "stage": 10
     },
     {
@@ -2291,6 +2297,7 @@
         "Schema validation; SHA-256 recorded; re-run produces no duplicate file."
       ],
       "owner_decision": null,
+      "decided_on": null,
       "stage": 10
     },
     {
@@ -2306,6 +2313,7 @@
         "Coverage at 8, 20 and 40 quarters; concept used per value (DATA-04, DATA-05)."
       ],
       "owner_decision": null,
+      "decided_on": null,
       "stage": 11
     },
     {
@@ -2321,6 +2329,7 @@
         "SHA-256 per file; row counts per table; filed dates within the quarter."
       ],
       "owner_decision": "Approve the volume after step 4.",
+      "decided_on": null,
       "stage": 11
     },
     {
@@ -2337,6 +2346,7 @@
         "As-of value equals the value of the matching vintage."
       ],
       "owner_decision": "Register the key and approve the series list.",
+      "decided_on": null,
       "stage": 13
     },
     {
@@ -2353,6 +2363,7 @@
         "Unmodified originals kept; attribution recorded."
       ],
       "owner_decision": "Approve after the macro feature plan of Stage 13.",
+      "decided_on": null,
       "stage": 13
     }
   ]

@@ -599,14 +599,18 @@ name = "multiverse-pipelines"
 version = "0.1.0"
 source = { editable = "pipelines" }
 dependencies = [
+    { name = "httpx" },
     { name = "multiverse-config" },
     { name = "multiverse-contracts" },
+    { name = "pydantic" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28" },
     { name = "multiverse-config", editable = "packages/config" },
     { name = "multiverse-contracts", editable = "packages/contracts/python" },
+    { name = "pydantic", specifier = ">=2.9" },
 ]
 
 [[package]]

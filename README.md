@@ -10,7 +10,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 - **Forecasts are not causal effects.** Predictive accuracy does not validate the effect of a decision. A result is labelled causal only after documented identification diagnostics.
 - **Intervals are model quantiles** until their coverage is measured on held-out companies and dates.
 - **No investment advice,** no share price prediction, no "fair market value".
-- **Current status: Stage 09 (source policy and Data Catalog) accepted; Phase B has started.** The Data Catalog describes the official sources (SEC EDGAR, FRED/ALFRED, ECB, World Bank) as metadata only; no data has been downloaded. The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
+- **Current status: Stage 10 (SEC raw ingestion) in review.** The Data Catalog describes the official sources (SEC EDGAR, FRED/ALFRED, ECB, World Bank). With the owner's approval (decision D-09), a sample of raw SEC files for ten companies was downloaded into a local, immutable archive (`var/raw`, never committed); the app shows none of it. The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
 
 ## Status
 
@@ -26,7 +26,8 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 | 07 | Research notebook: saved scenarios, revisions, reports, on this device only | Accepted |
 | 08 | Gate A: frontend audit, V1 release note (`docs/releases/`) | Accepted |
 | 09 | Source policy and Data Catalog: licences, rate limits, risk register, acquisition plan (metadata only) | Accepted |
-| 10–26 | Data → ML → causal → finance → publication | Planned |
+| 10 | SEC raw ingestion: immutable archive, metadata index, audit manifests, sample of ten companies (`pipelines/`) | Review |
+| 11–26 | Data → ML → causal → finance → publication | Planned |
 
 ## Repository layout
 
@@ -46,7 +47,7 @@ packages/config/       Validated settings and environment profiles (ADR-0010)
 packages/finance/      Pure financial formulas (Stage 21, 23)
 packages/causal/       Causal research tools (Stage 20)
 packages/forecast/     Baselines and temporal neural nets; ML libraries are optional extras
-pipelines/             SEC, FRED, ECB, World Bank ingestion (Stage 09–13)
+pipelines/             SEC raw ingestion (Stage 10); FRED, ECB, World Bank and normalization (Stage 11–13)
 data/schemas/          Normalized data definitions (Stage 11)
 configs/               Model and infrastructure parameters
 notebooks/research/    Research notebooks

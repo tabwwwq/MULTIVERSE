@@ -31,6 +31,7 @@ from multiverse_contracts.sources import (
     DocKind,
     DocLink,
     DownloadDecision,
+    DownloadScope,
     Evidence,
     FieldRole,
     FieldType,
@@ -57,11 +58,21 @@ AWAITING = DownloadDecision(
     status=DecisionStatus.AWAITING_OWNER,
     note="No automatic download until the owner approves this source (Stage 10 or later).",
 )
+SEC_SAMPLE_APPROVED = DownloadDecision(
+    status=DecisionStatus.APPROVED,
+    decided_on=date(2026, 10, 29),
+    scope=DownloadScope.SAMPLE,
+    note=(
+        "Decision D-09: the owner approved a sample of the ten candidates (submissions with "
+        "their older-filing pages and company facts, through the API) and one HEAD request for "
+        "companyfacts.zip, within 200 MB on disk. Bulk files wait for decision D-10."
+    ),
+)
 RAW_PROVENANCE = (
     "Request URL and the User-Agent or key reference used (never the key itself)",
     "downloaded_at in UTC",
     "HTTP status, Content-Length, Last-Modified and ETag when present",
-    "SHA-256 of the bytes as received",
+    "SHA-256 of the file as published, after HTTP gzip is removed",
     "Licence name and terms version in force on the download date",
 )
 
@@ -385,7 +396,7 @@ SEC = DataSource(
         ),
     ),
     verified_on=VERIFIED_ON,
-    download=AWAITING,
+    download=SEC_SAMPLE_APPROVED,
     notes=(
         "data.sec.gov does not support CORS: requests come from the server, never the browser.",
         "The SEC offers no technical support for scripted downloads.",
@@ -1477,14 +1488,18 @@ PLAN = (
         storage=".env stays out of git.",
         checks=("Settings refuse downloads without a User-Agent containing '@'.",),
         owner_decision="Approve SEC downloads and give the User-Agent.",
+        decided_on=date(2026, 10, 29),
         stage=10,
     ),
     AcquisitionStep(
         step=2,
         title="Submissions of the ten candidates",
         sources=SEC_ID,
-        scope="10 API requests for submissions, at 2 requests per second.",
-        volume="10 JSON files.",
+        scope=(
+            "10 API requests for submissions, plus the older-filing pages each one lists, at 2 "
+            "requests per second."
+        ),
+        volume="10 JSON files and their older-filing pages.",
         storage="var/raw/sec/submissions/, immutable, with SHA-256 and headers.",
         checks=(
             "Response validated against a schema.",

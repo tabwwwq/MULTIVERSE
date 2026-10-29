@@ -12,6 +12,7 @@ from multiverse_contracts.source_catalog import CATALOG_PATH, SOURCE_CATALOG
 from multiverse_contracts.sources import (
     AccessCategory,
     DecisionStatus,
+    DownloadScope,
     KeyStatus,
     Resale,
     RiskCategory,
@@ -36,9 +37,19 @@ def test_generated_file_matches_the_catalog() -> None:
     assert written == SOURCE_CATALOG
 
 
-def test_no_source_is_approved_for_download() -> None:
+def test_only_an_sec_sample_is_approved_for_download() -> None:
     assert SOURCE_CATALOG.automatic_downloads == "disabled"
-    assert {s.download.status for s in SOURCE_CATALOG.sources} == {DecisionStatus.AWAITING_OWNER}
+    decisions = {s.source_id: s.download for s in SOURCE_CATALOG.sources}
+    sec = decisions.pop("sec-edgar")
+    assert (sec.status, sec.scope) == (DecisionStatus.APPROVED, DownloadScope.SAMPLE)
+    assert "D-09" in sec.note
+    assert {d.status for d in decisions.values()} == {DecisionStatus.AWAITING_OWNER}
+
+
+def test_the_plan_records_decision_d09_and_keeps_later_ones_open() -> None:
+    decided = {step.step: step.decided_on for step in SOURCE_CATALOG.acquisition_plan}
+    assert decided[1] is not None
+    assert [n for n, on in decided.items() if on is None and n != 1] == [2, 3, 4, 5, 6, 7]
 
 
 def test_access_categories_are_split_and_keys_are_explicit() -> None:
@@ -146,7 +157,19 @@ def _too_fast(data: dict[str, Any]) -> None:
 
 
 def _approved_without_date(data: dict[str, Any]) -> None:
-    source(data, "sec-edgar")["download"]["status"] = "approved"
+    source(data, "fred-alfred")["download"].update(status="approved", scope="sample")
+
+
+def _approved_without_scope(data: dict[str, Any]) -> None:
+    source(data, "sec-edgar")["download"]["scope"] = None
+
+
+def _declined_with_scope(data: dict[str, Any]) -> None:
+    source(data, "sec-edgar")["download"]["status"] = "declined"
+
+
+def _decided_without_question(data: dict[str, Any]) -> None:
+    data["acquisition_plan"][1]["decided_on"] = "2026-10-29"
 
 
 def _unknown_source_in_risk(data: dict[str, Any]) -> None:
@@ -179,6 +202,9 @@ def _short_cik(data: dict[str, Any]) -> None:
         _key_mismatch,
         _too_fast,
         _approved_without_date,
+        _approved_without_scope,
+        _declined_with_scope,
+        _decided_without_question,
         _unknown_source_in_risk,
         _wrong_total,
         _unranked,

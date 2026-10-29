@@ -8,11 +8,13 @@ const ids = (query: string, access: Parameters<typeof searchSources>[2] = null) 
   searchSources(SOURCES, query, access).map((hit) => hit.source.source_id);
 
 describe("source catalog", () => {
-  it("holds metadata only, with every download awaiting the owner", () => {
+  it("holds metadata only, with an SEC sample the only approved download", () => {
     expect(SOURCE_CATALOG.automatic_downloads).toBe("disabled");
     for (const source of SOURCES) {
-      expect(source.download.status, source.source_id).toBe("awaiting_owner_decision");
+      const expected = source.source_id === "sec-edgar" ? "approved" : "awaiting_owner_decision";
+      expect(source.download.status, source.source_id).toBe(expected);
     }
+    expect(sourceById("sec-edgar")?.download.scope).toBe("sample");
   });
 
   it("links every document through the official-host allowlist", () => {

@@ -179,6 +179,13 @@ export type FieldRole =
 export type FieldType =
   "string" | "integer" | "decimal" | "date" | "datetime" | "code" | "boolean" | "object" | "array";
 /**
+ * What an approval covers: a named sample through the API, or bulk files as well.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DownloadScope".
+ */
+export type DownloadScope = "sample" | "bulk";
+/**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "DecisionStatus".
  */
@@ -416,6 +423,10 @@ export interface AcquisitionStep {
    * @minItems 1
    */
   checks: [string, ...string[]];
+  /**
+   * When the owner took that decision; empty while it is open.
+   */
+  decided_on: string | null;
   /**
    * What the owner has to decide before this step may run.
    */
@@ -854,6 +865,10 @@ export interface DictionaryField {
 export interface DownloadDecision {
   decided_on: string | null;
   note: string;
+  /**
+   * What the approval covers; set exactly when approved.
+   */
+  scope: DownloadScope | null;
   status: DecisionStatus;
 }
 /**
@@ -1565,7 +1580,7 @@ export interface SourceCatalog {
    */
   acquisition_plan: [AcquisitionStep, ...AcquisitionStep[]];
   /**
-   * No code downloads anything in Stage 09; Stage 10 needs the owner's decision.
+   * Nothing is scheduled: downloads run only as explicit commands, and only from a source the owner approved.
    */
   automatic_downloads: "disabled";
   /**

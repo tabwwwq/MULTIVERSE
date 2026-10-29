@@ -6,6 +6,7 @@ import { getCompanyRepository } from "@/companies/repository";
 import { currentListing, currentName } from "@/companies/search";
 import { SupportBadge, SyntheticBadge } from "@/components/companies/company-badges";
 import { DecisionBuilder } from "@/components/decisions/decision-builder";
+import { RestoreGate } from "@/components/notebook/restore-gate";
 import { Alert } from "@/components/ui/alert";
 import { ButtonLink } from "@/components/ui/button";
 import { buildCompanyContext } from "@/decisions/context";
@@ -29,10 +30,14 @@ export default async function DecisionsPage({ searchParams }: PageProps) {
       .filter((dossier) => dossier !== null)
       .map((dossier) => [dossier.company.company_id, dossier]),
   );
-  const { companyId, asOf, type, ignored } = parseDecisionParams(await searchParams, ids, (id) => {
-    const dossier = dossiers.get(id);
-    return dossier ? cutoffChoices(dossier) : [];
-  });
+  const { companyId, asOf, type, restore, ignored } = parseDecisionParams(
+    await searchParams,
+    ids,
+    (id) => {
+      const dossier = dossiers.get(id);
+      return dossier ? cutoffChoices(dossier) : [];
+    },
+  );
   const dossier = companyId ? dossiers.get(companyId) : undefined;
   const context = dossier ? buildCompanyContext(dossier) : null;
 
@@ -126,6 +131,13 @@ export default async function DecisionsPage({ searchParams }: PageProps) {
         <ButtonLink href="/decisions" variant="secondary">
           Choose another company
         </ButtonLink>
+      ) : restore ? (
+        <RestoreGate
+          context={context}
+          initialAsOf={initialAsOf}
+          initialType={type}
+          restore={restore}
+        />
       ) : (
         <DecisionBuilder context={context} initialAsOf={initialAsOf} initialType={type} />
       )}

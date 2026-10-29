@@ -11,6 +11,9 @@ sensitivity settings, and the intervention catalog.
 
 0.4.0 (Stage 06): scenario result with history, quantile paths, paired changes,
 change distributions, waterfalls, events and a failed state.
+
+0.5.0 (Stage 07): saved scenarios with immutable revisions, report snapshots
+and the notebook export file.
 """
 
-CONTRACTS_VERSION = "0.4.0"
+CONTRACTS_VERSION = "0.5.0"

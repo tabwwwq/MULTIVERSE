@@ -1,0 +1,143 @@
+{
+  "format": "multiverse-notebook",
+  "schema_version": 1,
+  "contracts_version": "0.5.0",
+  "exported_at": "2026-10-28T12:00:00Z",
+  "scenarios": [
+    {
+      "scenario_id": "4e2f6a8c-1b3d-4f5e-9a7c-0d2e4f6a8b1c",
+      "name": "Northwind R&D +40%",
+      "tags": ["rnd", "northwind"],
+      "notes": "Budget share versus percentage points of revenue.",
+      "created_at": "2026-10-28T10:00:00Z",
+      "updated_at": "2026-10-28T11:00:00Z",
+      "revisions": [
+        {
+          "revision": 1,
+          "parent_revision": null,
+          "derived_from": null,
+          "created_at": "2026-10-28T10:00:00Z",
+          "draft": {
+            "contracts_version": "0.3.0",
+            "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+            "as_of": "2022-12-31",
+            "data_origin": "synthetic",
+            "horizon_quarters": 20,
+            "seed": 20261027,
+            "decision": {
+              "type": "rnd_change",
+              "magnitude": {
+                "value": "0.4",
+                "unit": "fraction_of_previous_rnd_budget"
+              },
+              "timing": {
+                "announcement_date": "2022-12-31",
+                "effective_date": "2023-01-01",
+                "lag_quarters": 0,
+                "ramp_quarters": 2
+              },
+              "capitalized_fraction": "0",
+              "adoption_delay_quarters": {
+                "shape": "triangular",
+                "low": "4",
+                "mode": "8",
+                "high": "12"
+              },
+              "financing": {
+                "cash": "1",
+                "debt": "0",
+                "equity": "0"
+              }
+            },
+            "sensitivity": {
+              "parameters": ["adoption_delay_quarters"],
+              "points": 5
+            }
+          },
+          "mode": "demo",
+          "currency": "USD",
+          "result_status": "not_run",
+          "result_id": null,
+          "exported": true
+        },
+        {
+          "revision": 2,
+          "parent_revision": 1,
+          "derived_from": null,
+          "created_at": "2026-10-28T11:00:00Z",
+          "draft": {
+            "contracts_version": "0.3.0",
+            "company_id": "5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
+            "as_of": "2022-12-31",
+            "data_origin": "synthetic",
+            "horizon_quarters": 20,
+            "seed": 20261027,
+            "decision": {
+              "type": "rnd_change",
+              "magnitude": {
+                "value": "2",
+                "unit": "pp_of_revenue"
+              },
+              "timing": {
+                "announcement_date": "2022-12-31",
+                "effective_date": "2023-01-01",
+                "lag_quarters": 0,
+                "ramp_quarters": 2
+              },
+              "capitalized_fraction": "0",
+              "adoption_delay_quarters": {
+                "shape": "triangular",
+                "low": "4",
+                "mode": "8",
+                "high": "12"
+              },
+              "financing": {
+                "cash": "0.5",
+                "debt": "0.5",
+                "equity": "0"
+              }
+            },
+            "sensitivity": {
+              "parameters": [],
+              "points": 5
+            }
+          },
+          "mode": "demo",
+          "currency": "USD",
+          "result_status": "not_run",
+          "result_id": null,
+          "exported": false
+        }
+      ]
+    }
+  ],
+  "reports": [
+    {
+      "report_id": "9b1d3f5a-7c2e-4a6b-8d0f-1e3a5c7b9d2f",
+      "source": {
+        "scenario_id": "4e2f6a8c-1b3d-4f5e-9a7c-0d2e4f6a8b1c",
+        "revision": 1
+      },
+      "created_at": "2026-10-28T10:30:00Z",
+      "format": "markdown",
+      "file_name": "multiverse_northwind-rnd-40_r1_DEMO.md",
+      "content": "> SYNTHETIC DEMO DATA. Fictional company, mock or no results. Not investment advice.\n\n# Northwind R&D +40%\n\nRevision 1 of scenario 4e2f6a8c-1b3d-4f5e-9a7c-0d2e4f6a8b1c.\n",
+      "content_sha256": "89f71bacb09b26597c1cc080f56417ec113f3329439d62ca46a95ac74391ea69",
+      "manifest": {
+        "contracts_version": "0.3.0",
+        "scenario_id": "4e2f6a8c-1b3d-4f5e-9a7c-0d2e4f6a8b1c",
+        "revision": 1,
+        "mode": "demo",
+        "data_origin": "synthetic",
+        "causal_status": "not_assessed",
+        "as_of": "2022-12-31T23:59:59Z",
+        "seed": 20261027,
+        "code_version": "unversioned",
+        "dataset_snapshot_id": null,
+        "model_id": null,
+        "source_ids": [],
+        "generated_at": "2026-10-28T10:00:00Z"
+      }
+    }
+  ]
+}

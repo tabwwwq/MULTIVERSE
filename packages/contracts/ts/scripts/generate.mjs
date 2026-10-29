@@ -32,6 +32,9 @@ const compiled = await compile(schema, "MultiverseContracts", {
   bannerComment: banner,
   unreachableDefinitions: true,
   additionalProperties: false,
+  // An upper bound (tags: at most 10) stays a runtime rule; as a union of 11 tuple types it
+  // would only make the TypeScript unusable.
+  maxItems: -1,
   style: { printWidth: 100 },
 });
 

@@ -867,6 +867,36 @@ export interface ObservedPoint {
   value: string;
 }
 /**
+ * The JSON file a notebook is exported to and imported from (PRD FR-LB-03).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "NotebookExport".
+ */
+export interface NotebookExport {
+  contracts_version: string;
+  exported_at: string;
+  format: "multiverse-notebook";
+  reports: ReportSnapshot[];
+  scenarios: ScenarioRecord[];
+  schema_version: number;
+}
+/**
+ * One exported report. Never edited, never replaced (PRD FR-RP-02, FR-RP-03).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ReportSnapshot".
+ */
+export interface ReportSnapshot {
+  content: string;
+  content_sha256: string;
+  created_at: string;
+  file_name: string;
+  format: "markdown";
+  manifest: ReproducibilityManifest;
+  report_id: string;
+  source: RevisionRef;
+}
+/**
  * Identity card of one result. Two results with equal manifests must be identical.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -891,28 +921,62 @@ export interface ReproducibilityManifest {
   source_ids: string[];
 }
 /**
+ * A specific revision of a specific scenario.
+ *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "ResultFailure".
+ * via the `definition` "RevisionRef".
  */
-export interface ResultFailure {
-  code: string;
-  incident_id: string;
-  message: string;
+export interface RevisionRef {
+  revision: number;
+  scenario_id: string;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "RndChange".
+ * via the `definition` "ScenarioRecord".
  */
-export interface RndChange {
-  adoption_delay_quarters: FixedValue | UniformRange | TriangularRange;
+export interface ScenarioRecord {
+  created_at: string;
+  name: string;
+  notes: string;
   /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   * @minItems 1
    */
-  capitalized_fraction: string;
-  financing: FundingMix;
-  magnitude: Magnitude;
-  timing: Timing;
-  type: "rnd_change";
+  revisions: [ScenarioRevision, ...ScenarioRevision[]];
+  scenario_id: string;
+  /**
+   * @maxItems 10
+   *
+   * Items: Lowercase letters, digits and dashes, for example 'rnd'.
+   */
+  tags: string[];
+  updated_at: string;
+}
+/**
+ * One immutable state of a scenario.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ScenarioRevision".
+ */
+export interface ScenarioRevision {
+  created_at: string;
+  /**
+   * ISO 4217 currency code, for example 'USD'.
+   */
+  currency: string;
+  /**
+   * Set when the scenario was duplicated from another one.
+   */
+  derived_from: RevisionRef | null;
+  draft: ScenarioDraft;
+  /**
+   * A report was exported: the revision is locked.
+   */
+  exported: boolean;
+  mode: ResultMode;
+  parent_revision: number | null;
+  result_id: string | null;
+  result_status: "not_run" | "completed" | "failed";
+  revision: number;
 }
 /**
  * A decision for one company at one knowledge cutoff, ready to validate and run.
@@ -934,6 +998,21 @@ export interface ScenarioDraft {
   horizon_quarters: number;
   seed: number;
   sensitivity: SensitivitySettings;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RndChange".
+ */
+export interface RndChange {
+  adoption_delay_quarters: FixedValue | UniformRange | TriangularRange;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  capitalized_fraction: string;
+  financing: FundingMix;
+  magnitude: Magnitude;
+  timing: Timing;
+  type: "rnd_change";
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -961,6 +1040,15 @@ export interface WorkforceRestructure {
 export interface SensitivitySettings {
   parameters: string[];
   points: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ResultFailure".
+ */
+export interface ResultFailure {
+  code: string;
+  incident_id: string;
+  message: string;
 }
 /**
  * One run: a baseline and its alternates for a company at a knowledge cutoff.

@@ -8,7 +8,7 @@ import type {
 } from "@multiverse/contracts";
 import type { DecisionType } from "@multiverse/contracts/interventions";
 import { RotateCcw } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import {
   DistributionInput,
   NumberField,
@@ -17,6 +17,7 @@ import {
 } from "@/components/decisions/decision-fields";
 import { DecisionTypePicker, MechanismPanel } from "@/components/decisions/decision-info";
 import { RunDialog } from "@/components/decisions/run-dialog";
+import { type SavedTarget, SaveToNotebook } from "@/components/notebook/save-to-notebook";
 import { ValidationPanel } from "@/components/decisions/validation-panel";
 import { Button } from "@/components/ui/button";
 import { CheckboxField, SelectField, TextField } from "@/components/ui/field";
@@ -87,21 +88,43 @@ function shareTotal(values: Record<string, string>, keys: readonly string[]): st
   return total;
 }
 
+/** A saved revision opened in the builder ("restore form", Stage 07). */
+export interface RestoredRevision extends SavedTarget {
+  form: ScenarioForm;
+}
+
 interface DecisionBuilderProps {
   context: CompanyContext;
   initialAsOf: string;
   initialType: DecisionType;
+  restored?: RestoredRevision | undefined;
 }
 
-export function DecisionBuilder({ context, initialAsOf, initialType }: DecisionBuilderProps) {
-  const [asOf, setAsOf] = useState(initialAsOf);
-  const [horizon, setHorizon] = useState(String(CATALOG.horizon_quarters.default));
-  const [type, setType] = useState<DecisionType>(initialType);
-  const [forms, setForms] = useState<Partial<Record<DecisionType, DecisionForm>>>({});
+export function DecisionBuilder({
+  context,
+  initialAsOf,
+  initialType,
+  restored,
+}: DecisionBuilderProps) {
+  const [asOf, setAsOf] = useState(restored?.form.as_of ?? initialAsOf);
+  const [horizon, setHorizon] = useState(
+    restored?.form.horizon_quarters ?? String(CATALOG.horizon_quarters.default),
+  );
+  const [type, setType] = useState<DecisionType>(restored?.form.decision.type ?? initialType);
+  const [forms, setForms] = useState<Partial<Record<DecisionType, DecisionForm>>>(
+    restored ? { [restored.form.decision.type]: restored.form.decision } : {},
+  );
+  const [seed] = useState(restored?.form.seed ?? CATALOG.default_seed);
+  const [saved, setSaved] = useState<SavedTarget | null>(
+    restored
+      ? { scenarioId: restored.scenarioId, revision: restored.revision, name: restored.name }
+      : null,
+  );
   const [result, setResult] = useState<ValidationResult | null>(null);
   const [dismissed, setDismissed] = useState<ReadonlySet<string>>(new Set());
   const [announcement, setAnnouncement] = useState("");
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const formId = useId();
 
   const spec: InterventionSpec = specFor(type);
   const decision = forms[type] ?? defaultDecisionForm(type, asOf);
@@ -112,10 +135,10 @@ export function DecisionBuilder({ context, initialAsOf, initialType }: DecisionB
       as_of: asOf,
       data_origin: context.dataOrigin,
       horizon_quarters: horizon,
-      seed: CATALOG.default_seed,
+      seed,
       decision,
     }),
-    [asOf, context, decision, horizon],
+    [asOf, context, decision, horizon, seed],
   );
   const state = result ? freshness(result, scenario) : null;
   const visible = useMemo(
@@ -201,7 +224,13 @@ export function DecisionBuilder({ context, initialAsOf, initialType }: DecisionB
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <div className="flex min-w-0 flex-col gap-10">
-        <form noValidate onSubmit={validate} className="flex flex-col gap-10" aria-label="Decision">
+        <form
+          id={formId}
+          noValidate
+          onSubmit={validate}
+          className="flex flex-col gap-10"
+          aria-label="Decision"
+        >
           <section aria-labelledby="cutoff-title" className="flex flex-col gap-4">
             <h2 id="cutoff-title" className="font-display text-h3 text-ink">
               Knowledge cutoff and horizon
@@ -530,24 +559,40 @@ export function DecisionBuilder({ context, initialAsOf, initialType }: DecisionB
               </SelectField>
             </div>
           </section>
-
-          <div className="flex flex-wrap items-center gap-3 border-t border-line pt-6">
-            <Button type="submit" variant={blockedReason === null ? "secondary" : "primary"}>
-              Validate
-            </Button>
-            <Button type="button" variant="secondary" onClick={reset}>
-              <RotateCcw aria-hidden="true" />
-              Reset to defaults
-            </Button>
-            <RunDialog
-              draft={state?.state === "fresh" ? (result?.draft ?? null) : null}
-              blockedReason={blockedReason}
-            />
-            <p role="status" className="basis-full text-small text-ink-muted empty:hidden">
-              {announcement}
-            </p>
-          </div>
         </form>
+
+        {/*
+          The actions sit after the form: the Run and Save dialogs hold their own forms, and a
+          form inside a form is invalid HTML (the browser drops the inner one). Validate stays
+          the form's submit button through the form attribute.
+        */}
+        <div className="flex flex-wrap items-center gap-3 border-t border-line pt-6">
+          <Button
+            type="submit"
+            form={formId}
+            variant={blockedReason === null ? "secondary" : "primary"}
+          >
+            Validate
+          </Button>
+          <Button type="button" variant="secondary" onClick={reset}>
+            <RotateCcw aria-hidden="true" />
+            Reset to defaults
+          </Button>
+          <RunDialog
+            draft={state?.state === "fresh" ? (result?.draft ?? null) : null}
+            blockedReason={blockedReason}
+          />
+          <SaveToNotebook
+            draft={state?.state === "fresh" ? (result?.draft ?? null) : null}
+            blockedReason={blockedReason}
+            defaultName={`${context.name}: ${spec.label} at ${asOf}`.slice(0, 120)}
+            target={saved}
+            onSaved={setSaved}
+          />
+          <p role="status" className="basis-full text-small text-ink-muted empty:hidden">
+            {announcement}
+          </p>
+        </div>
 
         <ValidationPanel result={result} freshness={state} headingRef={headingRef} />
       </div>

@@ -12,8 +12,12 @@ export interface ParsedDecisionParams {
   companyId: string | null;
   asOf: string | null;
   type: DecisionType;
+  /** A saved revision to open in the form (Stage 07); it is read on this device. */
+  restore: { scenarioId: string; revision: number } | null;
   ignored: string[];
 }
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 function first(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
@@ -28,6 +32,8 @@ export function parseDecisionParams(
   const company = first(raw["company"]);
   const asOf = first(raw["asOf"]);
   const type = first(raw["type"]);
+  const restoreId = first(raw["restore"]);
+  const restoreRevision = first(raw["revision"]);
 
   let companyId: string | null = null;
   if (company !== undefined && company !== "") {
@@ -44,7 +50,16 @@ export function parseDecisionParams(
     if (isDecisionType(type)) decisionType = type;
     else ignored.push("type");
   }
-  return { companyId, asOf: cutoff, type: decisionType, ignored };
+  let restore: ParsedDecisionParams["restore"] = null;
+  if (restoreId !== undefined && restoreId !== "") {
+    const revision = Number(restoreRevision);
+    if (UUID.test(restoreId) && Number.isInteger(revision) && revision >= 1 && revision <= 10_000) {
+      restore = { scenarioId: restoreId, revision };
+    } else {
+      ignored.push("restore");
+    }
+  }
+  return { companyId, asOf: cutoff, type: decisionType, restore, ignored };
 }
 
 export function decisionsHref(

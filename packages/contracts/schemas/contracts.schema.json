@@ -1330,6 +1330,52 @@
       "title": "MetricValue",
       "type": "object"
     },
+    "NotebookExport": {
+      "additionalProperties": false,
+      "description": "The JSON file a notebook is exported to and imported from (PRD FR-LB-03).",
+      "properties": {
+        "contracts_version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "type": "string"
+        },
+        "exported_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "format": {
+          "const": "multiverse-notebook",
+          "type": "string"
+        },
+        "reports": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ReportSnapshot"
+          },
+          "type": "array"
+        },
+        "scenarios": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ScenarioRecord"
+          },
+          "type": "array"
+        },
+        "schema_version": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "format",
+        "schema_version",
+        "contracts_version",
+        "exported_at",
+        "scenarios",
+        "reports"
+      ],
+      "title": "NotebookExport",
+      "type": "object"
+    },
     "ObservedPoint": {
       "additionalProperties": false,
       "description": "A reported quarter, public by the cutoff.",
@@ -1661,6 +1707,54 @@
       "title": "Quantity",
       "type": "object"
     },
+    "ReportSnapshot": {
+      "additionalProperties": false,
+      "description": "One exported report. Never edited, never replaced (PRD FR-RP-02, FR-RP-03).",
+      "properties": {
+        "content": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "file_name": {
+          "pattern": "^[A-Za-z0-9_.-]+\\.md$",
+          "type": "string"
+        },
+        "format": {
+          "const": "markdown",
+          "type": "string"
+        },
+        "manifest": {
+          "$ref": "#/$defs/ReproducibilityManifest"
+        },
+        "report_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/RevisionRef"
+        }
+      },
+      "required": [
+        "report_id",
+        "source",
+        "created_at",
+        "format",
+        "file_name",
+        "content",
+        "content_sha256",
+        "manifest"
+      ],
+      "title": "ReportSnapshot",
+      "type": "object"
+    },
     "ReproducibilityManifest": {
       "additionalProperties": false,
       "description": "Identity card of one result. Two results with equal manifests must be identical.",
@@ -1806,6 +1900,26 @@
       "title": "ResultStatus",
       "type": "string"
     },
+    "RevisionRef": {
+      "additionalProperties": false,
+      "description": "A specific revision of a specific scenario.",
+      "properties": {
+        "revision": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "scenario_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scenario_id",
+        "revision"
+      ],
+      "title": "RevisionRef",
+      "type": "object"
+    },
     "RndChange": {
       "additionalProperties": false,
       "properties": {
@@ -1939,6 +2053,61 @@
         "sensitivity"
       ],
       "title": "ScenarioDraft",
+      "type": "object"
+    },
+    "ScenarioRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "maxLength": 5000,
+          "type": "string"
+        },
+        "revisions": {
+          "items": {
+            "$ref": "#/$defs/ScenarioRevision"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "scenario_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "tags": {
+          "default": [],
+          "items": {
+            "description": "Lowercase letters, digits and dashes, for example 'rnd'.",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,31}$",
+            "type": "string"
+          },
+          "maxItems": 10,
+          "type": "array"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scenario_id",
+        "name",
+        "tags",
+        "notes",
+        "created_at",
+        "updated_at",
+        "revisions"
+      ],
+      "title": "ScenarioRecord",
       "type": "object"
     },
     "ScenarioResult": {
@@ -2087,6 +2256,93 @@
         "created_at"
       ],
       "title": "ScenarioResult",
+      "type": "object"
+    },
+    "ScenarioRevision": {
+      "additionalProperties": false,
+      "description": "One immutable state of a scenario.",
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "currency": {
+          "description": "ISO 4217 currency code, for example 'USD'.",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "derived_from": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RevisionRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set when the scenario was duplicated from another one."
+        },
+        "draft": {
+          "$ref": "#/$defs/ScenarioDraft"
+        },
+        "exported": {
+          "description": "A report was exported: the revision is locked.",
+          "type": "boolean"
+        },
+        "mode": {
+          "$ref": "#/$defs/ResultMode"
+        },
+        "parent_revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "result_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "result_status": {
+          "enum": [
+            "not_run",
+            "completed",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "revision",
+        "parent_revision",
+        "derived_from",
+        "created_at",
+        "draft",
+        "mode",
+        "currency",
+        "result_status",
+        "result_id",
+        "exported"
+      ],
+      "title": "ScenarioRevision",
       "type": "object"
     },
     "ScenarioRun": {
@@ -2711,9 +2967,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.4.0",
+  "$id": "urn:multiverse:contracts:0.5.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.4.0"
+  "x-contracts-version": "0.5.0"
 }

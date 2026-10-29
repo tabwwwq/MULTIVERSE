@@ -4,6 +4,20 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-29 (Stage 07)
+
+- Contracts 0.5.0: `ScenarioRecord` with append-only revisions, `ReportSnapshot` with a SHA-256 of its content and a manifest, and the `NotebookExport` file with a schema version (ADR-0015).
+- Research Notebook (`/notebook`), stored only in this browser and labelled so: search by name, tag, notes or company; tag filter; editable name, tags and notes; revision history; open a revision in the Decision Builder; duplicate as a new scenario; compare two revisions, blocked for different cutoffs, horizons or currencies; Markdown reports with the reproducibility manifest that never change after export.
+- Decision Builder: Save to notebook as a new scenario or as the next revision of a restored one.
+- Import and export of the notebook as JSON: whole-file validation, refusal of newer versions and changed reports, migration of decision files from Stage 05, merging without overwriting.
+- Storage failures handled: private mode, full storage and unreadable data, which is never overwritten without a decision.
+- Settings & Privacy (`/settings`): what is stored on this device, and delete everything after confirmation.
+- Tests: 19 pytest, 28 vitest and 48 Playwright checks.
+
+### Fixed — 2026-10-29
+
+- The Run dialog form was nested inside the Decision Builder form since Stage 05: invalid HTML, a hydration error, and dialog buttons that submitted the outer form. The actions now sit after the form.
+
 ### Changed — 2026-10-28
 
 - Stage 06 accepted by the owner (CI run 40756212363 green).

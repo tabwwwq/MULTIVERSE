@@ -55,6 +55,14 @@ from multiverse_contracts.metrics import (
     Period,
     PeriodType,
 )
+from multiverse_contracts.notebook import (
+    NOTEBOOK_SCHEMA_VERSION,
+    NotebookExport,
+    ReportSnapshot,
+    RevisionRef,
+    ScenarioRecord,
+    ScenarioRevision,
+)
 from multiverse_contracts.primitives import (
     CausalStatus,
     ContractModel,
@@ -83,6 +91,7 @@ __version__ = "0.1.0"
 __all__ = [
     "CATALOG",
     "CONTRACTS_VERSION",
+    "NOTEBOOK_SCHEMA_VERSION",
     "AccountingStandard",
     "Acquisition",
     "CapexExpansion",
@@ -118,6 +127,7 @@ __all__ = [
     "MeasureUnit",
     "MetricResult",
     "MetricValue",
+    "NotebookExport",
     "ParameterSpec",
     "Period",
     "PeriodType",
@@ -125,13 +135,17 @@ __all__ = [
     "QualitySeverity",
     "QuantilePoint",
     "Quantity",
+    "ReportSnapshot",
     "ReproducibilityManifest",
     "ResultMetric",
     "ResultMode",
     "ResultStatus",
+    "RevisionRef",
     "RndChange",
     "ScenarioDraft",
+    "ScenarioRecord",
     "ScenarioResult",
+    "ScenarioRevision",
     "Sector",
     "SensitivitySettings",
     "SupportStatus",

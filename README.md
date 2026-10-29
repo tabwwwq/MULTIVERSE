@@ -10,7 +10,7 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 - **Forecasts are not causal effects.** Predictive accuracy does not validate the effect of a decision. A result is labelled causal only after documented identification diagnostics.
 - **Intervals are model quantiles** until their coverage is measured on held-out companies and dates.
 - **No investment advice,** no share price prediction, no "fair market value".
-- **Current status: Stage 06.** The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer and Universe Compare work on clearly labelled fictional companies and mock results; there is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
+- **Current status: Stage 07.** The Universe Explorer, Company Dossier, Decision Builder, Timeline Explorer, Universe Compare and Research Notebook work on clearly labelled fictional companies and mock results; saved scenarios stay in the browser of one device. There is no real dataset, trained model or simulation yet. Nothing in this repository claims measured accuracy.
 
 ## Status
 
@@ -23,12 +23,13 @@ MULTIVERSE is a research platform for counterfactual corporate scenarios. An ana
 | 04 | Company explorer and dossier on synthetic fixtures | Accepted |
 | 05 | Decision builder: six decision types, validation, intervention catalog | Accepted |
 | 06 | Timeline charts and scenario comparison on mock results | Accepted |
-| 07–26 | Research notebook → data → ML → causal → finance → publication | Planned |
+| 07 | Research notebook: saved scenarios, revisions, reports, on this device only | Review |
+| 08–26 | Frontend gate → data → ML → causal → finance → publication | Planned |
 
 ## Repository layout
 
 ```text
-apps/web/              Next.js web app: design system, shell, explorer, dossier, decision builder, timelines, compare
+apps/web/              Next.js web app: design system, shell, explorer, dossier, decision builder, timelines, compare, notebook
 services/api/          FastAPI HTTP API — composition root: multiverse_api.main:create_app
 services/worker/       Background jobs: simulation and training (queue in Stage 18)
 packages/contracts/    Shared contracts — single source of truth (ADR-0008)
@@ -38,6 +39,7 @@ packages/contracts/    Shared contracts — single source of truth (ADR-0008)
   fixtures/            Valid and invalid examples shared by tests; demo/ holds the synthetic companies
   catalog/             Generated intervention catalog: units, ranges, defaults (ADR-0013)
   fixtures/mock/       Generated mock scenario results for the charts (ADR-0014), not forecasts
+  fixtures/notebook/   A valid notebook export shared by the Python and web tests (ADR-0015)
 packages/config/       Validated settings and environment profiles (ADR-0010)
 packages/finance/      Pure financial formulas (Stage 21, 23)
 packages/causal/       Causal research tools (Stage 20)

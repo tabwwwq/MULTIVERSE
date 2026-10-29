@@ -1,5 +1,5 @@
 {
-  "contracts_version": "0.4.0",
+  "contracts_version": "0.5.0",
   "planning_range_note": "Planning ranges are design defaults, not measured historical ranges. Stage 14 replaces them with ranges measured on real data. A value outside the planning range is flagged out of distribution: any result for it would be fictional exploratory.",
   "horizon_quarters": {
     "key": "horizon_quarters",

@@ -303,7 +303,7 @@ export const SECTIONS: readonly Section[] = [
     group: "record",
     icon: NotebookPen,
     summary: "Saved scenarios with names, tags, notes and revision history.",
-    status: "planned",
+    status: "available",
     stage: 7,
     stageName: "Experiment library",
     plans: [
@@ -366,14 +366,14 @@ export const SECTIONS: readonly Section[] = [
     title: "Settings & Privacy",
     group: "platform",
     icon: Settings,
-    summary: "Display units, number format and the data stored on this device.",
-    status: "planned",
+    summary: "The data stored on this device, and how to delete all of it.",
+    status: "available",
     stage: 7,
     stageName: "Experiment library",
     plans: [
-      "Display scale for amounts (millions or billions).",
-      "Number format.",
+      "List of everything stored on this device.",
       "Delete everything stored on this device.",
+      "Display scale and number format arrive with Gate A (Stage 08).",
     ],
   },
 ];

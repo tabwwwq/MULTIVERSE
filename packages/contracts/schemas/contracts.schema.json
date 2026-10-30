@@ -237,6 +237,17 @@
       "title": "Authentication",
       "type": "string"
     },
+    "AvailabilityBasis": {
+      "description": "How the moment a value became available is known.",
+      "enum": [
+        "vintage",
+        "snapshot",
+        "schedule",
+        "estimated"
+      ],
+      "title": "AvailabilityBasis",
+      "type": "string"
+    },
     "CapexExpansion": {
       "additionalProperties": false,
       "properties": {
@@ -1657,6 +1668,16 @@
       "title": "FixedValue",
       "type": "object"
     },
+    "Frequency": {
+      "enum": [
+        "daily",
+        "monthly",
+        "quarterly",
+        "annual"
+      ],
+      "title": "Frequency",
+      "type": "string"
+    },
     "FundingMix": {
       "additionalProperties": false,
       "description": "Shares of the funding need; they add up to exactly 1.",
@@ -2041,6 +2062,377 @@
       ],
       "title": "LineageMethod",
       "type": "string"
+    },
+    "MacroCell": {
+      "additionalProperties": false,
+      "description": "One macro feature for one company quarter, as available at the cutoff.",
+      "properties": {
+        "calendar_quarter": {
+          "pattern": "^[0-9]{4}Q[1-4]$",
+          "type": "string"
+        },
+        "cik": {
+          "pattern": "^[0-9]{10}$",
+          "type": "string"
+        },
+        "feature": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MacroInput"
+          },
+          "type": "array"
+        },
+        "lag": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "mask": {
+          "type": "boolean"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "series_id": {
+          "pattern": "^[a-z]+:[A-Za-z0-9_.]+$",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/MacroCellState"
+        },
+        "synthetic": {
+          "default": false,
+          "type": "boolean"
+        },
+        "transform": {
+          "$ref": "#/$defs/Transform"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "window_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "window_start": {
+          "format": "date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cik",
+        "calendar_quarter",
+        "lag",
+        "window_start",
+        "window_end",
+        "feature",
+        "series_id",
+        "transform",
+        "state",
+        "mask",
+        "value",
+        "inputs",
+        "synthetic",
+        "reason"
+      ],
+      "title": "MacroCell",
+      "type": "object"
+    },
+    "MacroCellState": {
+      "enum": [
+        "observed",
+        "not_yet_released",
+        "unavailable",
+        "not_covered",
+        "unusable"
+      ],
+      "title": "MacroCellState",
+      "type": "string"
+    },
+    "MacroInput": {
+      "additionalProperties": false,
+      "properties": {
+        "available_from": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "basis": {
+          "$ref": "#/$defs/AvailabilityBasis"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "period_start": {
+          "format": "date",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "period_start",
+        "period_end",
+        "value",
+        "available_from",
+        "basis",
+        "raw_sha256"
+      ],
+      "title": "MacroInput",
+      "type": "object"
+    },
+    "MacroObservation": {
+      "additionalProperties": false,
+      "description": "One value of one period as published during one interval of time.",
+      "properties": {
+        "available_from": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "available_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When a later publication replaced it; empty while current."
+        },
+        "basis": {
+          "$ref": "#/$defs/AvailabilityBasis"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "period_start": {
+          "format": "date",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "series_id": {
+          "pattern": "^[a-z]+:[A-Za-z0-9_.]+$",
+          "type": "string"
+        },
+        "source_vintage": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source's vintage date."
+        },
+        "synthetic": {
+          "default": false,
+          "type": "boolean"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Empty when the source marks it missing."
+        }
+      },
+      "required": [
+        "series_id",
+        "period_start",
+        "period_end",
+        "value",
+        "available_from",
+        "available_to",
+        "basis",
+        "source_vintage",
+        "raw_sha256",
+        "synthetic"
+      ],
+      "title": "MacroObservation",
+      "type": "object"
+    },
+    "MacroSeries": {
+      "additionalProperties": false,
+      "description": "One registered series: what it measures and how it is published and revised.",
+      "properties": {
+        "attribution": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "business_days": {
+          "description": "Weekends, holidays and how gaps are treated.",
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "dataset_id": {
+          "maxLength": 60,
+          "minLength": 2,
+          "type": "string"
+        },
+        "feature": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "frequency": {
+          "$ref": "#/$defs/Frequency"
+        },
+        "geography": {
+          "description": "ISO code or area (US, EA).",
+          "maxLength": 10,
+          "minLength": 2,
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "period_label": {
+          "description": "Which date of the period the source uses as label.",
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "publication_lag": {
+          "description": "Typical delay from period end to first release.",
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "release_timezone": {
+          "maxLength": 40,
+          "minLength": 2,
+          "type": "string"
+        },
+        "revision_cadence": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "seasonal_adjustment": {
+          "$ref": "#/$defs/SeasonalAdjustment"
+        },
+        "series_id": {
+          "description": "Source prefix and the source's own code.",
+          "pattern": "^[a-z]+:[A-Za-z0-9_.]+$",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 40,
+          "minLength": 2,
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "transform": {
+          "$ref": "#/$defs/Transform"
+        },
+        "unit": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "vintage_support": {
+          "$ref": "#/$defs/VintageSupport"
+        }
+      },
+      "required": [
+        "series_id",
+        "source_id",
+        "dataset_id",
+        "title",
+        "geography",
+        "frequency",
+        "unit",
+        "seasonal_adjustment",
+        "period_label",
+        "release_timezone",
+        "publication_lag",
+        "revision_cadence",
+        "business_days",
+        "vintage_support",
+        "feature",
+        "transform",
+        "attribution",
+        "notes"
+      ],
+      "title": "MacroSeries",
+      "type": "object"
     },
     "Magnitude": {
       "additionalProperties": false,
@@ -4255,6 +4647,16 @@
       "title": "Score",
       "type": "object"
     },
+    "SeasonalAdjustment": {
+      "enum": [
+        "not_adjusted",
+        "adjusted",
+        "adjusted_annual_rate",
+        "not_applicable"
+      ],
+      "title": "SeasonalAdjustment",
+      "type": "string"
+    },
     "Sector": {
       "enum": [
         "semiconductors",
@@ -4769,6 +5171,19 @@
       "title": "Timing",
       "type": "object"
     },
+    "Transform": {
+      "description": "How observations inside a company quarter become one feature value.",
+      "enum": [
+        "quarter_mean",
+        "quarter_max",
+        "end_of_period",
+        "yoy_last_month",
+        "yoy_quarter",
+        "latest_year"
+      ],
+      "title": "Transform",
+      "type": "string"
+    },
     "TriangularRange": {
       "additionalProperties": false,
       "description": "Values between ``low`` and ``high``, most likely around ``mode``.",
@@ -4896,6 +5311,16 @@
         "months_of_salary"
       ],
       "title": "ValueUnit",
+      "type": "string"
+    },
+    "VintageSupport": {
+      "description": "What the source keeps of earlier publications.",
+      "enum": [
+        "full",
+        "archive",
+        "none"
+      ],
+      "title": "VintageSupport",
       "type": "string"
     },
     "Waterfall": {
@@ -5083,9 +5508,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.9.0",
+  "$id": "urn:multiverse:contracts:0.10.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.9.0"
+  "x-contracts-version": "0.10.0"
 }

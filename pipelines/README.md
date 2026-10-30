@@ -7,7 +7,7 @@ Data pipelines for SEC, FRED, ECB and World Bank (`docs/04`). They read the sour
 | 10 | SEC raw ingestion: Submissions API, Company Facts API, bulk ZIPs (ADR-0017) | **Done** |
 | 11 | XBRL normalization: canonical values with lineage, revisions and quality (ADR-0018) | **Done** |
 | 12 | Point-in-time warehouse: as-of values, quarterly panel with masks, hashed snapshots (ADR-0019) | **Done** |
-| 13 | Macro vintages | Planned |
+| 13 | Macro vintages: FRED/ALFRED, ECB, World Bank registry, availability, as-of join (ADR-0020); downloads await D-11 and D-12 | **Done** |
 
 Rules:
 
@@ -142,3 +142,34 @@ Snapshot folder (never committed):
 | `manifest.json` | `PitSnapshotManifest`: cutoff, view, window, counts per state, inputs with SHA-256, versions, build time (not hashed) |
 
 Identity over time: names follow `formerNames` with their dates. Tickers, exchanges and SIC codes are current values in the submissions file; they apply from the moment they were observed and never backwards, so an old cutoff sees no ticker or sector rather than today's. Their history per filing is in the Financial Statement Data Sets (decision D-10).
+
+## Macro vintages
+
+No download runs without the owner's decisions: D-11 (the owner registers the FRED key and puts it into `.env` as `MULTIVERSE_FRED_API_KEY`) and D-12 (ECB and World Bank). Until then everything runs on SYNTHETIC documents in the shape of the real responses, kept apart from archived data.
+
+| Command | What it does |
+|---|---|
+| `uv run python -m multiverse_pipelines.macro status` | Per source: owner decision, FRED key set or not (never its value), stored series |
+| `... macro fetch --source fred\|ecb\|worldbank [--series ID]` | Download into `var/raw/fred`, `ecb`, `worldbank` (20 MB); refused unless downloads are on for this command, the owner approved the source and, for FRED, the key is set |
+| `... macro build` | Archived files into `var/data/macro/macro.sqlite`; sources without files are reported, not fatal |
+| `... macro load-synthetic [--until 2026-10-28]` | SYNTHETIC documents into `var/data/macro/macro-synthetic.sqlite` |
+| `... macro as-of --series fred:CPIAUCSL --at 2021-12-31 [--synthetic]` | One series as available at a moment |
+| `... macro qa [--synthetic]` | Series metadata, coverage and timestamp QA into `var/data/macro/qa/` |
+| `... macro join --cutoff 2021-12-31 [--quarters 8] [--synthetic]` | Macro features joined with the PIT panel into `var/data/macro/joined/<id>/` (`joined-synthetic` for the synthetic store) |
+
+Registered series (`multiverse_pipelines/macro/registry.py`): FRED/ALFRED `FEDFUNDS`, `CPIAUCSL`, `UNRATE`, `GDPC1`, `DGS10`, `T10Y2Y`, `USREC`; ECB EUR/USD reference rate, deposit facility rate, euro area AAA 10-year yield; World Bank GDP growth, inflation, unemployment and GDP per capita for the United States and the euro area. Each records geography, frequency, unit, seasonal adjustment, period label, release time zone, publication lag, revision cadence, business days, what the source keeps of earlier publications, and the feature with its transform.
+
+When a value became available (`MacroObservation`):
+
+| Basis | Source | Rule |
+|---|---|---|
+| `vintage` | ALFRED real-time periods | From the end of the vintage date, US Eastern |
+| `snapshot` | World Bank `lastupdated` of each archived response | By the end of that day; an earlier publication is not evidence |
+| `schedule` | ECB, values that are never revised | Reference rate 16:00 CET that day; yield curve 12:00 CET next TARGET day; key rates from the start of their day |
+| `estimated` | none | Never usable as a feature |
+
+The join (`MacroCell`) gives one cell per company quarter of a PIT panel and per series, over the company's own fiscal quarter (calendar quarter when unknown), made only of observations available at the cutoff, from one vintage. Its reasons are built from the series' rules, never from later publications. States: `observed`, `not_yet_released`, `unavailable` (no key, no decision, nothing downloaded), `not_covered`, `unusable` (first publication not evidenced at the cutoff).
+
+Transforms: `quarter_mean` (all months of the quarter), `quarter_max` (recession), `end_of_period` (last daily value within 10 days of the quarter end), `yoy_last_month`, `yoy_quarter` (one vintage), `latest_year` (latest year available at the cutoff, never after the quarter).
+
+Joined folder: `joined.csv` (financial and macro rows with value, mask, state, availability, synthetic flag, provenance), `macro_cells.jsonl` (every input observation), `manifest.json`; the id `join-<date>-<12 hex>` is the SHA-256 of the PIT snapshot and the macro cells.

@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-30 (Stage 13)
+
+- Macro vintages (`python -m multiverse_pipelines.macro`, ADR-0020): a registry of 18 series (FRED/ALFRED policy rate, CPI, unemployment, real GDP, 10-year yield, 10y–2y spread, recession indicator; ECB EUR/USD reference rate, deposit facility rate, euro area AAA 10-year yield; World Bank GDP growth, inflation, unemployment and GDP per capita for the United States and the euro area) with geography, frequency, unit, seasonal adjustment, period label, release time zone, publication lag, revision cadence, business days and the chosen transform.
+- Every observation carries when it became available and how that is known: ALFRED vintages (end of the vintage date, US Eastern), dated World Bank snapshots, ECB publication rules for unrevised values (16:00 CET, next TARGET day 12:00 CET with TARGET holidays); estimated releases are never usable.
+- A vintage store (SQLite) and the as-of join with company quarters of the PIT panel: one cell per company quarter and series over the company's own fiscal quarter, made only of observations available at the cutoff from one vintage, with provenance; states observed, not yet released, unavailable, not covered, unusable. Reasons never mention later publications.
+- Downloads behind the same locks as SEC plus the FRED key; the key is never stored (archived URLs show `api_key=REDACTED`), FRED series whose notes mention copyright are skipped. Without a key or decision the commands report what is missing and the join says why in each cell.
+- SYNTHETIC documents in the shape of ALFRED, ECB and World Bank responses, kept in a separate store and folder, so the whole path runs before decisions D-11 and D-12.
+- Series coverage and timestamp QA (publication lag, revised periods, values published before their period ended, gaps, missing values) and a joined sample panel with provenance.
+- Contracts 0.10.0: `MacroSeries`, `MacroObservation`, `MacroCell`.
+
 ### Changed — 2026-10-30 (Stage 12 accepted)
 
 - Stage 12 (point-in-time warehouse) accepted by the owner (CI run 40981425041 green).

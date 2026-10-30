@@ -23,6 +23,7 @@
 | [0017](0017-sec-raw-archive.md) | Сырой архив SEC: неизменяемые файлы по SHA-256, append-only индекс, загрузки только явной командой | Accepted |
 | [0018](0018-canonical-xbrl-values.md) | Канонические значения из XBRL: иерархия concepts, квартализация по одному concept, две ревизии, пропуск не равен нулю | Accepted |
 | [0019](0019-point-in-time-warehouse.md) | Point-in-time warehouse: интервалы знания по времени EDGAR, пересчёт на каждый filing, snapshot по hash | Accepted |
+| [0020](0020-macro-vintages.md) | Макроэкономика по моменту публикации: vintages, правила публикации, as-of join с финансовыми кварталами | Accepted |
 
 ADR-0001…0006 перечислены в `docs/03_SYSTEM_ARCHITECTURE.md` комплекта. ADR-0007…0011 приняты на Stage 02.
 

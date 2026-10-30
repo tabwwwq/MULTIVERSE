@@ -16,6 +16,7 @@ from pydantic.json_schema import models_json_schema
 from multiverse_contracts.companies import CompanyDossier
 from multiverse_contracts.decisions import ScenarioDraft
 from multiverse_contracts.interventions import InterventionCatalog
+from multiverse_contracts.macro import MacroCell, MacroObservation, MacroSeries
 from multiverse_contracts.manifest import ReproducibilityManifest
 from multiverse_contracts.metrics import MetricValue
 from multiverse_contracts.normalized import NormalizedValue
@@ -43,6 +44,9 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     PanelCell,
     ChronologyAlert,
     PitSnapshotManifest,
+    MacroSeries,
+    MacroObservation,
+    MacroCell,
 )
 
 

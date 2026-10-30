@@ -28,6 +28,10 @@ three reported quarters.
 0.9.0 (Stage 12): point-in-time values with intervals of knowledge time, the
 as-of quarterly panel with feature masks, chronology alerts, snapshot manifests
 and effective-dated company attributes; the quality flag mixed_vintage.
+
+0.10.0 (Stage 13): macro series metadata, observations with the moment they
+became available and how that is known, and macro cells joined with company
+quarters with their input observations.
 """
 
-CONTRACTS_VERSION = "0.9.0"
+CONTRACTS_VERSION = "0.10.0"

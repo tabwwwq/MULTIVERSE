@@ -48,6 +48,13 @@ export type AlertKind =
  */
 export type Authentication = "none" | "declared_user_agent" | "api_key" | "contract";
 /**
+ * How the moment a value became available is known.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "AvailabilityBasis".
+ */
+export type AvailabilityBasis = "vintage" | "snapshot" | "schedule" | "estimated";
+/**
  * Identification status of a result. Never raised automatically (PRD FR-CA-02).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -269,6 +276,11 @@ export type FinancialStatement = "income_statement" | "cash_flow" | "balance_she
  */
 export type FiscalPeriod = "Q1" | "Q2" | "Q3" | "Q4" | "FY";
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Frequency".
+ */
+export type Frequency = "daily" | "monthly" | "quarterly" | "annual";
+/**
  * Unit of a parameter value. Fractions are shares: 0.25 means 25 %.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -295,6 +307,38 @@ export type KnowledgeView = "original" | "vintage" | "latest";
  * via the `definition` "Level".
  */
 export type Level = "low" | "medium" | "high";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MacroCellState".
+ */
+export type MacroCellState =
+  "observed" | "not_yet_released" | "unavailable" | "not_covered" | "unusable";
+/**
+ * How observations inside a company quarter become one feature value.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Transform".
+ */
+export type Transform =
+  | "quarter_mean"
+  | "quarter_max"
+  | "end_of_period"
+  | "yoy_last_month"
+  | "yoy_quarter"
+  | "latest_year";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SeasonalAdjustment".
+ */
+export type SeasonalAdjustment =
+  "not_adjusted" | "adjusted" | "adjusted_annual_rate" | "not_applicable";
+/**
+ * What the source keeps of earlier publications.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "VintageSupport".
+ */
+export type VintageSupport = "full" | "archive" | "none";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "QualityFlag".
@@ -1291,6 +1335,111 @@ export interface LicensedNeed {
    * What the platform does while the data is missing.
    */
   without_it: string;
+}
+/**
+ * One macro feature for one company quarter, as available at the cutoff.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MacroCell".
+ */
+export interface MacroCell {
+  calendar_quarter: string;
+  cik: string;
+  feature: string;
+  inputs: MacroInput[];
+  lag: number;
+  mask: boolean;
+  reason: string | null;
+  series_id: string;
+  state: MacroCellState;
+  synthetic: boolean;
+  transform: Transform;
+  value: string | null;
+  window_end: string;
+  window_start: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MacroInput".
+ */
+export interface MacroInput {
+  available_from: string;
+  basis: AvailabilityBasis;
+  period_end: string;
+  period_start: string;
+  raw_sha256: string | null;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  value: string;
+}
+/**
+ * One value of one period as published during one interval of time.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MacroObservation".
+ */
+export interface MacroObservation {
+  available_from: string;
+  /**
+   * When a later publication replaced it; empty while current.
+   */
+  available_to: string | null;
+  basis: AvailabilityBasis;
+  period_end: string;
+  period_start: string;
+  raw_sha256: string | null;
+  series_id: string;
+  /**
+   * The source's vintage date.
+   */
+  source_vintage: string | null;
+  synthetic: boolean;
+  /**
+   * Empty when the source marks it missing.
+   */
+  value: string | null;
+}
+/**
+ * One registered series: what it measures and how it is published and revised.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MacroSeries".
+ */
+export interface MacroSeries {
+  attribution: string;
+  /**
+   * Weekends, holidays and how gaps are treated.
+   */
+  business_days: string;
+  dataset_id: string;
+  feature: string;
+  frequency: Frequency;
+  /**
+   * ISO code or area (US, EA).
+   */
+  geography: string;
+  notes: string | null;
+  /**
+   * Which date of the period the source uses as label.
+   */
+  period_label: string;
+  /**
+   * Typical delay from period end to first release.
+   */
+  publication_lag: string;
+  release_timezone: string;
+  revision_cadence: string;
+  seasonal_adjustment: SeasonalAdjustment;
+  /**
+   * Source prefix and the source's own code.
+   */
+  series_id: string;
+  source_id: string;
+  title: string;
+  transform: Transform;
+  unit: string;
+  vintage_support: VintageSupport;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema

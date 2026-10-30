@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 12 — point-in-time warehouse |
 | Дата | 2026-10-30 |
-| Статус | REVIEW |
+| Статус | ACCEPTED 2026-10-30 (CI run 40981425041: 7/7 задач зелёные; владелец: «Принять Stage 12») |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/12_POINT_IN_TIME_WAREHOUSE.md` |
 | Основание | `docs/04` (слой Gold/PIT), `docs/09` (FeatureSnapshot), `docs/11` (PIT-тесты, honest metrics), `17_ACCEPTANCE_MATRIX` DATA-02, DATA-03, DATA-05; команда владельца 2026-10-30: «Делай Stage 12» |
 | Решение | ADR-0019 — point-in-time warehouse |

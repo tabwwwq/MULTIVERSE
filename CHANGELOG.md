@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-30 (Stage 12 accepted)
+
+- Stage 12 (point-in-time warehouse) accepted by the owner (CI run 40981425041 green).
+
 ### Added — 2026-10-30 (Stage 12)
 
 - Point-in-time warehouse (`python -m multiverse_pipelines.pit`, ADR-0019): every normalized value with the interval of knowledge time during which it was the current answer, in one SQLite file (`var/data/pit/`, never committed). The Stage 11 normalizer runs again at each moment a filing became public, on exactly the facts public then, so an as-of query equals normalizing what was public at the cutoff.

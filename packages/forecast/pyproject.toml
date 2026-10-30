@@ -4,10 +4,14 @@ version = "0.1.0"
 description = "Forecasting research: baselines first, then temporal neural networks (optional ML extras)."
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
-dependencies = ["multiverse-contracts"]
+dependencies = [
+    "multiverse-contracts",
+    "numpy>=2.0",
+    "scikit-learn>=1.5",
+]
 
 [project.optional-dependencies]
-boosting = ["scikit-learn>=1.5", "lightgbm>=4.5"]
+boosting = ["lightgbm>=4.5"]
 ml = ["torch>=2.6"]
 
 [tool.uv.sources]

@@ -38,6 +38,9 @@ counts, company decisions and the audited dataset manifest with its verdict.
 
 0.12.0 (data acquisition, decision D-10): the universe manifest: the bulk files a
 universe was drawn from, its eligibility rules and counts, strata and companies.
+
+0.13.0 (Stage 15): the forecasting dataset manifest, the locked forecasting protocol
+and the benchmark report with scores, intervals, sector errors and configurations.
 """
 
-CONTRACTS_VERSION = "0.12.0"
+CONTRACTS_VERSION = "0.13.0"

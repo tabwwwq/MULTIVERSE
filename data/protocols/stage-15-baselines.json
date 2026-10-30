@@ -1,0 +1,75 @@
+{
+  "protocol_id": "stage_15_baselines",
+  "seed": 20261030,
+  "targets": [
+    "revenue_growth",
+    "operating_margin",
+    "ebitda_margin",
+    "fcf_margin",
+    "debt_to_ebitda"
+  ],
+  "horizons": [1, 4, 8, 12, 20],
+  "validation_years": [2016, 2017, 2018, 2019],
+  "test_years": [2020, 2021, 2022, 2023, 2024, 2025, 2026],
+  "cold_start_share": 0.2,
+  "material_revenue": 10000000.0,
+  "winsor_quantile": 0.01,
+  "bootstrap_resamples": 1000,
+  "grids": {
+    "persistence": [[]],
+    "seasonal_naive": [[]],
+    "sector_average": [[{ "name": "window_quarters", "value": "8" }]],
+    "panel_ar": [[]],
+    "ridge": [
+      [{ "name": "alpha", "value": "0.1" }],
+      [{ "name": "alpha", "value": "1" }],
+      [{ "name": "alpha", "value": "10" }],
+      [{ "name": "alpha", "value": "100" }],
+      [{ "name": "alpha", "value": "1000" }]
+    ],
+    "elastic_net": [
+      [
+        { "name": "alpha", "value": "0.0001" },
+        { "name": "l1_ratio", "value": "0.5" }
+      ],
+      [
+        { "name": "alpha", "value": "0.001" },
+        { "name": "l1_ratio", "value": "0.5" }
+      ],
+      [
+        { "name": "alpha", "value": "0.01" },
+        { "name": "l1_ratio", "value": "0.5" }
+      ],
+      [
+        { "name": "alpha", "value": "0.001" },
+        { "name": "l1_ratio", "value": "0.9" }
+      ]
+    ],
+    "gbm": [
+      [
+        { "name": "max_depth", "value": "3" },
+        { "name": "learning_rate", "value": "0.05" },
+        { "name": "max_iter", "value": "300" },
+        { "name": "min_samples_leaf", "value": "50" }
+      ],
+      [
+        { "name": "max_depth", "value": "5" },
+        { "name": "learning_rate", "value": "0.05" },
+        { "name": "max_iter", "value": "300" },
+        { "name": "min_samples_leaf", "value": "50" }
+      ],
+      [
+        { "name": "max_depth", "value": "3" },
+        { "name": "learning_rate", "value": "0.1" },
+        { "name": "max_iter", "value": "150" },
+        { "name": "min_samples_leaf", "value": "200" }
+      ],
+      [
+        { "name": "max_depth", "value": "5" },
+        { "name": "learning_rate", "value": "0.03" },
+        { "name": "max_iter", "value": "500" },
+        { "name": "min_samples_leaf", "value": "100" }
+      ]
+    ]
+  }
+}

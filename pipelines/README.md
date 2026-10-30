@@ -10,6 +10,7 @@ Data pipelines for SEC, FRED, ECB and World Bank (`docs/04`). They read the sour
 | 13 | Macro vintages: FRED/ALFRED, ECB, World Bank registry, availability, as-of join (ADR-0020); real store since D-11 and D-12 | **Done** |
 | 14 | Gate B: dataset audit, usable examples, data card, coverage report, manifest with hash (ADR-0021) | **Done** (blocked on the sample) |
 | 14b | Data acquisition: SEC bulk files and a universe of 1000 companies (ADR-0022), real macro store, warehouse at scale; Gate B passed with warnings | **Done** |
+| 15 | Forecasting dataset: features at the origin, released targets (ADR-0023); the models live in `multiverse_forecast` | **Done** |
 
 Rules:
 
@@ -191,3 +192,9 @@ Joined folder: `joined.csv` (financial and macro rows with value, mask, state, a
 An example is a company and a forecast origin (calendar quarter end) whose last H quarters of revenue (lags 1 to H) were public at the origin, with the revenue h quarters later as first released by the data cutoff. Counts for H = 8, 12, 20 and h = 1, 4, 8, 12, 20.
 
 Checks: future revisions, duplicated company-quarters, concept drift, survivor-only sample, lost bankruptcies (8-K item 1.03), missingness, revenue gaps, negative and undefined ratios, currency and FX, outliers (robust z of log changes), unrealistic quarter-to-quarter jumps, cumulative cash flow, misidentified capex, reported vs calculated EBITDA, source conflicts; then the gate's own: leakage proof (rebuild from what was public at three cutoffs and compare snapshots and macro joins byte for byte), manual reconciliation (10 amounts read from sec.gov, re-checked on every run), usable sample size (at least 30 companies and 1 000 examples at H = 12, h = 4), macro data. Statuses: `pass`, `warning`, `fail`, `blocked`; the verdict is `blocked` exactly when a check fails or is blocked.
+
+## Forecasting dataset (Stage 15)
+
+`uv run python -m multiverse_pipelines.forecastset build --universe data/universe/sec-1000-20261030.json [--cutoff 2026-10-28]` reads the PIT warehouse, the universe file and the real macro store, and writes `var/data/forecast/<dataset id>/` (never committed): `dataset.csv` and `manifest.json` (`ForecastDatasetManifest`); the id is the SHA-256 of the CSV.
+
+One row is a company and a forecast origin (a calendar quarter end). Features are what the point-in-time panel held at the origin (vintage view, lags 1 to 8; lag 0 is never public) and each macro series' latest value available at the origin. Targets of quarter origin + h (h = 1, 4, 8, 12, 20) are first releases with the moment they were released: symmetric revenue growth, operating, EBITDA and FCF margins, debt / EBITDA; a ratio without meaning is written `undefined`. The benchmark is `python -m multiverse_forecast benchmark --dataset var/data/forecast/<dataset id>` (ADR-0023).

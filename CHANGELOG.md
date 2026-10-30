@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-31 (Stage 15)
+
+- Forecasting baselines before any neural network (ADR-0023): one dataset, one locked protocol, seven models scored on the same rows.
+- Forecasting dataset (`python -m multiverse_pipelines.forecastset build`): one row per company and forecast origin, features from the point-in-time panel at the origin (lags 1 to 8, never lag 0) and macro values available at the origin, targets as first released with their release moment; named by the SHA-256 of its CSV (`fds-20261028-d9e4acd03365`: 31 425 rows, 984 companies).
+- Targets: symmetric revenue growth (between −2 and 2), operating, EBITDA and FCF margins, debt / EBITDA; undefined ratios are counted, never scored; losses and vanished revenue stay in.
+- Locked protocol `data/protocols/stage-15-baselines.json`: validation 2016–2019 chooses settings, test 2020–2026 is scored once, rolling origin with yearly refits on targets released before the fold year, 20% of firms held out as cold starts, train-only winsorizing, imputation and scaling.
+- Models (`python -m multiverse_forecast benchmark`): persistence, seasonal naive, sector average, a pooled dynamic panel (OLS with SIC division effects and macro controls), Ridge, ElasticNet and histogram gradient boosting; MAE, RMSE, median AE, WAPE, firm- and revenue-weighted MAE, change against persistence with 95% intervals from a bootstrap over firms, errors by SIC division, the largest errors and plain findings; for all rows and for firms with $10 million or more of revenue at the origin.
+- Benchmark `bench-20261028-641a5b7181ea`: revenue growth beats persistence on every horizon and measure (h = 4: MAE 0.324 against 0.447, −27.5% with the interval −29.9 to −24.9%); for margins and debt / EBITDA the lower MAE of the learned models comes from the extremes only, and for firms with material revenue no model beats persistence with its interval below zero (operating and EBITDA margins: all six worse at h = 1, 4, 12, 20).
+- Contracts 0.13.0: `ForecastDatasetManifest`, `ForecastProtocol`, `BenchmarkReport` with `ScoreRow`, `SectorScore`, `ModelConfig`, `Population`.
+- numpy and scikit-learn became core dependencies of `multiverse-forecast`; LightGBM stays an extra.
+
 ### Changed — 2026-10-30 (data acquisition 14b accepted)
 
 - The data acquisition 14b (decisions D-10, D-11, D-12; universe of 1000 companies; Gate B passed with warnings) accepted by the owner (CI run 41129053273 green).

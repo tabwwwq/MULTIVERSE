@@ -194,7 +194,7 @@ def raw(dataset: str) -> RawObject:
         run_id="fixture",
         licence="fixture",
         terms_checked_on=date(2026, 10, 29),
-        catalog_version="0.12.0",
+        catalog_version="0.13.0",
     )
 
 

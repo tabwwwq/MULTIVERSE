@@ -55,6 +55,22 @@ export type Authentication = "none" | "declared_user_agent" | "api_key" | "contr
  */
 export type AvailabilityBasis = "vintage" | "snapshot" | "schedule" | "estimated";
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ForecastTarget".
+ */
+export type ForecastTarget =
+  "revenue_growth" | "operating_margin" | "ebitda_margin" | "fcf_margin" | "debt_to_ebitda";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Population".
+ */
+export type Population = "all" | "revenue_10m";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SplitName".
+ */
+export type SplitName = "validation" | "test" | "cold_start";
+/**
  * Identification status of a result. Never raised automatically (PRD FR-CA-02).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -281,6 +297,13 @@ export type FinancialStatement = "income_statement" | "cash_flow" | "balance_she
  */
 export type FiscalPeriod = "Q1" | "Q2" | "Q3" | "Q4" | "FY";
 /**
+ * Which value of a period a query returns when filings reported it more than once.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "KnowledgeView".
+ */
+export type KnowledgeView = "original" | "vintage" | "latest";
+/**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "Frequency".
  */
@@ -290,13 +313,6 @@ export type Frequency = "daily" | "monthly" | "quarterly" | "annual";
  * via the `definition` "GateVerdict".
  */
 export type GateVerdict = "passed" | "passed_with_warnings" | "blocked";
-/**
- * Which value of a period a query returns when filings reported it more than once.
- *
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "KnowledgeView".
- */
-export type KnowledgeView = "original" | "vintage" | "latest";
 /**
  * Unit of a parameter value. Fractions are shares: 0.25 means 25 %.
  *
@@ -597,6 +613,108 @@ export interface AcquisitionStep {
   storage: string;
   title: string;
   volume: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "BenchmarkReport".
+ */
+export interface BenchmarkReport {
+  benchmark_id: string;
+  /**
+   * @minItems 1
+   */
+  configs: [ModelConfig, ...ModelConfig[]];
+  contracts_version: string;
+  /**
+   * Not part of the hash.
+   */
+  created_at: string;
+  dataset_id: string;
+  dataset_sha256: string;
+  failures: string[];
+  /**
+   * @minItems 1
+   */
+  findings: [string, ...string[]];
+  protocol_id: string;
+  protocol_sha256: string;
+  /**
+   * @minItems 1
+   */
+  scores: [ScoreRow, ...ScoreRow[]];
+  sectors: SectorScore[];
+  seed: number;
+  /**
+   * Of the scores, configurations and inputs.
+   */
+  sha256: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ModelConfig".
+ */
+export interface ModelConfig {
+  model: string;
+  params: Param[];
+  target: ForecastTarget;
+  /**
+   * Of the chosen setting.
+   */
+  validation_mae: number | null;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Param".
+ */
+export interface Param {
+  name: string;
+  value: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ScoreRow".
+ */
+export interface ScoreRow {
+  companies: number;
+  examples: number;
+  firm_weighted_mae: number;
+  horizon: number;
+  mae: number;
+  mae_high: number;
+  /**
+   * 95% interval, bootstrap over companies.
+   */
+  mae_low: number;
+  median_ae: number;
+  model: string;
+  population: Population;
+  revenue_weighted_mae: number;
+  rmse: number;
+  split: SplitName;
+  target: ForecastTarget;
+  /**
+   * MAE over the persistence MAE on the same rows, minus one.
+   */
+  vs_naive: number | null;
+  vs_naive_high: number | null;
+  vs_naive_low: number | null;
+  /**
+   * None when actuals sum to zero.
+   */
+  wape: number | null;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SectorScore".
+ */
+export interface SectorScore {
+  division: string;
+  examples: number;
+  horizon: number;
+  mae: number;
+  model: string;
+  split: SplitName;
+  target: ForecastTarget;
 }
 /**
  * One archived bulk ZIP file the universe was drawn from.
@@ -1208,6 +1326,94 @@ export interface ExampleCount {
   history_quarters: number;
   horizon_quarters: number;
   origins: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ForecastDatasetManifest".
+ */
+export interface ForecastDatasetManifest {
+  companies: number;
+  contracts_version: string;
+  /**
+   * Not part of the hash.
+   */
+  created_at: string;
+  data_cutoff: string;
+  dataset_id: string;
+  /**
+   * @minItems 1
+   */
+  features: [string, ...string[]];
+  first_origin: string;
+  /**
+   * @minItems 1
+   */
+  horizons: [number, ...number[]];
+  last_origin: string;
+  macro_series: string[];
+  pit_built_at: string;
+  rows: number;
+  sha256: string;
+  target_counts: TargetCount[];
+  /**
+   * @minItems 1
+   */
+  targets: [ForecastTarget, ...ForecastTarget[]];
+  universe_id: string;
+  view: KnowledgeView;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TargetCount".
+ */
+export interface TargetCount {
+  defined: number;
+  horizon: number;
+  target: ForecastTarget;
+  /**
+   * Released, but the ratio has no meaning.
+   */
+  undefined: number;
+}
+/**
+ * Written before the test period is scored; its SHA-256 goes into every report.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ForecastProtocol".
+ */
+export interface ForecastProtocol {
+  bootstrap_resamples: number;
+  cold_start_share: number;
+  grids: {
+    /**
+     * This interface was referenced by `undefined`'s JSON-Schema definition
+     * via the `patternProperty` "^[a-z][a-z0-9_]*$".
+     */
+    [k: string]: Param[][];
+  };
+  /**
+   * @minItems 1
+   */
+  horizons: [number, ...number[]];
+  /**
+   * Revenue floor of the material population.
+   */
+  material_revenue: number;
+  protocol_id: string;
+  seed: number;
+  /**
+   * @minItems 1
+   */
+  targets: [ForecastTarget, ...ForecastTarget[]];
+  /**
+   * @minItems 1
+   */
+  test_years: [number, ...number[]];
+  /**
+   * @minItems 1
+   */
+  validation_years: [number, ...number[]];
+  winsor_quantile: number;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema

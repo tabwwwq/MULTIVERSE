@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 14 — аудит финансового датасета, Gate B |
 | Дата | 2026-10-30 |
-| Статус | REVIEW (вердикт Gate B: **blocked**, честный отчёт) |
+| Статус | ACCEPTED 2026-10-30 (CI run 41043307647: 7/7 задач зелёные; владелец: «Принять Stage 14»). Вердикт Gate B остаётся **blocked** до D-10, D-11, D-12 |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/14_DATA_QUALITY_GATE.md` |
 | Основание | `docs/11` (Gate 2 SEC PIT dataset QA, dataset quality tests, honest metrics), `docs/14` (Exit B), `docs/06` (окно истории 12–24, горизонты 1/4/8/12/20), `17_ACCEPTANCE_MATRIX` DATA-01…DATA-05; команда владельца 2026-10-30: «Делай Stage 14» |
 | Решение | ADR-0021 — Gate B |

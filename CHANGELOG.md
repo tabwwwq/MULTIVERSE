@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-30 (Stage 14 accepted)
+
+- Stage 14 (Gate B dataset audit) accepted by the owner (CI run 41043307647 green). The gate verdict stays blocked until decisions D-10 (SEC bulk files), D-11 (FRED key) and D-12 (ECB, World Bank).
+
 ### Added — 2026-10-30 (Stage 14)
 
 - Gate B dataset audit (`python -m multiverse_pipelines.audit run`, ADR-0021): the 15 checks of the prompt (future revisions, duplicated company-quarters, concept drift, survivor-only sample, lost bankruptcies, missingness, revenue gaps, negative and undefined ratios, currency, outliers, unrealistic jumps, cumulative cash flow, misidentified capex, reported vs calculated EBITDA, source conflicts) plus a leakage proof, manual reconciliation, usable sample size and macro data; statuses pass, warning, fail and blocked.

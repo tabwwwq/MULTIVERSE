@@ -175,7 +175,8 @@ class RawArchive:
             if os.access(path, os.W_OK):
                 report.problems.append(f"writable, should be read-only: {row.path}")
         skip = {self.tmp_dir.resolve(), self.runs_dir.resolve()}
-        for path in self.base.rglob("*"):
+        # Sorted: directory order differs between file systems; the report must not.
+        for path in sorted(self.base.rglob("*")):
             if not path.is_file() or path == self.index_path:
                 continue
             if any(parent in skip for parent in path.resolve().parents):

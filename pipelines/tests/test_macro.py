@@ -59,6 +59,13 @@ def utc(*parts: int) -> datetime:
     return datetime(*parts, tzinfo=UTC)
 
 
+@pytest.fixture(autouse=True)
+def _no_multiverse_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The local .env and shell must not decide a test (CI has neither)."""
+    for name in [n for n in os.environ if n.startswith("MULTIVERSE_")]:
+        monkeypatch.delenv(name)
+
+
 def store_until(until: date) -> MacroStore:
     """The synthetic store as an archive downloaded on ``until`` would hold it."""
     return cli.load_synthetic(None, until, BUILT)
@@ -331,7 +338,13 @@ def test_windows_prefer_fiscal_dates() -> None:
 
 
 def settings(**values: Any) -> Settings:
-    return Settings.model_validate({"allow_network_downloads": True, **values})
+    """Settings from these values only: no .env file, no MULTIVERSE_ variables."""
+    fields = {
+        "allow_network_downloads": True,
+        "sec_user_agent": "MULTIVERSE test test@example.com",
+        **values,
+    }
+    return Settings(_env_file=None, **fields)
 
 
 def approved(source_id: str) -> Any:

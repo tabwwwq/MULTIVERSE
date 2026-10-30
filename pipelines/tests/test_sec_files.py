@@ -15,7 +15,7 @@ import httpx
 import pytest
 
 from multiverse_config import Settings
-from multiverse_contracts.source_catalog import SOURCE_CATALOG
+from multiverse_contracts.source_catalog import AWAITING, SEC_SAMPLE_APPROVED, SOURCE_CATALOG
 from multiverse_contracts.sources import (
     DataSource,
     DecisionStatus,
@@ -207,7 +207,8 @@ def test_a_user_agent_needs_a_name_and_an_email(agent: str) -> None:
 
 
 def test_a_source_without_the_owners_approval_is_refused() -> None:
-    fred = next(s for s in SOURCE_CATALOG.sources if s.source_id == "fred-alfred")
+    catalog_fred = next(s for s in SOURCE_CATALOG.sources if s.source_id == "fred-alfred")
+    fred = catalog_fred.model_copy(update={"download": AWAITING})
     allowed = settings(allow_network_downloads=True, sec_user_agent=AGENT)
     with pytest.raises(PermissionRefusedError, match="not approved"):
         require_permission(allowed, fred, DownloadScope.SAMPLE)
@@ -215,9 +216,10 @@ def test_a_source_without_the_owners_approval_is_refused() -> None:
 
 def test_a_sample_approval_does_not_open_bulk_files() -> None:
     allowed = settings(allow_network_downloads=True, sec_user_agent=AGENT)
-    assert require_permission(allowed, sec(), DownloadScope.SAMPLE) == AGENT
+    sample = sec().model_copy(update={"download": SEC_SAMPLE_APPROVED})
+    assert require_permission(allowed, sample, DownloadScope.SAMPLE) == AGENT
     with pytest.raises(PermissionRefusedError, match="D-10"):
-        require_permission(allowed, sec(), DownloadScope.BULK)
+        require_permission(allowed, sample, DownloadScope.BULK)
     bulk = sec().model_copy(
         update={
             "download": DownloadDecision(
@@ -305,7 +307,7 @@ def test_status_works_offline(capsys: pytest.CaptureFixture[str]) -> None:
     assert cli.main(["status"]) == 0
     out = capsys.readouterr().out
     assert "network downloads   off" in out
-    assert "approved (sample)" in out
+    assert "approved (bulk)" in out  # decision D-10
     assert "@" not in out
 
 
@@ -320,6 +322,9 @@ def test_bulk_is_refused_with_a_sample_approval(
 ) -> None:
     monkeypatch.setenv("MULTIVERSE_ALLOW_NETWORK_DOWNLOADS", "true")
     monkeypatch.setenv("MULTIVERSE_SEC_USER_AGENT", AGENT)
+    # The catalog now approves bulk files (D-10); test the refusal with a sample-only source.
+    sample = sec().model_copy(update={"download": SEC_SAMPLE_APPROVED})
+    monkeypatch.setattr(cli, "sec_source", lambda: sample)
     assert cli.main(["bulk", "companyfacts-zip", "--max-mb", "1"]) == 2
     assert "D-10" in capsys.readouterr().err
 

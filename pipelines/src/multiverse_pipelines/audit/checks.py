@@ -11,17 +11,20 @@ Each check measures one risk on the data as it is and returns a status:
 import itertools
 import math
 import statistics
+import sys
 from collections import Counter, defaultdict
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 
 from multiverse_contracts.companies import QualitySeverity
-from multiverse_contracts.normalized import FiscalPeriod, NormalizedValue, QualityFlag, Revision
-from multiverse_contracts.pit import MASKED_STATES, CellState, ChronologyAlert, ValueChange
+from multiverse_contracts.metrics import LineageMethod
+from multiverse_contracts.normalized import FiscalPeriod, NormalizedValue, QualityFlag
+from multiverse_contracts.pit import MASKED_STATES, AlertKind, CellState, ChronologyAlert
 from multiverse_contracts.quality import CheckStatus, GateCheck, Measure
 from multiverse_contracts.sources import CompanyCandidate
+from multiverse_contracts.universe import UniverseManifest
 from multiverse_pipelines.pit.panel import Panel, nearest_quarter_end, quarter_label
 from multiverse_pipelines.pit.warehouse import Warehouse
 
@@ -32,6 +35,39 @@ JUMP = Decimal("0.5")
 OUTLIER_Z = 6.0
 SUM_TOLERANCE = Decimal("0.005")
 MISSING_WARN = 0.25
+GUARDED_ALERTS = frozenset({AlertKind.PERIOD_AFTER_FILING})
+
+
+@dataclass(frozen=True, slots=True)
+class Current:
+    """The fields of a value as known today that the checks read: a slim NormalizedValue.
+
+    A thousand companies hold millions of values; the full models would not fit in memory.
+    """
+
+    metric: str
+    fiscal_year: int
+    fiscal_period: FiscalPeriod
+    period_end: date
+    value: str | None
+    concept: str | None
+    currency: str | None
+    flags: tuple[QualityFlag, ...]
+    method: LineageMethod | None = None
+
+    @classmethod
+    def of(cls, row: NormalizedValue) -> "Current":
+        return cls(
+            sys.intern(row.metric),
+            row.fiscal_year,
+            row.fiscal_period,
+            row.period_end,
+            row.value,
+            sys.intern(row.concept) if row.concept else None,
+            sys.intern(row.currency) if row.currency else None,
+            tuple(row.flags),
+            row.method,
+        )
 
 
 @dataclass
@@ -42,11 +78,13 @@ class AuditData:
     candidates: dict[str, CompanyCandidate]
     data_cutoff: datetime
     panel: Panel
-    current: dict[str, list[NormalizedValue]] = field(default_factory=dict)
+    current: dict[str, list[Current]] = field(default_factory=dict)
     alerts: list[ChronologyAlert] = field(default_factory=list)
     revised: Counter[str] = field(default_factory=Counter)
     bankruptcy_filings: list[str] = field(default_factory=list)
     """8-K filings with item 1.03 (bankruptcy or receivership), from the archived index."""
+    universe: UniverseManifest | None = None
+    """The universe the companies were drawn from (D-10); ``None`` for the sample of D-09."""
 
     def name(self, cik: str) -> str:
         return self.names.get(cik, cik)
@@ -59,27 +97,19 @@ def load(
     candidates: dict[str, CompanyCandidate],
     data_cutoff: datetime,
     panel: Panel,
+    universe: UniverseManifest | None = None,
 ) -> AuditData:
     mine = {cik: candidates[cik] for cik in ciks if cik in candidates}
-    data = AuditData(warehouse, list(ciks), names, mine, data_cutoff, panel)
+    data = AuditData(warehouse, list(ciks), names, mine, data_cutoff, panel, universe=universe)
     for cik in ciks:
-        rows = []
-        for item in warehouse.all_values(cik):
-            if item.value.revision is not Revision.LATEST:
-                continue
-            if item.change is ValueChange.VALUE_REVISED:
-                data.revised[item.value.metric] += 1
-            if item.known_to is None:
-                rows.append(item.value)
-        data.current[cik] = rows
+        data.revised.update(warehouse.revised(cik))
+        data.current[cik] = [Current.of(item.value) for item in warehouse.current(cik)]
     data.alerts = warehouse.alerts(ciks)
     return data
 
 
-def _quarterly(
-    data: AuditData, metric: str
-) -> dict[str, dict[tuple[int, FiscalPeriod], NormalizedValue]]:
-    found: dict[str, dict[tuple[int, FiscalPeriod], NormalizedValue]] = {}
+def _quarterly(data: AuditData, metric: str) -> dict[str, dict[tuple[int, FiscalPeriod], Current]]:
+    found: dict[str, dict[tuple[int, FiscalPeriod], Current]] = {}
     for cik, rows in data.current.items():
         found[cik] = {(r.fiscal_year, r.fiscal_period): r for r in rows if r.metric == metric}
     return found
@@ -193,6 +223,8 @@ def concept_drift(data: AuditData) -> GateCheck:
 
 
 def survivorship(data: AuditData) -> GateCheck:
+    if data.universe is not None:
+        return _universe_survivorship(data, data.universe)
     acquired = [c for c in data.candidates.values() if c.status == "acquired"]
     listed = [c for c in data.candidates.values() if c.status == "listed"]
     return _check(
@@ -208,15 +240,41 @@ def survivorship(data: AuditData) -> GateCheck:
     )
 
 
+def _universe_survivorship(data: AuditData, universe: UniverseManifest) -> GateCheck:
+    mine = set(data.ciks)
+    gone = [c for c in universe.companies if c.cik in mine and c.deregistered]
+    eligible = universe.rules[-1].remaining
+    return _check(
+        "survivor_only_sample",
+        "Survivor-only sample",
+        CheckStatus.WARNING,
+        f"{len(gone)} of {len(mine)} companies have stopped reporting; the universe was drawn "
+        f"from all {eligible} eligible filers, active or not, but each needed 12 XBRL reports, "
+        "so companies that failed within three years of their first XBRL report are absent",
+        {
+            "still reporting": len(mine) - len(gone),
+            "deregistered (Form 15)": len(gone),
+            "eligible filers drawn from": eligible,
+        },
+        [f"{c.name}: Form 15, last filing {c.last_filed}" for c in gone],
+        [c.cik for c in gone],
+    )
+
+
 def bankruptcies(data: AuditData) -> GateCheck:
     deregistered = [a for a in data.alerts if a.kind.value == "deregistration"]
+    filings = len(data.bankruptcy_filings)
     return _check(
         "lost_bankruptcies",
         "Lost bankruptcies",
         CheckStatus.WARNING,
-        f"{len(data.bankruptcy_filings)} bankruptcy filings (8-K item 1.03) and "
-        f"{len(deregistered)} deregistrations in the sample; a model trained here has not seen "
-        "a failing company",
+        f"{filings} bankruptcy filings (8-K item 1.03) and {len(deregistered)} deregistrations; "
+        + (
+            "a model trained here has not seen a failing company"
+            if not filings
+            else "failing companies are present but rare, and their last quarters are often "
+            "never filed"
+        ),
         {
             "bankruptcies (8-K item 1.03)": len(data.bankruptcy_filings),
             "deregistrations": len(deregistered),
@@ -400,9 +458,16 @@ def jumps(data: AuditData) -> GateCheck:
 
 
 def cumulative_cashflow(data: AuditData) -> GateCheck:
+    """Q4 must be derived (the year minus nine months), never the annual total itself.
+
+    Q4 equal to the year is an error only when Q4 was not derived from the year. When it
+    was, the nine months it subtracts were filed as zero: a dormant company, or a filing
+    that contradicts its own quarters, which then shows as a sum that is off.
+    """
     findings: list[str] = []
     checked = 0
     q4_equals_year = 0
+    nine_months_zero = 0
     for metric in ("cfo", "capex"):
         for cik, rows in _quarterly(data, metric).items():
             years = {y for y, _ in rows}
@@ -413,9 +478,13 @@ def cumulative_cashflow(data: AuditData) -> GateCheck:
                 values = [Decimal(p.value or "0") for p in parts if p is not None]
                 total, annual = sum(values[:4], Decimal(0)), values[4]
                 checked += 1
-                if values[3] == annual and annual != 0:
-                    q4_equals_year += 1
-                    findings.append(f"{data.name(cik)} {metric} FY{year}: Q4 equals the year")
+                q4 = parts[3]
+                if values[3] == annual and annual != 0 and q4 is not None:
+                    if q4.method is LineageMethod.FY_MINUS_NINE_MONTHS:
+                        nine_months_zero += 1
+                    else:
+                        q4_equals_year += 1
+                        findings.append(f"{data.name(cik)} {metric} FY{year}: Q4 equals the year")
                 flagged = any(QualityFlag.MIXED_VINTAGE in p.flags for p in parts if p is not None)
                 if abs(total - annual) > SUM_TOLERANCE * abs(annual) and not flagged:
                     findings.append(
@@ -436,7 +505,8 @@ def cumulative_cashflow(data: AuditData) -> GateCheck:
         "is never the annual total",
         {
             "company-years checked": checked,
-            "Q4 equal to the year": q4_equals_year,
+            "Q4 equal to the year, not derived": q4_equals_year,
+            "Q4 equal to the year, nine months filed as zero": nine_months_zero,
             "sums off": len(findings) - q4_equals_year,
         },
         findings,
@@ -508,21 +578,27 @@ def source_conflicts(data: AuditData) -> GateCheck:
     alerts = Counter(
         f"{a.kind.value}" for a in data.alerts if a.severity is not QualitySeverity.INFO
     )
-    blocking = sum(1 for a in data.alerts if a.severity is QualitySeverity.BLOCKING)
+    blocking = [a for a in data.alerts if a.severity is QualitySeverity.BLOCKING]
+    # The pipeline already keeps these out of every view; any other blocking kind fails.
+    unguarded = [a for a in blocking if a.kind not in GUARDED_ALERTS]
     return _check(
         "source_conflicts",
         "Source conflicts",
         CheckStatus.FAIL
-        if blocking
+        if unguarded
         else CheckStatus.WARNING
         if flags or alerts
         else CheckStatus.PASS,
-        "disagreements inside and between filings, as flags on values and chronology alerts",
+        "disagreements inside and between filings, as flags on values and chronology alerts; "
+        "values of a period ending after their filing (estimates) are left out of every view",
         {
             **{k: v for k, v in flags.items()},
             **{f"alert {k}": v for k, v in alerts.items()},
-            "blocking alerts": blocking,
+            "blocking alerts": len(blocking),
+            "blocking alerts not guarded": len(unguarded),
         },
+        [f"{data.name(a.cik)}: {a.detail}" for a in unguarded + blocking],
+        [a.cik for a in blocking],
     )
 
 

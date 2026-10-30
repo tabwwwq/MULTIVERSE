@@ -25,6 +25,7 @@ from multiverse_contracts.pit import ChronologyAlert, PanelCell, PitSnapshotMani
 from multiverse_contracts.quality import GateManifest
 from multiverse_contracts.results import ScenarioResult
 from multiverse_contracts.sources import SourceCatalog
+from multiverse_contracts.universe import UniverseManifest
 from multiverse_contracts.version import CONTRACTS_VERSION
 
 # packages/contracts/python/src/multiverse_contracts/export.py -> packages/contracts/schemas/
@@ -49,6 +50,7 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     MacroObservation,
     MacroCell,
     GateManifest,
+    UniverseManifest,
 )
 
 

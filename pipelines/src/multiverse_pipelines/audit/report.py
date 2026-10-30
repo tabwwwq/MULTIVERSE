@@ -23,7 +23,10 @@ from multiverse_pipelines.audit.checks import AuditData
 from multiverse_pipelines.audit.examples import HISTORIES, HORIZONS, Example
 from multiverse_pipelines.pit.clock import eastern_date
 from multiverse_pipelines.pit.panel import PANEL_METRICS
+from multiverse_pipelines.sec.universe import division
 
+# Above this many companies the report groups them (by SIC division) instead of listing.
+LISTED_COMPANIES = 40
 STATUS_LABEL = {
     CheckStatus.PASS: "pass",
     CheckStatus.WARNING: "warning",
@@ -40,6 +43,28 @@ def sector_of(candidate: CompanyCandidate, sectors: Sequence[SectorPriority]) ->
             if int(low) <= code <= int(high or low):
                 return sector.sector
     return candidate.sic_description
+
+
+def group_of(data: AuditData, cik: str, sectors: Sequence[SectorPriority]) -> str:
+    """The sector of a catalog candidate, or the SIC division of a universe company."""
+    if data.universe is not None:
+        company = next((c for c in data.universe.companies if c.cik == cik), None)
+        if company is not None:
+            letter, title = division(company.sic)
+            return f"{letter} {title}"
+    candidate = data.candidates.get(cik)
+    return sector_of(candidate, sectors) if candidate else "unknown"
+
+
+def _names(names: Sequence[str], limit: int = 10) -> str:
+    shown = ", ".join(names[:limit])
+    return shown + (f" and {len(names) - limit} more" if len(names) > limit else "")
+
+
+def _scope(data: AuditData) -> str:
+    if data.universe is None:
+        return "the SEC sample of decision D-09"
+    return f"the universe `{data.universe.universe_id}` of decision D-10"
 
 
 def coverage_by(data: AuditData, key: str) -> dict[str, tuple[int, int]]:
@@ -112,19 +137,39 @@ def data_card(
         "",
         "## Composition",
         "",
-        "| Company | CIK | Sector | SIC | Fiscal year end | Filer | Status | Revenue dataset |",
-        "|---|---|---|---|---|---|---|---|",
     ]
     decided = {d.cik: d for d in manifest.companies}
-    for cik in data.ciks:
-        c = data.candidates.get(cik)
-        if c is None:
-            continue
-        d = decided[cik]
-        lines.append(
-            f"| {c.name} | {cik} | {sector_of(c, sectors)} | {c.sic} | {c.fiscal_year_end} | "
-            f"{c.filer_category} | {c.status} | {'included' if d.include else 'excluded'} |"
-        )
+    if data.universe is not None:
+        universe = data.universe
+        lines += [
+            f"{len(data.ciks)} companies drawn with seed {universe.seed} from "
+            f"{universe.rules[-1].remaining} eligible US filers; the list is in "
+            f"`data/universe/{universe.universe_id}.json`.",
+            "",
+            "| SIC division | Eligible | Chosen | Deregistered | In the revenue dataset |",
+            "|---|---|---|---|---|",
+        ]
+        for stratum in universe.strata:
+            mine = [c for c in universe.companies if c.division == stratum.division]
+            lines.append(
+                f"| {stratum.division} {stratum.title} | {stratum.eligible} | {stratum.selected} "
+                f"| {sum(c.deregistered for c in mine)} "
+                f"| {sum(decided[c.cik].include for c in mine if c.cik in decided)} |"
+            )
+    else:
+        lines += [
+            "| Company | CIK | Sector | SIC | Fiscal year end | Filer | Status | Revenue dataset |",
+            "|---|---|---|---|---|---|---|---|",
+        ]
+        for cik in data.ciks:
+            c = data.candidates.get(cik)
+            if c is None:
+                continue
+            d = decided[cik]
+            lines.append(
+                f"| {c.name} | {cik} | {sector_of(c, sectors)} | {c.sic} | {c.fiscal_year_end} "
+                f"| {c.filer_category} | {c.status} | {'included' if d.include else 'excluded'} |"
+            )
     currencies = Counter(r.currency for rows in data.current.values() for r in rows if r.currency)
     lines += [
         "",
@@ -156,15 +201,10 @@ def data_card(
     lines += ["", "Companies with at least 12 quarters, per metric:", ""]
     for metric in PANEL_METRICS:
         names = [data.name(c) for c in usable[metric]]
+        missing = [data.name(c) for c in data.ciks if c not in usable[metric]]
         lines.append(
             f"- `{metric}`: {len(names)} of {len(data.ciks)}"
-            + (
-                " (missing: "
-                + ", ".join(data.name(c) for c in data.ciks if c not in usable[metric])
-                + ")"
-                if len(names) < len(data.ciks)
-                else ""
-            )
+            + (f" (missing: {_names(missing)})" if missing else "")
         )
     lines += [
         "",
@@ -178,20 +218,16 @@ def data_card(
     lines += ["", "## Quality checks", "", "| Check | Status | Summary |", "|---|---|---|"]
     for check in manifest.checks:
         lines.append(f"| {check.title} | {STATUS_LABEL[check.status]} | {check.summary} |")
+    lines += ["", "## Known biases and limits", "", *_limits(manifest, data), ""]
     lines += [
-        "",
-        "## Known biases and limits",
-        "",
-        "- Ten companies chosen in 2026 by a rubric (decision D-09), nine still listed: a "
-        "survivor-heavy, large-cap, US-only sample. No bankruptcies.",
-        "- One company per sector at most: sector effects cannot be learned.",
-        "- No real macro data yet (decisions D-11, D-12).",
-        "- Share counts are not adjusted for stock splits.",
-        "",
         "## Intended use",
         "",
         "Pipeline validation and pilot baselines that state the sample. Not for claims about "
-        "companies in general, sectors, or decision effects.",
+        "companies in general, sectors, or decision effects."
+        if data.universe is None
+        else "Training and evaluation of forecasting baselines for US non-financial filers "
+        "with three or more years of XBRL reports, within the limits above. Not for claims "
+        "about decision effects: nothing here identifies a cause.",
         "",
         "## Sources and licence",
         "",
@@ -202,6 +238,40 @@ def data_card(
     if manifest.verdict_reasons:
         lines += ["## Why the verdict", ""] + [f"- {r}" for r in manifest.verdict_reasons] + [""]
     return "\n".join(lines)
+
+
+def _limits(manifest: GateManifest, data: AuditData) -> list[str]:
+    bankruptcies = len(data.bankruptcy_filings)
+    failing = (
+        "No bankruptcies."
+        if not bankruptcies
+        else f"{bankruptcies} bankruptcy filings (8-K item 1.03): failing companies are rare."
+    )
+    if data.universe is None:
+        lines = [
+            "- Ten companies chosen in 2026 by a rubric (decision D-09), nine still listed: a "
+            f"survivor-heavy, large-cap, US-only sample. {failing}",
+            "- One company per sector at most: sector effects cannot be learned.",
+        ]
+    else:
+        gone = sum(c.deregistered for c in data.universe.companies)
+        lines = [
+            f"- Drawn from every eligible filer, active or not ({gone} of "
+            f"{len(data.universe.companies)} have deregistered), but each needed 12 XBRL "
+            "reports: companies that failed within three years of their first XBRL report, "
+            "foreign private issuers (20-F) and the excluded financial sectors are absent. "
+            + failing,
+            "- XBRL begins in 2009 (large filers) and 2011 (all filers): no earlier history.",
+        ]
+    if manifest.synthetic_macro:
+        lines.append("- No real macro values: only the synthetic store exists (D-11, D-12).")
+    else:
+        lines.append(
+            "- Macro: FRED/ALFRED vintages and ECB series by publication rules; World Bank "
+            "indicators are one current snapshot, unusable at historical cutoffs."
+        )
+    lines.append("- Share counts are not adjusted for stock splits.")
+    return lines
 
 
 CSS = """
@@ -263,16 +333,18 @@ def coverage_html(
     by_metric = coverage_by(data, "metric")
     by_year = coverage_by(data, "year")
     years = sorted(by_year)
+    grouped = len(data.ciks) > LISTED_COMPANIES
+    groups = {cik: group_of(data, cik, sectors) for cik in data.ciks}
     heat: dict[tuple[str, str], list[int]] = defaultdict(lambda: [0, 0])
     for cell in data.panel.cells:
         if cell.state in (CellState.INACTIVE, CellState.NOT_COVERED, CellState.NOT_YET_FILED):
             continue
-        slot = heat[(cell.cik, cell.calendar_quarter[:4])]
+        slot = heat[(groups[cell.cik] if grouped else cell.cik, cell.calendar_quarter[:4])]
         slot[1] += 1
         slot[0] += cell.state in MASKED_STATES
     heat_rows = []
-    for cik in data.ciks:
-        row = [_esc(data.name(cik))]
+    for cik in sorted(set(groups.values())) if grouped else data.ciks:
+        row = [_esc(cik if grouped else data.name(cik))]
         for year in years:
             masked, total = heat.get((cik, year), [0, 0])
             share = masked / total if total else 0
@@ -309,12 +381,11 @@ def coverage_html(
     sector_rows = []
     by_sector: dict[str, list[str]] = defaultdict(list)
     for cik in data.ciks:
-        c = data.candidates.get(cik)
-        if c is not None:
-            by_sector[sector_of(c, sectors)].append(c.name)
+        if data.universe is not None or cik in data.candidates:
+            by_sector[groups[cik]].append(data.name(cik))
     for sector, names in sorted(by_sector.items()):
         sector_rows.append(
-            [_esc(sector), str(len(names)), f"<span class='wrap'>{_esc(', '.join(names))}</span>"]
+            [_esc(sector), str(len(names)), f"<span class='wrap'>{_esc(_names(names))}</span>"]
         )
     check_rows = [
         [
@@ -331,7 +402,7 @@ def coverage_html(
     usable_companies = sum(d.include for d in manifest.companies)
     revenue = by_metric.get("revenue", (0, 0))
     kpis = [
-        (str(len(data.ciks)), "companies in the SEC sample"),
+        (str(len(data.ciks)), "companies"),
         (str(usable_companies), "with 12+ revenue quarters"),
         (str(main.examples), "examples, H = 12, h = 4"),
         (_share(*revenue), "revenue present where public"),
@@ -344,11 +415,11 @@ def coverage_html(
         "<h1>Gate B: financial dataset coverage</h1>",
         f"<p class='lede'>Dataset <code>{_esc(manifest.dataset_id)}</code> · data cutoff "
         f"{eastern_date(manifest.data_cutoff)} (end of day, US Eastern) · point-in-time view · "
-        "measured on the local archive of the SEC sample (decision D-09). Size is counted in "
-        "usable examples, not files.</p>",
+        f"measured on the local archive of {_esc(_scope(data)).replace('`', '')}. Size is "
+        "counted in usable examples, not files.</p>",
         f"<section class='kpis'>{tiles}</section>",
-        "<h2>Metrics present per company and year (%)</h2>",
-        _table(["Company", *years], heat_rows, "heat"),
+        f"<h2>Metrics present per {'SIC division' if grouped else 'company'} and year (%)</h2>",
+        _table(["SIC division" if grouped else "Company", *years], heat_rows, "heat"),
         "<h2>Coverage by metric</h2>",
         _bars(metric_bars),
         "<h2>Trainable examples by history and horizon (quarters)</h2>",

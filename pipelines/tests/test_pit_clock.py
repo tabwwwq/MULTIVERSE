@@ -52,8 +52,10 @@ def test_eastern_days_and_their_bounds() -> None:
     assert day_start(date(2022, 1, 3)) == utc(2022, 1, 3, 5)
     assert eastern_date(utc(2022, 1, 1, 3, 0)) == date(2021, 12, 31)
     assert to_eastern(utc(2021, 2, 11, 21, 30)) == datetime(2021, 2, 11, 16, 30)
-    with pytest.raises(ValueError, match="1987"):
-        daylight_saving(1986)
+    assert daylight_saving(1986) == (datetime(1986, 4, 27, 2), datetime(1986, 10, 26, 2))
+    assert daylight_saving(1974) == (datetime(1974, 1, 6, 2), datetime(1974, 10, 27, 2))
+    assert daylight_saving(1960) is None  # no uniform rule: standard time
+    assert day_end(date(1960, 7, 1)) == datetime(1960, 7, 2, 4, 59, 59, 999999, tzinfo=UTC)
     with pytest.raises(ValueError, match="time zone"):
         to_eastern(datetime(2021, 1, 1))
 

@@ -8,13 +8,21 @@ Tables (``var/data/pit/warehouse.sqlite`` by default, never committed):
     alerts       broken chronology alerts
     inputs       the raw archive files each company was built from (path, SHA-256)
     meta         policy, contracts version, build time
+    codec        the zlib dictionary of the payloads
 
 Knowledge times are stored as fixed-width UTC text, so text order is time order. An
 as-of query is one indexed range condition: ``known_from <= cutoff < known_to``.
+
+A value's payload is its JSON, compressed with zlib primed by a dictionary: payload text
+of the first company built. Rows share most of their text (field names, concepts, enum
+values), so a primed row is about seven times smaller than its JSON, against twice for
+zlib alone; that keeps a 1000-company warehouse near a gigabyte.
 """
 
 import sqlite3
+import zlib
 from collections.abc import Iterable, Sequence
+from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
 
@@ -27,6 +35,7 @@ from multiverse_contracts.pit import (
     PitValue,
     SnapshotInput,
     TimePrecision,
+    ValueChange,
 )
 from multiverse_contracts.version import CONTRACTS_VERSION
 from multiverse_pipelines.pit.clock import eastern_date, from_stamp, stamp
@@ -38,7 +47,8 @@ SCHEMA = """
 CREATE TABLE pit_values (
     cik TEXT NOT NULL, metric TEXT NOT NULL, fiscal_year INTEGER NOT NULL,
     fiscal_period TEXT NOT NULL, revision TEXT NOT NULL, period_end TEXT NOT NULL,
-    known_from TEXT NOT NULL, known_to TEXT, has_value INTEGER NOT NULL, payload TEXT NOT NULL
+    known_from TEXT NOT NULL, known_to TEXT, has_value INTEGER NOT NULL, change TEXT NOT NULL,
+    payload BLOB NOT NULL
 );
 CREATE INDEX pit_values_as_of ON pit_values (cik, revision, metric, known_from);
 CREATE TABLE filings (
@@ -53,15 +63,101 @@ CREATE TABLE companies (
     cik TEXT PRIMARY KEY, knowledge_points INTEGER NOT NULL, estimates_dropped INTEGER NOT NULL
 );
 CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+CREATE TABLE codec (dictionary BLOB NOT NULL);
 """
+DICTIONARY_BYTES = 32 * 1024
+DICTIONARY_SAMPLES = 40
+Row = tuple[object, ...]
+
+
+def make_dictionary(values: Sequence[PitValue]) -> bytes:
+    """Payload text spread over one company's values: what zlib is primed with."""
+    step = max(1, len(values) // DICTIONARY_SAMPLES)
+    text = b"".join(v.model_dump_json().encode() for v in values[::step])
+    return text[-DICTIONARY_BYTES:]
+
+
+def encode(value: PitValue, dictionary: bytes) -> bytes:
+    packer = zlib.compressobj(6, zdict=dictionary) if dictionary else zlib.compressobj(6)
+    return packer.compress(value.model_dump_json().encode()) + packer.flush()
+
+
+def decode(payload: bytes, dictionary: bytes) -> PitValue:
+    unpacker = zlib.decompressobj(zdict=dictionary) if dictionary else zlib.decompressobj()
+    return PitValue.model_validate_json(unpacker.decompress(payload) + unpacker.flush())
+
+
+@dataclass(frozen=True)
+class CompanyRows:
+    """One company's rows, ready to insert: encoded in a worker, inserted by the parent."""
+
+    cik: str
+    values: list[Row]
+    filings: list[Row]
+    documents: dict[str, list[str]]
+    knowledge_points: int
+    estimates_dropped: int
+
+
+def company_rows(
+    history: CompanyHistory,
+    filings: Sequence[Filing],
+    attributes: Sequence[EntityAttribute],
+    alerts: Sequence[ChronologyAlert],
+    inputs: Sequence[SnapshotInput],
+    dictionary: bytes,
+) -> CompanyRows:
+    cik = history.cik
+    values: list[Row] = [
+        (
+            cik,
+            v.value.metric,
+            v.value.fiscal_year,
+            v.value.fiscal_period.value,
+            v.value.revision.value,
+            v.value.period_end.isoformat(),
+            stamp(v.known_from),
+            stamp(v.known_to) if v.known_to else None,
+            int(v.value.value is not None),
+            v.change.value,
+            encode(v, dictionary),
+        )
+        for v in history.values
+    ]
+    rows: list[Row] = [
+        (
+            cik,
+            f.accession,
+            f.form,
+            f.filing_date.isoformat(),
+            f.report_date.isoformat() if f.report_date else None,
+            stamp(f.accepted) if f.accepted else None,
+            stamp(f.known_at),
+            f.precision.value,
+            int(f.xbrl),
+        )
+        for f in filings
+    ]
+    documents = {
+        table: [item.model_dump_json() for item in items]
+        for table, items in (("attributes", attributes), ("alerts", alerts), ("inputs", inputs))
+    }
+    return CompanyRows(
+        cik, values, rows, documents, history.knowledge_points, history.estimates_dropped
+    )
 
 
 class Warehouse:
     def __init__(self, connection: sqlite3.Connection) -> None:
         self.db = connection
+        row = connection.execute("SELECT dictionary FROM codec").fetchone()
+        self.dictionary: bytes = row[0] if row else b""
+        self._filings: dict[str, FilingIndex] = {}
 
     @classmethod
-    def create(cls, path: Path | None = None, *, built_at: datetime) -> "Warehouse":
+    def create(
+        cls, path: Path | None = None, *, built_at: datetime, dictionary: bytes = b""
+    ) -> "Warehouse":
         """A new, empty warehouse; an existing file at the path is replaced."""
         if path is not None:
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -74,6 +170,7 @@ class Warehouse:
             "built_at": stamp(built_at),
         }
         db.executemany("INSERT INTO meta VALUES (?, ?)", sorted(meta.items()))
+        db.execute("INSERT INTO codec VALUES (?)", (dictionary,))
         db.commit()
         return cls(db)
 
@@ -83,7 +180,11 @@ class Warehouse:
             raise ValueError(
                 f"no warehouse at {path}: run `python -m multiverse_pipelines.pit build`"
             )
-        return cls(sqlite3.connect(path))
+        db = sqlite3.connect(path)
+        if not db.execute("SELECT 1 FROM sqlite_master WHERE name = 'codec'").fetchone():
+            db.close()
+            raise ValueError(f"{path} was built by an earlier version: rebuild the warehouse")
+        return cls(db)
 
     def close(self) -> None:
         self.db.close()
@@ -99,52 +200,26 @@ class Warehouse:
         alerts: Sequence[ChronologyAlert],
         inputs: Sequence[SnapshotInput],
     ) -> None:
-        cik = history.cik
+        self.insert(company_rows(history, filings, attributes, alerts, inputs, self.dictionary))
+
+    def insert(self, rows: CompanyRows) -> None:
+        """One company, encoded with this warehouse's dictionary, in one transaction."""
         self.db.executemany(
-            "INSERT INTO pit_values VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (
-                (
-                    cik,
-                    v.value.metric,
-                    v.value.fiscal_year,
-                    v.value.fiscal_period.value,
-                    v.value.revision.value,
-                    v.value.period_end.isoformat(),
-                    stamp(v.known_from),
-                    stamp(v.known_to) if v.known_to else None,
-                    int(v.value.value is not None),
-                    v.model_dump_json(),
-                )
-                for v in history.values
-            ),
+            "INSERT INTO pit_values VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", rows.values
         )
-        self.db.executemany(
-            "INSERT INTO filings VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (
-                (
-                    cik,
-                    f.accession,
-                    f.form,
-                    f.filing_date.isoformat(),
-                    f.report_date.isoformat() if f.report_date else None,
-                    stamp(f.accepted) if f.accepted else None,
-                    stamp(f.known_at),
-                    f.precision.value,
-                    int(f.xbrl),
-                )
-                for f in filings
-            ),
-        )
-        for table, items in (("attributes", attributes), ("alerts", alerts), ("inputs", inputs)):
+        self.db.executemany("INSERT INTO filings VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", rows.filings)
+        for table, payloads in rows.documents.items():
             self.db.executemany(
-                f"INSERT INTO {table} VALUES (?, ?)",
-                ((cik, item.model_dump_json()) for item in items),
+                f"INSERT INTO {table} VALUES (?, ?)", ((rows.cik, p) for p in payloads)
             )
         self.db.execute(
             "INSERT INTO companies VALUES (?, ?, ?)",
-            (cik, history.knowledge_points, history.estimates_dropped),
+            (rows.cik, rows.knowledge_points, rows.estimates_dropped),
         )
         self.db.commit()
+
+    def _values(self, sql: str, args: Sequence[object]) -> list[PitValue]:
+        return [decode(row[0], self.dictionary) for row in self.db.execute(sql, args)]
 
     def ciks(self) -> list[str]:
         return [row[0] for row in self.db.execute("SELECT cik FROM companies ORDER BY cik")]
@@ -184,7 +259,7 @@ class Warehouse:
             sql += " AND fiscal_period = ?"
             args.append(fiscal_period.value)
         sql += " ORDER BY metric, period_end, fiscal_period"
-        return [PitValue.model_validate_json(row[0]) for row in self.db.execute(sql, args)]
+        return self._values(sql, args)
 
     def history(
         self,
@@ -195,24 +270,46 @@ class Warehouse:
         revision: Revision = Revision.LATEST,
     ) -> list[PitValue]:
         """Every answer one period had, oldest first: its corrections over time."""
-        rows = self.db.execute(
+        return self._values(
             "SELECT payload FROM pit_values WHERE cik = ? AND metric = ? AND fiscal_year = ?"
             " AND fiscal_period = ? AND revision = ? ORDER BY known_from",
             (cik10(cik), metric, fiscal_year, fiscal_period.value, revision.value),
         )
-        return [PitValue.model_validate_json(row[0]) for row in rows]
 
     def all_values(self, cik: str) -> list[PitValue]:
-        rows = self.db.execute(
+        return self._values(
             "SELECT payload FROM pit_values WHERE cik = ? ORDER BY rowid", (cik10(cik),)
         )
-        return [PitValue.model_validate_json(row[0]) for row in rows]
+
+    def current(self, cik: str) -> list[PitValue]:
+        """Latest-revision values as known at the build: the answer of today."""
+        return self._values(
+            "SELECT payload FROM pit_values WHERE cik = ? AND revision = ? AND known_to IS NULL"
+            " ORDER BY rowid",
+            (cik10(cik), Revision.LATEST.value),
+        )
+
+    def revised(self, cik: str) -> dict[str, int]:
+        """Per metric: latest-revision values that replaced an earlier, different answer."""
+        rows = self.db.execute(
+            "SELECT metric, COUNT(*) FROM pit_values WHERE cik = ? AND revision = ?"
+            " AND change = ? GROUP BY metric",
+            (cik10(cik), Revision.LATEST.value, ValueChange.VALUE_REVISED.value),
+        )
+        return dict(rows.fetchall())
 
     def filings(self, cik: str) -> FilingIndex:
+        """The filing index of one company (read once, then kept)."""
+        cik = cik10(cik)
+        if cik not in self._filings:
+            self._filings[cik] = self._read_filings(cik)
+        return self._filings[cik]
+
+    def _read_filings(self, cik: str) -> FilingIndex:
         rows = self.db.execute(
             "SELECT accession, form, filing_date, report_date, accepted, known_at, precision,"
             " xbrl FROM filings WHERE cik = ?",
-            (cik10(cik),),
+            (cik,),
         )
         return FilingIndex(
             Filing(

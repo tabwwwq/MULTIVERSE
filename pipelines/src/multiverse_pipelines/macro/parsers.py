@@ -16,7 +16,12 @@ from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
-from multiverse_contracts.macro import AvailabilityBasis, Frequency, MacroObservation
+from multiverse_contracts.macro import (
+    AvailabilityBasis,
+    Frequency,
+    MacroObservation,
+    VintageSupport,
+)
 from multiverse_pipelines.macro import availability
 from multiverse_pipelines.macro.registry import BY_ID
 from multiverse_pipelines.xbrl.normalize import decimal_text
@@ -92,6 +97,42 @@ def alfred_observations(
     return found
 
 
+def fred_current_observations(
+    code: str, doc: Mapping[str, Any], *, raw_sha256: str | None = None, synthetic: bool = False
+) -> list[MacroObservation]:
+    """Current values of an unrevised daily FRED series, available by the H.15 rule."""
+    series_id = f"fred:{code}"
+    frequency = _series(series_id)
+    found: list[MacroObservation] = []
+    for row in doc["observations"]:
+        value = _number(row["value"])
+        if value is None:
+            continue
+        start = date.fromisoformat(row["date"])
+        found.append(
+            MacroObservation(
+                series_id=series_id,
+                period_start=start,
+                period_end=period_end(start, frequency),
+                value=value,
+                available_from=availability.h15_daily(start),
+                basis=AvailabilityBasis.SCHEDULE,
+                raw_sha256=raw_sha256,
+                synthetic=synthetic,
+            )
+        )
+    return found
+
+
+def fred_observations(
+    code: str, doc: Mapping[str, Any], *, raw_sha256: str | None = None, synthetic: bool = False
+) -> list[MacroObservation]:
+    """ALFRED vintages, or current values for a series registered without vintages."""
+    if BY_ID[f"fred:{code}"].vintage_support is VintageSupport.NONE:
+        return fred_current_observations(code, doc, raw_sha256=raw_sha256, synthetic=synthetic)
+    return alfred_observations(code, doc, raw_sha256=raw_sha256, synthetic=synthetic)
+
+
 def ecb_observations(
     text: str, *, raw_sha256: str | None = None, synthetic: bool = False
 ) -> list[MacroObservation]:
@@ -142,14 +183,18 @@ def worldbank_observations(
     ordered = sorted(snapshots, key=lambda s: s.updated)
     for snapshot in ordered:
         seen: set[tuple[str, int]] = set()
+        indicators: set[str] = set()
         for row in snapshot.rows:
             series_id = f"wb:{row['countryiso3code']}.{row['indicator']['id']}"
             _series(series_id)
+            indicators.add(row["indicator"]["id"])
             key = (series_id, int(row["date"]))
             seen.add(key)
             history[key].append((snapshot, _number(row["value"])))
+        # A value disappears only from a snapshot of its own indicator.
         for key, items in history.items():
-            if key not in seen and items and items[-1][0] is not snapshot:
+            own = key[0].split(".", 1)[1] in indicators
+            if own and key not in seen and items and items[-1][0] is not snapshot:
                 items.append((snapshot, None))
     found: list[MacroObservation] = []
     for (series_id, year), items in sorted(history.items()):

@@ -599,6 +599,25 @@ export interface AcquisitionStep {
   volume: string;
 }
 /**
+ * One archived bulk ZIP file the universe was drawn from.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "BulkFile".
+ */
+export interface BulkFile {
+  downloaded_at: string;
+  /**
+   * As the server sent it.
+   */
+  last_modified: string | null;
+  /**
+   * Relative to the raw root.
+   */
+  path: string;
+  sha256: string;
+  url: string;
+}
+/**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "CapexExpansion".
  */
@@ -2026,6 +2045,16 @@ export interface Risk {
   title: string;
 }
 /**
+ * A rule of eligibility and the companies still eligible after it.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RuleCount".
+ */
+export interface RuleCount {
+  remaining: number;
+  rule: string;
+}
+/**
  * One run: a baseline and its alternates for a company at a knowledge cutoff.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -2183,4 +2212,77 @@ export interface SourceCatalog {
    */
   sources: [DataSource, ...DataSource[]];
   verified_on: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "UniverseCompany".
+ */
+export interface UniverseCompany {
+  /**
+   * One of the ten catalog candidates, always included.
+   */
+  candidate: boolean;
+  cik: string;
+  /**
+   * A Form 15 is on file: no longer reporting.
+   */
+  deregistered: boolean;
+  division: string;
+  first_xbrl_filed: string;
+  last_filed: string;
+  name: string;
+  sic: string;
+  /**
+   * XBRL 10-K filings on file.
+   */
+  xbrl_10k: number;
+  /**
+   * XBRL 10-Q filings on file.
+   */
+  xbrl_10q: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "UniverseManifest".
+ */
+export interface UniverseManifest {
+  /**
+   * @minItems 1
+   */
+  companies: [UniverseCompany, ...UniverseCompany[]];
+  created_at: string;
+  decision: string;
+  /**
+   * @minItems 1
+   */
+  rules: [RuleCount, ...RuleCount[]];
+  /**
+   * Companies with a Company Facts file.
+   */
+  scanned: number;
+  seed: number;
+  size: number;
+  /**
+   * @minItems 2
+   */
+  sources: [BulkFile, BulkFile, ...BulkFile[]];
+  /**
+   * @minItems 1
+   */
+  strata: [UniverseStratum, ...UniverseStratum[]];
+  universe_id: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "UniverseStratum".
+ */
+export interface UniverseStratum {
+  division: string;
+  eligible: number;
+  /**
+   * Share of the sample, proportional to eligible.
+   */
+  quota: number;
+  selected: number;
+  title: string;
 }

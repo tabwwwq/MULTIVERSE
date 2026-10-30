@@ -91,14 +91,20 @@ def entities_as_of(
     found: list[dict[str, Any]] = []
     for cik in sorted({cik10(c) for c in ciks}):
         entity: dict[str, Any] = {"cik": cik}
+        index = warehouse.filings(cik)
+        known = index.known(cutoff)
         for attribute in EntityAttributeName:
+            if not known:
+                # Before its first filing nothing about a company was public. How its
+                # attributes are dated depends on that later filing, so say nothing.
+                entity[attribute.value] = []
+                entity[f"{attribute.value}_unknown"] = "no filings by this date"
+                continue
             values, reason = attribute_as_of(records, cik, attribute, cutoff)
             entity[attribute.value] = list(values)
             if reason:
                 entity[f"{attribute.value}_unknown"] = reason
-        index = warehouse.filings(cik)
         gone = index.deregistered(cutoff)
-        known = index.known(cutoff)
         entity["status"] = (
             "no_filings_yet" if not known else "deregistration_filed" if gone else "reporting"
         )

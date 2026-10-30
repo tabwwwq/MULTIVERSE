@@ -1,12 +1,16 @@
 """Gate B run: every check, the example counts, the manifest and the data card.
 
-Inputs are local: the PIT warehouse and raw archive of the SEC sample, the macro stores,
-and the manual reconciliation file in ``data/reconciliation/``. The leakage proof
-rebuilds the warehouse from only what was public at several cutoffs and compares the
-snapshots, and does the same for the macro join.
+Inputs are local: the PIT warehouse and raw archive (the SEC sample of D-09 or a
+universe of D-10), the macro stores, and the manual reconciliation file in
+``data/reconciliation/``. The leakage proof rebuilds the warehouse from only what was
+public at several cutoffs and compares the snapshots, and does the same for the macro
+join. For a large universe it rebuilds a seeded sample of the companies (the catalog
+candidates always among them): every company is built by the same code, and three full
+rebuilds of a thousand companies would take hours.
 """
 
 import json
+import random
 from collections import Counter
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -27,6 +31,7 @@ from multiverse_contracts.quality import (
     Measure,
 )
 from multiverse_contracts.sources import CompanyCandidate
+from multiverse_contracts.universe import UniverseManifest
 from multiverse_contracts.version import CONTRACTS_VERSION
 from multiverse_pipelines.audit.checks import CHECKS, AuditData, load
 from multiverse_pipelines.audit.examples import Example, count_examples, examples_hash
@@ -34,12 +39,13 @@ from multiverse_pipelines.macro.cli import load_synthetic
 from multiverse_pipelines.macro.join import macro_join
 from multiverse_pipelines.macro.registry import SERIES
 from multiverse_pipelines.macro.store import MacroStore
-from multiverse_pipelines.pit.build import build_warehouse, load_inputs
+from multiverse_pipelines.pit.build import archived_files, build_warehouse
 from multiverse_pipelines.pit.clock import eastern_date, parse_cutoff
-from multiverse_pipelines.pit.panel import PANEL_METRICS, build_panel, quarter_ends
+from multiverse_pipelines.pit.panel import PANEL_METRICS, quarter_ends
 from multiverse_pipelines.pit.snapshot import make_snapshot
 from multiverse_pipelines.pit.warehouse import Warehouse
 from multiverse_pipelines.sec.archive import RawArchive
+from multiverse_pipelines.sec.validate import load_json
 
 MIN_COMPANIES = 30
 MIN_EXAMPLES = 1000
@@ -47,6 +53,18 @@ MIN_QUARTERS = 12
 TARGET = "revenue"
 FIRST_ORIGIN = date(2010, 3, 31)
 FIRST_QUARTER = date(2009, 9, 30)
+LEAKAGE_COMPANIES = 40
+LEAKAGE_SEED = 20261030
+
+
+def leakage_sample(ciks: Sequence[str], required: Sequence[str], size: int) -> list[str]:
+    """The companies the leakage proof rebuilds: the required ones and a seeded draw."""
+    if len(ciks) <= size:
+        return sorted(ciks)
+    first = sorted(set(required) & set(ciks))
+    rest = sorted(set(ciks) - set(first))
+    random.Random(LEAKAGE_SEED).shuffle(rest)
+    return sorted(first + rest[: max(size - len(first), 0)])
 
 
 @dataclass
@@ -65,9 +83,12 @@ def leakage_check(
     synthetic: MacroStore | None,
     now: datetime,
     workers: int,
+    rebuilt_from: int | None = None,
 ) -> GateCheck:
     findings: list[str] = []
     measures: dict[str, str] = {}
+    if rebuilt_from is not None and rebuilt_from > len(ciks):
+        measures["companies rebuilt"] = f"{len(ciks)} of {rebuilt_from} (seeded sample)"
     for label in cutoffs:
         cutoff = parse_cutoff(label)
         options: dict[str, Any] = {"cutoff_label": label, "created_at": now, "quarters": 20}
@@ -166,25 +187,54 @@ def sample_size_check(counts: Sequence[ExampleCount], usable: int) -> GateCheck:
         findings=()
         if enough
         else (
-            "the SEC sample of decision D-09 holds 10 companies; the full universe needs the "
-            "bulk files of decision D-10",
+            "too few companies or examples: draw a larger universe from the bulk files "
+            "(decision D-10)",
         ),
     )
 
 
 def macro_check(real: MacroStore | None) -> GateCheck:
-    observations = 0
+    """Real series in the store, and whether each reaches back to the first origin."""
+    rows: list[tuple[str, int, str]] = []
     if real is not None:
-        observations = real.db.execute("SELECT COUNT(*) FROM observations").fetchone()[0]
+        rows = real.db.execute(
+            "SELECT series_id, COUNT(*), MIN(available_from) FROM observations GROUP BY series_id"
+        ).fetchall()
+    if not rows:
+        return GateCheck(
+            check_id="macro_data",
+            title="Macro data",
+            status=CheckStatus.BLOCKED,
+            summary="no real macro values in the store: run `macro fetch` and `macro build` "
+            "(decisions D-11, D-12); only the synthetic store exists",
+            measures=(Measure(name="real macro observations", value="0"),),
+        )
+    stored = {series_id: (count, earliest) for series_id, count, earliest in rows}
+    by_source: Counter[str] = Counter()
+    for series_id, (count, _) in stored.items():
+        by_source[series_id.split(":")[0]] += count
+    findings = [f"{s.series_id}: not in the store" for s in SERIES if s.series_id not in stored]
+    for series_id, (_, earliest) in sorted(stored.items()):
+        day = date.fromisoformat(earliest[:10])
+        if day > FIRST_ORIGIN:
+            findings.append(
+                f"{series_id}: first available {day}, after the first origin {FIRST_ORIGIN}; "
+                "earlier origins see no value"
+            )
     return GateCheck(
         check_id="macro_data",
         title="Macro data",
-        status=CheckStatus.PASS if observations else CheckStatus.BLOCKED,
-        summary="real macro series in the store"
-        if observations
-        else "no real macro values: the FRED key (D-11) and the ECB / World Bank decision "
-        "(D-12) are pending; only the synthetic store exists",
-        measures=(Measure(name="real macro observations", value=str(observations)),),
+        status=CheckStatus.WARNING if findings else CheckStatus.PASS,
+        summary=f"{len(stored)} of {len(SERIES)} registered series with real values"
+        + ("; some do not reach back to the first origin" if findings else ""),
+        measures=(
+            Measure(name="real macro observations", value=str(sum(by_source.values()))),
+            *(
+                Measure(name=f"{k} observations", value=str(v))
+                for k, v in sorted(by_source.items())
+            ),
+        ),
+        findings=tuple(findings[:40]),
     )
 
 
@@ -192,9 +242,12 @@ def bankruptcy_filings(
     archive: RawArchive, ciks: Sequence[str], names: dict[str, str]
 ) -> list[str]:
     found = []
+    lookup = archived_files(archive)
     for cik in ciks:
-        inputs = load_inputs(archive, cik)
-        for table in [inputs.submissions["filings"]["recent"], *inputs.pages]:
+        files = lookup(cik)
+        main = load_json(files.root / files.submissions.path)
+        pages = [load_json(files.root / row.path) for row in files.pages]
+        for table in [main["filings"]["recent"], *pages]:
             column = table.get("items") or [""] * len(table["form"])
             for form, items, filed in zip(table["form"], column, table["filingDate"], strict=True):
                 if form.startswith("8-K") and "1.03" in (items or "").split(","):
@@ -246,6 +299,8 @@ def run_gate(
     leakage_cutoffs: Sequence[str],
     now: datetime,
     workers: int = 1,
+    universe: UniverseManifest | None = None,
+    leakage_companies: int = LEAKAGE_COMPANIES,
 ) -> GateResult:
     data_cutoff = parse_cutoff(data_cutoff_label)
     # Every calendar quarter since the first XBRL filings (mid 2009).
@@ -258,14 +313,23 @@ def run_gate(
         created_at=now,
         quarters=quarters,
     )
-    panel = build_panel(warehouse, ciks, data_cutoff, quarters=quarters)
-    data = load(warehouse, ciks, names, candidates, data_cutoff, panel)
+    panel = snapshot.panel
+    data = load(warehouse, ciks, names, candidates, data_cutoff, panel, universe)
     data.bankruptcy_filings = bankruptcy_filings(archive, ciks, names)
     counts, examples = count_examples(warehouse, ciks, TARGET, data_cutoff, FIRST_ORIGIN)
     usable = usability(data)
     checks = [check(data) for check in CHECKS]
     checks += [
-        leakage_check(archive, warehouse, ciks, leakage_cutoffs, synthetic_macro, now, workers),
+        leakage_check(
+            archive,
+            warehouse,
+            leakage_sample(ciks, list(candidates), leakage_companies),
+            leakage_cutoffs,
+            synthetic_macro,
+            now,
+            workers,
+            rebuilt_from=len(ciks),
+        ),
         reconciliation_check(warehouse, reconciliation, data_cutoff),
         sample_size_check(counts, len(usable[TARGET])),
         macro_check(real_macro),
@@ -298,7 +362,8 @@ def run_gate(
         companies=tuple(decisions(data, usable)),
         example_counts=tuple(counts),
         pit_snapshot_id=snapshot.manifest.snapshot_id,
-        synthetic_macro=checks[-1].status is not CheckStatus.PASS,
+        # Synthetic macro only when the store holds no real values (the check is blocked).
+        synthetic_macro=checks[-1].status is CheckStatus.BLOCKED,
         checks=tuple(checks),
         verdict=verdict,
         verdict_reasons=tuple(reasons),

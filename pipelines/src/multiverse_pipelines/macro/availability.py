@@ -80,6 +80,17 @@ def snapshot_available(updated: date) -> datetime:
     return day_end(updated)
 
 
+def h15_daily(day: date) -> datetime:
+    """An H.15 daily rate: published the next business day; here the end of the second
+    weekday after it, US Eastern, because US holidays are not modelled (late side)."""
+    following, weekdays = day, 0
+    while weekdays < 2:
+        following += timedelta(days=1)
+        if following.weekday() < 5:
+            weekdays += 1
+    return day_end(following)
+
+
 def ecb_reference_rate(day: date) -> datetime:
     return from_cet(datetime.combine(day, time(16)))
 

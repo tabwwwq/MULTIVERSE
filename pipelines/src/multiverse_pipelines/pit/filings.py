@@ -12,7 +12,7 @@ observed and are unknown before it, so an old cutoff never sees today's ticker o
 
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Any
 
 from multiverse_contracts.pit import (
@@ -149,13 +149,16 @@ def attributes_from_submissions(
     found: list[EntityAttribute] = []
     former = sorted(doc.get("formerNames") or [], key=lambda item: item["from"])
     for item in former:
+        start = eastern_date(_moment(item["from"]))
+        # Some names are listed for one day only (from = to): such a name held that day.
+        end = max(eastern_date(_moment(item["to"])), start + timedelta(days=1))
         found.append(
             EntityAttribute(
                 cik=cik,
                 attribute=EntityAttributeName.NAME,
                 value=item["name"],
-                effective_from=eastern_date(_moment(item["from"])),
-                effective_to=eastern_date(_moment(item["to"])),
+                effective_from=start,
+                effective_to=end,
                 observed_at=observed_at,
                 source="SEC submissions: formerNames with dates",
             )

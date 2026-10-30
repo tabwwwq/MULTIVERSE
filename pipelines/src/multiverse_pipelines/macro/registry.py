@@ -37,6 +37,7 @@ def _fred(
     transform: Transform,
     label: str = MONTH_START,
     notes: str | None = None,
+    support: VintageSupport = VintageSupport.FULL,
 ) -> MacroSeries:
     return MacroSeries(
         series_id=f"fred:{code}",
@@ -52,7 +53,7 @@ def _fred(
         publication_lag=lag,
         revision_cadence=revisions,
         business_days=days,
-        vintage_support=VintageSupport.FULL,
+        vintage_support=support,
         feature=feature,
         transform=transform,
         attribution=FRED_ATTRIBUTION,
@@ -114,6 +115,10 @@ def _wb(code: str, area: str, iso: str, title: str, unit: str, feature: str) -> 
 
 
 ALL_DAYS = "Monthly average of business days, published once per month"
+DAILY_NOTE = (
+    "Not revised. ALFRED gives at most 2000 vintage dates per request and a daily series has "
+    "thousands, so current values are used, available by the H.15 publication rule."
+)
 SERIES: tuple[MacroSeries, ...] = (
     _fred(
         "FEDFUNDS",
@@ -177,6 +182,8 @@ SERIES: tuple[MacroSeries, ...] = (
         "us_10y_yield",
         Transform.END_OF_PERIOD,
         label="the business day itself",
+        notes=DAILY_NOTE,
+        support=VintageSupport.NONE,
     ),
     _fred(
         "T10Y2Y",
@@ -190,6 +197,8 @@ SERIES: tuple[MacroSeries, ...] = (
         "us_yield_curve_10y2y",
         Transform.END_OF_PERIOD,
         label="the business day itself",
+        notes=DAILY_NOTE,
+        support=VintageSupport.NONE,
     ),
     _fred(
         "USREC",

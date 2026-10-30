@@ -4,6 +4,27 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-30 (data acquisition: decisions D-10, D-11, D-12)
+
+- Owner decisions recorded in the source catalog: D-10 (SEC bulk files `companyfacts.zip` and `submissions.zip`, a universe of 1000 companies, 10 GB on disk), D-11 (FRED/ALFRED, 7 series), D-12 (ECB, 3 series; World Bank, 4 indicators for the United States and the euro area). Financial Statement Data Sets stay undecided.
+- Real macro store: all 18 registered series (FRED 41 779, ECB 22 953, World Bank 463 observation intervals). Daily H.15 rates (DGS10, T10Y2Y) are read as current values, public by the end of the second weekday after their day: ALFRED caps a request at 2000 vintage dates and these series are not revised.
+- Study universe (`python -m multiverse_pipelines.sec universe`, ADR-0022): 1000 companies drawn from the archived bulk files by written rules and seed 20261030, stratified by SIC division, the ten catalog candidates always included; 20 529 companies with Company Facts → 10 152 with 12+ XBRL 10-K/10-Q → 8 185 outside the excluded financial sectors → 7 573 with a revenue concept. 347 of the 1000 have deregistered. Manifest `data/universe/sec-1000-20261030.json`; 2 345 files (1 751 MB) copied out of the ZIPs into the raw archive byte for byte, addressed `<zip url>#<member>`.
+- Contracts 0.12.0: `UniverseManifest`, `UniverseCompany`, `UniverseStratum`, `RuleCount`, `BulkFile`.
+- PIT warehouse at scale: payloads zlib-compressed with a dictionary stored in the file (about 7× smaller), companies built in parallel and streamed into the file one at a time, filings cached; `pit build --universe` built 1000 companies (3.86 million value intervals, 1.3 GB) in 14 minutes.
+- Gate B at scale: `audit run --universe`, slim records for the checks, one panel instead of two, the leakage proof on a seeded sample of 40 companies with the candidates, the macro check over the real store, survivorship measured on the universe, the report grouped by SIC division.
+- Macro join with real data at 2025-12-31 for the universe (`join-20251231-b88170136556`): 144 000 cells, 74 983 observed, 65 062 unusable (World Bank snapshot; FRED marks October 2025 missing for unemployment and CPI), 3 955 not yet released.
+- Gate B on the universe (`gate-b-20261028-419fc004fe0e`): **passed with warnings**: 899 companies with 12+ revenue quarters and 17 508 examples at H = 12, h = 4; leakage proof identical at three cutoffs; reconciliation 10 of 10; 14 warnings on properties of the real data (survivorship after 12 XBRL reports, missingness, concept drift, outliers, macro coverage).
+- Tests never reach the network (`pipelines/tests/conftest.py`).
+
+### Fixed — 2026-10-30 (data acquisition)
+
+- A company with no filings at a cutoff showed attribute reasons that depended on its later first filing; before its first filing every attribute is now empty with one reason (leakage proof).
+- Former names listed for one day (from = to) broke the attribute contract; such a name holds that day.
+- A fiscal year label more than a year from its period end (a 10-K that tags fiscal 2015 as 1215) is ignored; the year is named by its end.
+- US daylight saving rules for 1967–1986 (old ALFRED vintages); World Bank disappearance scoped to one indicator; FRED error messages never print the key.
+- Cumulative cash flow: Q4 equal to the year after three zero quarters is arithmetic, not an error. Source conflicts: estimates (a period ending after its filing) are already left out of every view, so they are a warning with the cases; any other blocking alert still fails.
+- The Data Catalog download badge wraps on a 390 px card.
+
 ### Changed — 2026-10-30 (Stage 14 accepted)
 
 - Stage 14 (Gate B dataset audit) accepted by the owner (CI run 41043307647 green). The gate verdict stays blocked until decisions D-10 (SEC bulk files), D-11 (FRED key) and D-12 (ECB, World Bank).

@@ -3,7 +3,7 @@
 Every command reads the local raw archive of Stage 10 or the warehouse built from it;
 none touches the network.
 
-    build           all archived candidates (or --cik) into var/data/pit/warehouse.sqlite
+    build           the catalog candidates, --cik or a --universe into var/data/pit/warehouse.sqlite
     as-of           one company and metric as known at a moment
     history         every answer one period had: its corrections over time
     entity          name, ticker, exchange and SIC code as known at a moment
@@ -38,6 +38,7 @@ from multiverse_pipelines.pit.snapshot import make_snapshot, write_snapshot
 from multiverse_pipelines.pit.warehouse import Warehouse
 from multiverse_pipelines.sec.archive import RawArchive
 from multiverse_pipelines.sec.cik import cik10
+from multiverse_pipelines.sec.universe import read_manifest
 
 VIEWS = [view.value for view in KnowledgeView]
 WORKERS = os.cpu_count() or 1
@@ -53,6 +54,8 @@ def _parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
     build = commands.add_parser("build", help="build the warehouse from the raw archive")
     build.add_argument("--cik", action="append", help="repeatable; default: catalog candidates")
+    build.add_argument("--universe", type=Path, help="a universe file written by `sec universe`")
+    build.add_argument("--workers", type=int, default=WORKERS)
     as_of = commands.add_parser("as-of", help="one company and metric as known at a moment")
     as_of.add_argument("--cik", required=True)
     as_of.add_argument("--metric", required=True)
@@ -107,19 +110,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     now = datetime.now(UTC)
     try:
         if args.command == "build":
-            ciks = [cik10(c) for c in (args.cik or candidates)]
-            warehouse = build_warehouse(archive, ciks, db_path, built_at=now, workers=WORKERS)
-            names = _names()
-            for cik, (points, intervals, estimates) in warehouse.counts().items():
-                alerts = warehouse.alerts([cik])
-                print(
-                    f"{cik} {names.get(cik, ''):<34} {points:>3} knowledge points "
-                    f"{intervals:>7} value intervals {estimates:>3} estimates left out "
-                    f"{len(alerts):>3} alerts"
-                )
-            print(f"wrote {db_path}")
-            warehouse.close()
-            return 0
+            return _build(args, archive, db_path, candidates, now)
         if args.command == "leakage-check":
             return _leakage_check(args, archive, db_path, candidates, now)
         warehouse = Warehouse.open(db_path)
@@ -130,6 +121,43 @@ def main(argv: Sequence[str] | None = None) -> int:
     except ValueError as exc:
         print(f"refused: {exc}", file=sys.stderr)
         return 2
+
+
+def _progress(number: int, total: int, cik: str) -> None:
+    if total > 20 and (number % 50 == 0 or number == total):
+        print(f"built {number}/{total} (CIK {cik})", file=sys.stderr, flush=True)
+
+
+def _build(
+    args: argparse.Namespace,
+    archive: RawArchive,
+    db_path: Path,
+    candidates: list[str],
+    now: datetime,
+) -> int:
+    names = _names()
+    if args.universe:
+        universe = read_manifest(args.universe)
+        ciks = [c.cik for c in universe.companies]
+        names |= {c.cik: c.name for c in universe.companies}
+    else:
+        ciks = [cik10(c) for c in (args.cik or candidates)]
+    warehouse = build_warehouse(
+        archive, ciks, db_path, built_at=now, workers=args.workers, progress=_progress
+    )
+    counts = warehouse.counts()
+    if len(counts) <= 20:
+        for cik, (points, intervals, estimates) in counts.items():
+            alerts = warehouse.alerts([cik])
+            print(
+                f"{cik} {names.get(cik, '')[:34]:<34} {points:>3} knowledge points "
+                f"{intervals:>7} value intervals {estimates:>3} estimates left out "
+                f"{len(alerts):>3} alerts"
+            )
+    intervals = sum(c[1] for c in counts.values())
+    print(f"{len(counts)} companies, {intervals} value intervals, wrote {db_path}")
+    warehouse.close()
+    return 0
 
 
 def _query(

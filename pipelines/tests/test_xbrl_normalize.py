@@ -370,6 +370,22 @@ def test_fiscal_years_take_the_label_their_10k_gives_them() -> None:
     assert [y.label for y in FiscalCalendar.from_facts(facts).years] == [2024]
 
 
+def test_a_mistyped_fiscal_year_label_falls_back_to_the_year_end() -> None:
+    # A real 10-K (Interpublic, filed 2016-02-22) gives every fact of fiscal 2015 fy 1215.
+    fact = Fact(
+        "us-gaap:Revenues",
+        "USD",
+        date(2015, 1, 1),
+        date(2015, 12, 31),
+        Decimal(1),
+        K1,
+        "10-K",
+        date(2016, 2, 22),
+        1215,
+    )
+    assert [y.label for y in FiscalCalendar.from_facts([fact]).years] == [2015]
+
+
 def test_scale_and_rounding_checks() -> None:
     assert scale_mismatch("1196", "1196000000")
     assert scale_mismatch("378", "378600000")

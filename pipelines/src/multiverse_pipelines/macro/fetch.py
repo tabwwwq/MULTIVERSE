@@ -12,6 +12,7 @@ the copyright holder's permission under the FRED terms.
 """
 
 import json
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -22,6 +23,7 @@ from urllib.parse import urlencode
 import httpx
 
 from multiverse_config import Settings
+from multiverse_contracts.macro import VintageSupport
 from multiverse_contracts.sources import DataSource, DecisionStatus
 from multiverse_pipelines.macro.registry import SERIES
 from multiverse_pipelines.sec.archive import RawArchive
@@ -71,6 +73,11 @@ def require_macro_permission(settings: Settings, source: DataSource) -> str | No
             "https://fredaccount.stlouisfed.org and puts it into .env; it is never committed."
         )
     return settings.fred_api_key.get_secret_value()
+
+
+def redact_text(text: str) -> str:
+    """Any ``api_key=...`` in a message or URL replaced, so an error never shows the key."""
+    return re.sub(r"api_key=[^&\s'\"]+", "api_key=REDACTED", text)
 
 
 def redact(url: str) -> str:
@@ -153,6 +160,21 @@ def fetch_source(
     series_ids: Sequence[str] | None = None,
 ) -> FetchReport:
     """Download the registered series of one source; refused unless every lock is open."""
+    try:
+        return _fetch(settings, source, archive, run_id, catalog_version, transport, series_ids)
+    except IngestionError as exc:
+        raise type(exc)(redact_text(str(exc))) from None
+
+
+def _fetch(
+    settings: Settings,
+    source: DataSource,
+    archive: RawArchive,
+    run_id: str,
+    catalog_version: str,
+    transport: httpx.BaseTransport | None,
+    series_ids: Sequence[str] | None,
+) -> FetchReport:
     key = require_macro_permission(settings, source)
     wanted = [s for s in SERIES if s.source_id == source.source_id]
     if series_ids:
@@ -174,15 +196,10 @@ def fetch_source(
                 if "copyright" in notes.lower():
                     report.skipped.append(f"{series.series_id}: notes mention copyright")
                     continue
-                url = f"{FRED_BASE}/series/observations?" + urlencode(
-                    {
-                        "series_id": code,
-                        "api_key": key,
-                        "file_type": "json",
-                        "realtime_start": "1776-07-04",
-                        "realtime_end": "9999-12-31",
-                    }
-                )
+                query = {"series_id": code, "api_key": key, "file_type": "json"}
+                if series.vintage_support is VintageSupport.FULL:
+                    query |= {"realtime_start": "1776-07-04", "realtime_end": "9999-12-31"}
+                url = f"{FRED_BASE}/series/observations?" + urlencode(query)
                 dataset, file_key, file_format = "fred-series-observations", code, "json"
             elif source.source_id == "ecb-data-portal":
                 flow, _, rest = code.partition(".")

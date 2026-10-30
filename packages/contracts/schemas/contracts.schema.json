@@ -248,6 +248,52 @@
       "title": "AvailabilityBasis",
       "type": "string"
     },
+    "BulkFile": {
+      "additionalProperties": false,
+      "description": "One archived bulk ZIP file the universe was drawn from.",
+      "properties": {
+        "downloaded_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "last_modified": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "As the server sent it."
+        },
+        "path": {
+          "description": "Relative to the raw root.",
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "url": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "path",
+        "sha256",
+        "last_modified",
+        "downloaded_at"
+      ],
+      "title": "BulkFile",
+      "type": "object"
+    },
     "CapexExpansion": {
       "additionalProperties": false,
       "properties": {
@@ -4427,6 +4473,27 @@
       "title": "RndChange",
       "type": "object"
     },
+    "RuleCount": {
+      "additionalProperties": false,
+      "description": "A rule of eligibility and the companies still eligible after it.",
+      "properties": {
+        "remaining": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rule": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule",
+        "remaining"
+      ],
+      "title": "RuleCount",
+      "type": "object"
+    },
     "ScenarioDraft": {
       "additionalProperties": false,
       "description": "A decision for one company at one knowledge cutoff, ready to validate and run.\n\n``as_of`` is a date: the knowledge cutoff is the end of that day in UTC, as in the\ndossier (ADR-0002). A decision made at the cutoff can be announced on the cutoff\nday at the earliest.",
@@ -5527,6 +5594,176 @@
       "title": "UniformRange",
       "type": "object"
     },
+    "UniverseCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate": {
+          "description": "One of the ten catalog candidates, always included.",
+          "type": "boolean"
+        },
+        "cik": {
+          "pattern": "^[0-9]{10}$",
+          "type": "string"
+        },
+        "deregistered": {
+          "description": "A Form 15 is on file: no longer reporting.",
+          "type": "boolean"
+        },
+        "division": {
+          "pattern": "^[A-K]$",
+          "type": "string"
+        },
+        "first_xbrl_filed": {
+          "format": "date",
+          "type": "string"
+        },
+        "last_filed": {
+          "format": "date",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sic": {
+          "pattern": "^[0-9]{4}$",
+          "type": "string"
+        },
+        "xbrl_10k": {
+          "description": "XBRL 10-K filings on file.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "xbrl_10q": {
+          "description": "XBRL 10-Q filings on file.",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "cik",
+        "name",
+        "sic",
+        "division",
+        "xbrl_10k",
+        "xbrl_10q",
+        "first_xbrl_filed",
+        "last_filed",
+        "deregistered",
+        "candidate"
+      ],
+      "title": "UniverseCompany",
+      "type": "object"
+    },
+    "UniverseManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "companies": {
+          "items": {
+            "$ref": "#/$defs/UniverseCompany"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "decision": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/RuleCount"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "scanned": {
+          "description": "Companies with a Company Facts file.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "size": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/BulkFile"
+          },
+          "minItems": 2,
+          "type": "array"
+        },
+        "strata": {
+          "items": {
+            "$ref": "#/$defs/UniverseStratum"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "universe_id": {
+          "pattern": "^[a-z0-9][a-z0-9-]{2,79}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "universe_id",
+        "decision",
+        "seed",
+        "size",
+        "created_at",
+        "sources",
+        "scanned",
+        "rules",
+        "strata",
+        "companies"
+      ],
+      "title": "UniverseManifest",
+      "type": "object"
+    },
+    "UniverseStratum": {
+      "additionalProperties": false,
+      "properties": {
+        "division": {
+          "pattern": "^[A-K]$",
+          "type": "string"
+        },
+        "eligible": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "quota": {
+          "description": "Share of the sample, proportional to eligible.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "selected": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "title": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "division",
+        "title",
+        "eligible",
+        "quota",
+        "selected"
+      ],
+      "title": "UniverseStratum",
+      "type": "object"
+    },
     "ValueChange": {
       "description": "Why a new interval of knowledge began for one period.",
       "enum": [
@@ -5780,9 +6017,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.11.0",
+  "$id": "urn:multiverse:contracts:0.12.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.11.0"
+  "x-contracts-version": "0.12.0"
 }

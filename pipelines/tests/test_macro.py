@@ -23,15 +23,17 @@ from multiverse_contracts.macro import (
     MacroInput,
     MacroObservation,
     Transform,
+    VintageSupport,
 )
 from multiverse_contracts.pit import CellState, PanelCell
-from multiverse_contracts.source_catalog import SOURCE_CATALOG
+from multiverse_contracts.source_catalog import AWAITING, SOURCE_CATALOG
 from multiverse_contracts.sources import DecisionStatus, DownloadDecision, DownloadScope
 from multiverse_pipelines.macro import availability, cli, parsers, synthetic
 from multiverse_pipelines.macro.fetch import (
     MissingKeyError,
     fetch_source,
     redact,
+    redact_text,
     require_macro_permission,
     unavailable_reason,
 )
@@ -370,13 +372,15 @@ def test_missing_key_refuses_fred_before_any_request(tmp_path: Path) -> None:
             catalog_version="t",
             transport=transport,
         )
+    awaiting = SOURCES["fred-alfred"].model_copy(update={"download": AWAITING})
     with pytest.raises(PermissionRefusedError, match="not approved"):
-        require_macro_permission(settings(fred_api_key="k"), SOURCES["fred-alfred"])
+        require_macro_permission(settings(fred_api_key="k"), awaiting)
     with pytest.raises(PermissionRefusedError, match="Network downloads are off"):
         require_macro_permission(settings(allow_network_downloads=False), approved("world-bank"))
     assert calls == []
     assert "D-11" in unavailable_reason(settings(), SOURCES["fred-alfred"])
-    assert "D-12" in unavailable_reason(settings(), SOURCES["ecb-data-portal"])
+    ecb_awaiting = SOURCES["ecb-data-portal"].model_copy(update={"download": AWAITING})
+    assert "D-12" in unavailable_reason(settings(), ecb_awaiting)
 
 
 def test_fred_key_is_used_but_never_stored(tmp_path: Path) -> None:
@@ -491,3 +495,27 @@ def test_every_registered_series_has_its_rules() -> None:
     assert timedelta(0) < availability.ecb_yield_curve(
         date(2021, 6, 30)
     ) - availability.ecb_reference_rate(date(2021, 6, 30))
+
+
+def test_a_daily_rate_is_public_by_the_h15_rule_without_vintages() -> None:
+    # ALFRED caps a request at 2000 vintage dates: daily H.15 series are read as current
+    # values, each public by the end of the second weekday after its day (late side).
+    assert BY_ID["fred:DGS10"].vintage_support is VintageSupport.NONE
+    doc = {
+        "observations": [
+            {"date": "2024-01-05", "value": "4.05"},  # a Friday
+            {"date": "2024-01-08", "value": "."},  # no value that day
+        ]
+    }
+    (row,) = parsers.fred_observations("DGS10", doc)
+    assert row.basis is AvailabilityBasis.SCHEDULE
+    assert row.value == "4.05"
+    assert row.available_from == day_end(date(2024, 1, 9))
+    assert row.source_vintage is None
+
+
+def test_errors_never_print_the_key() -> None:
+    fake = "x" * 32
+    message = f"HTTP 400 for https://api.stlouisfed.org/fred/series?api_key={fake}&id=DGS10"
+    assert fake not in redact_text(message)
+    assert "api_key=REDACTED&id=DGS10" in redact_text(message)

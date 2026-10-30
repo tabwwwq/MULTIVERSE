@@ -25,6 +25,7 @@
 | [0019](0019-point-in-time-warehouse.md) | Point-in-time warehouse: интервалы знания по времени EDGAR, пересчёт на каждый filing, snapshot по hash | Accepted |
 | [0020](0020-macro-vintages.md) | Макроэкономика по моменту публикации: vintages, правила публикации, as-of join с финансовыми кварталами | Accepted |
 | [0021](0021-gate-b-audit.md) | Gate B: аудит по usable examples, проверки со статусом blocked, сверка как данные | Accepted |
+| [0022](0022-study-universe.md) | Вселенная исследования: стратифицированная выборка из bulk-файлов SEC по правилам и seed | Accepted |
 
 ADR-0001…0006 перечислены в `docs/03_SYSTEM_ARCHITECTURE.md` комплекта. ADR-0007…0011 приняты на Stage 02.
 

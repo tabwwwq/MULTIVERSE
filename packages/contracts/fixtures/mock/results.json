@@ -3797,7 +3797,7 @@
   ],
   "failure": null,
   "manifest": {
-   "contracts_version": "0.11.0",
+   "contracts_version": "0.12.0",
    "scenario_id": "2d7c9e41-5b3a-4f6e-8c1d-9a0b7e6f5c34",
    "revision": 1,
    "mode": "demo",
@@ -7707,7 +7707,7 @@
   ],
   "failure": null,
   "manifest": {
-   "contracts_version": "0.11.0",
+   "contracts_version": "0.12.0",
    "scenario_id": "8a4f6c2e-1d3b-4e5a-9f7c-2b6d8e0a1c53",
    "revision": 1,
    "mode": "demo",
@@ -9988,7 +9988,7 @@
   ],
   "failure": null,
   "manifest": {
-   "contracts_version": "0.11.0",
+   "contracts_version": "0.12.0",
    "scenario_id": "c3e5a7b9-2f4d-4c6e-8a0b-5d7f9e1c3a62",
    "revision": 1,
    "mode": "demo",
@@ -10042,7 +10042,7 @@
    "incident_id": "INC-MOCK-0001"
   },
   "manifest": {
-   "contracts_version": "0.11.0",
+   "contracts_version": "0.12.0",
    "scenario_id": "6f1d2b8a-3c4e-4a5f-9b7d-1e2c3a4b5d6e",
    "revision": 1,
    "mode": "demo",

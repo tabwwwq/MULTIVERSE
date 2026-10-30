@@ -68,6 +68,43 @@ SEC_SAMPLE_APPROVED = DownloadDecision(
         "companyfacts.zip, within 200 MB on disk. Bulk files wait for decision D-10."
     ),
 )
+SEC_BULK_APPROVED = DownloadDecision(
+    status=DecisionStatus.APPROVED,
+    decided_on=date(2026, 10, 30),
+    scope=DownloadScope.BULK,
+    note=(
+        "Decisions D-09 (sample, 2026-10-29) and D-10 (2026-10-30, owner in chat): the bulk "
+        "files companyfacts.zip and submissions.zip, for a universe of 1000 companies, within "
+        "10 GB on disk. Financial Statement Data Sets still need their own decision."
+    ),
+)
+FRED_APPROVED = DownloadDecision(
+    status=DecisionStatus.APPROVED,
+    decided_on=date(2026, 10, 30),
+    scope=DownloadScope.SAMPLE,
+    note=(
+        "Decision D-11 (owner in chat): the owner registered the API key, kept only in .env, and "
+        "approved FEDFUNDS, CPIAUCSL, UNRATE, GDPC1, DGS10, T10Y2Y and USREC with all vintages."
+    ),
+)
+ECB_APPROVED = DownloadDecision(
+    status=DecisionStatus.APPROVED,
+    decided_on=date(2026, 10, 30),
+    scope=DownloadScope.SAMPLE,
+    note=(
+        "Decision D-12 (owner in chat): the EUR/USD reference rate, the deposit facility rate "
+        "and the euro area AAA 10-year yield, full history."
+    ),
+)
+WB_APPROVED = DownloadDecision(
+    status=DecisionStatus.APPROVED,
+    decided_on=date(2026, 10, 30),
+    scope=DownloadScope.SAMPLE,
+    note=(
+        "Decision D-12 (owner in chat): GDP growth, inflation, unemployment and GDP per capita "
+        "for the United States and the euro area, as dated snapshots."
+    ),
+)
 RAW_PROVENANCE = (
     "Request URL and the User-Agent or key reference used (never the key itself)",
     "downloaded_at in UTC",
@@ -396,7 +433,7 @@ SEC = DataSource(
         ),
     ),
     verified_on=VERIFIED_ON,
-    download=SEC_SAMPLE_APPROVED,
+    download=SEC_BULK_APPROVED,
     notes=(
         "data.sec.gov does not support CORS: requests come from the server, never the browser.",
         "The SEC offers no technical support for scripted downloads.",
@@ -581,7 +618,7 @@ FRED = DataSource(
         ),
     ),
     verified_on=VERIFIED_ON,
-    download=AWAITING,
+    download=FRED_APPROVED,
     notes=(
         "Creating the FRED account and key is the owner's step; the assistant never creates "
         "accounts.",
@@ -675,7 +712,7 @@ ECB = DataSource(
         ),
     ),
     verified_on=VERIFIED_ON,
-    download=AWAITING,
+    download=ECB_APPROVED,
     notes=(
         "V2 covers USD reporters only (decision D-04), so ECB series start with FX and euro "
         "rates as macro context, low priority.",
@@ -801,7 +838,7 @@ WORLD_BANK = DataSource(
         ),
     ),
     verified_on=VERIFIED_ON,
-    download=AWAITING,
+    download=WB_APPROVED,
     notes=("Annual values are never spread over quarters before their release (docs/04).",),
 )
 
@@ -1562,6 +1599,7 @@ PLAN = (
             "As-of value equals the value of the matching vintage.",
         ),
         owner_decision="Register the key and approve the series list.",
+        decided_on=date(2026, 10, 30),
         stage=13,
     ),
     AcquisitionStep(
@@ -1576,6 +1614,7 @@ PLAN = (
         storage="var/raw/ecb/ and var/raw/worldbank/.",
         checks=("Unmodified originals kept; attribution recorded.",),
         owner_decision="Approve after the macro feature plan of Stage 13.",
+        decided_on=date(2026, 10, 30),
         stage=13,
     ),
 )

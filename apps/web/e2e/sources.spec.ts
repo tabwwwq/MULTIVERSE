@@ -29,8 +29,11 @@ test.describe("Data Catalog", () => {
     await expect(page.getByRole("status")).toHaveText("4 of 4 sources");
     await expect(page.getByRole("heading", { level: 3, name: "Public access" })).toBeVisible();
     await expect(page.getByRole("heading", { level: 3, name: "Free API key" })).toBeVisible();
-    await expect(page.getByText("Downloads off, awaiting the owner's decision")).toHaveCount(3);
-    await expect(page.getByText("Downloads approved by the owner: sample only")).toHaveCount(1);
+    await expect(page.getByText("Downloads off, awaiting the owner's decision")).toHaveCount(0);
+    await expect(page.getByText("Downloads approved by the owner: sample only")).toHaveCount(3);
+    await expect(
+      page.getByText("Downloads approved by the owner: sample and bulk files"),
+    ).toHaveCount(1);
     await expect(page.getByRole("heading", { name: "Licensed data" })).toBeVisible();
     await expect(page.getByText("The catalog shows no source data")).toBeVisible();
     await saveScreen(page, "data-catalog");
@@ -107,7 +110,8 @@ test.describe("Data Catalog", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Acquisition plan" })).toBeVisible();
     await expect(page.getByText("Real companies, no figures shown")).toBeVisible();
     await expect(page.getByText("Owner decided on 2026-10-29")).toHaveCount(1);
-    await expect(page.getByText("Owner decision needed")).toHaveCount(3);
+    await expect(page.getByText("Owner decided on 2026-10-30")).toHaveCount(2);
+    await expect(page.getByText("Owner decision needed")).toHaveCount(1);
     const risks = page.getByRole("region", { name: "15 risks" });
     await expect(risks.locator("tbody tr")).toHaveCount(15);
     const candidates = page.getByRole("region", { name: "Candidates for the first acquisition" });

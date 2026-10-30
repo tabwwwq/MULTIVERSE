@@ -1,9 +1,10 @@
 """Gate B: ``python -m multiverse_pipelines.audit run [--cutoff DATE]``.
 
-Reads the PIT warehouse and raw archive of the SEC sample, the macro stores and the
-manual reconciliation file; writes the manifest, examples, data card and coverage report
-into ``var/data/gate/``. Exit code 0 when the gate passes, 3 when it is blocked (the
-report is written either way), 2 when it cannot run.
+Reads the PIT warehouse and raw archive (the SEC sample, or a universe with
+``--universe``), the macro stores and the manual reconciliation file; writes the
+manifest, examples, data card and coverage report into ``var/data/gate/``. Exit code 0
+when the gate passes, 3 when it is blocked (the report is written either way), 2 when it
+cannot run.
 """
 
 import argparse
@@ -17,10 +18,11 @@ from multiverse_config import load_settings
 from multiverse_contracts.quality import GateVerdict
 from multiverse_contracts.source_catalog import SOURCE_CATALOG
 from multiverse_pipelines.audit.report import write_gate
-from multiverse_pipelines.audit.run import run_gate
+from multiverse_pipelines.audit.run import LEAKAGE_COMPANIES, run_gate
 from multiverse_pipelines.macro.store import MacroStore
 from multiverse_pipelines.pit.warehouse import Warehouse
 from multiverse_pipelines.sec.archive import RawArchive
+from multiverse_pipelines.sec.universe import read_manifest
 
 RECONCILIATION = Path("data/reconciliation/stage-14-manual.json")
 LEAKAGE_CUTOFFS = ("2013-06-30", "2019-12-31", "2025-12-31")
@@ -37,6 +39,13 @@ def _parser() -> argparse.ArgumentParser:
         "--leakage-cutoff", action="append", help=f"default: {', '.join(LEAKAGE_CUTOFFS)}"
     )
     run.add_argument("--reconciliation", type=Path, default=RECONCILIATION)
+    run.add_argument("--universe", type=Path, help="the universe file the warehouse was built from")
+    run.add_argument(
+        "--leakage-companies",
+        type=int,
+        default=LEAKAGE_COMPANIES,
+        help="companies the leakage proof rebuilds (a seeded sample with the candidates)",
+    )
     run.add_argument("--out", type=Path)
     return parser
 
@@ -55,7 +64,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"refused: {exc}", file=sys.stderr)
         return 2
     archive = RawArchive(settings.raw_dir, budget_bytes=settings.raw_budget_mb * 1024 * 1024)
-    names = {c.cik: c.name for c in SOURCE_CATALOG.candidates}
+    universe = read_manifest(args.universe) if args.universe else None
+    names = {c.cik: c.name for c in universe.companies} if universe else {}
+    names |= {c.cik: c.name for c in SOURCE_CATALOG.candidates}
     candidates = {c.cik: c for c in SOURCE_CATALOG.candidates}
     real = _store(settings.data_dir / "macro" / "macro.sqlite")
     synthetic = _store(settings.data_dir / "macro" / "macro-synthetic.sqlite")
@@ -73,6 +84,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             leakage_cutoffs=args.leakage_cutoff or LEAKAGE_CUTOFFS,
             now=now,
             workers=os.cpu_count() or 1,
+            universe=universe,
+            leakage_companies=args.leakage_companies,
         )
     except ValueError as exc:
         print(f"refused: {exc}", file=sys.stderr)

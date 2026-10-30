@@ -75,7 +75,9 @@ def _labels(facts: list[Fact], ends: set[date]) -> dict[date, int]:
                 primary[fact.accession] = fact
     votes: dict[date, Counter[int]] = defaultdict(Counter)
     for fact in primary.values():
-        if fact.fy is not None:
+        # A label more than a year from the year its period ends is a typing error in the
+        # filing (one 10-K names fiscal 2015 "1215"): the year is then named by its end.
+        if fact.fy is not None and abs(fact.fy - fact.end.year) <= 1:
             votes[fact.end][fact.fy] += 1
     return {end: counter.most_common(1)[0][0] for end, counter in votes.items()}
 

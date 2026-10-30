@@ -13,7 +13,7 @@ the filing is public from the end of that day. All three choices are on the late
 a value can arrive in a view a few hours after it was public, never before.
 
 Windows has no time zone database in the standard library, so the Eastern offset is
-computed from the US daylight saving rules (1987-2006 and since 2007).
+computed from the US daylight saving rules (1967-1986, 1987-2006 and since 2007).
 """
 
 from datetime import UTC, date, datetime, time, timedelta
@@ -34,21 +34,34 @@ def _sunday(year: int, month: int, nth: int) -> date:
     return last - timedelta(days=(last.weekday() + 1) % 7)
 
 
-def daylight_saving(year: int) -> tuple[datetime, datetime]:
-    """Local wall times at which daylight saving starts and ends (both at 2 a.m.)."""
+# The energy-crisis years started daylight saving early (Emergency Daylight Saving Act).
+EARLY_STARTS = {1974: date(1974, 1, 6), 1975: date(1975, 2, 23)}
+
+
+def daylight_saving(year: int) -> tuple[datetime, datetime] | None:
+    """Local wall times at which daylight saving starts and ends (both at 2 a.m.).
+
+    Uniform Time Act rules from 1967; before that there was no uniform rule, and the year
+    counts as standard time (only old ALFRED vintage dates reach back that far).
+    """
     if year >= 2007:
         start, end = _sunday(year, 3, 2), _sunday(year, 11, 1)
     elif year >= 1987:
         start, end = _sunday(year, 4, 1), _sunday(year, 10, -1)
+    elif year >= 1967:
+        start, end = EARLY_STARTS.get(year, _sunday(year, 4, -1)), _sunday(year, 10, -1)
     else:
-        raise ValueError(f"EDGAR time before 1987 is not supported (year {year})")
+        return None
     return datetime.combine(start, time(2)), datetime.combine(end, time(2))
 
 
 def offset_at(moment: datetime) -> timedelta:
     """Eastern offset from UTC at an aware moment."""
     utc = moment.astimezone(UTC).replace(tzinfo=None)
-    start, end = daylight_saving(utc.year)
+    bounds = daylight_saving(utc.year)
+    if bounds is None:
+        return EST
+    start, end = bounds
     # 2 a.m. standard time is 7:00 UTC; 2 a.m. daylight time is 6:00 UTC.
     return EDT if start - EST <= utc < end - EDT else EST
 
@@ -62,8 +75,8 @@ def to_eastern(moment: datetime) -> datetime:
 
 def from_eastern(wall: datetime) -> datetime:
     """Aware UTC moment of a naive Eastern wall time (the repeated hour counts as daylight)."""
-    start, end = daylight_saving(wall.year)
-    offset = EDT if start <= wall < end else EST
+    bounds = daylight_saving(wall.year)
+    offset = EDT if bounds is not None and bounds[0] <= wall < bounds[1] else EST
     return (wall - offset).replace(tzinfo=UTC)
 
 

@@ -144,6 +144,13 @@ from multiverse_contracts.sources import (
     Risk,
     SourceCatalog,
 )
+from multiverse_contracts.universe import (
+    BulkFile,
+    RuleCount,
+    UniverseCompany,
+    UniverseManifest,
+    UniverseStratum,
+)
 from multiverse_contracts.version import CONTRACTS_VERSION
 
 __version__ = "0.1.0"
@@ -158,6 +165,7 @@ __all__ = [
     "AcquisitionStep",
     "AlertKind",
     "AvailabilityBasis",
+    "BulkFile",
     "CapexExpansion",
     "CausalStatus",
     "CellState",
@@ -244,6 +252,7 @@ __all__ = [
     "RevisionRef",
     "Risk",
     "RndChange",
+    "RuleCount",
     "ScenarioDraft",
     "ScenarioRecord",
     "ScenarioResult",
@@ -262,6 +271,9 @@ __all__ = [
     "TriangularRange",
     "UncertaintyType",
     "UniformRange",
+    "UniverseCompany",
+    "UniverseManifest",
+    "UniverseStratum",
     "ValueChange",
     "ValueKind",
     "ValueUnit",

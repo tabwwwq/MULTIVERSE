@@ -1,5 +1,5 @@
 {
-  "contracts_version": "0.11.0",
+  "contracts_version": "0.12.0",
   "verified_on": "2026-10-29",
   "automatic_downloads": "disabled",
   "sources": [
@@ -560,9 +560,9 @@
       "verified_on": "2026-10-29",
       "download": {
         "status": "approved",
-        "decided_on": "2026-10-29",
-        "scope": "sample",
-        "note": "Decision D-09: the owner approved a sample of the ten candidates (submissions with their older-filing pages and company facts, through the API) and one HEAD request for companyfacts.zip, within 200 MB on disk. Bulk files wait for decision D-10."
+        "decided_on": "2026-10-30",
+        "scope": "bulk",
+        "note": "Decisions D-09 (sample, 2026-10-29) and D-10 (2026-10-30, owner in chat): the bulk files companyfacts.zip and submissions.zip, for a universe of 1000 companies, within 10 GB on disk. Financial Statement Data Sets still need their own decision."
       },
       "notes": [
         "data.sec.gov does not support CORS: requests come from the server, never the browser.",
@@ -858,10 +858,10 @@
       ],
       "verified_on": "2026-10-29",
       "download": {
-        "status": "awaiting_owner_decision",
-        "decided_on": null,
-        "scope": null,
-        "note": "No automatic download until the owner approves this source (Stage 10 or later)."
+        "status": "approved",
+        "decided_on": "2026-10-30",
+        "scope": "sample",
+        "note": "Decision D-11 (owner in chat): the owner registered the API key, kept only in .env, and approved FEDFUNDS, CPIAUCSL, UNRATE, GDPC1, DGS10, T10Y2Y and USREC with all vintages."
       },
       "notes": [
         "Creating the FRED account and key is the owner's step; the assistant never creates accounts.",
@@ -987,10 +987,10 @@
       ],
       "verified_on": "2026-10-29",
       "download": {
-        "status": "awaiting_owner_decision",
-        "decided_on": null,
-        "scope": null,
-        "note": "No automatic download until the owner approves this source (Stage 10 or later)."
+        "status": "approved",
+        "decided_on": "2026-10-30",
+        "scope": "sample",
+        "note": "Decision D-12 (owner in chat): the EUR/USD reference rate, the deposit facility rate and the euro area AAA 10-year yield, full history."
       },
       "notes": [
         "V2 covers USD reporters only (decision D-04), so ECB series start with FX and euro rates as macro context, low priority."
@@ -1171,10 +1171,10 @@
       ],
       "verified_on": "2026-10-29",
       "download": {
-        "status": "awaiting_owner_decision",
-        "decided_on": null,
-        "scope": null,
-        "note": "No automatic download until the owner approves this source (Stage 10 or later)."
+        "status": "approved",
+        "decided_on": "2026-10-30",
+        "scope": "sample",
+        "note": "Decision D-12 (owner in chat): GDP growth, inflation, unemployment and GDP per capita for the United States and the euro area, as dated snapshots."
       },
       "notes": [
         "Annual values are never spread over quarters before their release (docs/04)."
@@ -2346,7 +2346,7 @@
         "As-of value equals the value of the matching vintage."
       ],
       "owner_decision": "Register the key and approve the series list.",
-      "decided_on": null,
+      "decided_on": "2026-10-30",
       "stage": 13
     },
     {
@@ -2363,7 +2363,7 @@
         "Unmodified originals kept; attribution recorded."
       ],
       "owner_decision": "Approve after the macro feature plan of Stage 13.",
-      "decided_on": null,
+      "decided_on": "2026-10-30",
       "stage": 13
     }
   ]

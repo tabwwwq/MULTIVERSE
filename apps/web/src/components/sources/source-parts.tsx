@@ -25,12 +25,19 @@ export function AccessBadge({ access }: { access: DataSource["access"] }) {
   return <Badge tone={ACCESS_TONES[access]}>{ACCESS_LABELS[access]}</Badge>;
 }
 
-/** Downloads stay off until the owner decides; an approval also says what it covers. */
+/**
+ * Downloads stay off until the owner decides; an approval also says what it covers. The
+ * label is long ("…: sample and bulk files"), so it may wrap on a narrow card.
+ */
 export function DownloadBadge({ source }: { source: DataSource }) {
   const { status, scope } = source.download;
   const off = status !== "approved";
   return (
-    <Badge tone={off ? "warning" : "mint"} {...(off ? { icon: PowerOff } : {})}>
+    <Badge
+      tone={off ? "warning" : "mint"}
+      className="whitespace-normal!"
+      {...(off ? { icon: PowerOff } : {})}
+    >
       {DECISION_LABELS[status]}
       {scope ? `: ${DOWNLOAD_SCOPE_LABELS[scope]}` : null}
     </Badge>

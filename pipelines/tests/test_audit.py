@@ -7,6 +7,7 @@ to date) and a 10-K (the year) each year, in the shape of Company Facts and subm
 import json
 import os
 import shutil
+import sqlite3
 from collections.abc import Iterator
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
@@ -15,21 +16,37 @@ from typing import Any
 
 import pytest
 
+from multiverse_contracts.companies import QualitySeverity
+from multiverse_contracts.macro import AvailabilityBasis, MacroObservation
+from multiverse_contracts.metrics import LineageMethod
+from multiverse_contracts.normalized import FiscalPeriod
+from multiverse_contracts.pit import AlertKind, ChronologyAlert
 from multiverse_contracts.quality import CheckStatus, ExampleCount
 from multiverse_contracts.source_catalog import SOURCE_CATALOG
+from multiverse_contracts.universe import RuleCount, UniverseCompany, UniverseManifest
 from multiverse_pipelines.audit import cli as audit_cli
-from multiverse_pipelines.audit.checks import CHECKS, load
+from multiverse_pipelines.audit.checks import (
+    CHECKS,
+    Current,
+    cumulative_cashflow,
+    load,
+    source_conflicts,
+    survivorship,
+)
 from multiverse_pipelines.audit.examples import count_examples, examples_hash, shift
 from multiverse_pipelines.audit.run import (
+    leakage_sample,
     macro_check,
     reconciliation_check,
     sample_size_check,
 )
+from multiverse_pipelines.macro.store import MacroStore
 from multiverse_pipelines.pit import cli as pit_cli
 from multiverse_pipelines.pit.build import CompanyInputs, prepare
 from multiverse_pipelines.pit.clock import parse_cutoff
 from multiverse_pipelines.pit.panel import build_panel
-from multiverse_pipelines.pit.warehouse import Warehouse
+from multiverse_pipelines.pit.snapshot import entities_as_of
+from multiverse_pipelines.pit.warehouse import Warehouse, decode, encode, make_dictionary
 from multiverse_pipelines.sec.archive import RawArchive
 from multiverse_pipelines.sec.models import RawObject
 from multiverse_pipelines.xbrl.facts import facts_from_companyfacts
@@ -177,7 +194,7 @@ def raw(dataset: str) -> RawObject:
         run_id="fixture",
         licence="fixture",
         terms_checked_on=date(2026, 10, 29),
-        catalog_version="0.11.0",
+        catalog_version="0.12.0",
     )
 
 
@@ -363,3 +380,158 @@ def test_the_gate_command_writes_a_blocked_report(
 
 def test_jumps_threshold_is_relative() -> None:
     assert Decimal(revenue(2016, 2, True)) / Decimal(revenue(2016, 1, True)) - 1 > Decimal("0.5")
+
+
+def test_payloads_shrink_with_a_dictionary_and_decode_unchanged(
+    warehouse: Warehouse, tmp_path: Path
+) -> None:
+    values = warehouse.all_values(CIK)
+    dictionary = make_dictionary(values)
+    assert 0 < len(dictionary) <= 32 * 1024
+    plain = sum(len(v.model_dump_json()) for v in values)
+    packed = sum(len(encode(v, dictionary)) for v in values)
+    assert packed * 4 < plain
+    assert all(decode(encode(v, dictionary), dictionary) == v for v in values)
+    assert decode(encode(values[0], b""), b"") == values[0]
+    old = tmp_path / "old.sqlite"
+    sqlite3.connect(old).execute("CREATE TABLE meta (key TEXT, value TEXT)").connection.close()
+    with pytest.raises(ValueError, match="earlier version"):
+        Warehouse.open(old)
+
+
+def test_current_values_and_revision_counts_come_from_the_query(warehouse: Warehouse) -> None:
+    current = warehouse.current(CIK)
+    assert current
+    assert all(v.known_to is None and v.value.revision.value == "latest" for v in current)
+    revised = sum(warehouse.revised(CIK).values())
+    assert revised == sum(
+        1
+        for v in warehouse.all_values(CIK)
+        if v.value.revision.value == "latest" and v.change.value == "value_revised"
+    )
+
+
+def test_the_leakage_sample_is_seeded_and_keeps_the_candidates() -> None:
+    ciks = [f"{n:010d}" for n in range(1, 201)]
+    chosen = leakage_sample(ciks, ["0000000150", "0000009999"], 20)
+    assert len(chosen) == 20
+    assert "0000000150" in chosen
+    assert chosen == leakage_sample(list(reversed(ciks)), ["0000000150"], 20)
+    assert leakage_sample(ciks[:5], [], 20) == ciks[:5]
+
+
+def test_macro_check_names_series_that_start_after_the_first_origin() -> None:
+    store = MacroStore.create(None, synthetic=False, built_at=BUILT)
+    store.register(["fred:GDPC1"])
+    store.add(
+        [
+            MacroObservation(
+                series_id="fred:GDPC1",
+                period_start=date(2005, 1, 1),
+                period_end=date(2005, 3, 31),
+                value="100",
+                available_from=datetime(2005, 4, 28, 13, tzinfo=UTC),
+                basis=AvailabilityBasis.VINTAGE,
+                source_vintage=date(2005, 4, 28),
+            ),
+            MacroObservation(
+                series_id="wb:USA.NY.GDP.MKTP.KD.ZG",
+                period_start=date(2005, 1, 1),
+                period_end=date(2005, 12, 31),
+                value="3.5",
+                available_from=datetime(2026, 10, 1, 4, tzinfo=UTC),
+                basis=AvailabilityBasis.SNAPSHOT,
+                source_vintage=date(2026, 9, 30),
+            ),
+        ]
+    )
+    check = macro_check(store)
+    assert check.status is CheckStatus.WARNING
+    assert any(
+        f.startswith("wb:USA.NY.GDP.MKTP.KD.ZG: first available 2026-10-01") for f in check.findings
+    )
+    assert not any(f.startswith("fred:GDPC1: first") for f in check.findings)
+    assert any(f == "fred:UNRATE: not in the store" for f in check.findings)
+    store.close()
+
+
+def test_a_universe_counts_its_deregistered_companies(warehouse: Warehouse) -> None:
+    data = data_of(warehouse)
+    stub = UniverseCompany(
+        cik=CIK,
+        name="Steady",
+        sic="3674",
+        division="D",
+        xbrl_10k=7,
+        xbrl_10q=21,
+        first_xbrl_filed=date(2012, 5, 1),
+        last_filed=date(2019, 2, 1),
+        deregistered=True,
+        candidate=False,
+    )
+    data.universe = UniverseManifest.model_construct(
+        universe_id="sec-1-1",
+        rules=(RuleCount(rule="eligible", remaining=5),),
+        companies=(stub,),
+    )
+    check = survivorship(data)
+    assert check.status is CheckStatus.WARNING
+    assert {m.name: m.value for m in check.measures}["deregistered (Form 15)"] == "1"
+    assert check.findings == ("Steady: Form 15, last filing 2019-02-01",)
+
+
+def test_q4_equal_to_the_year_fails_only_when_not_derived(warehouse: Warehouse) -> None:
+    data = data_of(warehouse)
+
+    def cfo(period: FiscalPeriod, value: str, month: int, method: LineageMethod) -> Current:
+        end = date(2030, month, 28 if month < 12 else 31)
+        return Current("cfo", 2030, period, end, value, None, "USD", (), method)
+
+    reported, derived = LineageMethod.REPORTED, LineageMethod.FY_MINUS_NINE_MONTHS
+    year = cfo(FiscalPeriod.FY, "-100", 12, reported)
+
+    def quarters(value: str) -> list[Current]:
+        periods = [(FiscalPeriod.Q1, 3), (FiscalPeriod.Q2, 6), (FiscalPeriod.Q3, 9)]
+        return [cfo(p, value, m, reported) for p, m in periods]
+
+    # Nothing in the first nine months: Q4 = year minus zero, by arithmetic.
+    data.current = {CIK: [*quarters("0"), cfo(FiscalPeriod.Q4, "-100", 12, derived), year]}
+    check = cumulative_cashflow(data)
+    assert check.status is CheckStatus.PASS
+    measures = {m.name: m.value for m in check.measures}
+    assert measures["Q4 equal to the year, nine months filed as zero"] == "1"
+    # The annual total taken as Q4: an error of the pipeline.
+    data.current = {CIK: [*quarters("10"), cfo(FiscalPeriod.Q4, "-100", 12, reported), year]}
+    assert cumulative_cashflow(data).status is CheckStatus.FAIL
+
+
+def test_estimates_left_out_of_every_view_are_a_warning(warehouse: Warehouse) -> None:
+    data = data_of(warehouse)
+    data.alerts = [
+        ChronologyAlert(
+            kind=AlertKind.PERIOD_AFTER_FILING,
+            severity=QualitySeverity.BLOCKING,
+            cik=CIK,
+            accession="0000000031-12-000001",
+            concept="us-gaap:LongTermDebtNoncurrent",
+            period_end=date(2018, 6, 30),
+            detail="us-gaap:LongTermDebtNoncurrent for a period ending 2018-06-30 was filed on "
+            "2012-08-14: an estimate, left out of every view",
+        )
+    ]
+    check = source_conflicts(data)
+    assert check.status is CheckStatus.WARNING
+    assert {m.name: m.value for m in check.measures}["blocking alerts not guarded"] == "0"
+    assert check.companies == (CIK,)
+
+
+def test_before_its_first_filing_a_company_shows_nothing(warehouse: Warehouse) -> None:
+    # How the current name is dated depends on the first filing, a later fact: before it,
+    # every attribute is empty with one reason, so a rebuild from the past matches.
+    (entity,) = entities_as_of(warehouse, [CIK], parse_cutoff("2005-12-31"))
+    assert entity["status"] == "no_filings_yet"
+    for attribute in ("name", "ticker", "exchange", "sic"):
+        assert entity[attribute] == []
+        assert entity[f"{attribute}_unknown"] == "no filings by this date"
+    (later,) = entities_as_of(warehouse, [CIK], parse_cutoff("2019-06-30"))
+    assert later["status"] != "no_filings_yet"

@@ -7,8 +7,9 @@ Data pipelines for SEC, FRED, ECB and World Bank (`docs/04`). They read the sour
 | 10 | SEC raw ingestion: Submissions API, Company Facts API, bulk ZIPs (ADR-0017) | **Done** |
 | 11 | XBRL normalization: canonical values with lineage, revisions and quality (ADR-0018) | **Done** |
 | 12 | Point-in-time warehouse: as-of values, quarterly panel with masks, hashed snapshots (ADR-0019) | **Done** |
-| 13 | Macro vintages: FRED/ALFRED, ECB, World Bank registry, availability, as-of join (ADR-0020); downloads await D-11 and D-12 | **Done** |
-| 14 | Gate B: dataset audit, usable examples, data card, coverage report, manifest with hash (ADR-0021) | **Done** (verdict blocked) |
+| 13 | Macro vintages: FRED/ALFRED, ECB, World Bank registry, availability, as-of join (ADR-0020); real store since D-11 and D-12 | **Done** |
+| 14 | Gate B: dataset audit, usable examples, data card, coverage report, manifest with hash (ADR-0021) | **Done** (blocked on the sample) |
+| 14b | Data acquisition: SEC bulk files and a universe of 1000 companies (ADR-0022), real macro store, warehouse at scale; Gate B passed with warnings | **Done** |
 
 Rules:
 
@@ -37,6 +38,7 @@ Commands, run from the repository root:
 | `MULTIVERSE_ALLOW_NETWORK_DOWNLOADS=true uv run python -m multiverse_pipelines.sec bulk fsds --quarter 2024q1 --max-mb 150` | yes | One bulk ZIP after a HEAD shows it fits; refused until the catalog holds a `bulk` approval (decision D-10) |
 | `uv run python -m multiverse_pipelines.sec verify` | no | Re-hashes every archived file; finds changed, missing, writable and unknown files |
 | `uv run python -m multiverse_pipelines.sec coverage [--json]` | no | What the archived sample holds per candidate: filings by form, taxonomies, periods per V2 metric |
+| `uv run python -m multiverse_pipelines.sec universe [--size 1000] [--seed 20261030] [--no-extract]` | no | Draws the study universe from the archived bulk ZIPs by written rules and a seed (ADR-0022), writes `data/universe/sec-<size>-<seed>.json` and copies the chosen companies' files out of the ZIPs into the archive; needs the bulk approval (D-10) |
 
 On Windows PowerShell, set the switch for one command with `$env:MULTIVERSE_ALLOW_NETWORK_DOWNLOADS='true'; uv run python -m multiverse_pipelines.sec sample; Remove-Item Env:MULTIVERSE_ALLOW_NETWORK_DOWNLOADS`.
 
@@ -100,7 +102,7 @@ Reads only the local raw archive (company facts and submissions with their paged
 
 | Command | What it does |
 |---|---|
-| `uv run python -m multiverse_pipelines.pit build` | All archived candidates (or `--cik`) into `var/data/pit/warehouse.sqlite`; companies run in parallel |
+| `uv run python -m multiverse_pipelines.pit build [--universe data/universe/sec-1000-20261030.json] [--workers 12]` | The catalog candidates, `--cik` or a universe into `var/data/pit/warehouse.sqlite`; companies run in parallel and stream into the file one at a time; payloads are zlib-compressed with a dictionary stored in the file (1000 companies: 3.86 million value intervals, 1.3 GB, 14 minutes on 12 workers) |
 | `... pit as-of --cik 97476 --metric revenue --at 2021-12-31 [--view vintage\|original\|latest]` | One company and metric as known at a moment |
 | `... pit history --cik 48898 --metric revenue --fiscal-year 2019 --period FY` | Every answer one period had: its corrections over time |
 | `... pit entity --cik 816284 --at 2020-06-30` | Name, ticker, exchange, SIC code and status as known at a moment |
@@ -177,7 +179,7 @@ Joined folder: `joined.csv` (financial and macro rows with value, mask, state, a
 
 ## Gate B: dataset audit
 
-`uv run python -m multiverse_pipelines.audit run [--cutoff 2026-10-28] [--leakage-cutoff DATE ...]` reads the PIT warehouse, the raw archive, the macro stores and `data/reconciliation/stage-14-manual.json`, and writes `var/data/gate/` (never committed). Exit code 0 when the gate passes, 3 when it is blocked (the report is written either way), 2 when it cannot run.
+`uv run python -m multiverse_pipelines.audit run [--universe data/universe/sec-1000-20261030.json] [--cutoff 2026-10-28] [--leakage-cutoff DATE ...] [--leakage-companies 40]` reads the PIT warehouse, the raw archive, the macro stores and `data/reconciliation/stage-14-manual.json`, and writes `var/data/gate/` (never committed). With a universe the leakage proof rebuilds a seeded sample of 40 companies (the catalog candidates among them), and the report groups companies by SIC division. Exit code 0 when the gate passes, 3 when it is blocked (the report is written either way), 2 when it cannot run.
 
 | File | Content |
 |---|---|

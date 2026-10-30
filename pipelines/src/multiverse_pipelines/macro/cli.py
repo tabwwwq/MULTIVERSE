@@ -24,7 +24,7 @@ from multiverse_contracts.source_catalog import SOURCE_CATALOG
 from multiverse_contracts.sources import DataSource
 from multiverse_contracts.version import CONTRACTS_VERSION
 from multiverse_pipelines.macro import parsers, synthetic
-from multiverse_pipelines.macro.fetch import fetch_source, unavailable_reason
+from multiverse_pipelines.macro.fetch import fetch_source, redact_text, unavailable_reason
 from multiverse_pipelines.macro.join import macro_join
 from multiverse_pipelines.macro.joined import make_joined, write_joined
 from multiverse_pipelines.macro.qa import series_qa, write_qa
@@ -99,26 +99,24 @@ def build_store(
         for row in sorted(archive.objects(), key=lambda r: r.downloaded_at):
             by_key.setdefault(row.key, []).append(row)
         found: list[MacroObservation] = []
-        snapshots: list[parsers.Snapshot] = []
         for key, rows in by_key.items():
             newest = archive.root / rows[-1].path
             if source_id == "fred-alfred":
-                found += parsers.alfred_observations(
+                found += parsers.fred_observations(
                     key, load_json(newest), raw_sha256=rows[-1].sha256
                 )
             elif source_id == "ecb-data-portal":
                 text = newest.read_text(encoding="utf-8")
                 found += parsers.ecb_observations(text, raw_sha256=rows[-1].sha256)
             else:
-                # Every archived World Bank file is a dated snapshot: all of them count.
-                snapshots += [
+                # Every archived file of one indicator is a dated snapshot of it.
+                snapshots = [
                     parsers.worldbank_snapshot(
                         load_json(archive.root / r.path), raw_sha256=r.sha256
                     )
                     for r in rows
                 ]
-        if snapshots:
-            found += parsers.worldbank_observations(snapshots)
+                found += parsers.worldbank_observations(snapshots)
         store.register(
             s.series_id
             for s in SERIES
@@ -132,7 +130,7 @@ def load_synthetic(path: Path | None, until: date, now: datetime) -> MacroStore:
     store = MacroStore.create(path, synthetic=True, built_at=now)
     store.register(s.series_id for s in SERIES)
     for code, doc in synthetic.fred_documents(until).items():
-        store.add(parsers.alfred_observations(code, doc, synthetic=True))
+        store.add(parsers.fred_observations(code, doc, synthetic=True))
     store.add(parsers.ecb_observations(synthetic.ecb_csv(until), synthetic=True))
     for code in synthetic.WB_CODES:
         snapshots = [
@@ -149,7 +147,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         return _run(args, settings, now)
     except (ValueError, IngestionError) as exc:
-        print(f"refused: {exc}", file=sys.stderr)
+        print(f"refused: {redact_text(str(exc))}", file=sys.stderr)
         return 2
 
 

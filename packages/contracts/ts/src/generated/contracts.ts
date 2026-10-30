@@ -87,6 +87,11 @@ export type ResultMetric = "revenue" | "ebitda" | "fcf" | "net_debt" | "ev";
 export type ChangeUnit = "currency" | "fraction_of_baseline";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CheckStatus".
+ */
+export type CheckStatus = "pass" | "warning" | "fail" | "blocked";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "QualitySeverity".
  */
 export type QualitySeverity = "info" | "warning" | "blocking";
@@ -281,6 +286,18 @@ export type FiscalPeriod = "Q1" | "Q2" | "Q3" | "Q4" | "FY";
  */
 export type Frequency = "daily" | "monthly" | "quarterly" | "annual";
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "GateVerdict".
+ */
+export type GateVerdict = "passed" | "passed_with_warnings" | "blocked";
+/**
+ * Which value of a period a query returns when filings reported it more than once.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "KnowledgeView".
+ */
+export type KnowledgeView = "original" | "vintage" | "latest";
+/**
  * Unit of a parameter value. Fractions are shares: 0.25 means 25 %.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -295,13 +312,6 @@ export type ValueUnit =
  * via the `definition` "MagnitudeBase".
  */
 export type MagnitudeBase = "previous_rnd_budget" | "revenue" | "headcount" | "none";
-/**
- * Which value of a period a query returns when filings reported it more than once.
- *
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "KnowledgeView".
- */
-export type KnowledgeView = "original" | "vintage" | "latest";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "Level".
@@ -767,6 +777,16 @@ export interface Score {
   points: number;
 }
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CompanyDecision".
+ */
+export interface CompanyDecision {
+  cik: string;
+  include: boolean;
+  name: string;
+  reasons: string[];
+}
+/**
  * Everything known about one company at a knowledge cutoff ``as_of``.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -1156,6 +1176,85 @@ export interface ProceedsAllocation {
    * Exact decimal number as a string, for example '4213587912' or '-0.25'.
    */
   shareholder_distribution: string;
+}
+/**
+ * Trainable examples: company and forecast origin with enough history and a target.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ExampleCount".
+ */
+export interface ExampleCount {
+  companies: number;
+  examples: number;
+  history_quarters: number;
+  horizon_quarters: number;
+  origins: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "GateCheck".
+ */
+export interface GateCheck {
+  check_id: string;
+  /**
+   * Companies a finding concerns.
+   */
+  companies: string[];
+  /**
+   * Specific cases, at most 40.
+   */
+  findings: string[];
+  measures: Measure[];
+  status: CheckStatus;
+  summary: string;
+  title: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Measure".
+ */
+export interface Measure {
+  name: string;
+  value: string;
+}
+/**
+ * The audited dataset: what it holds, how much is usable, and its hash.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "GateManifest".
+ */
+export interface GateManifest {
+  /**
+   * @minItems 1
+   */
+  checks: [GateCheck, ...GateCheck[]];
+  /**
+   * @minItems 1
+   */
+  companies: [CompanyDecision, ...CompanyDecision[]];
+  contracts_version: string;
+  /**
+   * Not part of the hash.
+   */
+  created_at: string;
+  data_cutoff: string;
+  dataset_id: string;
+  /**
+   * @minItems 1
+   */
+  example_counts: [ExampleCount, ...ExampleCount[]];
+  first_origin: string;
+  last_origin: string;
+  pit_snapshot_id: string;
+  /**
+   * Of the canonical examples table.
+   */
+  sha256: string;
+  synthetic_macro: boolean;
+  target_metric: string;
+  verdict: GateVerdict;
+  verdict_reasons: string[];
+  view: KnowledgeView;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema

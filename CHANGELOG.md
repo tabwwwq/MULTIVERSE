@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-30 (Stage 14)
+
+- Gate B dataset audit (`python -m multiverse_pipelines.audit run`, ADR-0021): the 15 checks of the prompt (future revisions, duplicated company-quarters, concept drift, survivor-only sample, lost bankruptcies, missingness, revenue gaps, negative and undefined ratios, currency, outliers, unrealistic jumps, cumulative cash flow, misidentified capex, reported vs calculated EBITDA, source conflicts) plus a leakage proof, manual reconciliation, usable sample size and macro data; statuses pass, warning, fail and blocked.
+- Usable examples instead of file counts: a company and forecast origin with H quarters of public revenue history and the revenue h quarters later as first released, for H = 8, 12, 20 and h = 1, 4, 8, 12, 20; the examples table names the dataset by its SHA-256.
+- Data card and coverage report (company × year heat map, coverage by metric, examples by history and horizon, sectors, currency and reporting standard, checks) and per-metric inclusion decisions.
+- Ten manual reconciliations of derived amounts (Q4 = fiscal year − nine months) with the original filings on sec.gov for Stryker, Old Dominion, Waste Management, Akamai and Celgene, stored in `data/reconciliation/stage-14-manual.json` and re-checked on every run: 10 of 10 match.
+- Contracts 0.11.0: `GateCheck`, `ExampleCount`, `CompanyDecision`, `GateManifest`.
+- Verdict on the SEC sample: **blocked** (10 companies, 447 examples at H = 12 and h = 4 against the proposed 30 companies and 1 000 examples; no real macro data). Leakage proof and reconciliation pass.
+
 ### Changed — 2026-10-30 (Stage 13 accepted)
 
 - Stage 13 (macro vintages) accepted by the owner (CI run 41036165376 green). Real macro downloads still wait for decisions D-11 (FRED key) and D-12 (ECB, World Bank).

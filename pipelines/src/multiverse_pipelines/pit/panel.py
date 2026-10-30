@@ -208,7 +208,9 @@ def build_panel(
             default=None,
         )
         rows: dict[tuple[str, date], PitValue] = {}
-        for item in warehouse.as_of(cik, cutoff, view=view):
+        # One metric: let the query filter it (the audit builds a panel per origin).
+        only = metrics[0] if len(metrics) == 1 else None
+        for item in warehouse.as_of(cik, cutoff, view=view, metric=only):
             if item.value.fiscal_period is FiscalPeriod.FY:
                 continue
             slot = (item.value.metric, nearest_quarter_end(item.value.period_end))

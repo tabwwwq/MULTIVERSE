@@ -32,6 +32,9 @@ and effective-dated company attributes; the quality flag mixed_vintage.
 0.10.0 (Stage 13): macro series metadata, observations with the moment they
 became available and how that is known, and macro cells joined with company
 quarters with their input observations.
+
+0.11.0 (Stage 14): Gate B checks with measures and findings, trainable example
+counts, company decisions and the audited dataset manifest with its verdict.
 """
 
-CONTRACTS_VERSION = "0.10.0"
+CONTRACTS_VERSION = "0.11.0"

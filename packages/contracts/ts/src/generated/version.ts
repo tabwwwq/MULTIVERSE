@@ -4,4 +4,4 @@
  * Source of truth: packages/contracts/python. Regenerate: npm run contracts:gen
  */
 
-export const CONTRACTS_VERSION = "0.10.0";
+export const CONTRACTS_VERSION = "0.11.0";

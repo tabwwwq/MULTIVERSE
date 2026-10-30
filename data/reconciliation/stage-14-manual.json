@@ -1,0 +1,307 @@
+{
+  "description": "Manual reconciliation of derived amounts (Q4 = FY - 9M) with the original SEC filings (Stage 14).",
+  "read_on": "2026-10-30",
+  "method": "Each statement page (R*.htm, the filing's own XBRL rendering on sec.gov) was opened by hand in a browser, its FilingSummary.xml first to find the page; values typed from the page as shown, then scaled by the stated unit.",
+  "reconciliations": [
+    {
+      "company": "Stryker",
+      "cik": "0000310764",
+      "metric": "cfo",
+      "fiscal_year": 2024,
+      "fiscal_period": "Q4",
+      "view": "original",
+      "derivation": "fiscal year (10-K) minus nine months (10-Q for Q3)",
+      "line": "Net cash provided by operating activities",
+      "statement": "cash flows",
+      "filings": [
+        {
+          "form": "10-K",
+          "accession": "0000310764-25-000023",
+          "page": "https://www.sec.gov/Archives/edgar/data/310764/000031076425000023/R9.htm",
+          "period": "FY2024",
+          "as_shown": 4242,
+          "value": "4242000000"
+        },
+        {
+          "form": "10-Q",
+          "accession": "0000310764-24-000115",
+          "page": "https://www.sec.gov/Archives/edgar/data/310764/000031076424000115/R7.htm",
+          "period": "9M2024",
+          "as_shown": 2311,
+          "value": "2311000000"
+        }
+      ],
+      "expected": "1931000000"
+    },
+    {
+      "company": "Stryker",
+      "cik": "0000310764",
+      "metric": "capex",
+      "fiscal_year": 2024,
+      "fiscal_period": "Q4",
+      "view": "original",
+      "derivation": "fiscal year (10-K) minus nine months (10-Q for Q3)",
+      "line": "Purchases of property, plant and equipment",
+      "statement": "cash flows",
+      "filings": [
+        {
+          "form": "10-K",
+          "accession": "0000310764-25-000023",
+          "page": "https://www.sec.gov/Archives/edgar/data/310764/000031076425000023/R9.htm",
+          "period": "FY2024",
+          "as_shown": 755,
+          "value": "755000000"
+        },
+        {
+          "form": "10-Q",
+          "accession": "0000310764-24-000115",
+          "page": "https://www.sec.gov/Archives/edgar/data/310764/000031076424000115/R7.htm",
+          "period": "9M2024",
+          "as_shown": 489,
+          "value": "489000000"
+        }
+      ],
+      "expected": "266000000"
+    },
+    {
+      "company": "Old Dominion Freight Line",
+      "cik": "0000878927",
+      "metric": "revenue",
+      "fiscal_year": 2024,
+      "fiscal_period": "Q4",
+      "view": "original",
+      "derivation": "fiscal year (10-K) minus nine months (10-Q for Q3)",
+      "line": "Revenue from operations",
+      "statement": "operations",
+      "filings": [
+        {
+          "form": "10-K",
+          "accession": "0000950170-25-026661",
+          "page": "https://www.sec.gov/Archives/edgar/data/878927/000095017025026661/R4.htm",
+          "period": "FY2024",
+          "as_shown": 5814810,
+          "value": "5814810000"
+        },
+        {
+          "form": "10-Q",
+          "accession": "0000950170-24-122440",
+          "page": "https://www.sec.gov/Archives/edgar/data/878927/000095017024122440/R4.htm",
+          "period": "9M2024",
+          "as_shown": 4428981,
+          "value": "4428981000"
+        }
+      ],
+      "expected": "1385829000"
+    },
+    {
+      "company": "Old Dominion Freight Line",
+      "cik": "0000878927",
+      "metric": "operating_income",
+      "fiscal_year": 2024,
+      "fiscal_period": "Q4",
+      "view": "original",
+      "derivation": "fiscal year (10-K) minus nine months (10-Q for Q3)",
+      "line": "Operating income",
+      "statement": "operations",
+      "filings": [
+        {
+          "form": "10-K",
+          "accession": "0000950170-25-026661",
+          "page": "https://www.sec.gov/Archives/edgar/data/878927/000095017025026661/R4.htm",
+          "period": "FY2024",
+          "as_shown": 1543998,
+          "value": "1543998000"
+        },
+        {
+          "form": "10-Q",
+          "accession": "0000950170-24-122440",
+          "page": "https://www.sec.gov/Archives/edgar/data/878927/000095017024122440/R4.htm",
+          "period": "9M2024",
+          "as_shown": 1209978,
+          "value": "1209978000"
+        }
+      ],
+      "expected": "334020000"
+    },
+    {
+      "company": "Waste Management",
+      "cik": "0000823768",
+      "metric": "cfo",
+      "fiscal_year": 2024,
+      "fiscal_period": "Q4",
+      "view": "original",
+      "derivation": "fiscal year (10-K) minus nine months (10-Q for Q3)",
+      "line": "Net cash provided by operating activities",
+      "statement": "cash flows",
+      "filings": [
+        {
+          "form": "10-K",
+          "accession": "0001558370-25-001132",
+          "page": "https://www.sec.gov/Archives/edgar/data/823768/000155837025001132/R6.htm",
+          "period": "FY2024",
+          "as_shown": 5390,
+          "value": "5390000000"
+        },
+        {
+          "form": "10-Q",
+          "accession": "0001558370-24-013762",
+          "page": "https://www.sec.gov/Archives/edgar/data/823768/000155837024013762/R6.htm",
+          "period": "9M2024",
+          "as_shown": 3879,
+          "value": "3879000000"
+        }
+      ],
+      "expected": "1511000000"
+    },
+    {
+      "company": "Waste Management",
+      "cik": "0000823768",
+      "metric": "capex",
+      "fiscal_year": 2024,
+      "fiscal_period": "Q4",
+      "view": "original",
+      "derivation": "fiscal year (10-K) minus nine months (10-Q for Q3)",
+      "line": "Capital expenditures",
+      "statement": "cash flows",
+      "filings": [
+        {
+          "form": "10-K",
+          "accession": "0001558370-25-001132",
+          "page": "https://www.sec.gov/Archives/edgar/data/823768/000155837025001132/R6.htm",
+          "period": "FY2024",
+          "as_shown": 3231,
+          "value": "3231000000"
+        },
+        {
+          "form": "10-Q",
+          "accession": "0001558370-24-013762",
+          "page": "https://www.sec.gov/Archives/edgar/data/823768/000155837024013762/R6.htm",
+          "period": "9M2024",
+          "as_shown": 2116,
+          "value": "2116000000"
+        }
+      ],
+      "expected": "1115000000"
+    },
+    {
+      "company": "Akamai Technologies",
+      "cik": "0001086222",
+      "metric": "cfo",
+      "fiscal_year": 2024,
+      "fiscal_period": "Q4",
+      "view": "original",
+      "derivation": "fiscal year (10-K) minus nine months (10-Q for Q3)",
+      "line": "Net cash provided by operating activities",
+      "statement": "cash flows",
+      "filings": [
+        {
+          "form": "10-K",
+          "accession": "0001086222-25-000028",
+          "page": "https://www.sec.gov/Archives/edgar/data/1086222/000108622225000028/R8.htm",
+          "period": "FY2024",
+          "as_shown": 1519171,
+          "value": "1519171000"
+        },
+        {
+          "form": "10-Q",
+          "accession": "0001086222-24-000216",
+          "page": "https://www.sec.gov/Archives/edgar/data/1086222/000108622224000216/R7.htm",
+          "period": "9M2024",
+          "as_shown": 1175383,
+          "value": "1175383000"
+        }
+      ],
+      "expected": "343788000"
+    },
+    {
+      "company": "Akamai Technologies",
+      "cik": "0001086222",
+      "metric": "capex",
+      "fiscal_year": 2024,
+      "fiscal_period": "Q4",
+      "view": "original",
+      "derivation": "fiscal year (10-K) minus nine months (10-Q for Q3)",
+      "line": "Purchases of property and equipment",
+      "statement": "cash flows",
+      "filings": [
+        {
+          "form": "10-K",
+          "accession": "0001086222-25-000028",
+          "page": "https://www.sec.gov/Archives/edgar/data/1086222/000108622225000028/R8.htm",
+          "period": "FY2024",
+          "as_shown": 390433,
+          "value": "390433000"
+        },
+        {
+          "form": "10-Q",
+          "accession": "0001086222-24-000216",
+          "page": "https://www.sec.gov/Archives/edgar/data/1086222/000108622224000216/R7.htm",
+          "period": "9M2024",
+          "as_shown": 297548,
+          "value": "297548000"
+        }
+      ],
+      "expected": "92885000"
+    },
+    {
+      "company": "Celgene",
+      "cik": "0000816284",
+      "metric": "operating_income",
+      "fiscal_year": 2018,
+      "fiscal_period": "Q4",
+      "view": "original",
+      "derivation": "fiscal year (10-K) minus nine months (10-Q for Q3)",
+      "line": "Operating income",
+      "statement": "income",
+      "filings": [
+        {
+          "form": "10-K",
+          "accession": "0000816284-19-000014",
+          "page": "https://www.sec.gov/Archives/edgar/data/816284/000081628419000014/R4.htm",
+          "period": "FY2018",
+          "as_shown": 5191,
+          "value": "5191000000"
+        },
+        {
+          "form": "10-Q",
+          "accession": "0000816284-18-000024",
+          "page": "https://www.sec.gov/Archives/edgar/data/816284/000081628418000024/R2.htm",
+          "period": "9M2018",
+          "as_shown": 3384,
+          "value": "3384000000"
+        }
+      ],
+      "expected": "1807000000"
+    },
+    {
+      "company": "Celgene",
+      "cik": "0000816284",
+      "metric": "rnd",
+      "fiscal_year": 2018,
+      "fiscal_period": "Q4",
+      "view": "original",
+      "derivation": "fiscal year (10-K) minus nine months (10-Q for Q3)",
+      "line": "Research and development",
+      "statement": "income",
+      "filings": [
+        {
+          "form": "10-K",
+          "accession": "0000816284-19-000014",
+          "page": "https://www.sec.gov/Archives/edgar/data/816284/000081628419000014/R4.htm",
+          "period": "FY2018",
+          "as_shown": 5673,
+          "value": "5673000000"
+        },
+        {
+          "form": "10-Q",
+          "accession": "0000816284-18-000024",
+          "page": "https://www.sec.gov/Archives/edgar/data/816284/000081628418000024/R2.htm",
+          "period": "9M2018",
+          "as_shown": 4535,
+          "value": "4535000000"
+        }
+      ],
+      "expected": "1138000000"
+    }
+  ]
+}

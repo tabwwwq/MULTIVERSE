@@ -22,6 +22,7 @@ from multiverse_contracts.metrics import MetricValue
 from multiverse_contracts.normalized import NormalizedValue
 from multiverse_contracts.notebook import NotebookExport
 from multiverse_contracts.pit import ChronologyAlert, PanelCell, PitSnapshotManifest, PitValue
+from multiverse_contracts.quality import GateManifest
 from multiverse_contracts.results import ScenarioResult
 from multiverse_contracts.sources import SourceCatalog
 from multiverse_contracts.version import CONTRACTS_VERSION
@@ -47,6 +48,7 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     MacroSeries,
     MacroObservation,
     MacroCell,
+    GateManifest,
 )
 
 

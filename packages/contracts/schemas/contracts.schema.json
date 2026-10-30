@@ -391,6 +391,16 @@
       "title": "ChangeUnit",
       "type": "string"
     },
+    "CheckStatus": {
+      "enum": [
+        "pass",
+        "warning",
+        "fail",
+        "blocked"
+      ],
+      "title": "CheckStatus",
+      "type": "string"
+    },
     "ChronologyAlert": {
       "additionalProperties": false,
       "properties": {
@@ -710,6 +720,40 @@
         "concerns"
       ],
       "title": "CompanyCandidate",
+      "type": "object"
+    },
+    "CompanyDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "cik": {
+          "pattern": "^[0-9]{10}$",
+          "type": "string"
+        },
+        "include": {
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "reasons": {
+          "default": [],
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "cik",
+        "name",
+        "include",
+        "reasons"
+      ],
+      "title": "CompanyDecision",
       "type": "object"
     },
     "CompanyDossier": {
@@ -1536,6 +1580,43 @@
       "title": "Evidence",
       "type": "string"
     },
+    "ExampleCount": {
+      "additionalProperties": false,
+      "description": "Trainable examples: company and forecast origin with enough history and a target.",
+      "properties": {
+        "companies": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "examples": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "history_quarters": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "horizon_quarters": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "origins": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "history_quarters",
+        "horizon_quarters",
+        "examples",
+        "companies",
+        "origins"
+      ],
+      "title": "ExampleCount",
+      "type": "object"
+    },
     "FieldRole": {
       "description": "What a field means for point-in-time use (docs/04).",
       "enum": [
@@ -1705,6 +1786,176 @@
       ],
       "title": "FundingMix",
       "type": "object"
+    },
+    "GateCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "companies": {
+          "default": [],
+          "description": "Companies a finding concerns.",
+          "items": {
+            "pattern": "^[0-9]{10}$",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "findings": {
+          "default": [],
+          "description": "Specific cases, at most 40.",
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "measures": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Measure"
+          },
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/CheckStatus"
+        },
+        "summary": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "check_id",
+        "title",
+        "status",
+        "summary",
+        "measures",
+        "findings",
+        "companies"
+      ],
+      "title": "GateCheck",
+      "type": "object"
+    },
+    "GateManifest": {
+      "additionalProperties": false,
+      "description": "The audited dataset: what it holds, how much is usable, and its hash.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/GateCheck"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "companies": {
+          "items": {
+            "$ref": "#/$defs/CompanyDecision"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Not part of the hash.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "data_cutoff": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "dataset_id": {
+          "pattern": "^gate-b-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "example_counts": {
+          "items": {
+            "$ref": "#/$defs/ExampleCount"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "first_origin": {
+          "format": "date",
+          "type": "string"
+        },
+        "last_origin": {
+          "format": "date",
+          "type": "string"
+        },
+        "pit_snapshot_id": {
+          "pattern": "^pit-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "sha256": {
+          "description": "Of the canonical examples table.",
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "synthetic_macro": {
+          "type": "boolean"
+        },
+        "target_metric": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "verdict": {
+          "$ref": "#/$defs/GateVerdict"
+        },
+        "verdict_reasons": {
+          "default": [],
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "view": {
+          "$ref": "#/$defs/KnowledgeView"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "sha256",
+        "data_cutoff",
+        "view",
+        "target_metric",
+        "first_origin",
+        "last_origin",
+        "companies",
+        "example_counts",
+        "pit_snapshot_id",
+        "synthetic_macro",
+        "checks",
+        "verdict",
+        "verdict_reasons",
+        "contracts_version",
+        "created_at"
+      ],
+      "title": "GateManifest",
+      "type": "object"
+    },
+    "GateVerdict": {
+      "enum": [
+        "passed",
+        "passed_with_warnings",
+        "blocked"
+      ],
+      "title": "GateVerdict",
+      "type": "string"
     },
     "HistogramBin": {
       "additionalProperties": false,
@@ -2574,6 +2825,27 @@
         "default_value"
       ],
       "title": "MagnitudeUnitSpec",
+      "type": "object"
+    },
+    "Measure": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "Measure",
       "type": "object"
     },
     "MeasureUnit": {
@@ -5508,9 +5780,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.10.0",
+  "$id": "urn:multiverse:contracts:0.11.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.10.0"
+  "x-contracts-version": "0.11.0"
 }

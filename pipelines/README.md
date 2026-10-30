@@ -8,6 +8,7 @@ Data pipelines for SEC, FRED, ECB and World Bank (`docs/04`). They read the sour
 | 11 | XBRL normalization: canonical values with lineage, revisions and quality (ADR-0018) | **Done** |
 | 12 | Point-in-time warehouse: as-of values, quarterly panel with masks, hashed snapshots (ADR-0019) | **Done** |
 | 13 | Macro vintages: FRED/ALFRED, ECB, World Bank registry, availability, as-of join (ADR-0020); downloads await D-11 and D-12 | **Done** |
+| 14 | Gate B: dataset audit, usable examples, data card, coverage report, manifest with hash (ADR-0021) | **Done** (verdict blocked) |
 
 Rules:
 
@@ -173,3 +174,18 @@ The join (`MacroCell`) gives one cell per company quarter of a PIT panel and per
 Transforms: `quarter_mean` (all months of the quarter), `quarter_max` (recession), `end_of_period` (last daily value within 10 days of the quarter end), `yoy_last_month`, `yoy_quarter` (one vintage), `latest_year` (latest year available at the cutoff, never after the quarter).
 
 Joined folder: `joined.csv` (financial and macro rows with value, mask, state, availability, synthetic flag, provenance), `macro_cells.jsonl` (every input observation), `manifest.json`; the id `join-<date>-<12 hex>` is the SHA-256 of the PIT snapshot and the macro cells.
+
+## Gate B: dataset audit
+
+`uv run python -m multiverse_pipelines.audit run [--cutoff 2026-10-28] [--leakage-cutoff DATE ...]` reads the PIT warehouse, the raw archive, the macro stores and `data/reconciliation/stage-14-manual.json`, and writes `var/data/gate/` (never committed). Exit code 0 when the gate passes, 3 when it is blocked (the report is written either way), 2 when it cannot run.
+
+| File | Content |
+|---|---|
+| `manifest.json` | `GateManifest`: company decisions, example counts, every check with measures and findings, verdict, SHA-256 of the examples table (`gate-b-<date>-<12 hex>`) |
+| `examples.csv` | Every trainable example: company, origin, history, horizon, target quarter, target revenue |
+| `data-card.md` | Composition, usable size, coverage, checks, biases, intended use, sources |
+| `coverage.html` | Metrics present per company and year, coverage by metric, examples by history and horizon, sectors, currency and standard, checks |
+
+An example is a company and a forecast origin (calendar quarter end) whose last H quarters of revenue (lags 1 to H) were public at the origin, with the revenue h quarters later as first released by the data cutoff. Counts for H = 8, 12, 20 and h = 1, 4, 8, 12, 20.
+
+Checks: future revisions, duplicated company-quarters, concept drift, survivor-only sample, lost bankruptcies (8-K item 1.03), missingness, revenue gaps, negative and undefined ratios, currency and FX, outliers (robust z of log changes), unrealistic quarter-to-quarter jumps, cumulative cash flow, misidentified capex, reported vs calculated EBITDA, source conflicts; then the gate's own: leakage proof (rebuild from what was public at three cutoffs and compare snapshots and macro joins byte for byte), manual reconciliation (10 amounts read from sec.gov, re-checked on every run), usable sample size (at least 30 companies and 1 000 examples at H = 12, h = 4), macro data. Statuses: `pass`, `warning`, `fail`, `blocked`; the verdict is `blocked` exactly when a check fails or is blocked.

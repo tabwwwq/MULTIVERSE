@@ -97,13 +97,13 @@
 | Проверка | Результат |
 |---|---|
 | `npm run check` (полный gate) | **EXIT 0** |
-| pytest | **375 passed** (30 новых: 22 macro pipeline, 8 contract) |
+| pytest | **375 passed** (30 новых: 21 macro pipeline, 9 contract) |
 | vitest contracts / web | 4 / **200 passed** |
 | contracts drift | schema 0.10.0 и TS — up to date |
 | Playwright на 1440 / 768 / 390 | **529 passed, 14 skipped** (по замыслу); web этапом не менялся |
 | ruff, mypy strict, import-linter, secret scan | без замечаний |
 
-Первый CI run 41034319960 (commit `f61d440`) упал на задачах Python: тесты загрузок брали `MULTIVERSE_SEC_USER_AGENT` из моего локального `.env`, а в CI его нет. Тесты сделаны герметичными (settings только из переданных значений, переменные `MULTIVERSE_` очищаются); повторено на чистом clone — 375 passed.
+Первый CI run 41034319960 (commit `f61d440`) упал на задачах Python: тесты загрузок брали `MULTIVERSE_SEC_USER_AGENT` из моего локального `.env`, а в CI его нет. Тесты сделаны герметичными (settings только из переданных значений, переменные `MULTIVERSE_` очищаются); повторено на чистом clone — 375 passed; CI run 41035292912 (commit `17f6c49`) зелёный 7/7.
 
 Первый локальный прогон gate упал на secret scan: в тесте был фиктивный ключ вида `secret = "<32 символа>"`. Ключ теперь собирается в рантайме (`"x" * 32`), в репозитории нет строки, похожей на ключ.
 

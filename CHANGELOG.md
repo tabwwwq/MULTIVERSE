@@ -24,6 +24,7 @@
 - US daylight saving rules for 1967–1986 (old ALFRED vintages); World Bank disappearance scoped to one indicator; FRED error messages never print the key.
 - Cumulative cash flow: Q4 equal to the year after three zero quarters is arithmetic, not an error. Source conflicts: estimates (a period ending after its filing) are already left out of every view, so they are a warning with the cases; any other blocking alert still fails.
 - The Data Catalog download badge wraps on a 390 px card.
+- `sec verify` lists unknown archive files in a stable order (directory order differs between file systems; CI on Linux failed on it).
 
 ### Changed — 2026-10-30 (Stage 14 accepted)
 

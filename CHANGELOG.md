@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+### Added — 2026-10-30 (Stage 12)
+
+- Point-in-time warehouse (`python -m multiverse_pipelines.pit`, ADR-0019): every normalized value with the interval of knowledge time during which it was the current answer, in one SQLite file (`var/data/pit/`, never committed). The Stage 11 normalizer runs again at each moment a filing became public, on exactly the facts public then, so an as-of query equals normalizing what was public at the cutoff.
+- EDGAR's clock: a filing is public from its acceptance time (UTC in the submissions file, checked on the sample), never before the start of its filing date in US Eastern time; a date cutoff is the end of that day. A cutoff of 31 December never sees a filing dated in January.
+- Knowledge views `vintage` (default for features), `original` (first release) and `latest` (hindsight, refused by panels and snapshots); `as-of`, `history` (corrections of one period over time) and `entity` commands.
+- Complete quarterly panel by calendar quarter with feature masks and a reason for every empty cell (not yet filed, not reported, blocked, inactive after a Form 15, not covered); trailing-twelve-month and growth features computed from panel cells only.
+- Reproducible snapshots named by the SHA-256 of their canonical content, with panel, features, lineage export (source facts, filing URLs, raw file checksums) and manifest; `leakage-check` rebuilds from only what was public at a cutoff and compares the hash.
+- Chronology alerts (estimates inside filings, filing date mismatches, late acceptances, filings missing from the index, amendments before originals, reports out of order, late reports, deregistrations, quarters that do not add up to the year) and a coverage dashboard (HTML, Markdown, JSON) with explicit firm-quarter counts per metric.
+- Names follow their official dates; current tickers, exchanges and SIC codes apply only from when they were observed, never backwards.
+- Contracts 0.9.0: `PitValue`, `PanelCell`, `ChronologyAlert`, `PitSnapshotManifest`, `EntityAttribute`.
+
+### Changed — 2026-10-30 (Stage 12)
+
+- XBRL normalization: a latest derived value that combines a revised part with a part filed before that revision is flagged `mixed_vintage` (116 rows of the sample). The fiscal calendar can add a provisional year after the last 10-K; Stage 11 output does not use it.
+
 ### Changed — 2026-10-30 (Stage 11 accepted)
 
 - Stage 11 (XBRL normalization) accepted by the owner (CI run 40956130754 green).

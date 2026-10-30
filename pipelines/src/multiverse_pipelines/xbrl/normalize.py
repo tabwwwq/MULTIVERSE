@@ -11,7 +11,9 @@ report, in this order:
 
 Averages (weighted shares) are never subtracted, and instant values (cash, debt, shares
 outstanding) are taken at quarter ends as reported, never derived. A derivation never
-mixes concepts. ``original`` uses each fact as first filed, ``latest`` as last filed.
+mixes concepts. ``original`` uses each fact as first filed, ``latest`` as last filed. A latest
+derived value that combines a revised part with an older one is flagged ``mixed_vintage``
+(Stage 12).
 """
 
 from collections import Counter, defaultdict
@@ -127,11 +129,12 @@ def _missing_reason(spec: MetricSpec, period: FiscalPeriod) -> str:
 
 
 class CompanyNormalizer:
-    def __init__(self, cik: str, facts: Sequence[Fact]) -> None:
+    def __init__(self, cik: str, facts: Sequence[Fact], *, provisional: bool = False) -> None:
         self.cik = cik10(cik)
-        self.calendar = FiscalCalendar.from_facts(facts)
+        self.calendar = FiscalCalendar.from_facts(facts, provisional=provisional)
         self.currency = reporting_currency(facts)
         observations, self.duplicates = observe(facts)
+        self._observations = observations
         self.ambiguous = 0
         self.unplaced = 0
         self._index: dict[tuple[str, str], dict[tuple[int, str], Observation]] = defaultdict(dict)
@@ -287,6 +290,8 @@ class CompanyNormalizer:
             powers = [rounding(fact.value) for fact, _ in result.parts if fact.value != 0]
             if powers and max(powers) - min(powers) >= 3:
                 flags.add(QualityFlag.MIXED_ROUNDING)
+            if revision is Revision.LATEST and self._mixed_vintage(result):
+                flags.add(QualityFlag.MIXED_VINTAGE)
 
         alternatives: list[ConceptCheck] = []
         for other in spec.candidates:
@@ -324,6 +329,23 @@ class CompanyNormalizer:
                 "flags": tuple(flag for flag in QualityFlag if flag in flags),
             }
         )
+
+    def _mixed_vintage(self, result: Computed) -> bool:
+        """A revised part combined with a part last filed before that revision.
+
+        A restated year minus nine months that no later filing restated gives a fourth
+        quarter on two different bases (a sold business in one, not in the other).
+        """
+        revised = [
+            fact
+            for fact, _ in result.parts
+            if (observation := self._observations.get(fact.key)) is not None
+            and observation.original.value != observation.latest.value
+        ]
+        if not revised:
+            return False
+        newest = max(fact.filed for fact in revised)
+        return any(fact.filed < newest for fact, _ in result.parts if fact not in revised)
 
     def normalize(self) -> list[NormalizedValue]:
         rows = [

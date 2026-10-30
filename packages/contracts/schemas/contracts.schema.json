@@ -212,6 +212,21 @@
       "title": "AcquisitionStep",
       "type": "object"
     },
+    "AlertKind": {
+      "enum": [
+        "period_after_filing",
+        "filing_date_mismatch",
+        "accepted_after_filing_date",
+        "missing_acceptance",
+        "amendment_before_original",
+        "report_out_of_order",
+        "late_report",
+        "quarters_do_not_sum",
+        "deregistration"
+      ],
+      "title": "AlertKind",
+      "type": "string"
+    },
     "Authentication": {
       "enum": [
         "none",
@@ -296,6 +311,19 @@
       "title": "CausalStatus",
       "type": "string"
     },
+    "CellState": {
+      "enum": [
+        "observed",
+        "derived",
+        "not_yet_filed",
+        "not_reported",
+        "blocked",
+        "inactive",
+        "not_covered"
+      ],
+      "title": "CellState",
+      "type": "string"
+    },
     "ChangeDistribution": {
       "additionalProperties": false,
       "description": "Distribution of one paired difference at the horizon (docs/08 delta distributions).",
@@ -351,6 +379,100 @@
       ],
       "title": "ChangeUnit",
       "type": "string"
+    },
+    "ChronologyAlert": {
+      "additionalProperties": false,
+      "properties": {
+        "accession": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "cik": {
+          "pattern": "^[0-9]{10}$",
+          "type": "string"
+        },
+        "concept": {
+          "anyOf": [
+            {
+              "description": "Taxonomy concept, e.g. 'us-gaap:Revenues'.",
+              "pattern": "^[a-z][a-z0-9-]*:[A-Za-z][A-Za-z0-9]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "detail": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/AlertKind"
+        },
+        "known_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "metric": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "period_end": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "severity": {
+          "$ref": "#/$defs/QualitySeverity"
+        }
+      },
+      "required": [
+        "kind",
+        "severity",
+        "cik",
+        "accession",
+        "metric",
+        "concept",
+        "period_end",
+        "known_at",
+        "detail"
+      ],
+      "title": "ChronologyAlert",
+      "type": "object"
     },
     "Company": {
       "additionalProperties": false,
@@ -1737,6 +1859,16 @@
       "title": "KeyStatus",
       "type": "string"
     },
+    "KnowledgeView": {
+      "description": "Which value of a period a query returns when filings reported it more than once.",
+      "enum": [
+        "original",
+        "vintage",
+        "latest"
+      ],
+      "title": "KnowledgeView",
+      "type": "string"
+    },
     "Level": {
       "enum": [
         "low",
@@ -2549,6 +2681,220 @@
       "title": "PairedChange",
       "type": "object"
     },
+    "PanelCell": {
+      "additionalProperties": false,
+      "description": "One company, calendar quarter and metric of the as-of panel.",
+      "properties": {
+        "accession": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "calendar_quarter": {
+          "pattern": "^[0-9]{4}Q[1-4]$",
+          "type": "string"
+        },
+        "cik": {
+          "pattern": "^[0-9]{10}$",
+          "type": "string"
+        },
+        "concept": {
+          "anyOf": [
+            {
+              "description": "Taxonomy concept, e.g. 'us-gaap:Revenues'.",
+              "pattern": "^[a-z][a-z0-9-]*:[A-Za-z][A-Za-z0-9]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "description": "ISO 4217 currency code, for example 'USD'.",
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fiscal_period": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FiscalPeriod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fiscal_year": {
+          "anyOf": [
+            {
+              "maximum": 2200,
+              "minimum": 1990,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "flags": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/QualityFlag"
+          },
+          "type": "array"
+        },
+        "known_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lag": {
+          "description": "0 is the last calendar quarter ended at the cutoff.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "mask": {
+          "description": "True only when a value was knowable at the cutoff.",
+          "type": "boolean"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LineageMethod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "metric": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "period_end": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "period_start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "quarter_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why the cell is empty."
+        },
+        "state": {
+          "$ref": "#/$defs/CellState"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "cik",
+        "calendar_quarter",
+        "quarter_end",
+        "lag",
+        "metric",
+        "state",
+        "mask",
+        "value",
+        "unit",
+        "currency",
+        "fiscal_year",
+        "fiscal_period",
+        "period_start",
+        "period_end",
+        "method",
+        "concept",
+        "accession",
+        "known_from",
+        "flags",
+        "reason"
+      ],
+      "title": "PanelCell",
+      "type": "object"
+    },
     "ParameterSpec": {
       "additionalProperties": false,
       "description": "One input of a decision. ``uncertain`` parameters take a distribution.",
@@ -2713,6 +3059,158 @@
       "title": "PeriodType",
       "type": "string"
     },
+    "PitSnapshotManifest": {
+      "additionalProperties": false,
+      "description": "An immutable as-of panel: the same cutoff always gives the same cells and hash.",
+      "properties": {
+        "alerts": {
+          "description": "Chronology alerts of these companies.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "cells": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "ciks": {
+          "items": {
+            "pattern": "^[0-9]{10}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Not part of the hash.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "cutoff": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "cutoff_label": {
+          "description": "As requested.",
+          "maxLength": 40,
+          "minLength": 10,
+          "type": "string"
+        },
+        "inputs": {
+          "items": {
+            "$ref": "#/$defs/SnapshotInput"
+          },
+          "type": "array"
+        },
+        "metrics": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "panel_schema_version": {
+          "default": "panel-1",
+          "type": "string"
+        },
+        "policy_version": {
+          "default": "pit-policy-1",
+          "type": "string"
+        },
+        "quarters": {
+          "maximum": 80,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "sha256": {
+          "description": "Of the canonical cells file; names the snapshot.",
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^pit-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "state_counts": {
+          "items": {
+            "$ref": "#/$defs/StateCount"
+          },
+          "type": "array"
+        },
+        "view": {
+          "$ref": "#/$defs/KnowledgeView"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "sha256",
+        "cutoff",
+        "cutoff_label",
+        "view",
+        "quarters",
+        "ciks",
+        "metrics",
+        "cells",
+        "state_counts",
+        "policy_version",
+        "panel_schema_version",
+        "contracts_version",
+        "inputs",
+        "alerts",
+        "created_at"
+      ],
+      "title": "PitSnapshotManifest",
+      "type": "object"
+    },
+    "PitValue": {
+      "additionalProperties": false,
+      "description": "One normalized value during one interval of knowledge time.",
+      "properties": {
+        "change": {
+          "$ref": "#/$defs/ValueChange"
+        },
+        "known_from": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "known_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When a later filing replaced it; empty while current."
+        },
+        "timings": {
+          "default": [],
+          "description": "When each source filing became public.",
+          "items": {
+            "$ref": "#/$defs/SourceTiming"
+          },
+          "type": "array"
+        },
+        "value": {
+          "$ref": "#/$defs/NormalizedValue"
+        }
+      },
+      "required": [
+        "value",
+        "known_from",
+        "known_to",
+        "change",
+        "timings"
+      ],
+      "title": "PitValue",
+      "type": "object"
+    },
     "ProceedsAllocation": {
       "additionalProperties": false,
       "description": "Shares of the net proceeds of a divestiture; they add up to exactly 1.",
@@ -2756,7 +3254,8 @@
         "non_usd",
         "fifty_three_weeks",
         "mixed_rounding",
-        "scale_mismatch"
+        "scale_mismatch",
+        "mixed_vintage"
       ],
       "title": "QualityFlag",
       "type": "string"
@@ -3908,6 +4407,38 @@
       "title": "ShareMember",
       "type": "object"
     },
+    "SnapshotInput": {
+      "additionalProperties": false,
+      "description": "One raw archive file the warehouse was built from.",
+      "properties": {
+        "downloaded_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 300,
+          "minLength": 1,
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "url": {
+          "maxLength": 300,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "url",
+        "downloaded_at"
+      ],
+      "title": "SnapshotInput",
+      "type": "object"
+    },
     "SourceCatalog": {
       "additionalProperties": false,
       "description": "Every source, risk and planned step, checked as one document.",
@@ -4061,6 +4592,47 @@
       "title": "SourceFact",
       "type": "object"
     },
+    "SourceTiming": {
+      "additionalProperties": false,
+      "properties": {
+        "accession": {
+          "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$",
+          "type": "string"
+        },
+        "known_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "precision": {
+          "$ref": "#/$defs/TimePrecision"
+        }
+      },
+      "required": [
+        "accession",
+        "known_at",
+        "precision"
+      ],
+      "title": "SourceTiming",
+      "type": "object"
+    },
+    "StateCount": {
+      "additionalProperties": false,
+      "properties": {
+        "cells": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "state": {
+          "$ref": "#/$defs/CellState"
+        }
+      },
+      "required": [
+        "state",
+        "cells"
+      ],
+      "title": "StateCount",
+      "type": "object"
+    },
     "SupportStatus": {
       "description": "Whether MULTIVERSE can work with a company (PRD FC-01, FC-02).",
       "enum": [
@@ -4109,6 +4681,16 @@
       ],
       "title": "TickerListing",
       "type": "object"
+    },
+    "TimePrecision": {
+      "description": "How the moment a filing became public was determined.",
+      "enum": [
+        "accepted",
+        "filing_day_start",
+        "filing_day_end"
+      ],
+      "title": "TimePrecision",
+      "type": "string"
     },
     "TimelineEvent": {
       "additionalProperties": false,
@@ -4257,6 +4839,19 @@
       ],
       "title": "UniformRange",
       "type": "object"
+    },
+    "ValueChange": {
+      "description": "Why a new interval of knowledge began for one period.",
+      "enum": [
+        "first_known",
+        "value_filled",
+        "value_revised",
+        "value_withdrawn",
+        "confirmed",
+        "requalified"
+      ],
+      "title": "ValueChange",
+      "type": "string"
     },
     "ValueKind": {
       "description": "Where a number comes from in time (PRD FR-RE-01).",
@@ -4488,9 +5083,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.8.0",
+  "$id": "urn:multiverse:contracts:0.9.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.8.0"
+  "x-contracts-version": "0.9.0"
 }

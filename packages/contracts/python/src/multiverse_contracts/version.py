@@ -24,6 +24,10 @@ and the date an acquisition step's owner decision was taken.
 0.8.0 (Stage 11): normalized values from SEC XBRL facts with source facts,
 method, revision, knowledge date and quality flags; Q4 as fiscal year minus
 three reported quarters.
+
+0.9.0 (Stage 12): point-in-time values with intervals of knowledge time, the
+as-of quarterly panel with feature masks, chronology alerts, snapshot manifests
+and effective-dated company attributes; the quality flag mixed_vintage.
 """
 
-CONTRACTS_VERSION = "0.8.0"
+CONTRACTS_VERSION = "0.9.0"

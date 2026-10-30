@@ -6,7 +6,7 @@ Data pipelines for SEC, FRED, ECB and World Bank (`docs/04`). They read the sour
 |---|---|---|
 | 10 | SEC raw ingestion: Submissions API, Company Facts API, bulk ZIPs (ADR-0017) | **Done** |
 | 11 | XBRL normalization: canonical values with lineage, revisions and quality (ADR-0018) | **Done** |
-| 12 | Point-in-time warehouse | Planned |
+| 12 | Point-in-time warehouse: as-of values, quarterly panel with masks, hashed snapshots (ADR-0019) | **Done** |
 | 13 | Macro vintages | Planned |
 
 Rules:
@@ -90,3 +90,55 @@ One row is one metric of one company for one fiscal period (Q1 to Q4, FY) under 
 Each row names its concept, its method and the source facts with their signs. It also names the accession and date of the filing that made it knowable, and the other candidate concepts with their differences. Missing values carry a reason, never zero.
 
 Metrics: `revenue`, `cogs`, `operating_income`, `net_income`, `rnd`, `depreciation_amortization`, `cfo`, `capex`, `cash`, `long_term_debt`, `long_term_debt_noncurrent`, `debt_current`, `shares_diluted`, `shares_outstanding`; calculated `free_cash_flow` (CFO − capex) and `ebitda` (operating income + D&A, not adjusted). The concept map with relations is `multiverse_pipelines/xbrl/concepts.py`.
+
+A latest derived value that combines a revised part with a part filed before that revision (a restated year minus nine months nobody restated) carries the flag `mixed_vintage` (Stage 12).
+
+## Point-in-time warehouse
+
+Reads only the local raw archive (company facts and submissions with their paged files); no network. Run from the repository root:
+
+| Command | What it does |
+|---|---|
+| `uv run python -m multiverse_pipelines.pit build` | All archived candidates (or `--cik`) into `var/data/pit/warehouse.sqlite`; companies run in parallel |
+| `... pit as-of --cik 97476 --metric revenue --at 2021-12-31 [--view vintage\|original\|latest]` | One company and metric as known at a moment |
+| `... pit history --cik 48898 --metric revenue --fiscal-year 2019 --period FY` | Every answer one period had: its corrections over time |
+| `... pit entity --cik 816284 --at 2020-06-30` | Name, ticker, exchange, SIC code and status as known at a moment |
+| `... pit snapshot --cutoff 2021-12-31 [--quarters 20] [--view vintage\|original]` | The as-of panel, hashed, with features and lineage, into `var/data/pit/snapshots/<id>/` |
+| `... pit coverage --cutoff 2025-12-31` | Coverage dashboard (`coverage.html`, `.md`, `.json`) into `var/data/pit/coverage/` |
+| `... pit alerts [--severity warning]` | Broken chronology alerts |
+| `... pit leakage-check --cutoff 2021-12-31` | Rebuilds from only what was public at the cutoff and compares the snapshot hash with the full archive (exit 1 if they differ) |
+
+A cutoff given as a date is the end of that day in US Eastern time (EDGAR's clock); a time needs its offset (`2021-12-31T16:00-05:00`).
+
+When a filing became public: its EDGAR acceptance time (UTC in the submissions file), but never before the start of its filing date. An evening filing dated the next business day belongs to that day, so a cutoff of 31 December never sees a filing dated in January. When only the date is known (1990s filings, filings missing from the index), the end of that day.
+
+Each normalized value is stored with the interval of knowledge time during which it was the current answer (`PitValue`: `known_from`, `known_to`, why it changed, when each source filing was public). The Stage 11 normalizer runs again at every moment a filing became public, on exactly the facts public then, so an as-of query equals normalizing what was public at the cutoff: fiscal calendar, concept of the year, currency and derived quarters included. The current fiscal year, which has no 10-K yet, is placed as a provisional year from its 10-Qs. Facts that end after their own filing (estimates) never enter a view.
+
+Views:
+
+- `vintage`: as last filed before the cutoff, the default for features;
+- `original`: as first filed before the cutoff, to compare forecasts with the first release;
+- `latest`: as known today. Hindsight, for studying revisions only; panels and snapshots refuse it.
+
+The panel (`PanelCell`) has a cell for every company, each of the last N calendar quarters ended at the cutoff and each metric. A fiscal quarter belongs to the nearest calendar quarter end (a quarter ending 2 January is the fourth quarter). The mask is true only for `observed` and `derived` cells. Every other state says why the cell is empty and is never zero:
+
+| State | Meaning |
+|---|---|
+| `not_yet_filed` | The quarter ended, its 10-Q or 10-K was not public yet |
+| `not_reported` | The report was public, without this metric |
+| `blocked` | Withheld: conflicting values in one filing |
+| `inactive` | A Form 15 before the quarter ended, no periodic report after it, and the report for the first quarter after the Form 15 overdue (over 90 days). Until then `not_yet_filed`: a Form 15 can cover one class of securities only |
+| `not_covered` | Before the first XBRL report |
+
+Features (`ttm_<flow>`, `yoy_<flow>`) are computed from panel cells only, never from the warehouse, so they cannot see more than the panel; the mask propagates.
+
+Snapshot folder (never committed):
+
+| File | Content |
+|---|---|
+| `snapshot.jsonl` | Header, each company as of the cutoff, every cell: canonical JSON lines; its SHA-256 names the snapshot (`pit-<date>-<12 hex>`) |
+| `panel.csv`, `features.csv` | The cells and the features flattened |
+| `lineage.jsonl` | Each value: source facts, accession, when public, filing URL on sec.gov, raw file SHA-256 |
+| `manifest.json` | `PitSnapshotManifest`: cutoff, view, window, counts per state, inputs with SHA-256, versions, build time (not hashed) |
+
+Identity over time: names follow `formerNames` with their dates. Tickers, exchanges and SIC codes are current values in the submissions file; they apply from the moment they were observed and never backwards, so an old cutoff sees no ticker or sector rather than today's. Their history per filing is in the Financial Statement Data Sets (decision D-10).

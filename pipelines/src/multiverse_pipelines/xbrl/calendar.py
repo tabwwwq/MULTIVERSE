@@ -6,6 +6,10 @@ which also covers years ending in January. Quarter ends come from the year-to-da
 quarterly periods that start or continue the year. Every fact then falls into a slot:
 a quarter (Q1 to Q4), a year-to-date total (H1, 9M), the year (FY) or, for instant
 values, the end of a quarter (I1 to I4).
+
+On request the calendar also has a provisional year: the one after the last 10-K, while
+its 10-Qs are being filed. Its end is projected from the year before; the 10-K replaces
+it. Point-in-time views need it, because at a cutoff the current year has no 10-K yet.
 """
 
 from collections import Counter, defaultdict
@@ -28,6 +32,7 @@ class FiscalYear:
     start: date
     end: date
     quarter_ends: tuple[date, date, date, date]
+    provisional: bool = False
 
     @property
     def length(self) -> int:
@@ -99,12 +104,20 @@ def _quarter_ends(facts: list[Fact], start: date, end: date) -> tuple[date, date
     return (ends[0], ends[1], ends[2], end)
 
 
+def _projected_end(last: FiscalYear) -> date:
+    """The end of the year after ``last``: a month end again, or 52 weeks later."""
+    if (last.end + timedelta(days=1)).day == 1:
+        year, month = last.end.year + 1, last.end.month
+        return date(year + month // 12, month % 12 + 1, 1) - timedelta(days=1)
+    return last.end + timedelta(days=364)
+
+
 class FiscalCalendar:
     def __init__(self, years: Iterable[FiscalYear]) -> None:
         self.years = tuple(sorted(years, key=lambda year: year.end))
 
     @classmethod
-    def from_facts(cls, facts: Iterable[Fact]) -> "FiscalCalendar":
+    def from_facts(cls, facts: Iterable[Fact], *, provisional: bool = False) -> "FiscalCalendar":
         items = list(facts)
         periods = _years(items)
         labels = _labels(items, {end for _, end in periods})
@@ -118,6 +131,22 @@ class FiscalCalendar:
                 continue
             used.add(label)
             years.append(FiscalYear(label, start, end, _quarter_ends(items, start, end)))
+        if provisional and years:
+            last = max(years, key=lambda year: year.end)
+            start = last.end + timedelta(days=1)
+            margin = timedelta(days=TOLERANCE_DAYS)
+            limit = start + timedelta(days=last.length) + margin
+            begun = any(
+                f.start is not None
+                and f.form.startswith("10-Q")
+                and start - margin <= f.start
+                and f.end <= limit
+                for f in items
+            )
+            if begun and last.label + 1 not in used:
+                end = _projected_end(last)
+                ends = _quarter_ends(items, start, end)
+                years.append(FiscalYear(last.label + 1, start, end, ends, provisional=True))
         return cls(years)
 
     def year(self, label: int) -> FiscalYear | None:

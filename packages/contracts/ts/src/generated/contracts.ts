@@ -30,6 +30,20 @@ export type MagnitudeUnit =
   | "usd";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "AlertKind".
+ */
+export type AlertKind =
+  | "period_after_filing"
+  | "filing_date_mismatch"
+  | "accepted_after_filing_date"
+  | "missing_acceptance"
+  | "amendment_before_original"
+  | "report_out_of_order"
+  | "late_report"
+  | "quarters_do_not_sum"
+  | "deregistration";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "Authentication".
  */
 export type Authentication = "none" | "declared_user_agent" | "api_key" | "contract";
@@ -42,6 +56,18 @@ export type Authentication = "none" | "declared_user_agent" | "api_key" | "contr
 export type CausalStatus = "not_assessed" | "assumption_based" | "diagnostics_passed";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CellState".
+ */
+export type CellState =
+  | "observed"
+  | "derived"
+  | "not_yet_filed"
+  | "not_reported"
+  | "blocked"
+  | "inactive"
+  | "not_covered";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "ResultMetric".
  */
 export type ResultMetric = "revenue" | "ebitda" | "fcf" | "net_debt" | "ev";
@@ -52,6 +78,11 @@ export type ResultMetric = "revenue" | "ebitda" | "fcf" | "net_debt" | "ev";
  * via the `definition` "ChangeUnit".
  */
 export type ChangeUnit = "currency" | "fraction_of_baseline";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "QualitySeverity".
+ */
+export type QualitySeverity = "info" | "warning" | "blocking";
 /**
  * Whether a number describes real reported data or synthetic demo data (PRD SYN-04).
  *
@@ -103,11 +134,6 @@ export type Evidence = "verified" | "expected";
  * via the `definition` "FilingForm".
  */
 export type FilingForm = "10-K" | "10-Q" | "10-K/A" | "10-Q/A" | "20-F";
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "QualitySeverity".
- */
-export type QualitySeverity = "info" | "warning" | "blocking";
 /**
  * Whether MULTIVERSE can work with a company (PRD FC-01, FC-02).
  *
@@ -258,6 +284,13 @@ export type ValueUnit =
  */
 export type MagnitudeBase = "previous_rnd_budget" | "revenue" | "headcount" | "none";
 /**
+ * Which value of a period a query returns when filings reported it more than once.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "KnowledgeView".
+ */
+export type KnowledgeView = "original" | "vintage" | "latest";
+/**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "Level".
  */
@@ -280,7 +313,8 @@ export type QualityFlag =
   | "non_usd"
   | "fifty_three_weeks"
   | "mixed_rounding"
-  | "scale_mismatch";
+  | "scale_mismatch"
+  | "mixed_vintage";
 /**
  * Flows cover a period; balance sheet items and share counts are instant values.
  *
@@ -302,6 +336,26 @@ export type Revision = "original" | "latest";
  * via the `definition` "ResultMode".
  */
 export type ResultMode = "demo" | "empirical_forecast" | "causal_study" | "fictional_exploratory";
+/**
+ * Why a new interval of knowledge began for one period.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ValueChange".
+ */
+export type ValueChange =
+  | "first_known"
+  | "value_filled"
+  | "value_revised"
+  | "value_withdrawn"
+  | "confirmed"
+  | "requalified";
+/**
+ * How the moment a filing became public was determined.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TimePrecision".
+ */
+export type TimePrecision = "accepted" | "filing_day_start" | "filing_day_end";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "ResultStatus".
@@ -547,6 +601,21 @@ export interface HistogramBin {
    * Exact decimal number as a string, for example '4213587912' or '-0.25'.
    */
   low: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ChronologyAlert".
+ */
+export interface ChronologyAlert {
+  accession: string | null;
+  cik: string;
+  concept: string | null;
+  detail: string;
+  kind: AlertKind;
+  known_at: string | null;
+  metric: string | null;
+  period_end: string | null;
+  severity: QualitySeverity;
 }
 /**
  * Identity of a company. ``company_id`` stays the same through every rename and relisting.
@@ -1544,6 +1613,133 @@ export interface WorkforceRestructure {
 export interface SensitivitySettings {
   parameters: string[];
   points: number;
+}
+/**
+ * One company, calendar quarter and metric of the as-of panel.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "PanelCell".
+ */
+export interface PanelCell {
+  accession: string | null;
+  calendar_quarter: string;
+  cik: string;
+  concept: string | null;
+  currency: string | null;
+  fiscal_period: FiscalPeriod | null;
+  fiscal_year: number | null;
+  flags: QualityFlag[];
+  known_from: string | null;
+  /**
+   * 0 is the last calendar quarter ended at the cutoff.
+   */
+  lag: number;
+  /**
+   * True only when a value was knowable at the cutoff.
+   */
+  mask: boolean;
+  method: LineageMethod | null;
+  metric: string;
+  period_end: string | null;
+  period_start: string | null;
+  quarter_end: string;
+  /**
+   * Why the cell is empty.
+   */
+  reason: string | null;
+  state: CellState;
+  unit: string | null;
+  value: string | null;
+}
+/**
+ * An immutable as-of panel: the same cutoff always gives the same cells and hash.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "PitSnapshotManifest".
+ */
+export interface PitSnapshotManifest {
+  /**
+   * Chronology alerts of these companies.
+   */
+  alerts: number;
+  cells: number;
+  /**
+   * @minItems 1
+   */
+  ciks: [string, ...string[]];
+  contracts_version: string;
+  /**
+   * Not part of the hash.
+   */
+  created_at: string;
+  cutoff: string;
+  /**
+   * As requested.
+   */
+  cutoff_label: string;
+  inputs: SnapshotInput[];
+  /**
+   * @minItems 1
+   */
+  metrics: [string, ...string[]];
+  panel_schema_version: string;
+  policy_version: string;
+  quarters: number;
+  /**
+   * Of the canonical cells file; names the snapshot.
+   */
+  sha256: string;
+  snapshot_id: string;
+  state_counts: StateCount[];
+  view: KnowledgeView;
+}
+/**
+ * One raw archive file the warehouse was built from.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SnapshotInput".
+ */
+export interface SnapshotInput {
+  downloaded_at: string;
+  path: string;
+  sha256: string;
+  url: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "StateCount".
+ */
+export interface StateCount {
+  cells: number;
+  state: CellState;
+}
+/**
+ * One normalized value during one interval of knowledge time.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "PitValue".
+ */
+export interface PitValue {
+  change: ValueChange;
+  known_from: string;
+  /**
+   * When a later filing replaced it; empty while current.
+   */
+  known_to: string | null;
+  /**
+   * When each source filing became public.
+   */
+  timings: SourceTiming[];
+  value: NormalizedValue;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SourceTiming".
+ */
+export interface SourceTiming {
+  accession: string;
+  known_at: string;
+  precision: TimePrecision;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema

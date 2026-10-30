@@ -67,6 +67,8 @@ class QualityFlag(StrEnum):
     FIFTY_THREE_WEEKS = "fifty_three_weeks"
     MIXED_ROUNDING = "mixed_rounding"
     SCALE_MISMATCH = "scale_mismatch"
+    MIXED_VINTAGE = "mixed_vintage"
+    """A derived value mixing a restated part with a part filed before the restatement."""
 
 
 DERIVED_METHODS = frozenset(

@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-30 (Stage 13 accepted)
+
+- Stage 13 (macro vintages) accepted by the owner (CI run 41036165376 green). Real macro downloads still wait for decisions D-11 (FRED key) and D-12 (ECB, World Bank).
+
 ### Added — 2026-10-30 (Stage 13)
 
 - Macro vintages (`python -m multiverse_pipelines.macro`, ADR-0020): a registry of 18 series (FRED/ALFRED policy rate, CPI, unemployment, real GDP, 10-year yield, 10y–2y spread, recession indicator; ECB EUR/USD reference rate, deposit facility rate, euro area AAA 10-year yield; World Bank GDP growth, inflation, unemployment and GDP per capita for the United States and the euro area) with geography, frequency, unit, seasonal adjustment, period label, release time zone, publication lag, revision cadence, business days and the chosen transform.

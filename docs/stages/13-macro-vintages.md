@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 13 — макроэкономика с vintages и as-of join |
 | Дата | 2026-10-30 |
-| Статус | REVIEW |
+| Статус | ACCEPTED 2026-10-30 (CI run 41036165376: 7/7 задач зелёные; владелец: «Принять Stage 13»). Реальные макроданные по-прежнему ждут D-11 и D-12 |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/13_MACRO_VINTAGE_INTEGRATION.md` |
 | Основание | `docs/04` (macro, FRED vintage, World Bank), `docs/09` (MacroObservation), `docs/11` (будущие релизы не входят в прошлые snapshots); команда владельца 2026-10-30: «Делай Stage 13», затем «дальше» |
 | Решение | ADR-0020 — макроэкономика по моменту публикации |

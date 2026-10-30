@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 15 — baseline forecasting |
 | Дата | 2026-10-30 / 31 |
-| Статус | REVIEW (CI run 41143679653: 7/7 задач зелёные, commit `be17b5b`) |
+| Статус | ACCEPTED 2026-10-31 (CI run 41143679653: 7/7 задач зелёные, commit `be17b5b`; владелец: «Принять Stage 15») |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/15_BASELINE_FORECASTING.md` |
 | Основание | `docs/06` (цели, окна, горизонты 1/4/8/12/20, rolling origin, метрики), датасет Gate B на 1000 компаниях (14b); команда владельца 2026-10-30: «если ничего делай некст шаг» |
 | Решение | ADR-0023 — baselines прогноза |

@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-31 (Stage 15 accepted)
+
+- Stage 15 (forecasting baselines) accepted by the owner (CI run 41143679653 green).
+
 ### Added — 2026-10-31 (Stage 15)
 
 - Forecasting baselines before any neural network (ADR-0023): one dataset, one locked protocol, seven models scored on the same rows.

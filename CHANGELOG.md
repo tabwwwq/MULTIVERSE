@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-10-30 (data acquisition 14b accepted)
+
+- The data acquisition 14b (decisions D-10, D-11, D-12; universe of 1000 companies; Gate B passed with warnings) accepted by the owner (CI run 41129053273 green).
+
 ### Added — 2026-10-30 (data acquisition: decisions D-10, D-11, D-12)
 
 - Owner decisions recorded in the source catalog: D-10 (SEC bulk files `companyfacts.zip` and `submissions.zip`, a universe of 1000 companies, 10 GB on disk), D-11 (FRED/ALFRED, 7 series), D-12 (ECB, 3 series; World Bank, 4 indicators for the United States and the euro area). Financial Statement Data Sets stay undecided.

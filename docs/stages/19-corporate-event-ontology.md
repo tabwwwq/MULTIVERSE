@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 19 — corporate event ontology |
 | Дата | 2026-11-06 |
-| Статус | REVIEW |
+| Статус | REVIEW (CI run 42131812836: 7/7 задач зелёные, commit `04dc20e`); ждёт приёмки владельца |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/19_CORPORATE_EVENT_ONTOLOGY.md` |
 | Основание | `docs/05`, `docs/09`; команда владельца «Принять и Stage 19»; решение D-13 |
 | Решение | ADR-0027 — реестр событий |

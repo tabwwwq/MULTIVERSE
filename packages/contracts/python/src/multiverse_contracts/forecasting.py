@@ -9,7 +9,7 @@ it used, so a number can always be traced to its inputs.
 
 from datetime import date
 from enum import StrEnum
-from typing import Annotated, Self
+from typing import Annotated, Literal, Self
 
 from pydantic import AwareDatetime, Field, StringConstraints, model_validator
 
@@ -87,6 +87,26 @@ class ForecastDatasetManifest(ContractModel):
         return self
 
 
+class SequenceManifest(ContractModel):
+    """Quarterly histories aligned with the rows of a forecasting dataset (Stage 16)."""
+
+    sequences_id: Annotated[str, StringConstraints(pattern=r"^fsq-[0-9]{8}-[0-9a-f]{12}$")]
+    sha256: Sha256
+    dataset_id: str
+    dataset_sha256: Sha256
+    lags: int = Field(ge=1, le=40, description="Lags 1 to this one; lag 0 is never public.")
+    channels: tuple[Name, ...] = Field(min_length=1)
+    rows: int = Field(ge=0, description="Company origins, each with every lag.")
+    contracts_version: str
+    created_at: AwareDatetime = Field(description="Not part of the hash.")
+
+    @model_validator(mode="after")
+    def _check(self) -> Self:
+        if self.sequences_id.rsplit("-", 1)[1] != self.sha256[:12]:
+            raise ValueError("the sequences are named by their SHA-256")
+        return self
+
+
 class Param(ContractModel):
     name: Name
     value: str = Field(min_length=1, max_length=80)
@@ -105,6 +125,13 @@ class ForecastProtocol(ContractModel):
     material_revenue: float = Field(gt=0, description="Revenue floor of the material population.")
     winsor_quantile: float = Field(ge=0, lt=0.5)
     bootstrap_resamples: int = Field(ge=100)
+    repeats: int = Field(
+        default=1,
+        ge=1,
+        le=10,
+        description="Trainings per test fold, with seeds seed, seed + 1, ...: each is scored, "
+        "and so is the mean of their forecasts.",
+    )
     grids: dict[Name, tuple[tuple[Param, ...], ...]]
 
     @model_validator(mode="after")
@@ -176,4 +203,40 @@ class BenchmarkReport(ContractModel):
     def _check(self) -> Self:
         if self.benchmark_id.rsplit("-", 1)[1] != self.sha256[:12]:
             raise ValueError("the benchmark is named by its SHA-256")
+        return self
+
+
+class EpochLog(ContractModel):
+    epoch: int = Field(ge=1)
+    train_loss: Score
+    validation_loss: Score
+    learning_rate: Score
+    seconds: Score
+
+
+class TrainingRun(ContractModel):
+    """One training of a temporal model: what it saw, how it went, where it is stored."""
+
+    run_id: Annotated[str, StringConstraints(pattern=r"^run-[0-9]{8}-[0-9a-f]{12}$")]
+    model: Name
+    purpose: Literal["smoke", "benchmark"]
+    dataset_id: str
+    sequences_id: str
+    fold_year: int
+    seed: int
+    device: str
+    torch_version: str
+    params: tuple[Param, ...]
+    train_rows: int = Field(ge=1)
+    validation_rows: int = Field(ge=1)
+    evaluated_rows: int = Field(ge=0)
+    epochs: tuple[EpochLog, ...] = Field(min_length=1)
+    best_epoch: int = Field(ge=1)
+    checkpoint_sha256: Sha256
+    created_at: AwareDatetime = Field(description="Not part of the id.")
+
+    @model_validator(mode="after")
+    def _check(self) -> Self:
+        if self.best_epoch > len(self.epochs):
+            raise ValueError("the best epoch is one of the epochs run")
         return self

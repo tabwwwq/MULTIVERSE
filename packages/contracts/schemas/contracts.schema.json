@@ -1714,6 +1714,36 @@
       "title": "DownloadScope",
       "type": "string"
     },
+    "EpochLog": {
+      "additionalProperties": false,
+      "properties": {
+        "epoch": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "learning_rate": {
+          "type": "number"
+        },
+        "seconds": {
+          "type": "number"
+        },
+        "train_loss": {
+          "type": "number"
+        },
+        "validation_loss": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "epoch",
+        "train_loss",
+        "validation_loss",
+        "learning_rate",
+        "seconds"
+      ],
+      "title": "EpochLog",
+      "type": "object"
+    },
     "Evidence": {
       "description": "Whether a score rests on a checked fact or on an expectation still to be checked.",
       "enum": [
@@ -2047,6 +2077,13 @@
           "pattern": "^[a-z][a-z0-9_]*$",
           "type": "string"
         },
+        "repeats": {
+          "default": 1,
+          "description": "Trainings per test fold, with seeds seed, seed + 1, ...: each is scored, and so is the mean of their forecasts.",
+          "maximum": 10,
+          "minimum": 1,
+          "type": "integer"
+        },
         "seed": {
           "type": "integer"
         },
@@ -2088,6 +2125,7 @@
         "material_revenue",
         "winsor_quantile",
         "bootstrap_resamples",
+        "repeats",
         "grids"
       ],
       "title": "ForecastProtocol",
@@ -5620,6 +5658,67 @@
       "title": "SensitivitySettings",
       "type": "object"
     },
+    "SequenceManifest": {
+      "additionalProperties": false,
+      "description": "Quarterly histories aligned with the rows of a forecasting dataset (Stage 16).",
+      "properties": {
+        "channels": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Not part of the hash.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "dataset_id": {
+          "type": "string"
+        },
+        "dataset_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "lags": {
+          "description": "Lags 1 to this one; lag 0 is never public.",
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "rows": {
+          "description": "Company origins, each with every lag.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "sequences_id": {
+          "pattern": "^fsq-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sequences_id",
+        "sha256",
+        "dataset_id",
+        "dataset_sha256",
+        "lags",
+        "channels",
+        "rows",
+        "contracts_version",
+        "created_at"
+      ],
+      "title": "SequenceManifest",
+      "type": "object"
+    },
     "ShareGroupSpec": {
       "additionalProperties": false,
       "description": "Shares that must add up to exactly 100 % (PRD FR-DE-04, docs/07).",
@@ -6087,6 +6186,104 @@
         "ramp_quarters"
       ],
       "title": "Timing",
+      "type": "object"
+    },
+    "TrainingRun": {
+      "additionalProperties": false,
+      "description": "One training of a temporal model: what it saw, how it went, where it is stored.",
+      "properties": {
+        "best_epoch": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "checkpoint_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Not part of the id.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "dataset_id": {
+          "type": "string"
+        },
+        "device": {
+          "type": "string"
+        },
+        "epochs": {
+          "items": {
+            "$ref": "#/$defs/EpochLog"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "evaluated_rows": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "fold_year": {
+          "type": "integer"
+        },
+        "model": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "params": {
+          "items": {
+            "$ref": "#/$defs/Param"
+          },
+          "type": "array"
+        },
+        "purpose": {
+          "enum": [
+            "smoke",
+            "benchmark"
+          ],
+          "type": "string"
+        },
+        "run_id": {
+          "pattern": "^run-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "sequences_id": {
+          "type": "string"
+        },
+        "torch_version": {
+          "type": "string"
+        },
+        "train_rows": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "validation_rows": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "run_id",
+        "model",
+        "purpose",
+        "dataset_id",
+        "sequences_id",
+        "fold_year",
+        "seed",
+        "device",
+        "torch_version",
+        "params",
+        "train_rows",
+        "validation_rows",
+        "evaluated_rows",
+        "epochs",
+        "best_epoch",
+        "checkpoint_sha256",
+        "created_at"
+      ],
+      "title": "TrainingRun",
       "type": "object"
     },
     "Transform": {
@@ -6596,9 +6793,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.13.0",
+  "$id": "urn:multiverse:contracts:0.14.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.13.0"
+  "x-contracts-version": "0.14.0"
 }

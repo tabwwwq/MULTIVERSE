@@ -8,6 +8,7 @@ import csv
 import hashlib
 import io
 import json
+import shutil
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -23,7 +24,7 @@ from multiverse_contracts.forecasting import (
 )
 from multiverse_forecast import cli
 from multiverse_forecast.benchmark import Runner, boundary, cold_start_firms, run
-from multiverse_forecast.data import LAGS, load
+from multiverse_forecast.data import LAGS, load, load_sequences
 from multiverse_forecast.models import Prep, persistence_values, seasonal_lag
 
 TARGET = ForecastTarget.REVENUE_GROWTH
@@ -150,6 +151,50 @@ def test_the_dataset_is_checked_against_its_hash(dataset_folder: Path, tmp_path:
     (broken / "dataset.csv").write_bytes((dataset_folder / "dataset.csv").read_bytes() + b"\n")
     with pytest.raises(ValueError, match="SHA-256"):
         load(broken)
+
+
+def write_sequences(folder: Path, dataset_sha256: str, text: str) -> None:
+    digest = hashlib.sha256(text.encode()).hexdigest()
+    (folder / "sequences.csv").write_bytes(text.encode())
+    (folder / "sequences.json").write_text(
+        json.dumps(
+            {
+                "sequences_id": f"fsq-20250101-{digest[:12]}",
+                "sha256": digest,
+                "dataset_id": f"fds-20250101-{dataset_sha256[:12]}",
+                "dataset_sha256": dataset_sha256,
+                "lags": 2,
+                "channels": ["rev_growth"],
+                "rows": 1,
+                "contracts_version": "0.14.0",
+                "created_at": "2025-01-02T00:00:00Z",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+
+def test_sequences_follow_the_dataset_rows_and_are_checked(
+    dataset_folder: Path, tmp_path: Path
+) -> None:
+    folder = tmp_path / "copy"
+    shutil.copytree(dataset_folder, folder)
+    dataset = load(folder)
+    cik, origin = str(dataset.ciks[5]), str(dataset.origins[5])
+    text = f"cik,origin,lag,rev_growth\n{cik},{origin},1,0.5\n{cik},{origin},2,\n"
+    write_sequences(folder, dataset.manifest.sha256, text)
+    sequences, sequences_id = load_sequences(folder, dataset)
+    assert sequences_id.startswith("fsq-20250101-")
+    assert sequences.shape == (dataset.ciks.size, 2, 1)
+    assert sequences[5, 1, 0] == 0.5  # lag 1 is the newest, so it comes last
+    assert np.isnan(sequences[5, 0, 0])  # a gap stays a gap
+    assert np.isnan(sequences[6]).all()
+    (folder / "sequences.csv").write_bytes(text.replace("0.5", "0.6").encode())
+    with pytest.raises(ValueError, match="SHA-256"):
+        load_sequences(folder, dataset)
+    write_sequences(folder, "cd" * 32, text)
+    with pytest.raises(ValueError, match="another dataset"):
+        load_sequences(folder, dataset)
 
 
 def test_naive_forecasts_read_only_public_lags() -> None:

@@ -41,6 +41,9 @@ universe was drawn from, its eligibility rules and counts, strata and companies.
 
 0.13.0 (Stage 15): the forecasting dataset manifest, the locked forecasting protocol
 and the benchmark report with scores, intervals, sector errors and configurations.
+
+0.14.0 (Stage 16): quarterly sequences aligned with a forecasting dataset, and the
+training run of a temporal model with its configuration, losses and checkpoint.
 """
 
-CONTRACTS_VERSION = "0.13.0"
+CONTRACTS_VERSION = "0.14.0"

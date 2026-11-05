@@ -39,6 +39,7 @@ from multiverse_contracts.distributions import (
 )
 from multiverse_contracts.forecasting import (
     BenchmarkReport,
+    EpochLog,
     ForecastDatasetManifest,
     ForecastProtocol,
     ForecastTarget,
@@ -47,8 +48,10 @@ from multiverse_contracts.forecasting import (
     Population,
     ScoreRow,
     SectorScore,
+    SequenceManifest,
     SplitName,
     TargetCount,
+    TrainingRun,
 )
 from multiverse_contracts.interventions import (
     CATALOG,
@@ -213,6 +216,7 @@ __all__ = [
     "DownloadScope",
     "EntityAttribute",
     "EntityAttributeName",
+    "EpochLog",
     "ExampleCount",
     "FilingForm",
     "FilingReference",
@@ -282,6 +286,7 @@ __all__ = [
     "Sector",
     "SectorScore",
     "SensitivitySettings",
+    "SequenceManifest",
     "SourceCatalog",
     "SourceFact",
     "SourceTiming",
@@ -291,6 +296,7 @@ __all__ = [
     "TickerListing",
     "TimePrecision",
     "Timing",
+    "TrainingRun",
     "Transform",
     "TriangularRange",
     "UncertaintyType",

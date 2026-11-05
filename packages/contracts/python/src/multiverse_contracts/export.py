@@ -19,6 +19,8 @@ from multiverse_contracts.forecasting import (
     BenchmarkReport,
     ForecastDatasetManifest,
     ForecastProtocol,
+    SequenceManifest,
+    TrainingRun,
 )
 from multiverse_contracts.interventions import InterventionCatalog
 from multiverse_contracts.macro import MacroCell, MacroObservation, MacroSeries
@@ -59,6 +61,8 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     ForecastDatasetManifest,
     ForecastProtocol,
     BenchmarkReport,
+    SequenceManifest,
+    TrainingRun,
 )
 
 

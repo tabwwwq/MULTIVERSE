@@ -1,4 +1,4 @@
-"""Contracts of Stage 15: the dataset manifest, the locked protocol, the benchmark report."""
+"""Contracts of Stages 15 and 16: dataset, sequences, protocol, benchmark, training run."""
 
 import json
 from typing import Any
@@ -10,6 +10,8 @@ from multiverse_contracts.forecasting import (
     BenchmarkReport,
     ForecastDatasetManifest,
     ForecastProtocol,
+    SequenceManifest,
+    TrainingRun,
 )
 
 SHA = "ab" * 32
@@ -105,3 +107,66 @@ def test_the_benchmark_is_named_by_its_hash() -> None:
         BenchmarkReport.model_validate_json(
             json.dumps(report | {"benchmark_id": "bench-20261028-000000000000"})
         )
+
+
+def sequences(**changes: Any) -> dict[str, Any]:
+    return {
+        "sequences_id": f"fsq-20261028-{SHA[:12]}",
+        "sha256": SHA,
+        "dataset_id": f"fds-20261028-{SHA[:12]}",
+        "dataset_sha256": SHA,
+        "lags": 24,
+        "channels": ["rev_growth"],
+        "rows": 1,
+        "contracts_version": "0.14.0",
+        "created_at": "2026-10-31T12:00:00Z",
+    } | changes
+
+
+def test_sequences_are_named_by_their_hash() -> None:
+    SequenceManifest.model_validate_json(json.dumps(sequences()))
+    with pytest.raises(ValidationError, match="SHA-256"):
+        SequenceManifest.model_validate_json(
+            json.dumps(sequences(sequences_id="fsq-20261028-000000000000"))
+        )
+
+
+def test_a_protocol_repeats_a_training_at_most_ten_times() -> None:
+    assert ForecastProtocol.model_validate_json(json.dumps(protocol())).repeats == 1
+    with pytest.raises(ValidationError):
+        ForecastProtocol.model_validate_json(json.dumps(protocol(repeats=11)))
+
+
+def training_run(**changes: Any) -> dict[str, Any]:
+    epoch = {
+        "epoch": 1,
+        "train_loss": 1.2,
+        "validation_loss": 1.3,
+        "learning_rate": 0.001,
+        "seconds": 0.3,
+    }
+    return {
+        "run_id": f"run-20261028-{SHA[:12]}",
+        "model": "gru_attention",
+        "purpose": "benchmark",
+        "dataset_id": f"fds-20261028-{SHA[:12]}",
+        "sequences_id": f"fsq-20261028-{SHA[:12]}",
+        "fold_year": 2020,
+        "seed": 20261030,
+        "device": "cuda",
+        "torch_version": "2.14.1+cu130",
+        "params": [{"name": "hidden", "value": "64"}],
+        "train_rows": 10,
+        "validation_rows": 2,
+        "evaluated_rows": 3,
+        "epochs": [epoch],
+        "best_epoch": 1,
+        "checkpoint_sha256": SHA,
+        "created_at": "2026-10-31T12:00:00Z",
+    } | changes
+
+
+def test_the_best_epoch_of_a_training_is_one_it_ran() -> None:
+    TrainingRun.model_validate_json(json.dumps(training_run()))
+    with pytest.raises(ValidationError, match="best epoch"):
+        TrainingRun.model_validate_json(json.dumps(training_run(best_epoch=2)))

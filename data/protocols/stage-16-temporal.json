@@ -1,0 +1,35 @@
+{
+  "protocol_id": "stage_16_temporal",
+  "seed": 20261030,
+  "targets": [
+    "revenue_growth",
+    "operating_margin",
+    "ebitda_margin",
+    "fcf_margin",
+    "debt_to_ebitda"
+  ],
+  "horizons": [1, 4, 8, 12, 20],
+  "validation_years": [2016, 2017, 2018, 2019],
+  "test_years": [2020, 2021, 2022, 2023, 2024, 2025, 2026],
+  "cold_start_share": 0.2,
+  "material_revenue": 10000000.0,
+  "winsor_quantile": 0.01,
+  "bootstrap_resamples": 1000,
+  "repeats": 3,
+  "grids": {
+    "gru_attention": [
+      [
+        { "name": "hidden", "value": "32" },
+        { "name": "layers", "value": "1" }
+      ],
+      [
+        { "name": "hidden", "value": "64" },
+        { "name": "layers", "value": "1" }
+      ],
+      [
+        { "name": "hidden", "value": "64" },
+        { "name": "layers", "value": "2" }
+      ]
+    ]
+  }
+}

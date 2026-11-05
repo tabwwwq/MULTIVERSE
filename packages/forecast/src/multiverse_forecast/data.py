@@ -15,7 +15,11 @@ from pathlib import Path
 import numpy as np
 import numpy.typing as npt
 
-from multiverse_contracts.forecasting import ForecastDatasetManifest, ForecastTarget
+from multiverse_contracts.forecasting import (
+    ForecastDatasetManifest,
+    ForecastTarget,
+    SequenceManifest,
+)
 
 Floats = npt.NDArray[np.float64]
 Bools = npt.NDArray[np.bool_]
@@ -103,3 +107,24 @@ def load(folder: Path) -> Dataset:
 def canonical_sha256(payload: object) -> str:
     text = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def load_sequences(folder: Path, dataset: Dataset) -> tuple[Floats, str]:
+    """Histories [rows, lags, channels], oldest lag first, in the order of the dataset rows."""
+    manifest = SequenceManifest.model_validate_json((folder / "sequences.json").read_bytes())
+    if manifest.dataset_sha256 != dataset.manifest.sha256:
+        raise ValueError(f"{folder}: the sequences belong to another dataset")
+    raw = (folder / "sequences.csv").read_bytes()
+    if hashlib.sha256(raw).hexdigest() != manifest.sha256:
+        raise ValueError(f"{folder}: sequences.csv does not match the SHA-256 of its manifest")
+    index = {
+        (str(c), str(o)): i
+        for i, (c, o) in enumerate(zip(dataset.ciks, dataset.origins.astype(str), strict=True))
+    }
+    channels = tuple(manifest.channels)
+    out = np.full((len(index), manifest.lags, len(channels)), np.nan)
+    for row in csv.DictReader(raw.decode("utf-8").splitlines()):
+        i = index[(row["cik"], row["origin"])]
+        lag = int(row["lag"])
+        out[i, manifest.lags - lag] = [_float(row[c]) for c in channels]
+    return out, manifest.sequences_id

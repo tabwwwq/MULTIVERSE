@@ -2,9 +2,14 @@
 
 from datetime import UTC, date, datetime
 from decimal import Decimal
+from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
 
 from multiverse_contracts.forecasting import ForecastTarget
 from multiverse_contracts.macro import AvailabilityBasis, MacroObservation
+from multiverse_pipelines.forecastset import sequences
 from multiverse_pipelines.forecastset.build import (
     UNDEFINED,
     _growth,
@@ -13,6 +18,15 @@ from multiverse_pipelines.forecastset.build import (
     target_counts,
     targets_for,
     to_csv,
+)
+from multiverse_pipelines.forecastset.sequences import (
+    CHANNELS,
+    SEQUENCE_LAGS,
+    SequenceTask,
+    channels_at,
+    company_sequences,
+    dataset_rows,
+    to_sequence_csv,
 )
 from multiverse_pipelines.macro.store import MacroStore
 from multiverse_pipelines.pit.clock import day_end
@@ -124,3 +138,46 @@ def test_the_csv_is_sorted_and_stable() -> None:
     assert to_csv(list(reversed(rows)), {ORIGIN: {"macro_fedfunds": 0.25}}) == text
     counts = {(c.target, c.horizon): c for c in target_counts(rows)}
     assert counts[(ForecastTarget.REVENUE_GROWTH, 1)].undefined == 1
+
+
+def test_a_quarter_of_a_sequence_reads_its_own_lag_and_keeps_gaps() -> None:
+    lagged = {("revenue", k): Decimal(100 + k) for k in range(2, 10)}
+    lagged |= {("operating_income", 2): Decimal(21), ("cash", 2): Decimal(41)}
+    lagged[("revenue", 1)] = Decimal(10**9)  # a newer quarter: lag 2 must not read it
+    row = dict(zip(CHANNELS, channels_at(lagged, 2), strict=True))
+    assert row["rev_growth"] == _growth(Decimal(102), Decimal(106))
+    assert row["op_margin"] == 21 / 102
+    assert row["cash_to_rev"] == 41 / (102 + 103 + 104 + 105)
+    assert row["ebitda_margin"] is None  # missing stays missing
+    assert row["rnd_intensity"] is None
+
+
+def test_a_sequence_never_reads_the_quarter_ending_on_the_origin(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def cell(lag: int, value: int, mask: bool = True) -> SimpleNamespace:
+        return SimpleNamespace(metric="revenue", lag=lag, value=str(value), mask=mask)
+
+    cells = [cell(0, 10**9), cell(1, 110), cell(2, 120, mask=False), cell(5, 100)]
+    monkeypatch.setattr(sequences, "_warehouse", lambda _: None)
+    monkeypatch.setattr(sequences, "build_panel", lambda *_, **__: SimpleNamespace(cells=cells))
+    rows = company_sequences(SequenceTask(Path("unused"), "0000000001", (ORIGIN,)))
+    assert [lag for _, _, lag, _ in rows] == list(range(1, SEQUENCE_LAGS + 1))
+    by_lag = {lag: dict(zip(CHANNELS, values, strict=True)) for _, _, lag, values in rows}
+    assert by_lag[1]["rev_growth"] == _growth(Decimal(110), Decimal(100))
+    assert by_lag[2]["log_rev"] is None  # a masked cell is not a value
+
+
+def test_the_sequence_csv_is_sorted_and_leaves_gaps_empty(tmp_path: Path) -> None:
+    blank: list[float | None] = [None] * len(CHANNELS)
+    text = to_sequence_csv(
+        [("0000000002", "2021-12-31", 1, blank), ("0000000001", "2021-12-31", 2, [0.5, *blank[1:]])]
+    )
+    lines = text.splitlines()
+    assert lines[0].startswith("cik,origin,lag,rev_growth")
+    assert lines[1].startswith("0000000001,2021-12-31,2,0.5,")
+    assert lines[2] == "0000000002,2021-12-31,1" + "," * len(CHANNELS)
+    (tmp_path / "dataset.csv").write_text(
+        "cik,origin\n0000000001,2021-12-31\n0000000001,2022-03-31\n", encoding="utf-8"
+    )
+    assert dataset_rows(tmp_path) == {"0000000001": [date(2021, 12, 31), date(2022, 3, 31)]}

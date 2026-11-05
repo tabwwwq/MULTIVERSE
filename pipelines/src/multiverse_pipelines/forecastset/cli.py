@@ -3,6 +3,9 @@
 Reads the PIT warehouse, the universe file and the real macro store; writes
 ``var/data/forecast/<dataset id>/`` (never committed): ``dataset.csv`` and
 ``manifest.json`` (``ForecastDatasetManifest``). The id is the SHA-256 of the CSV.
+
+``sequences --dataset <folder>`` adds the 24-quarter histories of the same rows for the
+temporal model of Stage 16: ``sequences.csv`` and ``sequences.json`` (``SequenceManifest``).
 """
 
 import argparse
@@ -14,7 +17,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from multiverse_config import load_settings
-from multiverse_contracts.forecasting import ForecastDatasetManifest, ForecastTarget
+from multiverse_contracts.forecasting import (
+    ForecastDatasetManifest,
+    ForecastTarget,
+    SequenceManifest,
+)
 from multiverse_contracts.pit import KnowledgeView
 from multiverse_contracts.version import CONTRACTS_VERSION
 from multiverse_pipelines.audit.examples import origins
@@ -30,6 +37,13 @@ from multiverse_pipelines.forecastset.build import (
     target_counts,
     to_csv,
     write_rows,
+)
+from multiverse_pipelines.forecastset.sequences import (
+    CHANNELS,
+    SEQUENCE_LAGS,
+    build_sequences,
+    dataset_rows,
+    to_sequence_csv,
 )
 from multiverse_pipelines.macro.store import MacroStore
 from multiverse_pipelines.pit.clock import eastern_date, from_stamp, parse_cutoff
@@ -48,7 +62,36 @@ def _parser() -> argparse.ArgumentParser:
     build.add_argument("--cutoff", default="2026-10-28", help="data cutoff (end of day, ET)")
     build.add_argument("--workers", type=int, default=WORKERS)
     build.add_argument("--out", type=Path, help="default: <data dir>/forecast")
+    sequences = commands.add_parser("sequences", help="24-quarter histories of a dataset's rows")
+    sequences.add_argument("--dataset", type=Path, required=True, help="a dataset folder")
+    sequences.add_argument("--workers", type=int, default=WORKERS)
     return parser
+
+
+def _sequences(args: argparse.Namespace, db_path: Path) -> int:
+    folder: Path = args.dataset
+    base = ForecastDatasetManifest.model_validate_json((folder / "manifest.json").read_bytes())
+    rows = build_sequences(db_path, dataset_rows(folder), args.workers, _progress)
+    text = to_sequence_csv(rows)
+    digest = sha256_text(text)
+    manifest = SequenceManifest(
+        sequences_id=f"fsq-{base.dataset_id.split('-')[1]}-{digest[:12]}",
+        sha256=digest,
+        dataset_id=base.dataset_id,
+        dataset_sha256=base.sha256,
+        lags=SEQUENCE_LAGS,
+        channels=CHANNELS,
+        rows=len(rows) // SEQUENCE_LAGS,
+        contracts_version=CONTRACTS_VERSION,
+        created_at=datetime.now(UTC),
+    )
+    (folder / "sequences.csv").write_bytes(text.encode("utf-8"))
+    (folder / "sequences.json").write_bytes(
+        (json.dumps(manifest.model_dump(mode="json"), indent=2) + "\n").encode("utf-8")
+    )
+    print(f"{manifest.sequences_id}: {manifest.rows} company origins x {SEQUENCE_LAGS} lags")
+    print(f"wrote {folder / 'sequences.csv'}")
+    return 0
 
 
 def _progress(number: int, total: int) -> None:
@@ -60,6 +103,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     settings = load_settings()
     db_path = settings.data_dir / "pit" / "warehouse.sqlite"
+    if args.command == "sequences":
+        try:
+            return _sequences(args, db_path)
+        except (OSError, ValueError) as exc:
+            print(f"refused: {exc}", file=sys.stderr)
+            return 2
     try:
         warehouse = Warehouse.open(db_path)
         built_at = from_stamp(warehouse.meta()["built_at"])

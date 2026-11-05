@@ -4,6 +4,23 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-05 (Stage 16)
+
+- A temporal neural network on point-in-time history (ADR-0024), not a wrapper and not trained on synthetic data: GRU with attention, and causal dilated convolutions (TCN) as the candidate. Inputs: 24 quarters by 9 channels with masks, plus the Stage 15 features; outputs: quantiles 0.1, 0.5, 0.9 for five targets at five horizons, in spaces that respect each target, without clamps.
+- Sequences (`python -m multiverse_pipelines.forecastset sequences`): `fsq-20261028-80de28a4bff3`, the same 31 425 rows as Stage 15, lag 0 never; all 16 shared columns equal the Stage 15 features exactly.
+- Trainings (`python -m multiverse_forecast neural`, `neural-benchmark`): Stage 15 folds, cold starts and release rule; a checkpoint, `TrainingRun` manifest, epoch log and curve per run; a saved checkpoint must reproduce the forecasts.
+- Protocols `data/protocols/stage-16-temporal.json` and `stage-16-temporal-large.json`, both locked before their runs; a smoke run, a CPU run (33 trainings) and a GPU run (150 trainings on an RTX 4070 Laptop GPU).
+- Benchmark `bench-20261028-f02547836d11`: on the test years 2020–2026 both networks beat persistence by MAE on 25 of 25 target and horizon pairs (22 with the 95% interval below zero) and the best baseline on 24 of 25; revenue growth at h = 4: 0.309 against 0.447 and 0.324. The median error of margins stays at persistence level, which no Stage 15 model reached. Not proven: margins of firms with $10 million or more of revenue at h = 4, 8, 12. Worse than persistence for the typical firm: debt / EBITDA at h = 1, 4, 20. Worse than boosting: revenue growth at h = 1.
+- A repeat of the GPU run gave the same 150 checkpoint hashes on this machine. All 20 settings score within 0.6260–0.6434 on validation, and small networks win: more capacity does not help on these data.
+- Model card `docs/stages/16-model-card.md`; training curves from the logs in `docs/stages/16-plots/`.
+- Contracts 0.14.0: `SequenceManifest`, `TrainingRun`, `EpochLog`, `ForecastProtocol.repeats`.
+- PyTorch 2.14.1+cu130 in the optional `ml` extra, pinned in the lock; CI installs no extras.
+
+### Fixed — 2026-11-05 (Stage 16)
+
+- The benchmark report lists one finding per setting: a single finding with all 20 settings exceeded the 400 characters of the contract and lost the report of the first GPU run after its trainings.
+- The import smoke test checks for PyTorch in a fresh interpreter, not in the shared pytest process.
+
 ### Changed — 2026-10-31 (Stage 15 accepted)
 
 - Stage 15 (forecasting baselines) accepted by the owner (CI run 41143679653 green).

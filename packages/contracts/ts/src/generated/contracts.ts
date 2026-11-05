@@ -1315,6 +1315,17 @@ export interface ProceedsAllocation {
   shareholder_distribution: string;
 }
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EpochLog".
+ */
+export interface EpochLog {
+  epoch: number;
+  learning_rate: number;
+  seconds: number;
+  train_loss: number;
+  validation_loss: number;
+}
+/**
  * Trainable examples: company and forecast origin with enough history and a target.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -1400,6 +1411,10 @@ export interface ForecastProtocol {
    */
   material_revenue: number;
   protocol_id: string;
+  /**
+   * Trainings per test fold, with seeds seed, seed + 1, ...: each is scored, and so is the mean of their forecasts.
+   */
+  repeats: number;
   seed: number;
   /**
    * @minItems 1
@@ -2381,6 +2396,35 @@ export interface SectorPriority {
   sic_codes: [string, ...string[]];
 }
 /**
+ * Quarterly histories aligned with the rows of a forecasting dataset (Stage 16).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SequenceManifest".
+ */
+export interface SequenceManifest {
+  /**
+   * @minItems 1
+   */
+  channels: [string, ...string[]];
+  contracts_version: string;
+  /**
+   * Not part of the hash.
+   */
+  created_at: string;
+  dataset_id: string;
+  dataset_sha256: string;
+  /**
+   * Lags 1 to this one; lag 0 is never public.
+   */
+  lags: number;
+  /**
+   * Company origins, each with every lag.
+   */
+  rows: number;
+  sequences_id: string;
+  sha256: string;
+}
+/**
  * Every source, risk and planned step, checked as one document.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -2418,6 +2462,37 @@ export interface SourceCatalog {
    */
   sources: [DataSource, ...DataSource[]];
   verified_on: string;
+}
+/**
+ * One training of a temporal model: what it saw, how it went, where it is stored.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TrainingRun".
+ */
+export interface TrainingRun {
+  best_epoch: number;
+  checkpoint_sha256: string;
+  /**
+   * Not part of the id.
+   */
+  created_at: string;
+  dataset_id: string;
+  device: string;
+  /**
+   * @minItems 1
+   */
+  epochs: [EpochLog, ...EpochLog[]];
+  evaluated_rows: number;
+  fold_year: number;
+  model: string;
+  params: Param[];
+  purpose: "smoke" | "benchmark";
+  run_id: string;
+  seed: number;
+  sequences_id: string;
+  torch_version: string;
+  train_rows: number;
+  validation_rows: number;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema

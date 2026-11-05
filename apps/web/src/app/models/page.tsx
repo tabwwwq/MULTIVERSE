@@ -25,13 +25,13 @@ export default function ModelsPage() {
       </Section>
       <Section
         id="candidate"
-        title="Model candidate"
+        title="Signed model"
         intro="Measured on years never used for a choice, under a protocol written before scoring."
       >
         <Alert tone="warning" title="Not approved for the product">
           <p>
-            Candidate <code>model-20261028-9ce4d4180aa9</code>: the owner has not signed it off, and
-            only 3 of 15 target and horizon pairs passed the rule.
+            Model <code>model-20261028-9ce4d4180aa9</code> is signed for research on the 3 of 15
+            target and horizon pairs that passed the rule, and on nothing else.
           </p>
           <ul className="mt-2 list-disc pl-5">
             {APPROVED_PAIRS.map((pair) => (

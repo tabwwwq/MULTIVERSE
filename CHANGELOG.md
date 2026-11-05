@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-06 (Stage 19)
+
+- Corporate event registry (ADR-0027): a taxonomy of six decisions, annotation guidelines, and a first hand-read sample. An event exists only after its primary document was read; the announced intention and the executed treatment are separate fields, and every value is read in a named place or listed as unknown.
+- Decision D-13 (owner in chat): up to 150 filing documents within 200 MB. 60 documents (38 MB) fetched behind the three download locks into the immutable archive.
+- Sample `evs-20261106-3cc4abd6372b` (`python -m multiverse_pipelines.events sample`): five strata from the archived filing index and the Stage 15 dataset, one filing per firm, a third from companies that later left EDGAR reporting, seed 20261106.
+- Registry `data/events/registry.json`: 60 filings read, 48 events and 12 rejections kept with their reason (SPAC mergers, new debt that replaces nothing, intensity moved by revenue, one error of the filing index). Reviewed by one AI reviewer only, said so on every event.
+- Audit (`events audit`): composition, unknown fields, reviews, overlap inside the registry and against unread 8-K filings. Verdict: not credible, causal work blocked: no type reaches 30 events and no event has a human review. All 8 layoffs have debt filings in their window, and the documents themselves name something else going on for 22 of 48 events.
+- Event Registry (`/events`, `/events/[eventId]`): the block, filters, intention next to execution, unknowns, what happened at the same time, the link to the filing, and a review form; reviews stay in the browser until downloaded and merged with `events reviews --file`.
+- Contracts 0.17.0: `CorporateEvent`, `EventEvidence`, `EventReview`, `EventMagnitude`, `EventFunding`, `EventCandidate`, `CandidateSample`, `EventRegistry`, `QualityAudit`.
+
 ### Changed — 2026-11-06 (Stages 16, 17 and 18 accepted)
 
 - Stages 16, 17 and 18 accepted by the owner (CI runs 42106520404, 42120259862 and 42124978629 green). Model `model-20261028-9ce4d4180aa9` is signed for research on three target and horizon pairs only; nothing in the product uses it.

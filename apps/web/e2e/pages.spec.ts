@@ -46,6 +46,7 @@ const PAGES = [
   { path: "/compare", name: "compare-index", heading: "Universe Compare" },
   { path: "/notebook", name: "notebook-empty", heading: "Research Notebook" },
   { path: "/settings", name: "settings", heading: "Settings & Privacy" },
+  { path: "/events", name: "events", heading: "Event Registry" },
   {
     path: "/compare/2d7c9e41-5b3a-4f6e-8c1d-9a0b7e6f5c34",
     name: "compare",

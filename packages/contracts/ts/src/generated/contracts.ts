@@ -71,6 +71,12 @@ export type Population = "all" | "revenue_10m";
  */
 export type SplitName = "validation" | "test" | "cold_start";
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EventType".
+ */
+export type EventType =
+  "rnd_change" | "acquisition" | "layoff" | "divestiture" | "capex_change" | "refinancing";
+/**
  * Identification status of a result. Never raised automatically (PRD FR-CA-02).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -208,12 +214,25 @@ export type MeasureUnit =
 export type UncertaintyType =
   "none" | "predictive_quantiles" | "conditional_model_quantiles" | "calibrated_interval";
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CompletionStatus".
+ */
+export type CompletionStatus = "announced" | "partial" | "completed" | "terminated" | "unknown";
+/**
  * How a candidate concept relates to the metric (the concept hierarchy).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "ConceptRelation".
  */
 export type ConceptRelation = "primary" | "equivalent" | "narrower" | "broader";
+/**
+ * One meaning each: +40% of a budget is not +40 points of revenue (docs/05).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EventUnit".
+ */
+export type EventUnit =
+  "usd" | "headcount" | "percent_of_workforce" | "percent_change" | "points_of_revenue" | "unknown";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "DataFormat".
@@ -866,6 +885,64 @@ export interface BulkFile {
   url: string;
 }
 /**
+ * The drawn sample: rules, seed and counts, so it can be repeated.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CandidateSample".
+ */
+export interface CandidateSample {
+  candidates: EventCandidate[];
+  contracts_version: string;
+  /**
+   * Not part of the hash.
+   */
+  created_at: string;
+  /**
+   * Filings per stratum after drawing.
+   */
+  drawn: {
+    /**
+     * This interface was referenced by `undefined`'s JSON-Schema definition
+     * via the `patternProperty` "^[a-z][a-z0-9_]*$".
+     */
+    [k: string]: number;
+  };
+  /**
+   * Filings per stratum before drawing.
+   */
+  population: {
+    /**
+     * This interface was referenced by `undefined`'s JSON-Schema definition
+     * via the `patternProperty` "^[a-z][a-z0-9_]*$".
+     */
+    [k: string]: number;
+  };
+  sample_id: string;
+  seed: number;
+  sha256: string;
+  universe_id: string;
+}
+/**
+ * A filing that may hold an event: a pointer to read, never a label.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EventCandidate".
+ */
+export interface EventCandidate {
+  accession: string;
+  candidate_id: string;
+  cik: string;
+  company: string;
+  deregistered: boolean;
+  division: string;
+  event_type: EventType;
+  filed_at: string;
+  form: string;
+  items: string[];
+  stratum: string;
+  url: string;
+}
+/**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "CapexExpansion".
  */
@@ -1218,6 +1295,135 @@ export interface ConceptCheck {
    * Exact decimal number as a string, for example '4213587912' or '-0.25'.
    */
   value: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CorporateEvent".
+ */
+export interface CorporateEvent {
+  /**
+   * The first public document: the start of any event window.
+   */
+  announced_at: string | null;
+  cik: string;
+  company: string;
+  completion: CompletionStatus;
+  /**
+   * Other events or shocks in the same window, as documented.
+   */
+  confounded_by: string[];
+  /**
+   * Whether the company has since left EDGAR reporting.
+   */
+  deregistered: boolean;
+  division: string;
+  /**
+   * Closing or effective date.
+   */
+  effective_on: string | null;
+  event_id: string;
+  event_type: EventType;
+  /**
+   * @minItems 1
+   */
+  evidence: [EventEvidence, ...EventEvidence[]];
+  /**
+   * What was done, as far as documented.
+   */
+  executed: string | null;
+  funding: EventFunding;
+  /**
+   * What was announced, if anything.
+   */
+  intention: string | null;
+  magnitude: EventMagnitude;
+  /**
+   * From the effective date to the document that reports it.
+   */
+  reporting_lag_days: number | null;
+  /**
+   * @minItems 1
+   */
+  reviews: [EventReview, ...EventReview[]];
+  /**
+   * The sampling stratum it was drawn from.
+   */
+  stratum: string;
+  /**
+   * Said aloud, never hidden.
+   */
+  unknown_fields: string[];
+}
+/**
+ * Where a fact was read. The summary is in the reviewer's words, not a quotation.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EventEvidence".
+ */
+export interface EventEvidence {
+  accession: string;
+  document_sha256: string;
+  /**
+   * EDGAR acceptance: when it became public.
+   */
+  filed_at: string;
+  form: string;
+  /**
+   * 8-K item, when one applies.
+   */
+  item: string | null;
+  /**
+   * Page, section or paragraph of the document.
+   */
+  locator: string;
+  role: "announcement" | "execution" | "magnitude" | "funding" | "status" | "context";
+  summary: string;
+  url: string;
+}
+/**
+ * Shares of the consideration; all None when the documents do not say.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EventFunding".
+ */
+export interface EventFunding {
+  cash: number | null;
+  debt: number | null;
+  equity: number | null;
+  note: string | null;
+  other: number | null;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EventMagnitude".
+ */
+export interface EventMagnitude {
+  /**
+   * What the number is, in the document's own terms.
+   */
+  measures: string;
+  unit: EventUnit;
+  value: number | null;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EventReview".
+ */
+export interface EventReview {
+  confidence: "high" | "medium" | "low";
+  decision: "confirmed" | "corrected" | "rejected" | "unsure";
+  kind: "human" | "ai";
+  notes: string | null;
+  reviewed_at: string;
+  reviewer: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CountRow".
+ */
+export interface CountRow {
+  count: number;
+  key: string;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -1641,6 +1847,30 @@ export interface EvaluationProtocol {
    * Below this many observed quarters: sparse.
    */
   sparse_quarters: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EventRegistry".
+ */
+export interface EventRegistry {
+  events: CorporateEvent[];
+  guidelines: string;
+  registry_version: string;
+  /**
+   * Read and not an event: kept, so the sample stays honest.
+   */
+  rejected: RejectedCandidate[];
+  sample_id: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RejectedCandidate".
+ */
+export interface RejectedCandidate {
+  candidate_id: string;
+  kind: "human" | "ai";
+  reason: string;
+  reviewer: string;
 }
 /**
  * Trainable examples: company and forecast origin with enough history and a target.
@@ -2524,6 +2754,18 @@ export interface SensitivitySettings {
   points: number;
 }
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "OverlapCell".
+ */
+export interface OverlapCell {
+  first: EventType;
+  /**
+   * Events of one firm within the window of each other.
+   */
+  pairs: number;
+  second: EventType;
+}
+/**
  * One company, calendar quarter and metric of the as-of panel.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -2649,6 +2891,43 @@ export interface SourceTiming {
   accession: string;
   known_at: string;
   precision: TimePrecision;
+}
+/**
+ * What the registry can carry, measured; the verdict gates causal work (docs/05).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "QualityAudit".
+ */
+export interface QualityAudit {
+  blockers: string[];
+  by_completion: CountRow[];
+  by_division: CountRow[];
+  by_type: CountRow[];
+  candidates_read: number;
+  confounded: number;
+  contracts_version: string;
+  credible_for_causal_work: boolean;
+  deregistered_events: number;
+  double_reviewed: number;
+  events: number;
+  human_reviewed: number;
+  /**
+   * Events with an unread filing of that 8-K item in the window.
+   */
+  index_overlap: CountRow[];
+  overlap: OverlapCell[];
+  overlap_window_days: number;
+  registry_version: string;
+  rejected: number;
+  /**
+   * Share of double-reviewed events with the same decision.
+   */
+  reviewer_agreement: number | null;
+  sample_id: string;
+  /**
+   * Events missing each field.
+   */
+  unknown_rate: CountRow[];
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema

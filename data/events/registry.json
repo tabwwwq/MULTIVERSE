@@ -1,0 +1,2581 @@
+{
+  "registry_version": "0.1.0",
+  "sample_id": "evs-20261106-3cc4abd6372b",
+  "guidelines": "docs/product/event-annotation-guidelines.md",
+  "events": [
+    {
+      "event_id": "evt-0001031029-layoff-20140625",
+      "cik": "0001031029",
+      "company": "Startek, Inc.",
+      "division": "I",
+      "deregistered": true,
+      "event_type": "layoff",
+      "intention": "Close the Heredia, Costa Rica site by the third quarter of 2014.",
+      "executed": null,
+      "announced_at": "2014-06-25T04:00:00Z",
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 1000000.0,
+        "unit": "usd",
+        "measures": "Estimated one-time employee termination benefits"
+      },
+      "funding": {
+        "cash": 1.0,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": "Substantially all restructuring costs are cash"
+      },
+      "completion": "announced",
+      "unknown_fields": ["effective_on", "reporting_lag_days"],
+      "confounded_by": [],
+      "stratum": "item_2_05",
+      "evidence": [
+        {
+          "role": "announcement",
+          "url": "https://www.sec.gov/Archives/edgar/data/1031029/000103102914000057/form8-kcr.htm",
+          "accession": "0001031029-14-000057",
+          "form": "8-K",
+          "filed_at": "2014-06-25T04:00:00Z",
+          "item": "2.05",
+          "locator": "Item 2.05, paragraphs 1-2",
+          "summary": "Site closure with termination benefits; the number of employees is not stated.",
+          "document_sha256": "6c1a3462649449b7570f017b6875b63e3788a752e3be719dc5651b8ecbf13375"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001741830-layoff-20241127",
+      "cik": "0001741830",
+      "company": "Kronos Bio, Inc.",
+      "division": "D",
+      "deregistered": true,
+      "event_type": "layoff",
+      "intention": "Reduce the workforce by about 83%, substantially done by 31 December 2024.",
+      "executed": null,
+      "announced_at": "2024-11-27T05:00:00Z",
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 83.0,
+        "unit": "percent_of_workforce",
+        "measures": "Approved reduction of the workforce"
+      },
+      "funding": {
+        "cash": 1.0,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": "About $3.7 million of cash severance"
+      },
+      "completion": "announced",
+      "unknown_fields": ["effective_on", "reporting_lag_days"],
+      "confounded_by": [],
+      "stratum": "item_2_05",
+      "evidence": [
+        {
+          "role": "announcement",
+          "url": "https://www.sec.gov/Archives/edgar/data/1741830/000174183024000070/kron-20241122.htm",
+          "accession": "0001741830-24-000070",
+          "form": "8-K",
+          "filed_at": "2024-11-27T05:00:00Z",
+          "item": "2.05",
+          "locator": "Item 2.05, paragraphs 1-2",
+          "summary": "The board approved the reduction on 22 November 2024.",
+          "document_sha256": "9e839f5463a8ab363fcaa73118b51f849e6b1143a2ea66ebc31ee5fb3974e43f"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001683606-layoff-20181219",
+      "cik": "0001683606",
+      "company": "Cars.com Inc.",
+      "division": "I",
+      "deregistered": false,
+      "event_type": "layoff",
+      "intention": null,
+      "executed": "About 100 sales positions eliminated in a sales restructuring.",
+      "announced_at": "2018-12-19T02:38:35Z",
+      "effective_on": "2018-12-12",
+      "reporting_lag_days": 6,
+      "magnitude": {
+        "value": 100.0,
+        "unit": "headcount",
+        "measures": "Sales positions eliminated"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["funding"],
+      "confounded_by": [
+        "Reorganisation after the conversion of affiliate arrangements and the Dealer Inspire acquisition"
+      ],
+      "stratum": "item_2_05",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1683606/000156459018031039/cars-8k_20181218.htm",
+          "accession": "0001564590-18-031039",
+          "form": "8-K",
+          "filed_at": "2018-12-19T02:38:35Z",
+          "item": "2.05",
+          "locator": "Item 2.05, paragraphs 1-2",
+          "summary": "The filing says the positions have been eliminated, as part of a redesign.",
+          "document_sha256": "14adeba4acdb33e31dfec89759d934944db4af1de30ccc4b5b5ca42ca808e968"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000817720-layoff-20171117",
+      "cik": "0000817720",
+      "company": "SYNAPTICS Inc",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "layoff",
+      "intention": "Eliminate about 156 positions, about 7% of headcount, and consolidate space.",
+      "executed": null,
+      "announced_at": "2017-11-17T21:03:02Z",
+      "effective_on": "2017-11-15",
+      "reporting_lag_days": 2,
+      "magnitude": {
+        "value": 156.0,
+        "unit": "headcount",
+        "measures": "Positions to be eliminated"
+      },
+      "funding": {
+        "cash": 1.0,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": "Costs paid predominantly in cash"
+      },
+      "completion": "announced",
+      "unknown_fields": [],
+      "confounded_by": ["The company names acquisition synergies among the reasons"],
+      "stratum": "item_2_05",
+      "evidence": [
+        {
+          "role": "announcement",
+          "url": "https://www.sec.gov/Archives/edgar/data/817720/000119312517346930/d497152d8k.htm",
+          "accession": "0001193125-17-346930",
+          "form": "8-K",
+          "filed_at": "2017-11-17T21:03:02Z",
+          "item": "2.05",
+          "locator": "Item 2.05, paragraphs 1-2",
+          "summary": "Employees were notified on 15 November 2017; charges of $8 to $10 million.",
+          "document_sha256": "b8f37f21811f87c5fea65f58bfb32590fef6e8602dc199e3fba2139afffa2f4a"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000009389-layoff-20170727",
+      "cik": "0000009389",
+      "company": "BALL Corp",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "layoff",
+      "intention": "Close the Recklinghausen plants, ending production on 31 July 2017.",
+      "executed": null,
+      "announced_at": null,
+      "effective_on": "2017-07-31",
+      "reporting_lag_days": -4,
+      "magnitude": {
+        "value": 360.0,
+        "unit": "headcount",
+        "measures": "People employed at the plants, not confirmed separations"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "announced",
+      "unknown_fields": ["announced_at", "funding"],
+      "confounded_by": [],
+      "stratum": "item_2_05",
+      "evidence": [
+        {
+          "role": "announcement",
+          "url": "https://www.sec.gov/Archives/edgar/data/9389/000000938917000026/8_k.htm",
+          "accession": "0000009389-17-000026",
+          "form": "8-K",
+          "filed_at": "2017-07-27T22:07:34Z",
+          "item": "2.05",
+          "locator": "Item 2.05, paragraph 1",
+          "summary": "Follows a press release of 2 March 2017 that was not read, so the first announcement is unknown.",
+          "document_sha256": "333c07e714e122e6ea5121b4339f46dc781006f00e674fe3e1d1bd809f63d58c"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000099780-layoff-20191118",
+      "cik": "0000099780",
+      "company": "TRINITY INDUSTRIES INC",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "layoff",
+      "intention": "Eliminate about 80 positions within about 60 days.",
+      "executed": null,
+      "announced_at": "2019-11-18T21:47:54Z",
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 80.0,
+        "unit": "headcount",
+        "measures": "Positions to be eliminated"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "announced",
+      "unknown_fields": ["effective_on", "reporting_lag_days", "funding"],
+      "confounded_by": ["The same plan writes down manufacturing assets"],
+      "stratum": "item_2_05",
+      "evidence": [
+        {
+          "role": "announcement",
+          "url": "https://www.sec.gov/Archives/edgar/data/99780/000009978019000134/restructuring.htm",
+          "accession": "0000099780-19-000134",
+          "form": "8-K",
+          "filed_at": "2019-11-18T21:47:54Z",
+          "item": "2.05",
+          "locator": "Item 2.05, paragraphs 1-2",
+          "summary": "Approved on 12 November 2019; total charges of $14 to $18 million.",
+          "document_sha256": "2aa08b9ae3bb2c422719c20fdbdcd3f9b38b9a7a340a0c5e463b2954f9a2a51a"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001144215-layoff-20120309",
+      "cik": "0001144215",
+      "company": "ACUITY INC. (DE)",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "layoff",
+      "intention": "Close the Cochran, Georgia plant by the end of the fiscal year.",
+      "executed": null,
+      "announced_at": "2012-03-09T21:33:04Z",
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 15000000.0,
+        "unit": "usd",
+        "measures": "Pre-tax special charge of the closure"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "announced",
+      "unknown_fields": ["effective_on", "reporting_lag_days", "funding"],
+      "confounded_by": ["Part of ongoing streamlining the company had already disclosed"],
+      "stratum": "item_2_05",
+      "evidence": [
+        {
+          "role": "announcement",
+          "url": "https://www.sec.gov/Archives/edgar/data/1144215/000114421512000057/ayi-201239x8xk.htm",
+          "accession": "0001144215-12-000057",
+          "form": "8-K",
+          "filed_at": "2012-03-09T21:33:04Z",
+          "item": "2.05",
+          "locator": "Item 2.05, paragraphs 1-2",
+          "summary": "The number of employees is not stated in the section read.",
+          "document_sha256": "e24848061fb71e15645b953ef56eb05710e464e73f2a2ffb6d982034dc274dab"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001530950-layoff-20231201",
+      "cik": "0001530950",
+      "company": "Post Holdings, Inc.",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "layoff",
+      "intention": "Close the Lancaster, Ohio cereal plant by the end of September 2024.",
+      "executed": null,
+      "announced_at": "2023-12-01T13:00:49Z",
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 200.0,
+        "unit": "headcount",
+        "measures": "People employed at the plant, subject to union talks"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "announced",
+      "unknown_fields": ["effective_on", "reporting_lag_days", "funding"],
+      "confounded_by": [
+        "Production moves to other plants with about $20 million of capital expenditure"
+      ],
+      "stratum": "item_2_05",
+      "evidence": [
+        {
+          "role": "announcement",
+          "url": "https://www.sec.gov/Archives/edgar/data/1530950/000153095023000399/post-20231129.htm",
+          "accession": "0001530950-23-000399",
+          "form": "8-K",
+          "filed_at": "2023-12-01T13:00:49Z",
+          "item": "2.05",
+          "locator": "Item 2.05, paragraphs 1-2",
+          "summary": "Decided on 29 November 2023; pre-tax charges of $49 to $55 million.",
+          "document_sha256": "0555fbd40eb166c072af532774e8a041d710757150a0dcf4c65060368198d77c"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000819689-divestiture-20120907",
+      "cik": "0000819689",
+      "company": "MICRON SOLUTIONS INC /DE/",
+      "division": "D",
+      "deregistered": true,
+      "event_type": "divestiture",
+      "intention": "Discontinue the WirelessDx subsidiary and sell most of its assets within 60 days.",
+      "executed": null,
+      "announced_at": "2012-09-07T16:51:56Z",
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 2750000.0,
+        "unit": "usd",
+        "measures": "Estimated expenses and charges of the wind-down"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "announced",
+      "unknown_fields": ["effective_on", "reporting_lag_days", "funding"],
+      "confounded_by": [],
+      "stratum": "item_2_05",
+      "evidence": [
+        {
+          "role": "announcement",
+          "url": "https://www.sec.gov/Archives/edgar/data/819689/000081968912000066/a8-k20120904.htm",
+          "accession": "0000819689-12-000066",
+          "form": "8-K",
+          "filed_at": "2012-09-07T16:51:56Z",
+          "item": "2.05",
+          "locator": "Item 2.05, paragraphs 1-2",
+          "summary": "The board authorised it on 4 September 2012.",
+          "document_sha256": "2dceb2e96d58cb9bb3dd0a6594a107b1ad4255e96eca8dbe53ac1d210f1d96e6"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000037996-divestiture-20210628",
+      "cik": "0000037996",
+      "company": "FORD MOTOR CO",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "divestiture",
+      "intention": "Ford Credit subsidiaries in Brazil and Argentina stop originating receivables by the end of 2021 and sell or wind down.",
+      "executed": null,
+      "announced_at": "2021-06-28T20:15:47Z",
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 375000000.0,
+        "unit": "usd",
+        "measures": "Upper bound of the pre-tax charges, mostly non-cash"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "announced",
+      "unknown_fields": ["effective_on", "reporting_lag_days", "funding"],
+      "confounded_by": [],
+      "stratum": "item_2_05",
+      "evidence": [
+        {
+          "role": "announcement",
+          "url": "https://www.sec.gov/Archives/edgar/data/37996/000003799621000048/f-20210625.htm",
+          "accession": "0000037996-21-000048",
+          "form": "8-K",
+          "filed_at": "2021-06-28T20:15:47Z",
+          "item": "2.05",
+          "locator": "Item 2.05, paragraphs 1-2",
+          "summary": "About $10 million in cash for employee separations; timing not fixed.",
+          "document_sha256": "96d6ce43f5b5d34e2dd20005de9d4720eda9fb94edec2b284164a089ef652f9e"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001168325-acquisition-20150708",
+      "cik": "0001168325",
+      "company": "FONU2 Inc.",
+      "division": "G",
+      "deregistered": true,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought all assets of Apple Box Productions through a subsidiary.",
+      "announced_at": null,
+      "effective_on": "2015-07-02",
+      "reporting_lag_days": 6,
+      "magnitude": {
+        "value": 1000000.0,
+        "unit": "usd",
+        "measures": "Total consideration"
+      },
+      "funding": {
+        "cash": 0.4,
+        "debt": 0.6,
+        "equity": null,
+        "other": null,
+        "note": "$400 000 in cash and a $600 000 seller note"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1168325/000121390015005030/f8k070815_fonu2inc.htm",
+          "accession": "0001213900-15-005030",
+          "form": "8-K",
+          "filed_at": "2015-07-08T14:54:39Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraph 1",
+          "summary": "A small asset purchase with a seller note.",
+          "document_sha256": "4639b3dc50722e2bfb5d40b25c180f950cb6fea46a11345e538733d22db248e1"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001732845-acquisition-20181105",
+      "cik": "0001732845",
+      "company": "WestRock Co",
+      "division": "D",
+      "deregistered": true,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Merged with KapStone; KapStone holders took cash or stock.",
+      "announced_at": null,
+      "effective_on": "2018-11-02",
+      "reporting_lag_days": 3,
+      "magnitude": {
+        "value": 3300000000.0,
+        "unit": "usd",
+        "measures": "Cash paid to KapStone holders; about 1.56 million shares come on top"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": "About $3.3 billion in cash and 1 564 992 shares"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "funding"],
+      "confounded_by": ["A holding company reorganisation closed in the same transaction"],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1732845/000117184318007567/f8k_110518.htm",
+          "accession": "0001171843-18-007567",
+          "form": "8-K",
+          "filed_at": "2018-11-05T07:00:50Z",
+          "item": "2.01",
+          "locator": "Item 2.01",
+          "summary": "The share value is not stated in the part read.",
+          "document_sha256": "bd98605fa46c84814a3567d77abebd3b5bc2d7811254e46c24ef436d7d0510a3"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000709804-acquisition-20120605",
+      "cik": "0000709804",
+      "company": "Steel Excel Inc.",
+      "division": "B",
+      "deregistered": true,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought Sun Well Service from BNS Holding.",
+      "announced_at": null,
+      "effective_on": "2012-05-31",
+      "reporting_lag_days": 5,
+      "magnitude": {
+        "value": 68725000.0,
+        "unit": "usd",
+        "measures": "Stock valued at $60 825 000 plus about $7.9 million in cash"
+      },
+      "funding": {
+        "cash": 0.115,
+        "debt": null,
+        "equity": 0.885,
+        "other": null,
+        "note": "About $17.6 million of the target's debt stayed in place"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/709804/000143774912005844/steelexcel_8k-053112.htm",
+          "accession": "0001437749-12-005844",
+          "form": "8-K",
+          "filed_at": "2012-06-05T20:30:45Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraphs 1-2",
+          "summary": "Sum of the two parts of the price.",
+          "document_sha256": "686c20862ae839c8ff30b3d8c65312ae4ca81938a3c75f1b30e703333f4d3e26"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001227930-acquisition-20150430",
+      "cik": "0001227930",
+      "company": "ENTROPIC COMMUNICATIONS INC",
+      "division": "D",
+      "deregistered": true,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Entropic was merged into MaxLinear: $1.20 in cash and 0.22 MaxLinear share per share.",
+      "announced_at": null,
+      "effective_on": "2015-04-30",
+      "reporting_lag_days": 0,
+      "magnitude": {
+        "value": null,
+        "unit": "unknown",
+        "measures": "Aggregate price not stated in the part read"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": "Mixed cash and stock per share"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "magnitude", "funding"],
+      "confounded_by": ["The filer is the target, not the buyer"],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1227930/000119312515162607/d919095d8k.htm",
+          "accession": "0001193125-15-162607",
+          "form": "8-K",
+          "filed_at": "2015-04-30T17:08:10Z",
+          "item": "2.01",
+          "locator": "Item 2.01",
+          "summary": "The treatment falls on the buyer; this firm stops reporting.",
+          "document_sha256": "bdcc67d27a3d214cbffe592ba76e9a5c3881b351639a3ecea6659a0e294c41da"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001113481-acquisition-20130110",
+      "cik": "0001113481",
+      "company": "MEDICINES CO /DE",
+      "division": "D",
+      "deregistered": true,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought Incline Therapeutics by merger.",
+      "announced_at": null,
+      "effective_on": "2013-01-04",
+      "reporting_lag_days": 6,
+      "magnitude": {
+        "value": 156000000.0,
+        "unit": "usd",
+        "measures": "Cash to Incline equity holders at closing, before adjustment"
+      },
+      "funding": {
+        "cash": 1.0,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": "Another $13 million paid to end a third-party option, $18.5 million in escrow"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1113481/000110465913001846/a13-2576_18k.htm",
+          "accession": "0001104659-13-001846",
+          "form": "8-K",
+          "filed_at": "2013-01-10T16:30:43Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraphs 1-2",
+          "summary": "All-cash purchase.",
+          "document_sha256": "b523a59746e994a0bcdd741acea1ad2c00b139897711d9310637491ef7ba0da6"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001131675-acquisition-20120305",
+      "cik": "0001131675",
+      "company": "HASCO Medical, Inc.",
+      "division": "D",
+      "deregistered": true,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought all stock of Ride-Away Handicap Equipment.",
+      "announced_at": null,
+      "effective_on": "2012-03-01",
+      "reporting_lag_days": 4,
+      "magnitude": {
+        "value": 6000000.0,
+        "unit": "usd",
+        "measures": "Total consideration"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": "$500 000 in cash and stock valued at $2.5 million; the rest was not read"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "funding"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1131675/000116169712000123/form_8-k.htm",
+          "accession": "0001161697-12-000123",
+          "form": "8-K",
+          "filed_at": "2012-03-05T09:30:40Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraph 1",
+          "summary": "Funding only partly read.",
+          "document_sha256": "bf82b60713b3ad664bc90a59898a3d894c2169064151ddaffcfe3751eddbfd2a"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001126234-acquisition-20241212",
+      "cik": "0001126234",
+      "company": "LUMOS PHARMA, INC.",
+      "division": "D",
+      "deregistered": true,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Lumos Pharma was bought by Double Point Ventures: $4.25 per share plus a contingent value right.",
+      "announced_at": null,
+      "effective_on": "2024-12-12",
+      "reporting_lag_days": 0,
+      "magnitude": {
+        "value": null,
+        "unit": "unknown",
+        "measures": "Aggregate price not stated in the part read"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": "Cash per share plus a contingent right"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "magnitude", "funding"],
+      "confounded_by": ["The filer is the target, not the buyer"],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1126234/000119312524276512/d909721d8k.htm",
+          "accession": "0001193125-24-276512",
+          "form": "8-K",
+          "filed_at": "2024-12-12T10:28:21Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraphs 1-2",
+          "summary": "Tender offer completed; an 8-K of 23 October 2024 announced it.",
+          "document_sha256": "72fc108617b0b6948c1269a2b92778c697df6f4cea228b7d4ed234c34e1702e8"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001070081-acquisition-20170420",
+      "cik": "0001070081",
+      "company": "PTC THERAPEUTICS, INC.",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought all rights to Emflaza from Marathon.",
+      "announced_at": null,
+      "effective_on": "2017-04-20",
+      "reporting_lag_days": 0,
+      "magnitude": {
+        "value": 140000000.0,
+        "unit": "usd",
+        "measures": "Upfront consideration; royalties and a milestone may follow"
+      },
+      "funding": {
+        "cash": 0.536,
+        "debt": null,
+        "equity": 0.464,
+        "other": null,
+        "note": "$75 million in cash and 6 683 598 shares worth $65 million"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1070081/000107008117000071/v3_ptcform8kxitem201xitem3.htm",
+          "accession": "0001070081-17-000071",
+          "form": "8-K",
+          "filed_at": "2017-04-20T20:17:11Z",
+          "item": "2.01",
+          "locator": "Item 2.01",
+          "summary": "An asset purchase, previously announced.",
+          "document_sha256": "7ebb6437ffdf958b85559c812c8ba0190ad31cf66e80a1a771817d2155d50854"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001144980-acquisition-20231211",
+      "cik": "0001144980",
+      "company": "ASBURY AUTOMOTIVE GROUP INC",
+      "division": "G",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought substantially all assets of the Jim Koons dealerships.",
+      "announced_at": null,
+      "effective_on": "2023-12-11",
+      "reporting_lag_days": 0,
+      "magnitude": {
+        "value": 1200000000.0,
+        "unit": "usd",
+        "measures": "Aggregate net purchase price"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "funding"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1144980/000114498023000134/abg-20231211.htm",
+          "accession": "0001144980-23-000134",
+          "form": "8-K",
+          "filed_at": "2023-12-11T20:40:55Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraph 1",
+          "summary": "Previously announced; funding not stated in the part read.",
+          "document_sha256": "5dd6b711b260e556159178f86461d48cb4782657c8f293dbd70770af96887960"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001590714-acquisition-20141104",
+      "cik": "0001590714",
+      "company": "Element Solutions Inc",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Platform bought the Chemtura AgroSolutions business.",
+      "announced_at": null,
+      "effective_on": "2014-11-03",
+      "reporting_lag_days": 0,
+      "magnitude": {
+        "value": null,
+        "unit": "unknown",
+        "measures": "The price was not captured in the part read"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "magnitude", "funding"],
+      "confounded_by": ["New term loans and revolver borrowings closed with the acquisition"],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1590714/000117184314005189/f8k_110314.htm",
+          "accession": "0001171843-14-005189",
+          "form": "8-K",
+          "filed_at": "2014-11-04T03:22:43Z",
+          "item": "2.01",
+          "locator": "Item 2.01",
+          "summary": "Financing described in the same filing.",
+          "document_sha256": "9517e400703fdf1c8f165bc72b9793b2069f0a2fea1d223443d42508779d5bd9"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001112985-acquisition-20180409",
+      "cik": "0001112985",
+      "company": "CannAwake Corp",
+      "division": "B",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Delta issued preferred stock for all of Nipton; the seller took about 82% of the common stock.",
+      "announced_at": null,
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": null,
+        "unit": "unknown",
+        "measures": "Paid in preferred stock; no dollar value stated"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": 1.0,
+        "other": null,
+        "note": "160 000 Series A preferred shares"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "effective_on", "reporting_lag_days", "magnitude"],
+      "confounded_by": ["A change of control of a shell-like company"],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1112985/000121390018004191/f8k040518_deltainternational.htm",
+          "accession": "0001213900-18-004191",
+          "form": "8-K",
+          "filed_at": "2018-04-09T17:02:21Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraph 1",
+          "summary": "The closing day is blank in the filing itself.",
+          "document_sha256": "7c57bde7fd2be9f90839e23b6b947bdccb6c1697f472a0c7d71cf6a22d15146c"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "low",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000104889-divestiture-20150708",
+      "cik": "0000104889",
+      "company": "Graham Holdings Co",
+      "division": "I",
+      "deregistered": false,
+      "event_type": "divestiture",
+      "intention": "Separate Cable ONE, a plan announced on 13 November 2014.",
+      "executed": "Cable ONE was spun off to shareholders.",
+      "announced_at": null,
+      "effective_on": "2015-07-01",
+      "reporting_lag_days": 7,
+      "magnitude": {
+        "value": null,
+        "unit": "unknown",
+        "measures": "A pro rata distribution of all Cable ONE shares"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "magnitude", "funding"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/104889/000010488915000049/d8k.htm",
+          "accession": "0000104889-15-000049",
+          "form": "8-K",
+          "filed_at": "2015-07-08T16:51:47Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraph 1",
+          "summary": "The announcement document itself was not read.",
+          "document_sha256": "6cce44dee94702ba1c9c77a945cb3e1b6d260ce22f9e17fc543cb8cb29682116"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000883984-acquisition-20220107",
+      "cik": "0000883984",
+      "company": "ICU MEDICAL INC/DE",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought the Smiths Medical business from Smiths Group.",
+      "announced_at": null,
+      "effective_on": "2022-01-06",
+      "reporting_lag_days": 1,
+      "magnitude": {
+        "value": 1850000000.0,
+        "unit": "usd",
+        "measures": "Cash consideration; 2 500 000 shares and up to $100 million contingent come on top"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": "Cash on hand and new credit facilities, shares not valued in the part read"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "funding"],
+      "confounded_by": ["New credit facilities closed with the acquisition"],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/883984/000088398422000005/icui-20220107.htm",
+          "accession": "0000883984-22-000005",
+          "form": "8-K",
+          "filed_at": "2022-01-07T13:59:50Z",
+          "item": "2.01",
+          "locator": "Item 2.01 by reference to Item 1.01",
+          "summary": "The price is stated in the section referred to.",
+          "document_sha256": "df85957bf92277406295a75a1d088c9889b5b04ee1797314b1ef5b1b978c7649"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001383312-acquisition-20210512",
+      "cik": "0001383312",
+      "company": "BROADRIDGE FINANCIAL SOLUTIONS, INC.",
+      "division": "I",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought Itiviti Holding.",
+      "announced_at": null,
+      "effective_on": "2021-05-12",
+      "reporting_lag_days": 0,
+      "magnitude": {
+        "value": 2600000000.0,
+        "unit": "usd",
+        "measures": "Total purchase price in cash, approximate"
+      },
+      "funding": {
+        "cash": 1.0,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1383312/000114036121016941/nt10023715x7_8k.htm",
+          "accession": "0001140361-21-016941",
+          "form": "8-K",
+          "filed_at": "2021-05-12T18:25:41Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraph 1",
+          "summary": "Paid in cash in several currencies.",
+          "document_sha256": "8f2ccae87f9c8b47652c7849568c5faca9297bf3c3f83bb78a36e52c6e1517b3"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001546589-acquisition-20131206",
+      "cik": "0001546589",
+      "company": "Grey Fox Holdings Corp.",
+      "division": "H",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought 22 federal oil and gas leases in Nevada.",
+      "announced_at": null,
+      "effective_on": "2013-12-02",
+      "reporting_lag_days": 4,
+      "magnitude": {
+        "value": 250000.0,
+        "unit": "usd",
+        "measures": "Aggregate purchase price of the leases"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "funding"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1546589/000101968713004741/grayfox_8k-120613.htm",
+          "accession": "0001019687-13-004741",
+          "form": "8-K",
+          "filed_at": "2013-12-06T15:38:01Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraphs 1-2",
+          "summary": "A small asset purchase by an early-stage firm.",
+          "document_sha256": "1c8ebc09d3afebd2a484d8d6cf90efc8160bdc534e834297399494193a0a2e23"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001092839-divestiture-20150730",
+      "cik": "0001092839",
+      "company": "DUNE ENERGY INC",
+      "division": "B",
+      "deregistered": false,
+      "event_type": "divestiture",
+      "intention": null,
+      "executed": "Sold substantially all assets in Chapter 11.",
+      "announced_at": null,
+      "effective_on": "2015-07-27",
+      "reporting_lag_days": 3,
+      "magnitude": {
+        "value": null,
+        "unit": "unknown",
+        "measures": "Part of the price is liabilities assumed; the total is not stated in the part read"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "magnitude", "funding"],
+      "confounded_by": ["A forced sale in bankruptcy"],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1092839/000119312515270534/d56900d8k.htm",
+          "accession": "0001193125-15-270534",
+          "form": "8-K",
+          "filed_at": "2015-07-30T14:52:35Z",
+          "item": "2.01",
+          "locator": "Item 2.01",
+          "summary": "One buyer paid $1 and assumed liabilities; the company is winding down.",
+          "document_sha256": "74a1f7e50c4c39393f895f7c311078b5a27219f92d8fa081ed1725cb2c38c98c"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001538849-acquisition-20150221",
+      "cik": "0001538849",
+      "company": "CrossAmerica Partners LP",
+      "division": "F",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought Erickson Oil Products and 64 convenience store sites.",
+      "announced_at": null,
+      "effective_on": "2015-02-17",
+      "reporting_lag_days": 3,
+      "magnitude": {
+        "value": 85000000.0,
+        "unit": "usd",
+        "measures": "Aggregate cash price, subject to adjustment"
+      },
+      "funding": {
+        "cash": null,
+        "debt": 1.0,
+        "equity": null,
+        "other": null,
+        "note": "Financed under the credit facility"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1538849/000119312515056261/d875871d8k.htm",
+          "accession": "0001193125-15-056261",
+          "form": "8-K",
+          "filed_at": "2015-02-21T01:58:34Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraph 1",
+          "summary": "Previously announced.",
+          "document_sha256": "1d06b5cec819a8d576f58dce0d0ee5950f034d522a6958a2f0ddd17e3a56fcb6"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000846377-acquisition-20120214",
+      "cik": "0000846377",
+      "company": "Totaligent, Inc.",
+      "division": "H",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Merged with WikiPay, paying in preferred stock.",
+      "announced_at": null,
+      "effective_on": "2012-02-10",
+      "reporting_lag_days": 4,
+      "magnitude": {
+        "value": null,
+        "unit": "unknown",
+        "measures": "7 992 000 preferred shares; no dollar value stated"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": 1.0,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "magnitude"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/846377/000121390012000694/f8k020912_wikiloan.htm",
+          "accession": "0001213900-12-000694",
+          "form": "8-K",
+          "filed_at": "2012-02-14T20:54:11Z",
+          "item": "2.01",
+          "locator": "Item 2.01, paragraphs 1-2",
+          "summary": "A share-for-share merger.",
+          "document_sha256": "b4f950a9ec913efdebc8b2fc98c9993fc592ba9ec3bf790c6533f5e6ee67b3ff"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001043961-acquisition-20120927",
+      "cik": "0001043961",
+      "company": "Precipio, Inc.",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": null,
+      "executed": "Bought assets of Axial Biotech through a subsidiary.",
+      "announced_at": null,
+      "effective_on": "2012-09-21",
+      "reporting_lag_days": 6,
+      "magnitude": {
+        "value": 3400000.0,
+        "unit": "usd",
+        "measures": "Cash paid at closing, approximate; further terms follow"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": "Cash at closing; later terms not read"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "funding"],
+      "confounded_by": [],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1043961/000114420412053247/v324553_8k.htm",
+          "accession": "0001144204-12-053247",
+          "form": "8-K",
+          "filed_at": "2012-09-27T20:14:43Z",
+          "item": "2.01",
+          "locator": "Item 2.01",
+          "summary": "Further consideration is described after the transfer of assets.",
+          "document_sha256": "6a60f180109981b6261538b141d1fba4c7815e5dacd347182570f8cda44b4033"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001624985-acquisition-20180614",
+      "cik": "0001624985",
+      "company": "SUPA Consolidated Inc.",
+      "division": "I",
+      "deregistered": false,
+      "event_type": "acquisition",
+      "intention": "Buy rights in the Lordsburg lithium project for $50 000 and 19.9% of the stock.",
+      "executed": "The stock was delivered with effect from 24 May 2018.",
+      "announced_at": null,
+      "effective_on": "2018-05-24",
+      "reporting_lag_days": 21,
+      "magnitude": {
+        "value": 50000.0,
+        "unit": "usd",
+        "measures": "Cash part only; 19.9% of the stock comes on top"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "partial",
+      "unknown_fields": ["announced_at", "funding"],
+      "confounded_by": ["A change of the company's whole business"],
+      "stratum": "item_2_01",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1624985/000164033418001195/xnda_8k.htm",
+          "accession": "0001640334-18-001195",
+          "form": "8-K",
+          "filed_at": "2018-06-14T21:25:41Z",
+          "item": "2.01",
+          "locator": "Items 1.01 and 2.01",
+          "summary": "A royalty deed and milestones were still to be delivered.",
+          "document_sha256": "c0d790298ca7d00eaf8c1431b32c1372e3c0ef69edd3d9427f1828a5a509c9df"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "low",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000861878-refinancing-20211004",
+      "cik": "0000861878",
+      "company": "STERICYCLE INC",
+      "division": "E",
+      "deregistered": true,
+      "event_type": "refinancing",
+      "intention": null,
+      "executed": "New credit agreement refinanced the existing one.",
+      "announced_at": null,
+      "effective_on": "2021-09-30",
+      "reporting_lag_days": 4,
+      "magnitude": {
+        "value": 1400000000.0,
+        "unit": "usd",
+        "measures": "$200 million term loan and $1.2 billion revolver commitments"
+      },
+      "funding": {
+        "cash": null,
+        "debt": 1.0,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at"],
+      "confounded_by": [],
+      "stratum": "item_2_03",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/861878/000119312521291128/d233563d8k.htm",
+          "accession": "0001193125-21-291128",
+          "form": "8-K",
+          "filed_at": "2021-10-04T17:24:37Z",
+          "item": "2.03",
+          "locator": "Items 1.01 and 2.03",
+          "summary": "The proceeds refinanced the earlier agreement on the closing date.",
+          "document_sha256": "76ead1afe8083310ca15cb5c12564eec94c8b442bb8e2c7d2e4ec2dfa21f1af3"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000070415-refinancing-20200512",
+      "cik": "0000070415",
+      "company": "GP STRATEGIES CORP",
+      "division": "I",
+      "deregistered": true,
+      "event_type": "refinancing",
+      "intention": null,
+      "executed": "Amended the credit agreement: looser leverage limit for 2020.",
+      "announced_at": null,
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": null,
+        "unit": "unknown",
+        "measures": "A covenant change, no new principal"
+      },
+      "funding": {
+        "cash": null,
+        "debt": 1.0,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "effective_on", "reporting_lag_days", "magnitude"],
+      "confounded_by": ["Amended in May 2020, during the pandemic"],
+      "stratum": "item_2_03",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/70415/000007041520000081/a8-kamendmenttocreditagree.htm",
+          "accession": "0000070415-20-000081",
+          "form": "8-K",
+          "filed_at": "2020-05-12T17:18:51Z",
+          "item": "2.03",
+          "locator": "Item 1.01",
+          "summary": "The maximum leverage ratio rose from 3.0 to 3.75 for the rest of 2020.",
+          "document_sha256": "67ade467053cd69080cdc3ec79794d6a38636e174bfbfbd725b943022d5e7e65"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001334814-refinancing-20120502",
+      "cik": "0001334814",
+      "company": "ZILLOW INC",
+      "division": "I",
+      "deregistered": true,
+      "event_type": "refinancing",
+      "intention": null,
+      "executed": "Amended and restated its revolving loan agreement with Silicon Valley Bank.",
+      "announced_at": null,
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": null,
+        "unit": "unknown",
+        "measures": "The size was not captured in the part read"
+      },
+      "funding": {
+        "cash": null,
+        "debt": 1.0,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "effective_on", "reporting_lag_days", "magnitude"],
+      "confounded_by": ["Filed with the RentJuice acquisition and quarterly results"],
+      "stratum": "item_2_03",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1334814/000119312512204560/d342198d8k.htm",
+          "accession": "0001193125-12-204560",
+          "form": "8-K",
+          "filed_at": "2012-05-02T16:17:12Z",
+          "item": "2.03",
+          "locator": "Item 1.01",
+          "summary": "An amendment of an existing facility.",
+          "document_sha256": "af652c215ff6ec8abbc96e495ba3150f9e3374fd3e8dad54e168e1dc6dec084f"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001504747-refinancing-20120904",
+      "cik": "0001504747",
+      "company": "Swisher Hygiene Inc.",
+      "division": "D",
+      "deregistered": true,
+      "event_type": "refinancing",
+      "intention": null,
+      "executed": "Amended and restated the senior secured revolver.",
+      "announced_at": null,
+      "effective_on": "2012-08-31",
+      "reporting_lag_days": 4,
+      "magnitude": {
+        "value": 50000000.0,
+        "unit": "usd",
+        "measures": "Maximum borrowing, subject to a borrowing base"
+      },
+      "funding": {
+        "cash": null,
+        "debt": 1.0,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at"],
+      "confounded_by": [],
+      "stratum": "item_2_03",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1504747/000119312512378251/d406153d8k.htm",
+          "accession": "0001193125-12-378251",
+          "form": "8-K",
+          "filed_at": "2012-09-04T07:39:54Z",
+          "item": "2.03",
+          "locator": "Item 2.03, paragraph 1",
+          "summary": "Availability depends on the borrowing base.",
+          "document_sha256": "9142a21ceae2cc41875387172e625f4b4c8e9845147fe075b4991417dd7d9ae0"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001128928-refinancing-20120403",
+      "cik": "0001128928",
+      "company": "FLOWERS FOODS INC",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "refinancing",
+      "intention": null,
+      "executed": "Issued 4.375% notes due 2022 and repaid the revolver.",
+      "announced_at": null,
+      "effective_on": "2012-04-03",
+      "reporting_lag_days": 0,
+      "magnitude": {
+        "value": 400000000.0,
+        "unit": "usd",
+        "measures": "Aggregate principal of the notes"
+      },
+      "funding": {
+        "cash": null,
+        "debt": 1.0,
+        "equity": null,
+        "other": null,
+        "note": "The rest of the proceeds went to acquisitions and general purposes"
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at"],
+      "confounded_by": [],
+      "stratum": "item_2_03",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1128928/000119312512147214/d328366d8k.htm",
+          "accession": "0001193125-12-147214",
+          "form": "8-K",
+          "filed_at": "2012-04-03T16:59:39Z",
+          "item": "2.03",
+          "locator": "Items 1.01 and 2.03",
+          "summary": "Only part of the proceeds repaid debt.",
+          "document_sha256": "c6ccae26e9075fa5d1c989af921953668a4af123ba9d7d0c875e93dc6f3be76a"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001567683-refinancing-20211202",
+      "cik": "0001567683",
+      "company": "Clearway Energy, Inc.",
+      "division": "E",
+      "deregistered": false,
+      "event_type": "refinancing",
+      "intention": null,
+      "executed": "Sixth amendment of the revolver: higher leverage limit and other terms.",
+      "announced_at": null,
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 495000000.0,
+        "unit": "usd",
+        "measures": "Revolving commitments"
+      },
+      "funding": {
+        "cash": null,
+        "debt": 1.0,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "effective_on", "reporting_lag_days"],
+      "confounded_by": [],
+      "stratum": "item_2_03",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1567683/000110465921145441/tm2134349d1_8k.htm",
+          "accession": "0001104659-21-145441",
+          "form": "8-K",
+          "filed_at": "2021-12-02T02:25:34Z",
+          "item": "2.03",
+          "locator": "Item 1.01",
+          "summary": "An amendment of an existing facility.",
+          "document_sha256": "63a84db32ae54abcd2c1fbecfd2800e0a336a720592c10b0b8171913129ca2e3"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000312257-refinancing-20220614",
+      "cik": "0000312257",
+      "company": "INNOVATIVE FOOD HOLDINGS INC",
+      "division": "F",
+      "deregistered": false,
+      "event_type": "refinancing",
+      "intention": null,
+      "executed": "New term loans repaid the term loans with Fifth Third Bank.",
+      "announced_at": null,
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 5695052.11,
+        "unit": "usd",
+        "measures": "Initial loan disbursed"
+      },
+      "funding": {
+        "cash": null,
+        "debt": 1.0,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "effective_on", "reporting_lag_days"],
+      "confounded_by": [],
+      "stratum": "item_2_03",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/312257/000118518522000739/innovfood20220613_8k.htm",
+          "accession": "0001185185-22-000739",
+          "form": "8-K",
+          "filed_at": "2022-06-14T21:25:34Z",
+          "item": "2.03",
+          "locator": "Items 1.01 and 2.03",
+          "summary": "A bridge that was to convert on a USDA guarantee.",
+          "document_sha256": "4cbd1075cad5f83ece6791041f0dbe1d5f9e7f58b5c34c1aba6c37fe6c082172"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001324404-refinancing-20150923",
+      "cik": "0001324404",
+      "company": "CF Industries Holdings, Inc.",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "refinancing",
+      "intention": "Bridge loans to fund a combination and refinance specified debt.",
+      "executed": null,
+      "announced_at": "2015-09-23T20:47:20Z",
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 4000000000.0,
+        "unit": "usd",
+        "measures": "Tranche A up to $1 billion and tranche B up to $3 billion"
+      },
+      "funding": {
+        "cash": null,
+        "debt": 1.0,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "announced",
+      "unknown_fields": ["effective_on", "reporting_lag_days"],
+      "confounded_by": ["Financing tied to a business combination"],
+      "stratum": "item_2_03",
+      "evidence": [
+        {
+          "role": "announcement",
+          "url": "https://www.sec.gov/Archives/edgar/data/1324404/000110465915066737/a15-19961_18k.htm",
+          "accession": "0001104659-15-066737",
+          "form": "8-K",
+          "filed_at": "2015-09-23T20:47:20Z",
+          "item": "2.03",
+          "locator": "Items 1.01 and 2.03",
+          "summary": "Commitments, not borrowings; the outcome is not in this filing.",
+          "document_sha256": "894266d7c36134604b660c3bc51e4fde02f20841d4ba75f803bf465b13c5ec44"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001317630-refinancing-20231101",
+      "cik": "0001317630",
+      "company": "ITC Holdings Corp.",
+      "division": "E",
+      "deregistered": false,
+      "event_type": "refinancing",
+      "intention": null,
+      "executed": "METC issued senior secured notes; the proceeds repay its revolver and fund capital expenditures.",
+      "announced_at": null,
+      "effective_on": null,
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 90000000.0,
+        "unit": "usd",
+        "measures": "Aggregate principal of the notes"
+      },
+      "funding": {
+        "cash": null,
+        "debt": 1.0,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "effective_on", "reporting_lag_days"],
+      "confounded_by": [],
+      "stratum": "item_2_03",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1317630/000110465923113385/tm2329541d1_8k.htm",
+          "accession": "0001104659-23-113385",
+          "form": "8-K",
+          "filed_at": "2023-11-01T20:08:21Z",
+          "item": "2.03",
+          "locator": "Items 1.01 and 2.03",
+          "summary": "A subsidiary's private placement.",
+          "document_sha256": "e13aac7839fb06430f774d0ba54f2af45eafdbfa582f9629bd823b4bbaf60656"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001505512-rnd_change-20160223",
+      "cik": "0001505512",
+      "company": "Regulus Therapeutics Inc.",
+      "division": "D",
+      "deregistered": true,
+      "event_type": "rnd_change",
+      "intention": null,
+      "executed": "R&D expense rose from $29.9 million in 2013 to $41.0 million in 2014.",
+      "announced_at": null,
+      "effective_on": "2014-12-31",
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 37.1,
+        "unit": "percent_change",
+        "measures": "Yearly change of R&D expense, computed from the two amounts"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "reporting_lag_days", "funding"],
+      "confounded_by": [],
+      "stratum": "rnd_jump",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1505512/000162828016011521/rgls20151231-10k.htm",
+          "accession": "0001628280-16-011521",
+          "form": "10-K",
+          "filed_at": "2016-02-23T08:06:53Z",
+          "item": null,
+          "locator": "MD&A, research and development expenses",
+          "summary": "Driven by clinical studies and preclinical work.",
+          "document_sha256": "913d2493b6d4ad6de96f0e0fa002e6ca7b585ec26cba0d633eaceb0fb1a7acc3"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001049502-rnd_change-20200229",
+      "cik": "0001049502",
+      "company": "MKS INC",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "rnd_change",
+      "intention": null,
+      "executed": "R&D expense rose from $135.7 million in 2018 to $164.1 million in 2019.",
+      "announced_at": null,
+      "effective_on": "2019-12-31",
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 20.9,
+        "unit": "percent_change",
+        "measures": "Yearly change of R&D expense, computed from the two amounts"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "reporting_lag_days", "funding"],
+      "confounded_by": ["$26.8 million of the $28.4 million increase came from the ESI merger"],
+      "stratum": "rnd_jump",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1049502/000119312520056028/d114808d10k.htm",
+          "accession": "0001193125-20-056028",
+          "form": "10-K",
+          "filed_at": "2020-02-29T01:20:21Z",
+          "item": null,
+          "locator": "MD&A, research and development",
+          "summary": "Nearly all of the rise is an acquisition, not a decision about R&D.",
+          "document_sha256": "efc55e409b6aeba4d69146832ae2345734d48ae292850147c4e0d6ce5781b731"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001825079-rnd_change-20240404",
+      "cik": "0001825079",
+      "company": "Velo3D, Inc.",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "rnd_change",
+      "intention": null,
+      "executed": "R&D fell in 2023 as new projects were cut under a strategic realignment.",
+      "announced_at": null,
+      "effective_on": "2023-12-31",
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": null,
+        "unit": "unknown",
+        "measures": "The total change was not captured in the part read"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "reporting_lag_days", "magnitude", "funding"],
+      "confounded_by": ["Part of a company-wide realignment"],
+      "stratum": "rnd_jump",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1825079/000182507924000008/velo-20231231.htm",
+          "accession": "0001825079-24-000008",
+          "form": "10-K",
+          "filed_at": "2024-04-04T00:39:49Z",
+          "item": null,
+          "locator": "MD&A, research and development",
+          "summary": "Components of the fall are listed: headcount, product development, testing.",
+          "document_sha256": "c41ee35f0af23df0867bbad7828f5dcedb61a7a8bbeef126251387f1f016e8bd"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0000085408-capex_change-20170224",
+      "cik": "0000085408",
+      "company": "ROWAN COMPANIES PLC",
+      "division": "B",
+      "deregistered": true,
+      "event_type": "capex_change",
+      "intention": null,
+      "executed": "Capital expenditures fell from about $2.0 billion in 2014 to $722.9 million in 2015.",
+      "announced_at": null,
+      "effective_on": "2015-12-31",
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": -63.9,
+        "unit": "percent_change",
+        "measures": "Yearly change, computed from the two amounts; 2014 is rounded"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "reporting_lag_days", "funding"],
+      "confounded_by": ["The end of a drillship construction programme, not a new decision"],
+      "stratum": "capex_jump",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/85408/000008540817000006/rdc-12312016x10k.htm",
+          "accession": "0000085408-17-000006",
+          "form": "10-K",
+          "filed_at": "2017-02-24T13:33:01Z",
+          "item": null,
+          "locator": "MD&A, liquidity",
+          "summary": "The fourth drillship was delivered in March 2015.",
+          "document_sha256": "54786b44b1e0f492fa224351812a9c46af550a386eb54c23ec6a83825fabac33"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001060736-capex_change-20200206",
+      "cik": "0001060736",
+      "company": "Seagen Inc.",
+      "division": "D",
+      "deregistered": true,
+      "event_type": "capex_change",
+      "intention": null,
+      "executed": "Purchases of property and equipment rose from $21.2 million in 2018 to $70.8 million in 2019.",
+      "announced_at": null,
+      "effective_on": "2019-12-31",
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 233.4,
+        "unit": "percent_change",
+        "measures": "Yearly change, computed from the cash flow statement"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "reporting_lag_days", "funding"],
+      "confounded_by": [],
+      "stratum": "capex_jump",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1060736/000106073620000006/a10k2019.htm",
+          "accession": "0001060736-20-000006",
+          "form": "10-K",
+          "filed_at": "2020-02-06T17:17:54Z",
+          "item": null,
+          "locator": "Statements of cash flows, investing activities",
+          "summary": "The reason was not read.",
+          "document_sha256": "9912d69a05aafe0173a97180e72a17028e638ebad20dcc146f65892d3edcfe01"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001360214-capex_change-20190312",
+      "cik": "0001360214",
+      "company": "HARROW, INC.",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "capex_change",
+      "intention": null,
+      "executed": "Purchases of property, plant and equipment rose from $772 thousand in 2017 to $1 768 thousand in 2018.",
+      "announced_at": null,
+      "effective_on": "2018-12-31",
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 129.0,
+        "unit": "percent_change",
+        "measures": "Yearly change, computed from the cash flow statement"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "reporting_lag_days", "funding"],
+      "confounded_by": [],
+      "stratum": "capex_jump",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1360214/000149315219003188/form10-k.htm",
+          "accession": "0001493152-19-003188",
+          "form": "10-K",
+          "filed_at": "2019-03-12T20:16:55Z",
+          "item": null,
+          "locator": "Statements of cash flows, investing activities",
+          "summary": "The reason was not read.",
+          "document_sha256": "e9da5ade83cf0d86a6eaeaf44f966388f7e8e6cadf5349d92643e8835bdde770"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001342958-capex_change-20220415",
+      "cik": "0001342958",
+      "company": "KUSTOM ENTERTAINMENT, INC.",
+      "division": "D",
+      "deregistered": false,
+      "event_type": "capex_change",
+      "intention": null,
+      "executed": "Purchases of property, plant and equipment rose from $0.62 million in 2020 to $6.43 million in 2021.",
+      "announced_at": null,
+      "effective_on": "2021-12-31",
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 933.7,
+        "unit": "percent_change",
+        "measures": "Yearly change, computed from the cash flow statement"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "reporting_lag_days", "funding"],
+      "confounded_by": ["Two acquisitions in the same year"],
+      "stratum": "capex_jump",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1342958/000149315222010126/form10-k.htm",
+          "accession": "0001493152-22-010126",
+          "form": "10-K",
+          "filed_at": "2022-04-15T21:06:36Z",
+          "item": null,
+          "locator": "Statements of cash flows, investing activities",
+          "summary": "The reason was not read.",
+          "document_sha256": "d6dd8df7928fe9a322868cf53e28aa163651fc1ae17d642a63a87b2fcbc3aafe"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "medium",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001086222-capex_change-20180301",
+      "cik": "0001086222",
+      "company": "AKAMAI TECHNOLOGIES INC",
+      "division": "I",
+      "deregistered": false,
+      "event_type": "capex_change",
+      "intention": null,
+      "executed": "Purchases of property and equipment and capitalised software rose from $316.3 million in 2016 to $414.8 million in 2017.",
+      "announced_at": null,
+      "effective_on": "2017-12-31",
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": 31.1,
+        "unit": "percent_change",
+        "measures": "Yearly change, computed from the two amounts; includes capitalised software"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "reporting_lag_days", "funding"],
+      "confounded_by": ["Nominum and Soasta were acquired in the same year"],
+      "stratum": "capex_jump",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1086222/000108622218000052/akam10k123117.htm",
+          "accession": "0001086222-18-000052",
+          "form": "10-K",
+          "filed_at": "2018-03-01T14:07:51Z",
+          "item": null,
+          "locator": "MD&A, investing activities",
+          "summary": "The company names network and facility expansion.",
+          "document_sha256": "b636c377f98cb01b0f46533eb4c1e450985453da5d7e82d4c5baf3e13f3809ab"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "event_id": "evt-0001570585-capex_change-20200213",
+      "cik": "0001570585",
+      "company": "Liberty Global Ltd.",
+      "division": "E",
+      "deregistered": false,
+      "event_type": "capex_change",
+      "intention": null,
+      "executed": "Capital expenditures fell from $1 453.0 million in 2018 to $1 243.1 million in 2019.",
+      "announced_at": null,
+      "effective_on": "2019-12-31",
+      "reporting_lag_days": null,
+      "magnitude": {
+        "value": -14.4,
+        "unit": "percent_change",
+        "measures": "Yearly change, computed from the two amounts"
+      },
+      "funding": {
+        "cash": null,
+        "debt": null,
+        "equity": null,
+        "other": null,
+        "note": null
+      },
+      "completion": "completed",
+      "unknown_fields": ["announced_at", "reporting_lag_days", "funding"],
+      "confounded_by": ["Part of the fall is foreign exchange and vendor financing"],
+      "stratum": "capex_jump",
+      "evidence": [
+        {
+          "role": "execution",
+          "url": "https://www.sec.gov/Archives/edgar/data/1570585/000157058520000023/lg201910-k.htm",
+          "accession": "0001570585-20-000023",
+          "form": "10-K",
+          "filed_at": "2020-02-13T21:20:12Z",
+          "item": null,
+          "locator": "MD&A, investing activities",
+          "summary": "Not a pure spending decision.",
+          "document_sha256": "53aed293c2225795e4326b5e06486b6b08a96db0454584874dc6e8d1b5fe6db0"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": "claude_ai",
+          "kind": "ai",
+          "decision": "confirmed",
+          "confidence": "high",
+          "notes": "First reading; no human has checked this event.",
+          "reviewed_at": "2026-11-06T12:00:00Z"
+        }
+      ]
+    }
+  ],
+  "rejected": [
+    {
+      "candidate_id": "item_2_05-0001193125-15-313057",
+      "reason": "A rebranding with non-cash amortization: no workforce, sale or exit.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "item_2_05-0001564590-19-027999",
+      "reason": "A product line wound down, mostly inventory write-down: outside the six types.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "item_2_01-0000827187-16-000103",
+      "reason": "The filing index lists Item 2.01, but the document is an earnings release under Item 2.02.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "item_2_01-0001104659-21-081560",
+      "reason": "A SPAC business combination: a listing, outside the taxonomy.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "item_2_01-0001104659-22-107212",
+      "reason": "A SPAC business combination: a listing, outside the taxonomy.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "item_2_01-0001193125-21-355383",
+      "reason": "A SPAC business combination: a listing, outside the taxonomy.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "item_2_03-0001193125-16-499457",
+      "reason": "New notes mainly to fund an acquisition: not a refinancing of existing debt.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "item_2_03-0000895419-14-000035",
+      "reason": "A new revolver for general purposes; no replaced debt is stated.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "item_2_03-0001193125-17-050385",
+      "reason": "A new unsecured loan from an officer; no replaced debt is stated.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "rnd_jump-0000950170-24-036808",
+      "reason": "R&D fell only 3%: the change of intensity came from revenue, not from a decision.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "rnd_jump-0001493152-21-007505",
+      "reason": "The filing gives no amount for the change of R&D in the parts read.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    },
+    {
+      "candidate_id": "rnd_jump-0001493152-26-012914",
+      "reason": "The filing says R&D costs are built into unit prices: no change can be read.",
+      "reviewer": "claude_ai",
+      "kind": "ai"
+    }
+  ]
+}

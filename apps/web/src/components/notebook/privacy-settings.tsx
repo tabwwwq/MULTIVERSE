@@ -8,6 +8,7 @@ import { useNotebook } from "@/notebook/use-notebook";
 const DESCRIPTIONS: Record<string, string> = {
   "multiverse.notebook": "Research notebook: saved scenarios, revisions and exported reports.",
   "multiverse.sidebar.collapsed": "Whether the navigation sidebar is collapsed.",
+  "multiverse.event-reviews": "Your reviews of events, until you download them.",
 };
 
 function size(bytes: number): string {

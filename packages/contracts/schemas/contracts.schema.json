@@ -731,6 +731,71 @@
       "title": "BulkFile",
       "type": "object"
     },
+    "CandidateSample": {
+      "additionalProperties": false,
+      "description": "The drawn sample: rules, seed and counts, so it can be repeated.",
+      "properties": {
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/EventCandidate"
+          },
+          "type": "array"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Not part of the hash.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "drawn": {
+          "description": "Filings per stratum after drawing.",
+          "patternProperties": {
+            "^[a-z][a-z0-9_]*$": {
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "population": {
+          "description": "Filings per stratum before drawing.",
+          "patternProperties": {
+            "^[a-z][a-z0-9_]*$": {
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "sample_id": {
+          "pattern": "^evs-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "universe_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sample_id",
+        "sha256",
+        "universe_id",
+        "seed",
+        "population",
+        "drawn",
+        "candidates",
+        "contracts_version",
+        "created_at"
+      ],
+      "title": "CandidateSample",
+      "type": "object"
+    },
     "CapexExpansion": {
       "additionalProperties": false,
       "properties": {
@@ -1375,6 +1440,17 @@
       "title": "CompanyStatus",
       "type": "string"
     },
+    "CompletionStatus": {
+      "enum": [
+        "announced",
+        "partial",
+        "completed",
+        "terminated",
+        "unknown"
+      ],
+      "title": "CompletionStatus",
+      "type": "string"
+    },
     "ConceptCheck": {
       "additionalProperties": false,
       "description": "Reconciliation evidence: another candidate concept reported for the same period.",
@@ -1417,6 +1493,198 @@
       ],
       "title": "ConceptRelation",
       "type": "string"
+    },
+    "CorporateEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "announced_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first public document: the start of any event window."
+        },
+        "cik": {
+          "pattern": "^[0-9]{10}$",
+          "type": "string"
+        },
+        "company": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "completion": {
+          "$ref": "#/$defs/CompletionStatus"
+        },
+        "confounded_by": {
+          "default": [],
+          "description": "Other events or shocks in the same window, as documented.",
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "deregistered": {
+          "description": "Whether the company has since left EDGAR reporting.",
+          "type": "boolean"
+        },
+        "division": {
+          "pattern": "^[A-K]$",
+          "type": "string"
+        },
+        "effective_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Closing or effective date."
+        },
+        "event_id": {
+          "pattern": "^evt-[0-9]{10}-[a-z_]+-[0-9]{8}$",
+          "type": "string"
+        },
+        "event_type": {
+          "$ref": "#/$defs/EventType"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EventEvidence"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "executed": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What was done, as far as documented."
+        },
+        "funding": {
+          "$ref": "#/$defs/EventFunding",
+          "default": {
+            "cash": null,
+            "debt": null,
+            "equity": null,
+            "note": null,
+            "other": null
+          }
+        },
+        "intention": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What was announced, if anything."
+        },
+        "magnitude": {
+          "$ref": "#/$defs/EventMagnitude"
+        },
+        "reporting_lag_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "From the effective date to the document that reports it."
+        },
+        "reviews": {
+          "items": {
+            "$ref": "#/$defs/EventReview"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "stratum": {
+          "description": "The sampling stratum it was drawn from.",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "unknown_fields": {
+          "default": [],
+          "description": "Said aloud, never hidden.",
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "event_id",
+        "cik",
+        "company",
+        "division",
+        "deregistered",
+        "event_type",
+        "intention",
+        "executed",
+        "announced_at",
+        "effective_on",
+        "reporting_lag_days",
+        "magnitude",
+        "funding",
+        "completion",
+        "unknown_fields",
+        "confounded_by",
+        "stratum",
+        "evidence",
+        "reviews"
+      ],
+      "title": "CorporateEvent",
+      "type": "object"
+    },
+    "CountRow": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "key": {
+          "maxLength": 60,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "count"
+      ],
+      "title": "CountRow",
+      "type": "object"
     },
     "CoverageEntry": {
       "additionalProperties": false,
@@ -2402,6 +2670,395 @@
       ],
       "title": "EvaluationProtocol",
       "type": "object"
+    },
+    "EventCandidate": {
+      "additionalProperties": false,
+      "description": "A filing that may hold an event: a pointer to read, never a label.",
+      "properties": {
+        "accession": {
+          "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$",
+          "type": "string"
+        },
+        "candidate_id": {
+          "maxLength": 80,
+          "minLength": 1,
+          "type": "string"
+        },
+        "cik": {
+          "pattern": "^[0-9]{10}$",
+          "type": "string"
+        },
+        "company": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "deregistered": {
+          "type": "boolean"
+        },
+        "division": {
+          "pattern": "^[A-K]$",
+          "type": "string"
+        },
+        "event_type": {
+          "$ref": "#/$defs/EventType"
+        },
+        "filed_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "form": {
+          "maxLength": 20,
+          "minLength": 1,
+          "type": "string"
+        },
+        "items": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "stratum": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "url": {
+          "pattern": "^https://www\\.sec\\.gov/Archives/edgar/data/",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "cik",
+        "company",
+        "division",
+        "deregistered",
+        "event_type",
+        "stratum",
+        "accession",
+        "form",
+        "items",
+        "filed_at",
+        "url"
+      ],
+      "title": "EventCandidate",
+      "type": "object"
+    },
+    "EventEvidence": {
+      "additionalProperties": false,
+      "description": "Where a fact was read. The summary is in the reviewer's words, not a quotation.",
+      "properties": {
+        "accession": {
+          "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$",
+          "type": "string"
+        },
+        "document_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "filed_at": {
+          "description": "EDGAR acceptance: when it became public.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "form": {
+          "maxLength": 20,
+          "minLength": 1,
+          "type": "string"
+        },
+        "item": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "8-K item, when one applies."
+        },
+        "locator": {
+          "description": "Page, section or paragraph of the document.",
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "announcement",
+            "execution",
+            "magnitude",
+            "funding",
+            "status",
+            "context"
+          ],
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "url": {
+          "pattern": "^https://www\\.sec\\.gov/Archives/edgar/data/",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "url",
+        "accession",
+        "form",
+        "filed_at",
+        "item",
+        "locator",
+        "summary",
+        "document_sha256"
+      ],
+      "title": "EventEvidence",
+      "type": "object"
+    },
+    "EventFunding": {
+      "additionalProperties": false,
+      "description": "Shares of the consideration; all None when the documents do not say.",
+      "properties": {
+        "cash": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "debt": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "equity": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "other": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "cash",
+        "debt",
+        "equity",
+        "other",
+        "note"
+      ],
+      "title": "EventFunding",
+      "type": "object"
+    },
+    "EventMagnitude": {
+      "additionalProperties": false,
+      "properties": {
+        "measures": {
+          "description": "What the number is, in the document's own terms.",
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "unit": {
+          "$ref": "#/$defs/EventUnit",
+          "default": "unknown"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "measures"
+      ],
+      "title": "EventMagnitude",
+      "type": "object"
+    },
+    "EventRegistry": {
+      "additionalProperties": false,
+      "properties": {
+        "events": {
+          "items": {
+            "$ref": "#/$defs/CorporateEvent"
+          },
+          "type": "array"
+        },
+        "guidelines": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "registry_version": {
+          "maxLength": 20,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rejected": {
+          "default": [],
+          "description": "Read and not an event: kept, so the sample stays honest.",
+          "items": {
+            "$ref": "#/$defs/RejectedCandidate"
+          },
+          "type": "array"
+        },
+        "sample_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "registry_version",
+        "sample_id",
+        "guidelines",
+        "events",
+        "rejected"
+      ],
+      "title": "EventRegistry",
+      "type": "object"
+    },
+    "EventReview": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "confirmed",
+            "corrected",
+            "rejected",
+            "unsure"
+          ],
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "human",
+            "ai"
+          ],
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reviewed_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "reviewer": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reviewer",
+        "kind",
+        "decision",
+        "confidence",
+        "notes",
+        "reviewed_at"
+      ],
+      "title": "EventReview",
+      "type": "object"
+    },
+    "EventType": {
+      "enum": [
+        "rnd_change",
+        "acquisition",
+        "layoff",
+        "divestiture",
+        "capex_change",
+        "refinancing"
+      ],
+      "title": "EventType",
+      "type": "string"
+    },
+    "EventUnit": {
+      "description": "One meaning each: +40% of a budget is not +40 points of revenue (docs/05).",
+      "enum": [
+        "usd",
+        "headcount",
+        "percent_of_workforce",
+        "percent_change",
+        "points_of_revenue",
+        "unknown"
+      ],
+      "title": "EventUnit",
+      "type": "string"
     },
     "Evidence": {
       "description": "Whether a score rests on a checked fact or on an expectation still to be checked.",
@@ -4879,6 +5536,29 @@
       "title": "ObservedPoint",
       "type": "object"
     },
+    "OverlapCell": {
+      "additionalProperties": false,
+      "properties": {
+        "first": {
+          "$ref": "#/$defs/EventType"
+        },
+        "pairs": {
+          "description": "Events of one firm within the window of each other.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "second": {
+          "$ref": "#/$defs/EventType"
+        }
+      },
+      "required": [
+        "first",
+        "second",
+        "pairs"
+      ],
+      "title": "OverlapCell",
+      "type": "object"
+    },
     "PairedChange": {
       "additionalProperties": false,
       "description": "Alternate minus baseline, computed path by path, as quantiles.",
@@ -5495,6 +6175,139 @@
       "title": "ProceedsAllocation",
       "type": "object"
     },
+    "QualityAudit": {
+      "additionalProperties": false,
+      "description": "What the registry can carry, measured; the verdict gates causal work (docs/05).",
+      "properties": {
+        "blockers": {
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "by_completion": {
+          "items": {
+            "$ref": "#/$defs/CountRow"
+          },
+          "type": "array"
+        },
+        "by_division": {
+          "items": {
+            "$ref": "#/$defs/CountRow"
+          },
+          "type": "array"
+        },
+        "by_type": {
+          "items": {
+            "$ref": "#/$defs/CountRow"
+          },
+          "type": "array"
+        },
+        "candidates_read": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "confounded": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "credible_for_causal_work": {
+          "type": "boolean"
+        },
+        "deregistered_events": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "double_reviewed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "events": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "human_reviewed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "index_overlap": {
+          "default": [],
+          "description": "Events with an unread filing of that 8-K item in the window.",
+          "items": {
+            "$ref": "#/$defs/CountRow"
+          },
+          "type": "array"
+        },
+        "overlap": {
+          "items": {
+            "$ref": "#/$defs/OverlapCell"
+          },
+          "type": "array"
+        },
+        "overlap_window_days": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "registry_version": {
+          "type": "string"
+        },
+        "rejected": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "reviewer_agreement": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Share of double-reviewed events with the same decision."
+        },
+        "sample_id": {
+          "type": "string"
+        },
+        "unknown_rate": {
+          "description": "Events missing each field.",
+          "items": {
+            "$ref": "#/$defs/CountRow"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "registry_version",
+        "sample_id",
+        "candidates_read",
+        "events",
+        "rejected",
+        "by_type",
+        "by_completion",
+        "by_division",
+        "deregistered_events",
+        "human_reviewed",
+        "double_reviewed",
+        "reviewer_agreement",
+        "unknown_rate",
+        "confounded",
+        "overlap",
+        "overlap_window_days",
+        "index_overlap",
+        "credible_for_causal_work",
+        "blockers",
+        "contracts_version"
+      ],
+      "title": "QualityAudit",
+      "type": "object"
+    },
     "QualityFlag": {
       "enum": [
         "restated",
@@ -5644,6 +6457,40 @@
       ],
       "title": "Redistribution",
       "type": "string"
+    },
+    "RejectedCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "maxLength": 80,
+          "minLength": 1,
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "human",
+            "ai"
+          ],
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "reviewer": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "reason",
+        "reviewer",
+        "kind"
+      ],
+      "title": "RejectedCandidate",
+      "type": "object"
     },
     "ReportSnapshot": {
       "additionalProperties": false,
@@ -8037,9 +8884,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.16.0",
+  "$id": "urn:multiverse:contracts:0.17.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.16.0"
+  "x-contracts-version": "0.17.0"
 }

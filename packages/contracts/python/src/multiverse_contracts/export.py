@@ -15,6 +15,7 @@ from pydantic.json_schema import models_json_schema
 
 from multiverse_contracts.companies import CompanyDossier
 from multiverse_contracts.decisions import ScenarioDraft
+from multiverse_contracts.events import CandidateSample, EventRegistry, QualityAudit
 from multiverse_contracts.forecasting import (
     BenchmarkReport,
     EvaluationPackage,
@@ -73,6 +74,9 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     JobLogLine,
     JobView,
     JobDetail,
+    CandidateSample,
+    EventRegistry,
+    QualityAudit,
 )
 
 

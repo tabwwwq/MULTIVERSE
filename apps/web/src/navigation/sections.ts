@@ -8,6 +8,7 @@ import {
   Columns2,
   Cpu,
   Database,
+  FileSearch,
   FileText,
   GitBranchPlus,
   History,
@@ -23,7 +24,7 @@ import {
 } from "lucide-react";
 
 /**
- * The 20 screens of the information architecture (docs/02_USER_EXPERIENCE.md).
+ * The screens of the information architecture (docs/02_USER_EXPERIENCE.md).
  * `available` sections have a real page; `planned` ones render an honest placeholder
  * that names the stage which builds them. Navigation, breadcrumbs, the placeholder
  * route and the tests all read this list.
@@ -263,6 +264,18 @@ export const SECTIONS: readonly Section[] = [
       "Enterprise value and equity value as separate results, with the bridge between them.",
       "Sensitivity of value to WACC and terminal growth.",
     ],
+  },
+  {
+    slug: "events",
+    href: "/events",
+    title: "Event Registry",
+    group: "analyse",
+    icon: FileSearch,
+    summary: "Corporate decisions read in their filings, with evidence, unknowns and reviews.",
+    status: "available",
+    stage: 19,
+    stageName: "Corporate event ontology",
+    plans: [],
   },
   {
     slug: "causal-map",

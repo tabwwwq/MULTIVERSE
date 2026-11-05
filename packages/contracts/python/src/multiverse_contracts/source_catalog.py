@@ -75,7 +75,9 @@ SEC_BULK_APPROVED = DownloadDecision(
     note=(
         "Decisions D-09 (sample, 2026-10-29) and D-10 (2026-10-30, owner in chat): the bulk "
         "files companyfacts.zip and submissions.zip, for a universe of 1000 companies, within "
-        "10 GB on disk. Financial Statement Data Sets still need their own decision."
+        "10 GB on disk. Financial Statement Data Sets still need their own decision. Decision "
+        "D-13 (2026-11-06, owner in chat): up to 150 filing documents, within 200 MB, for the "
+        "event registry of Stage 19."
     ),
 )
 FRED_APPROVED = DownloadDecision(

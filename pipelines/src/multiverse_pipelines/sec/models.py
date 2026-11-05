@@ -30,7 +30,7 @@ class RawObject(Record):
     path: str = Field(description="Relative to the raw root, with forward slashes.")
     sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     size_bytes: int = Field(ge=0)
-    file_format: Literal["json", "zip", "csv"]
+    file_format: Literal["json", "zip", "csv", "html"]
     content_encoding: str = Field(description="HTTP compression on the wire, e.g. gzip.")
     http_status: int
     content_length: int | None = Field(default=None, description="As sent, before decoding.")
@@ -81,7 +81,7 @@ class RunManifest(Record):
     """Audit record of one command: what was asked, what the source answered, what was kept."""
 
     run_id: str
-    mode: Literal["sample", "probe", "bulk"]
+    mode: Literal["sample", "probe", "bulk", "documents"]
     started_at: datetime
     finished_at: datetime
     status: RunStatus

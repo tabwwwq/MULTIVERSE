@@ -1,5 +1,5 @@
 {
-  "contracts_version": "0.16.0",
+  "contracts_version": "0.17.0",
   "verified_on": "2026-10-29",
   "automatic_downloads": "disabled",
   "sources": [
@@ -562,7 +562,7 @@
         "status": "approved",
         "decided_on": "2026-10-30",
         "scope": "bulk",
-        "note": "Decisions D-09 (sample, 2026-10-29) and D-10 (2026-10-30, owner in chat): the bulk files companyfacts.zip and submissions.zip, for a universe of 1000 companies, within 10 GB on disk. Financial Statement Data Sets still need their own decision."
+        "note": "Decisions D-09 (sample, 2026-10-29) and D-10 (2026-10-30, owner in chat): the bulk files companyfacts.zip and submissions.zip, for a universe of 1000 companies, within 10 GB on disk. Financial Statement Data Sets still need their own decision. Decision D-13 (2026-11-06, owner in chat): up to 150 filing documents, within 200 MB, for the event registry of Stage 19."
       },
       "notes": [
         "data.sec.gov does not support CORS: requests come from the server, never the browser.",

@@ -16,6 +16,7 @@ const NESTED_LABELS: Record<string, string> = {
   "/timeline": "Result",
   "/compare": "Result",
   "/data-catalog": "Source",
+  "/events": "Event",
 };
 
 /** Fixed pages nested under a section, named on their own. */

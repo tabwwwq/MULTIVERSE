@@ -7,8 +7,8 @@ import { NAV_GROUPS, SECTIONS, formatStage } from "@/navigation/sections";
 const APP_DIR = fileURLToPath(new URL("../src/app", import.meta.url));
 
 describe("sections", () => {
-  it("cover the 20 screens of the information architecture", () => {
-    expect(SECTIONS).toHaveLength(20);
+  it("cover the 20 screens of the information architecture and the event registry", () => {
+    expect(SECTIONS).toHaveLength(21);
   });
 
   it("have unique paths and slugs", () => {

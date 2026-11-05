@@ -50,6 +50,9 @@ package: quantile scores, slices, firms, ablations, memorization, stability, app
 
 0.16.0 (Stage 18): training jobs: request, estimate, status, log lines and the job view
 with progress, heartbeat, spend and alerts; the training run purpose job.
+
+0.17.0 (Stage 19): corporate events with announced intention and executed treatment apart,
+evidence, reviews and unknown fields; the candidate sample, the registry and its audit.
 """
 
-CONTRACTS_VERSION = "0.16.0"
+CONTRACTS_VERSION = "0.17.0"

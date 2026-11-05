@@ -7,6 +7,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./demo": "./src/demo.ts",
+    "./events": "./src/events.ts",
     "./interventions": "./src/interventions.ts",
     "./mock-results": "./src/mock-results.ts",
     "./sources": "./src/sources.ts"

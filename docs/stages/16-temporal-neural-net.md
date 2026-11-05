@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 16 — temporal neural net |
 | Дата | 2026-10-31 / 2026-11-05 |
-| Статус | REVIEW (CI run 42106520404: 7/7 задач зелёные, commit `ddb5f79`); ждёт приёмки владельца |
+| Статус | ACCEPTED 2026-11-06 (CI run 42106520404: 7/7 задач зелёные, commit `ddb5f79`; владелец: «Принять и Stage 19») |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/16_TEMPORAL_NEURAL_NET.md` |
 | Основание | `docs/06` (forecast net без интервенций, маски, горизонты 1/4/8/12/20, early stopping, checkpoints, seeds); baselines Stage 15. Команды владельца 2026-10-31: «дальше»; согласие на PyTorch CPU и smoke-тест («я согласен делай»); полный CPU-прогон по плану; затем «поставь все сам сделай круто на макс силу» — CUDA и большой прогон на GPU; 2026-11-05: «доделай все и начинай некст шаг» |
 | Решение | ADR-0024 — temporal model |

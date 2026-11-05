@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-11-06 (Stages 16, 17 and 18 accepted)
+
+- Stages 16, 17 and 18 accepted by the owner (CI runs 42106520404, 42120259862 and 42124978629 green). Model `model-20261028-9ce4d4180aa9` is signed for research on three target and horizon pairs only; nothing in the product uses it.
+
 ### Added — 2026-11-05 (Stage 18)
 
 - Training jobs outside any HTTP request (ADR-0026): a durable SQLite queue (`multiverse_jobs`), workers with leases and heartbeats, a real checkpoint, stop, pause and resume, budgets, retries and alerts.

@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 17 — probabilistic validation |
 | Дата | 2026-11-05 |
-| Статус | REVIEW (CI run 42120259862: зелёный, commit `c1639d0`); ждёт приёмки и подписи владельца |
+| Статус | ACCEPTED 2026-11-06 (CI run 42120259862: зелёный, commit `c1639d0`; владелец: «Принять и Stage 19») |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/17_PROBABILISTIC_VALIDATION.md` |
 | Основание | `docs/06`, `docs/11`; модели Stage 16; команды владельца 2026-11-05: «доделай все и начинай некст шаг», «делай дальше и иди к некст шагу» |
 | Решение | ADR-0025 — вероятностная оценка |
@@ -251,7 +251,7 @@ COVID виден сразу: origins 2020 покрыты на 67–78%. Моде
 
 ### Next prompt
 
-`18_TRAINING_OPERATIONS.md`: команда владельца «иди к некст шагу» уже дана. Durable jobs, stop и resume, checkpoint со всем состоянием, прогресс 0–100%.
+`18_TRAINING_OPERATIONS.md`: выполнен по команде владельца «иди к некст шагу».
 
 ## 4. Acceptance
 
@@ -271,4 +271,4 @@ COVID виден сразу: origins 2020 покрыты на 67–78%. Моде
 | Не memorization | Обученные и watch-фирмы; cold start против знакомых | ✅ |
 | Не оценивать policy effect по forecasting MAE | Нет таких утверждений | ✅ |
 | Пакет оценки, реальные графики, таблица baselines, интервалы, провалы | `17-evaluation-package.md`, `eval-20261028-b365e4a12ddb` | ✅ |
-| Signed-off, approved model id | `model-20261028-9ce4d4180aa9` кандидат на 3 парах, подпись владельца ждёт | ⏳ |
+| Signed-off, approved model id | `model-20261028-9ce4d4180aa9`, 3 пары, только исследование; ответ владельца 2026-11-06 | ✅ |

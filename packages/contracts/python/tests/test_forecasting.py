@@ -1,4 +1,4 @@
-"""Contracts of Stages 15 and 16: dataset, sequences, protocol, benchmark, training run."""
+"""Contracts of Stages 15 to 17: dataset, sequences, protocols, benchmark, runs, evaluation."""
 
 import json
 from typing import Any
@@ -8,6 +8,7 @@ from pydantic import ValidationError
 
 from multiverse_contracts.forecasting import (
     BenchmarkReport,
+    EvaluationProtocol,
     ForecastDatasetManifest,
     ForecastProtocol,
     SequenceManifest,
@@ -170,3 +171,43 @@ def test_the_best_epoch_of_a_training_is_one_it_ran() -> None:
     TrainingRun.model_validate_json(json.dumps(training_run()))
     with pytest.raises(ValidationError, match="best epoch"):
         TrainingRun.model_validate_json(json.dumps(training_run(best_epoch=2)))
+
+
+def evaluation(**changes: Any) -> dict[str, Any]:
+    return {
+        "protocol_id": "stage_17_evaluation",
+        "base_protocol_id": "stage_16_temporal_large",
+        "base_protocol_sha256": SHA,
+        "benchmark_id": f"bench-20261028-{SHA[:12]}",
+        "seed": 20261030,
+        "levels": [0.1, 0.5, 0.9],
+        "nominal": [0.8],
+        "development_years": [2020],
+        "final_years": [2024],
+        "repeats": 5,
+        "ablation_repeats": 3,
+        "ood_z": 4.0,
+        "sparse_quarters": 8,
+        "dense_quarters": 16,
+        "approval": {
+            "horizons": [1],
+            "min_examples": 300,
+            "coverage_tolerance": 0.05,
+            "cold_start_tolerance": 0.1,
+        },
+    } | changes
+
+
+def test_an_evaluation_decides_on_earlier_years_than_its_verdict() -> None:
+    EvaluationProtocol.model_validate_json(json.dumps(evaluation()))
+    with pytest.raises(ValidationError, match="before the final years"):
+        EvaluationProtocol.model_validate_json(json.dumps(evaluation(development_years=[2024])))
+
+
+def test_an_evaluation_has_ordered_levels_and_fair_ablations() -> None:
+    with pytest.raises(ValidationError, match="in order"):
+        EvaluationProtocol.model_validate_json(json.dumps(evaluation(levels=[0.9, 0.5, 0.1])))
+    with pytest.raises(ValidationError, match="include the median"):
+        EvaluationProtocol.model_validate_json(json.dumps(evaluation(levels=[0.1, 0.9, 0.95])))
+    with pytest.raises(ValidationError, match="no more than the full model"):
+        EvaluationProtocol.model_validate_json(json.dumps(evaluation(ablation_repeats=6)))

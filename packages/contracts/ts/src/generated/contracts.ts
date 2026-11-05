@@ -5,6 +5,12 @@
  */
 
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ForecastTarget".
+ */
+export type ForecastTarget =
+  "revenue_growth" | "operating_margin" | "ebitda_margin" | "fcf_margin" | "debt_to_ebitda";
+/**
  * How a source is reached. A free endpoint is still not a licence (docs/12).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -54,12 +60,6 @@ export type Authentication = "none" | "declared_user_agent" | "api_key" | "contr
  * via the `definition` "AvailabilityBasis".
  */
 export type AvailabilityBasis = "vintage" | "snapshot" | "schedule" | "estimated";
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "ForecastTarget".
- */
-export type ForecastTarget =
-  "revenue_growth" | "operating_margin" | "ebitda_margin" | "fcf_margin" | "debt_to_ebitda";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "Population".
@@ -452,6 +452,23 @@ export type RiskCategory =
 
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "AblationScore".
+ */
+export interface AblationScore {
+  /**
+   * Pinball over that of the full model, minus one.
+   */
+  change: number;
+  change_high: number;
+  change_low: number;
+  examples: number;
+  horizon: number;
+  name: string;
+  pinball: number;
+  target: ForecastTarget;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "Acquisition".
  */
 export interface Acquisition {
@@ -613,6 +630,105 @@ export interface AcquisitionStep {
   storage: string;
   title: string;
   volume: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ApprovalRow".
+ */
+export interface ApprovalRow {
+  approved: boolean;
+  beats_persistence: boolean;
+  coverage_cold: boolean;
+  coverage_seen: boolean;
+  enough_examples: boolean;
+  examples: number;
+  horizon: number;
+  not_worse_than_best: boolean;
+  target: ForecastTarget;
+  typical_firm: boolean;
+}
+/**
+ * Which forecasts may leave Stage 17: written down before anything is scored.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ApprovalRule".
+ */
+export interface ApprovalRule {
+  /**
+   * The same gap for firms never trained on.
+   */
+  cold_start_tolerance: number;
+  /**
+   * Allowed gap to each nominal coverage.
+   */
+  coverage_tolerance: number;
+  /**
+   * @minItems 1
+   */
+  horizons: [number, ...number[]];
+  /**
+   * Rows of the final years, per target and horizon.
+   */
+  min_examples: number;
+}
+/**
+ * The quantile forecasts of one model on one set of rows, in the target's training space.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "BandScore".
+ */
+export interface BandScore {
+  best_baseline: string | null;
+  calibrated: boolean;
+  companies: number;
+  /**
+   * Per nominal coverage of the protocol.
+   */
+  coverage: number[];
+  coverage_high: number[];
+  coverage_low: number[];
+  examples: number;
+  horizon: number;
+  /**
+   * Of the median forecast, in the target's own units.
+   */
+  median_ae: number;
+  median_width: number[];
+  model: string;
+  period: string;
+  pinball: number;
+  pinball_high: number;
+  /**
+   * 95% interval, bootstrap over companies.
+   */
+  pinball_low: number;
+  population: Population;
+  /**
+   * Share of actuals below each level.
+   */
+  reliability: number[];
+  split: SplitName;
+  target: ForecastTarget;
+  /**
+   * Pinball over that of the best baseline band, minus one.
+   */
+  vs_best: number | null;
+  vs_best_high: number | null;
+  vs_best_low: number | null;
+  /**
+   * Pinball over that of the persistence band, minus one.
+   */
+  vs_persistence: number | null;
+  vs_persistence_high: number | null;
+  vs_persistence_low: number | null;
+  /**
+   * Mean width per nominal coverage.
+   */
+  width: number[];
+  /**
+   * Weighted interval score, a finite approximation of CRPS.
+   */
+  wis: number;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -1048,6 +1164,27 @@ export interface Quantity {
   value: string;
 }
 /**
+ * How errors spread over firms: a mean over rows hides the firm it fails.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CompanyErrors".
+ */
+export interface CompanyErrors {
+  /**
+   * Share of firms with a lower pinball.
+   */
+  better_than_persistence: number;
+  companies: number;
+  examples: number;
+  examples_per_firm_median: number;
+  horizon: number;
+  model: string;
+  pinball_p10: number;
+  pinball_p50: number;
+  pinball_p90: number;
+  target: ForecastTarget;
+}
+/**
  * Reconciliation evidence: another candidate concept reported for the same period.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -1324,6 +1461,172 @@ export interface EpochLog {
   seconds: number;
   train_loss: number;
   validation_loss: number;
+}
+/**
+ * Stage 17: what the quantile forecasts are worth, measured, with every failure kept.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EvaluationPackage".
+ */
+export interface EvaluationPackage {
+  ablations: AblationScore[];
+  approvals: ApprovalRow[];
+  bands_sha256: string;
+  benchmark_id: string;
+  calibrated: boolean;
+  companies: CompanyErrors[];
+  contracts_version: string;
+  /**
+   * Not part of the hash.
+   */
+  created_at: string;
+  dataset_id: string;
+  dataset_sha256: string;
+  evaluation_id: string;
+  failures: string[];
+  /**
+   * @minItems 1
+   */
+  findings: [string, ...string[]];
+  memorization: MemorizationScore[];
+  model_id: string;
+  primary_model: string;
+  protocol_id: string;
+  protocol_sha256: string;
+  /**
+   * @minItems 1
+   */
+  scores: [BandScore, ...BandScore[]];
+  sequences_id: string;
+  /**
+   * Of the scores, the stored forecasts and the inputs.
+   */
+  sha256: string;
+  slices: SliceScore[];
+  stability: StabilityScore[];
+}
+/**
+ * Pinball where the model could remember a firm, and where it could not.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MemorizationScore".
+ */
+export interface MemorizationScore {
+  /**
+   * Cold over seen, each set against persistence.
+   */
+  cold_change: number;
+  cold_change_high: number;
+  cold_change_low: number;
+  horizon: number;
+  target: ForecastTarget;
+  /**
+   * Test rows of firms it never saw.
+   */
+  test_cold: number;
+  /**
+   * Test rows of firms it was fitted on.
+   */
+  test_seen: number;
+  /**
+   * Rows it was fitted on.
+   */
+  trained: number;
+  /**
+   * Same period, firms that only stopped the training.
+   */
+  watched: number;
+}
+/**
+ * One model on one slice of the rows: a year, a sector, a history length, a condition.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SliceScore".
+ */
+export interface SliceScore {
+  companies: number;
+  coverage: number[];
+  examples: number;
+  horizon: number;
+  kind: "year" | "division" | "history" | "distribution";
+  model: string;
+  pinball: number;
+  target: ForecastTarget;
+  value: string;
+  vs_persistence: number;
+}
+/**
+ * Forecasts of one quarter from two origins, and the disagreement between seeds.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "StabilityScore".
+ */
+export interface StabilityScore {
+  long_horizon: number;
+  /**
+   * Of the later forecast.
+   */
+  median_error: number;
+  median_revision: number;
+  /**
+   * Between the seeds, at the long horizon.
+   */
+  median_seed_spread: number;
+  pairs: number;
+  short_horizon: number;
+  target: ForecastTarget;
+}
+/**
+ * Written before Stage 17 scored anything; its SHA-256 goes into the package.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EvaluationProtocol".
+ */
+export interface EvaluationProtocol {
+  ablation_repeats: number;
+  ablations: string[];
+  approval: ApprovalRule;
+  base_protocol_id: string;
+  base_protocol_sha256: string;
+  /**
+   * The Stage 16 benchmark whose chosen settings it uses.
+   */
+  benchmark_id: string;
+  /**
+   * At this many observed quarters: dense.
+   */
+  dense_quarters: number;
+  /**
+   * Choose the architecture and whether to calibrate.
+   *
+   * @minItems 1
+   */
+  development_years: [number, ...number[]];
+  /**
+   * Scored last, for the verdict.
+   *
+   * @minItems 1
+   */
+  final_years: [number, ...number[]];
+  /**
+   * @minItems 3
+   */
+  levels: [number, number, number, ...number[]];
+  /**
+   * @minItems 1
+   */
+  nominal: [number, ...number[]];
+  /**
+   * A row is out of distribution beyond this many deviations.
+   */
+  ood_z: number;
+  protocol_id: string;
+  repeats: number;
+  seed: number;
+  /**
+   * Below this many observed quarters: sparse.
+   */
+  sparse_quarters: number;
 }
 /**
  * Trainable examples: company and forecast origin with enough history and a target.

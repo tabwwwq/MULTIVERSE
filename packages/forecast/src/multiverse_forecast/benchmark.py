@@ -41,6 +41,7 @@ FAILURE_HORIZON = 4
 FAILURES = 5
 SECTOR_HORIZONS = (1, 4)
 MIN_TRAIN = 200
+WATCH_SHARE = 0.1
 
 
 def boundary(year: int) -> np.datetime64:
@@ -156,6 +157,14 @@ class Runner:
             predicted=p.predicted,
             naive=persistence_values(self.ds.x[rows], self.ds.features, target),
         )
+
+
+def watch_rows(runner: Runner) -> Bools:
+    """Rows of a seeded tenth of the training firms: they never enter a gradient."""
+    dataset, protocol = runner.ds, runner.protocol
+    firms = sorted(set(dataset.ciks[~runner.cold].tolist()))
+    watch = cold_start_firms(firms, WATCH_SHARE, protocol.seed + 1)
+    return np.isin(dataset.ciks, sorted(watch))
 
 
 def run(dataset: Dataset, protocol: ForecastProtocol, protocol_sha256: str) -> BenchmarkReport:

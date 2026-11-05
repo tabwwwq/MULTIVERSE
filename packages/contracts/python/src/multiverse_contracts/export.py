@@ -17,6 +17,8 @@ from multiverse_contracts.companies import CompanyDossier
 from multiverse_contracts.decisions import ScenarioDraft
 from multiverse_contracts.forecasting import (
     BenchmarkReport,
+    EvaluationPackage,
+    EvaluationProtocol,
     ForecastDatasetManifest,
     ForecastProtocol,
     SequenceManifest,
@@ -63,6 +65,8 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     BenchmarkReport,
     SequenceManifest,
     TrainingRun,
+    EvaluationProtocol,
+    EvaluationPackage,
 )
 
 

@@ -11,12 +11,21 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from multiverse_contracts.forecasting import BenchmarkReport, ForecastProtocol
-from multiverse_forecast.benchmark import run
+from multiverse_contracts.forecasting import (
+    BenchmarkReport,
+    EvaluationProtocol,
+    ForecastProtocol,
+    SequenceManifest,
+)
+from multiverse_forecast import evaluation_report
+from multiverse_forecast.bands import load_stored, run_baselines
+from multiverse_forecast.benchmark import Runner, run
 from multiverse_forecast.data import Dataset, load, load_sequences
 from multiverse_forecast.report import write_report
 
 PROTOCOL = Path("data/protocols/stage-15-baselines.json")
+LARGE = Path("data/protocols/stage-16-temporal-large.json")
+EVALUATION = Path("data/protocols/stage-17-evaluation.json")
 OUT = Path("var/data/forecast")
 
 
@@ -45,6 +54,16 @@ def _parser() -> argparse.ArgumentParser:
     full.add_argument("--baselines", type=Path, required=True, help="the Stage 15 report.json")
     full.add_argument("--device", default="auto", help="auto, cpu or cuda")
     full.add_argument("--out", type=Path, default=OUT)
+    judge = commands.add_parser("evaluate", help="the quantile forecasts of Stage 17")
+    judge.add_argument("step", choices=("train", "baselines", "report"))
+    judge.add_argument("--dataset", type=Path, required=True, help="a dataset folder")
+    judge.add_argument("--protocol", type=Path, default=EVALUATION)
+    judge.add_argument("--base-protocol", type=Path, default=LARGE)
+    judge.add_argument("--benchmark", type=Path, required=True, help="the Stage 16 report.json")
+    judge.add_argument("--baselines", type=Path, required=True, help="the Stage 15 report.json")
+    judge.add_argument("--device", default="auto", help="auto, cpu or cuda")
+    judge.add_argument("--out", type=Path, default=OUT)
+    judge.add_argument("--figures", type=Path, help="also write the plots here")
     return parser
 
 
@@ -110,9 +129,73 @@ def _neural(args: argparse.Namespace, dataset: Dataset, protocol: ForecastProtoc
     return 0
 
 
+def _evaluate(args: argparse.Namespace) -> int:
+    raw = args.protocol.read_bytes()
+    protocol = EvaluationProtocol.model_validate_json(raw)
+    base_raw = args.base_protocol.read_bytes()
+    base = ForecastProtocol.model_validate_json(base_raw)
+    if hashlib.sha256(base_raw).hexdigest() != protocol.base_protocol_sha256:
+        raise ValueError("the protocol was written for another base protocol")
+    benchmark = BenchmarkReport.model_validate_json(args.benchmark.read_bytes())
+    if benchmark.benchmark_id != protocol.benchmark_id:
+        raise ValueError("the protocol names another Stage 16 benchmark")
+    baselines = BenchmarkReport.model_validate_json(args.baselines.read_bytes())
+    dataset = load(args.dataset)
+    if baselines.dataset_sha256 != dataset.manifest.sha256:
+        raise ValueError("the Stage 15 report was built on another dataset")
+    root = args.out / "evaluation" / protocol.protocol_id
+
+    def show(line: str) -> None:
+        print(line, file=sys.stderr, flush=True)
+
+    if args.step == "train":
+        # PyTorch is an optional extra: imported only for this step.
+        from multiverse_forecast.evaluation import run_trainings
+        from multiverse_forecast.neural import Config
+
+        sequences, sequences_id = load_sequences(args.dataset, dataset)
+        run_trainings(
+            dataset,
+            sequences,
+            sequences_id,
+            base,
+            protocol,
+            benchmark,
+            Config(device=args.device),
+            root,
+            show,
+        )
+    elif args.step == "baselines":
+        runner = Runner(dataset, base)
+        run_baselines(runner, baselines, protocol, base.test_years, root / "bands", show)
+    else:
+        stored = load_stored(root / "bands")
+        manifest = SequenceManifest.model_validate_json(
+            (args.dataset / "sequences.json").read_bytes()
+        )
+        measured = evaluation_report.measure(dataset, base, protocol, stored)
+        package = evaluation_report.build(
+            dataset,
+            manifest.sequences_id,
+            protocol,
+            hashlib.sha256(raw).hexdigest(),
+            benchmark,
+            measured,
+            stored,
+        )
+        folder = evaluation_report.write(package, protocol, args.out, args.figures)
+        for line in (*package.findings, *package.failures):
+            print(line)
+        print(f"{package.evaluation_id}: model {package.model_id}")
+        print(f"wrote {folder}")
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.command == "evaluate":
+            return _evaluate(args)
         raw = args.protocol.read_bytes()
         protocol = ForecastProtocol.model_validate_json(raw)
         dataset = load(args.dataset)

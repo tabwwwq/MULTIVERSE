@@ -44,6 +44,9 @@ and the benchmark report with scores, intervals, sector errors and configuration
 
 0.14.0 (Stage 16): quarterly sequences aligned with a forecasting dataset, and the
 training run of a temporal model with its configuration, losses and checkpoint.
+
+0.15.0 (Stage 17): the evaluation protocol with its approval rule, and the evaluation
+package: quantile scores, slices, firms, ablations, memorization, stability, approvals.
 """
 
-CONTRACTS_VERSION = "0.14.0"
+CONTRACTS_VERSION = "0.15.0"

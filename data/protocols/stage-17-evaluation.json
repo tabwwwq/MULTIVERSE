@@ -1,0 +1,33 @@
+{
+  "protocol_id": "stage_17_evaluation",
+  "base_protocol_id": "stage_16_temporal_large",
+  "base_protocol_sha256": "db5214f7aa07c77d4f0f92bac9c4e031c892f38b807a506a84ad97f9b07da5b4",
+  "benchmark_id": "bench-20261028-f02547836d11",
+  "seed": 20261030,
+  "levels": [0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95],
+  "nominal": [0.5, 0.8, 0.9],
+  "development_years": [2020, 2021, 2022, 2023],
+  "final_years": [2024, 2025, 2026],
+  "repeats": 5,
+  "ablation_repeats": 3,
+  "ablations": [
+    "no_macro",
+    "no_rnd",
+    "no_debt",
+    "lags_12",
+    "lags_4",
+    "no_sequence",
+    "no_static",
+    "no_masks",
+    "other_depth"
+  ],
+  "ood_z": 4.0,
+  "sparse_quarters": 8,
+  "dense_quarters": 16,
+  "approval": {
+    "horizons": [1, 4, 8],
+    "min_examples": 300,
+    "coverage_tolerance": 0.05,
+    "cold_start_tolerance": 0.1
+  }
+}

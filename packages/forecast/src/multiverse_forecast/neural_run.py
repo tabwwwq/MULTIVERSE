@@ -37,7 +37,7 @@ from multiverse_contracts.forecasting import (
     SplitName,
     TrainingRun,
 )
-from multiverse_forecast.benchmark import Prediction, Runner, boundary, cold_start_firms
+from multiverse_forecast.benchmark import Prediction, Runner, boundary, watch_rows
 from multiverse_forecast.data import Dataset, Floats, canonical_sha256
 from multiverse_forecast.models import Prep, persistence_values
 from multiverse_forecast.neural import (
@@ -52,12 +52,11 @@ from multiverse_forecast.neural import (
     load_checkpoint,
     predict,
     save_checkpoint,
-    to_target_space,
     train,
 )
+from multiverse_forecast.probabilistic import to_target_space
 
 MODEL = "gru_attention"
-EARLY_STOPPING_SHARE = 0.1
 VALIDATION_HORIZONS = (1, 4, 8)
 Pair = tuple[int, int]
 
@@ -103,9 +102,7 @@ def fold(
     dataset, protocol = runner.ds, runner.protocol
     labels = labels_until(dataset, boundary(year))
     has_label = ~np.isnan(labels).all(axis=(1, 2))
-    firms = sorted(set(dataset.ciks[~runner.cold].tolist()))
-    watch = cold_start_firms(firms, EARLY_STOPPING_SHARE, protocol.seed + 1)
-    watched = np.isin(dataset.ciks, sorted(watch))
+    watched = watch_rows(runner)
     candidates = ~runner.cold & has_label & (dataset.years < year)
     train_rows = np.flatnonzero(candidates & ~watched)
     valid_rows = np.flatnonzero(candidates & watched)
@@ -318,7 +315,7 @@ class NeuralBenchmark:
     """Validation score of each setting: mean over targets of MAE over persistence MAE."""
 
 
-def _config(base: Config, model: str, params: tuple[Param, ...], seed: int) -> Config:
+def setting(base: Config, model: str, params: tuple[Param, ...], seed: int) -> Config:
     values = {p.name: p.value for p in params}
     return replace(
         base,
@@ -381,8 +378,8 @@ def _benchmark_model(
     choice: dict[str, float] = {}
     best: tuple[float, tuple[Param, ...], dict[Pair, tuple[np.ndarray, Floats]]] | None = None
     for params in grid:
-        config = _config(base, model, params, protocol.seed)
-        setting = ", ".join(f"{p.name}={p.value}" for p in params)
+        config = setting(base, model, params, protocol.seed)
+        named = ", ".join(f"{p.name}={p.value}" for p in params)
         pooled: dict[Pair, tuple[list[np.ndarray], list[Floats]]] = {}
         for year in protocol.validation_years:
             current = fold(runner, sequences, year, config.seed)
@@ -412,7 +409,7 @@ def _benchmark_model(
             )
             runs.append(run)
             progress(
-                f"{model} validation {year} ({setting}): {len(run.epochs)} epochs, "
+                f"{model} validation {year} ({named}): {len(run.epochs)} epochs, "
                 f"best {run.best_epoch}"
             )
         joined = {k: (np.concatenate(v[0]), np.concatenate(v[1])) for k, v in pooled.items()}
@@ -426,7 +423,7 @@ def _benchmark_model(
             naive_abs = np.concatenate([e[1] for e in errors])
             ratios.append(float(model_abs.mean() / naive_abs.mean()))
         score = float(np.mean(ratios))
-        choice[f"{model}: {setting}"] = score
+        choice[f"{model}: {named}"] = score
         if best is None or score < best[0]:
             best = (score, params, joined)
     assert best is not None
@@ -452,7 +449,7 @@ def _benchmark_model(
         by_pair = eval_rows(runner, year)
         per_seed: list[dict[Pair, Floats]] = []
         for repeat in range(protocol.repeats):
-            config = _config(base, model, params, protocol.seed + repeat)
+            config = setting(base, model, params, protocol.seed + repeat)
             current = fold(runner, sequences, year, config.seed)
             trained = train(current.data, current.train_rows, current.valid_rows, config)
             per_seed.append(

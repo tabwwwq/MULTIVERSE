@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-05 (Stage 17)
+
+- Probabilistic evaluation (ADR-0025) under a protocol locked before anything was scored (`data/protocols/stage-17-evaluation.json`): development years 2020–2023 choose the model, final years 2024–2026 give the verdict, and an approval rule is written down in advance. The final years were never used for a choice, but they were part of the pooled test tables of Stages 15 and 16, and the package says so.
+- The temporal model with seven quantiles (0.05 to 0.95); three levels still reproduce the Stage 16 checkpoints byte for byte.
+- Measures (`multiverse_forecast.probabilistic`): pinball, weighted interval score, coverage and width of the 50, 80 and 90% intervals, reliability, conformalized quantile regression on the watch firms, firm-bootstrap intervals; all in each target's training space.
+- Baseline bands on the same split (`multiverse_forecast.bands`): persistence, ElasticNet and boosting with the quantiles of their errors, and quantile gradient boosting, the fair rival.
+- 259 GPU trainings, 9 ablations, slices by year, sector, history length and input condition, errors by firm, memorization and stability checks (`python -m multiverse_forecast evaluate train | baselines | report`). Forecasts are stored apart from the report, and a stored variant is never trained again; every training line shows the percent of the run.
+- Package `eval-20261028-b365e4a12ddb` for candidate `model-20261028-9ce4d4180aa9` (GRU, not calibrated): 3 of 15 target and horizon pairs pass the rule (operating margin h = 8, EBITDA margin h = 4 and 8). Owner sign-off pending; `docs/stages/17-evaluation-package.md`.
+- Measured: raw quantiles sit within 2 to 4 points of nominal coverage except in the 2020 shock (67–78% for the 80% interval at h = 4); conformal calibration made development coverage worse (0.051 against 0.029 for 80%) and stays out of the model; the network beats the persistence band on 13 of 15 pairs in the final years, while quantile boosting is as good overall, stronger at h = 1 and weaker at h = 4 to 8; no sign of memorized firms; macro, R&D, masks and depth do not move the pinball, while the firm's own history and debt features do.
+- Contracts 0.15.0: `EvaluationProtocol`, `ApprovalRule`, `EvaluationPackage`, `BandScore`, `SliceScore`, `CompanyErrors`, `AblationScore`, `MemorizationScore`, `StabilityScore`, `ApprovalRow`.
+
 ### Added — 2026-11-05 (Stage 16)
 
 - A temporal neural network on point-in-time history (ADR-0024), not a wrapper and not trained on synthetic data: GRU with attention, and causal dilated convolutions (TCN) as the candidate. Inputs: 24 quarters by 9 channels with masks, plus the Stage 15 features; outputs: quantiles 0.1, 0.5, 0.9 for five targets at five horizons, in spaces that respect each target, without clamps.

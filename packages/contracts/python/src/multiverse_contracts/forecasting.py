@@ -240,3 +240,195 @@ class TrainingRun(ContractModel):
         if self.best_epoch > len(self.epochs):
             raise ValueError("the best epoch is one of the epochs run")
         return self
+
+
+class ApprovalRule(ContractModel):
+    """Which forecasts may leave Stage 17: written down before anything is scored."""
+
+    horizons: tuple[int, ...] = Field(min_length=1)
+    min_examples: int = Field(ge=1, description="Rows of the final years, per target and horizon.")
+    coverage_tolerance: Score = Field(description="Allowed gap to each nominal coverage.")
+    cold_start_tolerance: Score = Field(description="The same gap for firms never trained on.")
+
+
+class EvaluationProtocol(ContractModel):
+    """Written before Stage 17 scored anything; its SHA-256 goes into the package."""
+
+    protocol_id: Name
+    base_protocol_id: Name
+    base_protocol_sha256: Sha256
+    benchmark_id: str = Field(description="The Stage 16 benchmark whose chosen settings it uses.")
+    seed: int
+    levels: tuple[float, ...] = Field(min_length=3)
+    nominal: tuple[float, ...] = Field(min_length=1)
+    development_years: tuple[int, ...] = Field(
+        min_length=1, description="Choose the architecture and whether to calibrate."
+    )
+    final_years: tuple[int, ...] = Field(min_length=1, description="Scored last, for the verdict.")
+    repeats: int = Field(ge=1, le=10)
+    ablation_repeats: int = Field(ge=1, le=10)
+    ablations: tuple[Name, ...] = ()
+    ood_z: Score = Field(description="A row is out of distribution beyond this many deviations.")
+    sparse_quarters: int = Field(ge=1, description="Below this many observed quarters: sparse.")
+    dense_quarters: int = Field(ge=1, description="At this many observed quarters: dense.")
+    approval: ApprovalRule
+
+    @model_validator(mode="after")
+    def _check(self) -> Self:
+        if max(self.development_years) >= min(self.final_years):
+            raise ValueError("development years come before the final years")
+        if self.ablation_repeats > self.repeats:
+            raise ValueError("an ablation repeats no more than the full model")
+        if sorted(self.levels) != list(self.levels) or 0.5 not in self.levels:
+            raise ValueError("levels are in order and include the median")
+        return self
+
+
+class BandScore(ContractModel):
+    """The quantile forecasts of one model on one set of rows, in the target's training space."""
+
+    target: ForecastTarget
+    horizon: int = Field(ge=1, le=40)
+    split: SplitName
+    population: Population = Population.ALL
+    period: Name
+    model: Name
+    calibrated: bool
+    examples: int = Field(ge=0)
+    companies: int = Field(ge=0)
+    pinball: Score
+    pinball_low: Score = Field(description="95% interval, bootstrap over companies.")
+    pinball_high: Score
+    wis: Score = Field(description="Weighted interval score, a finite approximation of CRPS.")
+    median_ae: Score = Field(description="Of the median forecast, in the target's own units.")
+    coverage: tuple[Score, ...] = Field(description="Per nominal coverage of the protocol.")
+    coverage_low: tuple[Score, ...]
+    coverage_high: tuple[Score, ...]
+    width: tuple[Score, ...] = Field(description="Mean width per nominal coverage.")
+    median_width: tuple[Score, ...]
+    reliability: tuple[Score, ...] = Field(description="Share of actuals below each level.")
+    vs_persistence: Score | None = Field(
+        default=None, description="Pinball over that of the persistence band, minus one."
+    )
+    vs_persistence_low: Score | None = None
+    vs_persistence_high: Score | None = None
+    vs_best: Score | None = Field(
+        default=None, description="Pinball over that of the best baseline band, minus one."
+    )
+    vs_best_low: Score | None = None
+    vs_best_high: Score | None = None
+    best_baseline: Name | None = None
+
+
+class SliceScore(ContractModel):
+    """One model on one slice of the rows: a year, a sector, a history length, a condition."""
+
+    kind: Literal["year", "division", "history", "distribution"]
+    value: str = Field(min_length=1, max_length=40)
+    target: ForecastTarget
+    horizon: int = Field(ge=1, le=40)
+    model: Name
+    examples: int = Field(ge=0)
+    companies: int = Field(ge=0)
+    pinball: Score
+    vs_persistence: Score
+    coverage: tuple[Score, ...]
+
+
+class CompanyErrors(ContractModel):
+    """How errors spread over firms: a mean over rows hides the firm it fails."""
+
+    target: ForecastTarget
+    horizon: int = Field(ge=1, le=40)
+    model: Name
+    companies: int = Field(ge=0)
+    examples: int = Field(ge=0)
+    examples_per_firm_median: Score
+    pinball_p10: Score
+    pinball_p50: Score
+    pinball_p90: Score
+    better_than_persistence: Score = Field(description="Share of firms with a lower pinball.")
+
+
+class AblationScore(ContractModel):
+    name: Name
+    target: ForecastTarget
+    horizon: int = Field(ge=1, le=40)
+    examples: int = Field(ge=0)
+    pinball: Score
+    change: Score = Field(description="Pinball over that of the full model, minus one.")
+    change_low: Score
+    change_high: Score
+
+
+class MemorizationScore(ContractModel):
+    """Pinball where the model could remember a firm, and where it could not."""
+
+    target: ForecastTarget
+    horizon: int = Field(ge=1, le=40)
+    trained: Score = Field(description="Rows it was fitted on.")
+    watched: Score = Field(description="Same period, firms that only stopped the training.")
+    test_seen: Score = Field(description="Test rows of firms it was fitted on.")
+    test_cold: Score = Field(description="Test rows of firms it never saw.")
+    cold_change: Score = Field(description="Cold over seen, each set against persistence.")
+    cold_change_low: Score
+    cold_change_high: Score
+
+
+class StabilityScore(ContractModel):
+    """Forecasts of one quarter from two origins, and the disagreement between seeds."""
+
+    target: ForecastTarget
+    long_horizon: int = Field(ge=1, le=40)
+    short_horizon: int = Field(ge=1, le=40)
+    pairs: int = Field(ge=0)
+    median_revision: Score
+    median_error: Score = Field(description="Of the later forecast.")
+    median_seed_spread: Score = Field(description="Between the seeds, at the long horizon.")
+
+
+class ApprovalRow(ContractModel):
+    target: ForecastTarget
+    horizon: int = Field(ge=1, le=40)
+    examples: int = Field(ge=0)
+    enough_examples: bool
+    coverage_seen: bool
+    coverage_cold: bool
+    beats_persistence: bool
+    not_worse_than_best: bool
+    typical_firm: bool
+    approved: bool
+
+
+class EvaluationPackage(ContractModel):
+    """Stage 17: what the quantile forecasts are worth, measured, with every failure kept."""
+
+    evaluation_id: Annotated[str, StringConstraints(pattern=r"^eval-[0-9]{8}-[0-9a-f]{12}$")]
+    sha256: Sha256 = Field(description="Of the scores, the stored forecasts and the inputs.")
+    dataset_id: str
+    dataset_sha256: Sha256
+    sequences_id: str
+    protocol_id: Name
+    protocol_sha256: Sha256
+    benchmark_id: str
+    bands_sha256: Sha256
+    model_id: Annotated[str, StringConstraints(pattern=r"^model-[0-9]{8}-[0-9a-f]{12}$")]
+    primary_model: Name
+    calibrated: bool
+    scores: tuple[BandScore, ...] = Field(min_length=1)
+    slices: tuple[SliceScore, ...] = ()
+    companies: tuple[CompanyErrors, ...] = ()
+    ablations: tuple[AblationScore, ...] = ()
+    memorization: tuple[MemorizationScore, ...] = ()
+    stability: tuple[StabilityScore, ...] = ()
+    approvals: tuple[ApprovalRow, ...] = ()
+    findings: tuple[Text, ...] = Field(min_length=1)
+    failures: tuple[Text, ...] = ()
+    contracts_version: str
+    created_at: AwareDatetime = Field(description="Not part of the hash.")
+
+    @model_validator(mode="after")
+    def _check(self) -> Self:
+        if self.evaluation_id.rsplit("-", 1)[1] != self.sha256[:12]:
+            raise ValueError("the evaluation is named by its SHA-256")
+        return self

@@ -14,9 +14,9 @@ Encoders (``Config.arch``): ``gru_attention``, a GRU over the quarters; ``tcn``,
 causal dilated convolutions (dilations 1, 2, 4, 8: every state sees up to 31 quarters back,
 never forward). Both feed the same additive attention, last state and head.
 
-Output: [5 targets, 5 horizons, 3 quantiles (0.1, 0.5, 0.9)], a distribution per target
-and horizon. Quantiles cannot cross: the median is free, the outer quantiles are the
-median minus and plus a softplus. Targets are learned in a space that respects them:
+Output: [5 targets, 5 horizons, levels], by default the quantiles 0.1, 0.5 and 0.9; Stage
+17 trains seven levels. Quantiles cannot cross: the median is free, and each outer quantile
+lies one softplus beyond its neighbour. Targets are learned in a space that respects them:
 
 - revenue growth (between -2 and 2): 2 * tanh(z), bounded and smooth, never clipped;
 - margins: asinh(y / 0.1), unbounded, tails compressed; back-transformed by 0.1 * sinh;
@@ -43,9 +43,9 @@ from torch import nn
 
 from multiverse_contracts.forecasting import EpochLog, ForecastTarget
 from multiverse_forecast.data import Floats
+from multiverse_forecast.probabilistic import RATIO_SCALE, from_target_space
 
 QUANTILES = (0.1, 0.5, 0.9)
-RATIO_SCALE = 0.1
 TARGETS = tuple(ForecastTarget)
 HORIZONS = (1, 4, 8, 12, 20)
 GROWTH_CHANNEL = 0
@@ -66,9 +66,20 @@ class Config:
     threads: int = 8
     device: str = "auto"
     arch: str = "gru_attention"
+    levels: tuple[float, ...] = QUANTILES
+
+    def __post_init__(self) -> None:
+        self.levels = tuple(self.levels)
+
+    def plain(self) -> dict[str, object]:
+        """Every field; the default levels stay out, so Stage 16 runs keep their ids."""
+        values = asdict(self)
+        if self.levels == QUANTILES:
+            del values["levels"]
+        return values
 
     def params(self) -> dict[str, str]:
-        return {k: str(v) for k, v in asdict(self).items()}
+        return {k: str(v) for k, v in self.plain().items()}
 
 
 def device_for(config: Config) -> torch.device:
@@ -93,22 +104,6 @@ def channel_transform(sequence: Floats) -> Floats:
     ratios = [c for c in range(out.shape[-1]) if c not in (GROWTH_CHANNEL, LOG_REVENUE_CHANNEL)]
     out[..., ratios] = np.arcsinh(out[..., ratios] / RATIO_SCALE)
     return out
-
-
-def to_target_space(target: ForecastTarget, y: Floats) -> Floats:
-    if target is ForecastTarget.REVENUE_GROWTH:
-        return y
-    if target is ForecastTarget.DEBT_TO_EBITDA:
-        return np.arcsinh(y)
-    return np.arcsinh(y / RATIO_SCALE)
-
-
-def from_target_space(target: ForecastTarget, g: Floats) -> Floats:
-    if target is ForecastTarget.REVENUE_GROWTH:
-        return g
-    if target is ForecastTarget.DEBT_TO_EBITDA:
-        return np.sinh(g)
-    return np.sinh(g) * RATIO_SCALE
 
 
 @dataclass
@@ -159,6 +154,7 @@ class TemporalModel(nn.Module):  # type: ignore[misc,unused-ignore]
     def __init__(self, channels: int, static: int, config: Config) -> None:
         super().__init__()
         hidden = config.hidden
+        self.levels = config.levels
         self.embed = nn.Linear(2 * channels, hidden)
         self.gru: nn.Module
         if config.arch == "tcn":
@@ -177,7 +173,7 @@ class TemporalModel(nn.Module):  # type: ignore[misc,unused-ignore]
             nn.Linear(3 * hidden, hidden),
             nn.ReLU(),
             nn.Dropout(config.dropout),
-            nn.Linear(hidden, len(TARGETS) * len(HORIZONS) * len(QUANTILES)),
+            nn.Linear(hidden, len(TARGETS) * len(HORIZONS) * len(config.levels)),
         )
 
     def forward(
@@ -189,7 +185,7 @@ class TemporalModel(nn.Module):  # type: ignore[misc,unused-ignore]
         weights = torch.softmax(scores, dim=1)
         context = (weights.unsqueeze(-1) * states).sum(dim=1)
         joined = torch.cat([context, states[:, -1], self.static(static)], dim=-1)
-        raw = self.head(joined).view(-1, len(TARGETS), len(HORIZONS), len(QUANTILES))
+        raw = self.head(joined).view(-1, len(TARGETS), len(HORIZONS), len(self.levels))
         return quantiles(raw)
 
 
@@ -198,10 +194,11 @@ GruAttention = TemporalModel
 
 def quantiles(raw: torch.Tensor) -> torch.Tensor:
     """Ordered quantiles in each target's space: smooth transforms, no clamps."""
-    median = raw[..., 1]
-    low = median - nn.functional.softplus(raw[..., 0])
-    high = median + nn.functional.softplus(raw[..., 2])
-    q = torch.stack([low, median, high], dim=-1)
+    middle = raw.shape[-1] // 2
+    median = raw[..., middle : middle + 1]
+    below = nn.functional.softplus(raw[..., :middle].flip(-1)).cumsum(dim=-1).flip(-1)
+    above = nn.functional.softplus(raw[..., middle + 1 :]).cumsum(dim=-1)
+    q = torch.cat([median - below, median, median + above], dim=-1)
     growth = TARGETS.index(ForecastTarget.REVENUE_GROWTH)
     debt = TARGETS.index(ForecastTarget.DEBT_TO_EBITDA)
     parts = [q[:, t] for t in range(len(TARGETS))]
@@ -210,9 +207,14 @@ def quantiles(raw: torch.Tensor) -> torch.Tensor:
     return torch.stack(parts, dim=1)
 
 
-def pinball(q: torch.Tensor, labels: torch.Tensor, present: torch.Tensor) -> torch.Tensor:
+def pinball(
+    q: torch.Tensor,
+    labels: torch.Tensor,
+    present: torch.Tensor,
+    levels: tuple[float, ...] = QUANTILES,
+) -> torch.Tensor:
     """Pinball loss per (target, horizon), averaged over present labels, then over pairs."""
-    taus = torch.tensor(QUANTILES, dtype=q.dtype, device=q.device)
+    taus = torch.tensor(levels, dtype=q.dtype, device=q.device)
     diff = labels.unsqueeze(-1) - q
     loss = torch.maximum(taus * diff, (taus - 1) * diff).sum(dim=-1)
     counts = present.sum(dim=0)
@@ -262,7 +264,7 @@ class Trained:
 
 def _loss(model: GruAttention, batch: tuple[torch.Tensor, ...]) -> torch.Tensor:
     values, mask, static, labels, present = batch
-    return pinball(model(values, mask, static), labels, present)
+    return pinball(model(values, mask, static), labels, present, model.levels)
 
 
 def evaluate_loss(model: GruAttention, data: OnDevice, rows: np.ndarray, config: Config) -> float:
@@ -327,8 +329,16 @@ def train(data: Arrays, train_rows: np.ndarray, valid_rows: np.ndarray, config: 
     return Trained(model, epochs, best_epoch)
 
 
-def predict(model: GruAttention, data: Arrays, rows: np.ndarray, config: Config) -> Floats:
-    """Quantiles [rows, targets, horizons, 3] back in each target's own units."""
+def predict(
+    model: GruAttention,
+    data: Arrays,
+    rows: np.ndarray,
+    config: Config,
+    *,
+    target_space: bool = False,
+) -> Floats:
+    """Quantiles [rows, targets, horizons, levels], in each target's own units unless asked
+    for its training space."""
     placed = data.on(next(model.parameters()).device)
     model.eval()
     parts = []
@@ -337,7 +347,10 @@ def predict(model: GruAttention, data: Arrays, rows: np.ndarray, config: Config)
             part = rows[start : start + config.batch_size]
             values, mask, static, _, _ = placed.batch(part)
             parts.append(model(values, mask, static).cpu().numpy().astype(np.float64))
-    q = np.concatenate(parts) if parts else np.zeros((0, len(TARGETS), len(HORIZONS), 3))
+    shape = (0, len(TARGETS), len(HORIZONS), len(config.levels))
+    q = np.concatenate(parts) if parts else np.zeros(shape)
+    if target_space:
+        return q
     for t, target in enumerate(TARGETS):
         q[:, t] = from_target_space(target, q[:, t])
     return q
@@ -350,7 +363,7 @@ def save_checkpoint(
     torch.save(
         {
             "state_dict": model.state_dict(),
-            "config": json.dumps(asdict(config)),
+            "config": json.dumps(config.plain()),
             "prep": json.dumps(prep),
             "epoch": epoch,
             "shape": [model.embed.in_features // 2, model.static[0].in_features],

@@ -1,5 +1,51 @@
 {
   "$defs": {
+    "AblationScore": {
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "description": "Pinball over that of the full model, minus one.",
+          "type": "number"
+        },
+        "change_high": {
+          "type": "number"
+        },
+        "change_low": {
+          "type": "number"
+        },
+        "examples": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "horizon": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "pinball": {
+          "type": "number"
+        },
+        "target": {
+          "$ref": "#/$defs/ForecastTarget"
+        }
+      },
+      "required": [
+        "name",
+        "target",
+        "horizon",
+        "examples",
+        "pinball",
+        "change",
+        "change_low",
+        "change_high"
+      ],
+      "title": "AblationScore",
+      "type": "object"
+    },
     "AccessCategory": {
       "description": "How a source is reached. A free endpoint is still not a licence (docs/12).",
       "enum": [
@@ -227,6 +273,92 @@
       "title": "AlertKind",
       "type": "string"
     },
+    "ApprovalRow": {
+      "additionalProperties": false,
+      "properties": {
+        "approved": {
+          "type": "boolean"
+        },
+        "beats_persistence": {
+          "type": "boolean"
+        },
+        "coverage_cold": {
+          "type": "boolean"
+        },
+        "coverage_seen": {
+          "type": "boolean"
+        },
+        "enough_examples": {
+          "type": "boolean"
+        },
+        "examples": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "horizon": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "not_worse_than_best": {
+          "type": "boolean"
+        },
+        "target": {
+          "$ref": "#/$defs/ForecastTarget"
+        },
+        "typical_firm": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "target",
+        "horizon",
+        "examples",
+        "enough_examples",
+        "coverage_seen",
+        "coverage_cold",
+        "beats_persistence",
+        "not_worse_than_best",
+        "typical_firm",
+        "approved"
+      ],
+      "title": "ApprovalRow",
+      "type": "object"
+    },
+    "ApprovalRule": {
+      "additionalProperties": false,
+      "description": "Which forecasts may leave Stage 17: written down before anything is scored.",
+      "properties": {
+        "cold_start_tolerance": {
+          "description": "The same gap for firms never trained on.",
+          "type": "number"
+        },
+        "coverage_tolerance": {
+          "description": "Allowed gap to each nominal coverage.",
+          "type": "number"
+        },
+        "horizons": {
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "min_examples": {
+          "description": "Rows of the final years, per target and horizon.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "horizons",
+        "min_examples",
+        "coverage_tolerance",
+        "cold_start_tolerance"
+      ],
+      "title": "ApprovalRule",
+      "type": "object"
+    },
     "Authentication": {
       "enum": [
         "none",
@@ -247,6 +379,214 @@
       ],
       "title": "AvailabilityBasis",
       "type": "string"
+    },
+    "BandScore": {
+      "additionalProperties": false,
+      "description": "The quantile forecasts of one model on one set of rows, in the target's training space.",
+      "properties": {
+        "best_baseline": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "calibrated": {
+          "type": "boolean"
+        },
+        "companies": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "coverage": {
+          "description": "Per nominal coverage of the protocol.",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "coverage_high": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "coverage_low": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "examples": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "horizon": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "median_ae": {
+          "description": "Of the median forecast, in the target's own units.",
+          "type": "number"
+        },
+        "median_width": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "model": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "period": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "pinball": {
+          "type": "number"
+        },
+        "pinball_high": {
+          "type": "number"
+        },
+        "pinball_low": {
+          "description": "95% interval, bootstrap over companies.",
+          "type": "number"
+        },
+        "population": {
+          "$ref": "#/$defs/Population",
+          "default": "all"
+        },
+        "reliability": {
+          "description": "Share of actuals below each level.",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "split": {
+          "$ref": "#/$defs/SplitName"
+        },
+        "target": {
+          "$ref": "#/$defs/ForecastTarget"
+        },
+        "vs_best": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pinball over that of the best baseline band, minus one."
+        },
+        "vs_best_high": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "vs_best_low": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "vs_persistence": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pinball over that of the persistence band, minus one."
+        },
+        "vs_persistence_high": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "vs_persistence_low": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "width": {
+          "description": "Mean width per nominal coverage.",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "wis": {
+          "description": "Weighted interval score, a finite approximation of CRPS.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "target",
+        "horizon",
+        "split",
+        "population",
+        "period",
+        "model",
+        "calibrated",
+        "examples",
+        "companies",
+        "pinball",
+        "pinball_low",
+        "pinball_high",
+        "wis",
+        "median_ae",
+        "coverage",
+        "coverage_low",
+        "coverage_high",
+        "width",
+        "median_width",
+        "reliability",
+        "vs_persistence",
+        "vs_persistence_low",
+        "vs_persistence_high",
+        "vs_best",
+        "vs_best_low",
+        "vs_best_high",
+        "best_baseline"
+      ],
+      "title": "BandScore",
+      "type": "object"
     },
     "BenchmarkReport": {
       "additionalProperties": false,
@@ -966,6 +1306,62 @@
         "quality_flags"
       ],
       "title": "CompanyDossier",
+      "type": "object"
+    },
+    "CompanyErrors": {
+      "additionalProperties": false,
+      "description": "How errors spread over firms: a mean over rows hides the firm it fails.",
+      "properties": {
+        "better_than_persistence": {
+          "description": "Share of firms with a lower pinball.",
+          "type": "number"
+        },
+        "companies": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "examples": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "examples_per_firm_median": {
+          "type": "number"
+        },
+        "horizon": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "model": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "pinball_p10": {
+          "type": "number"
+        },
+        "pinball_p50": {
+          "type": "number"
+        },
+        "pinball_p90": {
+          "type": "number"
+        },
+        "target": {
+          "$ref": "#/$defs/ForecastTarget"
+        }
+      },
+      "required": [
+        "target",
+        "horizon",
+        "model",
+        "companies",
+        "examples",
+        "examples_per_firm_median",
+        "pinball_p10",
+        "pinball_p50",
+        "pinball_p90",
+        "better_than_persistence"
+      ],
+      "title": "CompanyErrors",
       "type": "object"
     },
     "CompanyStatus": {
@@ -1742,6 +2138,269 @@
         "seconds"
       ],
       "title": "EpochLog",
+      "type": "object"
+    },
+    "EvaluationPackage": {
+      "additionalProperties": false,
+      "description": "Stage 17: what the quantile forecasts are worth, measured, with every failure kept.",
+      "properties": {
+        "ablations": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/AblationScore"
+          },
+          "type": "array"
+        },
+        "approvals": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ApprovalRow"
+          },
+          "type": "array"
+        },
+        "bands_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "benchmark_id": {
+          "type": "string"
+        },
+        "calibrated": {
+          "type": "boolean"
+        },
+        "companies": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CompanyErrors"
+          },
+          "type": "array"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Not part of the hash.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "dataset_id": {
+          "type": "string"
+        },
+        "dataset_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "evaluation_id": {
+          "pattern": "^eval-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "failures": {
+          "default": [],
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "findings": {
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "memorization": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MemorizationScore"
+          },
+          "type": "array"
+        },
+        "model_id": {
+          "pattern": "^model-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "primary_model": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "protocol_id": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "protocol_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "scores": {
+          "items": {
+            "$ref": "#/$defs/BandScore"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "sequences_id": {
+          "type": "string"
+        },
+        "sha256": {
+          "description": "Of the scores, the stored forecasts and the inputs.",
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "slices": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SliceScore"
+          },
+          "type": "array"
+        },
+        "stability": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StabilityScore"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "evaluation_id",
+        "sha256",
+        "dataset_id",
+        "dataset_sha256",
+        "sequences_id",
+        "protocol_id",
+        "protocol_sha256",
+        "benchmark_id",
+        "bands_sha256",
+        "model_id",
+        "primary_model",
+        "calibrated",
+        "scores",
+        "slices",
+        "companies",
+        "ablations",
+        "memorization",
+        "stability",
+        "approvals",
+        "findings",
+        "failures",
+        "contracts_version",
+        "created_at"
+      ],
+      "title": "EvaluationPackage",
+      "type": "object"
+    },
+    "EvaluationProtocol": {
+      "additionalProperties": false,
+      "description": "Written before Stage 17 scored anything; its SHA-256 goes into the package.",
+      "properties": {
+        "ablation_repeats": {
+          "maximum": 10,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "ablations": {
+          "default": [],
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "approval": {
+          "$ref": "#/$defs/ApprovalRule"
+        },
+        "base_protocol_id": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "base_protocol_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "benchmark_id": {
+          "description": "The Stage 16 benchmark whose chosen settings it uses.",
+          "type": "string"
+        },
+        "dense_quarters": {
+          "description": "At this many observed quarters: dense.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "development_years": {
+          "description": "Choose the architecture and whether to calibrate.",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "final_years": {
+          "description": "Scored last, for the verdict.",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "levels": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "type": "array"
+        },
+        "nominal": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "ood_z": {
+          "description": "A row is out of distribution beyond this many deviations.",
+          "type": "number"
+        },
+        "protocol_id": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "repeats": {
+          "maximum": 10,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "sparse_quarters": {
+          "description": "Below this many observed quarters: sparse.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "protocol_id",
+        "base_protocol_id",
+        "base_protocol_sha256",
+        "benchmark_id",
+        "seed",
+        "levels",
+        "nominal",
+        "development_years",
+        "final_years",
+        "repeats",
+        "ablation_repeats",
+        "ablations",
+        "ood_z",
+        "sparse_quarters",
+        "dense_quarters",
+        "approval"
+      ],
+      "title": "EvaluationProtocol",
       "type": "object"
     },
     "Evidence": {
@@ -3271,6 +3930,59 @@
         "effect"
       ],
       "title": "MechanismEffect",
+      "type": "object"
+    },
+    "MemorizationScore": {
+      "additionalProperties": false,
+      "description": "Pinball where the model could remember a firm, and where it could not.",
+      "properties": {
+        "cold_change": {
+          "description": "Cold over seen, each set against persistence.",
+          "type": "number"
+        },
+        "cold_change_high": {
+          "type": "number"
+        },
+        "cold_change_low": {
+          "type": "number"
+        },
+        "horizon": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "target": {
+          "$ref": "#/$defs/ForecastTarget"
+        },
+        "test_cold": {
+          "description": "Test rows of firms it never saw.",
+          "type": "number"
+        },
+        "test_seen": {
+          "description": "Test rows of firms it was fitted on.",
+          "type": "number"
+        },
+        "trained": {
+          "description": "Rows it was fitted on.",
+          "type": "number"
+        },
+        "watched": {
+          "description": "Same period, firms that only stopped the training.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "target",
+        "horizon",
+        "trained",
+        "watched",
+        "test_seen",
+        "test_cold",
+        "cold_change",
+        "cold_change_low",
+        "cold_change_high"
+      ],
+      "title": "MemorizationScore",
       "type": "object"
     },
     "MetricResult": {
@@ -5787,6 +6499,72 @@
       "title": "ShareMember",
       "type": "object"
     },
+    "SliceScore": {
+      "additionalProperties": false,
+      "description": "One model on one slice of the rows: a year, a sector, a history length, a condition.",
+      "properties": {
+        "companies": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "coverage": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "examples": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "horizon": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "year",
+            "division",
+            "history",
+            "distribution"
+          ],
+          "type": "string"
+        },
+        "model": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "pinball": {
+          "type": "number"
+        },
+        "target": {
+          "$ref": "#/$defs/ForecastTarget"
+        },
+        "value": {
+          "maxLength": 40,
+          "minLength": 1,
+          "type": "string"
+        },
+        "vs_persistence": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "kind",
+        "value",
+        "target",
+        "horizon",
+        "model",
+        "examples",
+        "companies",
+        "pinball",
+        "vs_persistence",
+        "coverage"
+      ],
+      "title": "SliceScore",
+      "type": "object"
+    },
     "SnapshotInput": {
       "additionalProperties": false,
       "description": "One raw archive file the warehouse was built from.",
@@ -6003,6 +6781,51 @@
       ],
       "title": "SplitName",
       "type": "string"
+    },
+    "StabilityScore": {
+      "additionalProperties": false,
+      "description": "Forecasts of one quarter from two origins, and the disagreement between seeds.",
+      "properties": {
+        "long_horizon": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "median_error": {
+          "description": "Of the later forecast.",
+          "type": "number"
+        },
+        "median_revision": {
+          "type": "number"
+        },
+        "median_seed_spread": {
+          "description": "Between the seeds, at the long horizon.",
+          "type": "number"
+        },
+        "pairs": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "short_horizon": {
+          "maximum": 40,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "target": {
+          "$ref": "#/$defs/ForecastTarget"
+        }
+      },
+      "required": [
+        "target",
+        "long_horizon",
+        "short_horizon",
+        "pairs",
+        "median_revision",
+        "median_error",
+        "median_seed_spread"
+      ],
+      "title": "StabilityScore",
+      "type": "object"
     },
     "StateCount": {
       "additionalProperties": false,
@@ -6793,9 +7616,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.14.0",
+  "$id": "urn:multiverse:contracts:0.15.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.14.0"
+  "x-contracts-version": "0.15.0"
 }

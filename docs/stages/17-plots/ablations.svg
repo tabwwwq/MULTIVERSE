@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 816" role="img" aria-label="Pinball change without one input, h=4, all test years, seen firms">
+<style>svg{--surface:#fcfcfb;--ink:#0b0b0b;--muted:#52514e;--grid:#e4e3df;--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4}@media (prefers-color-scheme:dark){svg{--surface:#1a1a19;--ink:#f0efec;--muted:#c3c2b7;--grid:#3a3a37;--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181}}text{font:12px system-ui,sans-serif;fill:var(--muted)}.title{font-size:15px;font-weight:600;fill:var(--ink)}.ink{fill:var(--ink)}</style>
+<rect width="100%" height="100%" fill="var(--surface)"/>
+<text class="title" x="16" y="26">Pinball change without one input, h=4, all test years, seen firms</text>
+<rect x="16" y="41" width="12" height="4" rx="2" fill="var(--s1)"/>
+<text x="34" y="50">Revenue growth</text>
+<rect x="143" y="41" width="12" height="4" rx="2" fill="var(--s2)"/>
+<text x="161" y="50">Operating margin</text>
+<rect x="284" y="41" width="12" height="4" rx="2" fill="var(--s3)"/>
+<text x="302" y="50">EBITDA margin</text>
+<rect x="404" y="41" width="12" height="4" rx="2" fill="var(--s4)"/>
+<text x="422" y="50">FCF margin</text>
+<rect x="502" y="41" width="12" height="4" rx="2" fill="var(--s5)"/>
+<text x="520" y="50">Debt / EBITDA</text>
+<line x1="163.7" y1="72" x2="163.7" y2="756" stroke="var(--muted)" stroke-dasharray="4 4"/>
+<text x="122" y="114.0" text-anchor="end">lags_12</text>
+<line x1="153.0" y1="88.0" x2="160.8" y2="88.0" stroke="var(--s1)" stroke-width="2"/>
+<circle cx="156.9" cy="88.0" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><title>lags_12 revenue_growth: -0.6% (7626 rows)</title></circle>
+<line x1="152.0" y1="99.0" x2="166.6" y2="99.0" stroke="var(--s2)" stroke-width="2"/>
+<circle cx="159.5" cy="99.0" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><title>lags_12 operating_margin: -0.4% (7020 rows)</title></circle>
+<line x1="151.6" y1="110.0" x2="168.7" y2="110.0" stroke="var(--s3)" stroke-width="2"/>
+<circle cx="160.2" cy="110.0" r="4" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"><title>lags_12 ebitda_margin: -0.3% (6544 rows)</title></circle>
+<line x1="146.8" y1="121.0" x2="159.4" y2="121.0" stroke="var(--s4)" stroke-width="2"/>
+<circle cx="153.1" cy="121.0" r="4" fill="var(--s4)" stroke="var(--surface)" stroke-width="2"><title>lags_12 fcf_margin: -1.0% (6203 rows)</title></circle>
+<line x1="157.9" y1="132.0" x2="181.9" y2="132.0" stroke="var(--s5)" stroke-width="2"/>
+<circle cx="170.5" cy="132.0" r="4" fill="var(--s5)" stroke="var(--surface)" stroke-width="2"><title>lags_12 debt_to_ebitda: +0.6% (2741 rows)</title></circle>
+<text x="122" y="190.0" text-anchor="end">lags_4</text>
+<line x1="149.9" y1="164.0" x2="160.9" y2="164.0" stroke="var(--s1)" stroke-width="2"/>
+<circle cx="155.7" cy="164.0" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><title>lags_4 revenue_growth: -0.7% (7626 rows)</title></circle>
+<line x1="149.8" y1="175.0" x2="176.1" y2="175.0" stroke="var(--s2)" stroke-width="2"/>
+<circle cx="163.2" cy="175.0" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><title>lags_4 operating_margin: -0.0% (7020 rows)</title></circle>
+<line x1="150.3" y1="186.0" x2="182.5" y2="186.0" stroke="var(--s3)" stroke-width="2"/>
+<circle cx="166.2" cy="186.0" r="4" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"><title>lags_4 ebitda_margin: +0.2% (6544 rows)</title></circle>
+<line x1="130.0" y1="197.0" x2="154.3" y2="197.0" stroke="var(--s4)" stroke-width="2"/>
+<circle cx="142.2" cy="197.0" r="4" fill="var(--s4)" stroke="var(--surface)" stroke-width="2"><title>lags_4 fcf_margin: -2.0% (6203 rows)</title></circle>
+<line x1="152.9" y1="208.0" x2="198.5" y2="208.0" stroke="var(--s5)" stroke-width="2"/>
+<circle cx="175.7" cy="208.0" r="4" fill="var(--s5)" stroke="var(--surface)" stroke-width="2"><title>lags_4 debt_to_ebitda: +1.1% (2741 rows)</title></circle>
+<text x="122" y="266.0" text-anchor="end">no_debt</text>
+<line x1="160.3" y1="240.0" x2="171.9" y2="240.0" stroke="var(--s1)" stroke-width="2"/>
+<circle cx="166.4" cy="240.0" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><title>no_debt revenue_growth: +0.2% (7626 rows)</title></circle>
+<line x1="149.8" y1="251.0" x2="166.2" y2="251.0" stroke="var(--s2)" stroke-width="2"/>
+<circle cx="158.0" cy="251.0" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><title>no_debt operating_margin: -0.5% (7020 rows)</title></circle>
+<line x1="146.3" y1="262.0" x2="166.9" y2="262.0" stroke="var(--s3)" stroke-width="2"/>
+<circle cx="156.7" cy="262.0" r="4" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"><title>no_debt ebitda_margin: -0.6% (6544 rows)</title></circle>
+<line x1="147.3" y1="273.0" x2="161.5" y2="273.0" stroke="var(--s4)" stroke-width="2"/>
+<circle cx="154.6" cy="273.0" r="4" fill="var(--s4)" stroke="var(--surface)" stroke-width="2"><title>no_debt fcf_margin: -0.8% (6203 rows)</title></circle>
+<line x1="503.3" y1="284.0" x2="730.0" y2="284.0" stroke="var(--s5)" stroke-width="2"/>
+<circle cx="602.6" cy="284.0" r="4" fill="var(--s5)" stroke="var(--surface)" stroke-width="2"><title>no_debt debt_to_ebitda: +40.4% (2741 rows)</title></circle>
+<text x="122" y="342.0" text-anchor="end">no_macro</text>
+<line x1="163.1" y1="316.0" x2="173.9" y2="316.0" stroke="var(--s1)" stroke-width="2"/>
+<circle cx="168.3" cy="316.0" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><title>no_macro revenue_growth: +0.4% (7626 rows)</title></circle>
+<line x1="161.4" y1="327.0" x2="172.9" y2="327.0" stroke="var(--s2)" stroke-width="2"/>
+<circle cx="167.1" cy="327.0" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><title>no_macro operating_margin: +0.3% (7020 rows)</title></circle>
+<line x1="158.5" y1="338.0" x2="172.7" y2="338.0" stroke="var(--s3)" stroke-width="2"/>
+<circle cx="165.7" cy="338.0" r="4" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"><title>no_macro ebitda_margin: +0.2% (6544 rows)</title></circle>
+<line x1="162.5" y1="349.0" x2="171.2" y2="349.0" stroke="var(--s4)" stroke-width="2"/>
+<circle cx="166.8" cy="349.0" r="4" fill="var(--s4)" stroke="var(--surface)" stroke-width="2"><title>no_macro fcf_margin: +0.3% (6203 rows)</title></circle>
+<line x1="154.9" y1="360.0" x2="176.8" y2="360.0" stroke="var(--s5)" stroke-width="2"/>
+<circle cx="165.7" cy="360.0" r="4" fill="var(--s5)" stroke="var(--surface)" stroke-width="2"><title>no_macro debt_to_ebitda: +0.2% (2741 rows)</title></circle>
+<text x="122" y="418.0" text-anchor="end">no_masks</text>
+<line x1="154.5" y1="392.0" x2="164.8" y2="392.0" stroke="var(--s1)" stroke-width="2"/>
+<circle cx="159.8" cy="392.0" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><title>no_masks revenue_growth: -0.4% (7626 rows)</title></circle>
+<line x1="149.3" y1="403.0" x2="171.4" y2="403.0" stroke="var(--s2)" stroke-width="2"/>
+<circle cx="160.6" cy="403.0" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><title>no_masks operating_margin: -0.3% (7020 rows)</title></circle>
+<line x1="151.0" y1="414.0" x2="176.0" y2="414.0" stroke="var(--s3)" stroke-width="2"/>
+<circle cx="163.8" cy="414.0" r="4" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"><title>no_masks ebitda_margin: +0.0% (6544 rows)</title></circle>
+<line x1="151.4" y1="425.0" x2="170.6" y2="425.0" stroke="var(--s4)" stroke-width="2"/>
+<circle cx="161.4" cy="425.0" r="4" fill="var(--s4)" stroke="var(--surface)" stroke-width="2"><title>no_masks fcf_margin: -0.2% (6203 rows)</title></circle>
+<line x1="159.4" y1="436.0" x2="183.1" y2="436.0" stroke="var(--s5)" stroke-width="2"/>
+<circle cx="171.7" cy="436.0" r="4" fill="var(--s5)" stroke="var(--surface)" stroke-width="2"><title>no_masks debt_to_ebitda: +0.7% (2741 rows)</title></circle>
+<text x="122" y="494.0" text-anchor="end">no_rnd</text>
+<line x1="158.9" y1="468.0" x2="169.1" y2="468.0" stroke="var(--s1)" stroke-width="2"/>
+<circle cx="163.8" cy="468.0" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><title>no_rnd revenue_growth: +0.0% (7626 rows)</title></circle>
+<line x1="150.9" y1="479.0" x2="169.7" y2="479.0" stroke="var(--s2)" stroke-width="2"/>
+<circle cx="160.1" cy="479.0" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><title>no_rnd operating_margin: -0.3% (7020 rows)</title></circle>
+<line x1="149.9" y1="490.0" x2="173.4" y2="490.0" stroke="var(--s3)" stroke-width="2"/>
+<circle cx="161.8" cy="490.0" r="4" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"><title>no_rnd ebitda_margin: -0.2% (6544 rows)</title></circle>
+<line x1="155.6" y1="501.0" x2="169.7" y2="501.0" stroke="var(--s4)" stroke-width="2"/>
+<circle cx="162.4" cy="501.0" r="4" fill="var(--s4)" stroke="var(--surface)" stroke-width="2"><title>no_rnd fcf_margin: -0.1% (6203 rows)</title></circle>
+<line x1="140.9" y1="512.0" x2="170.2" y2="512.0" stroke="var(--s5)" stroke-width="2"/>
+<circle cx="155.5" cy="512.0" r="4" fill="var(--s5)" stroke="var(--surface)" stroke-width="2"><title>no_rnd debt_to_ebitda: -0.8% (2741 rows)</title></circle>
+<text x="122" y="570.0" text-anchor="end">no_sequence</text>
+<line x1="166.9" y1="544.0" x2="182.6" y2="544.0" stroke="var(--s1)" stroke-width="2"/>
+<circle cx="174.7" cy="544.0" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><title>no_sequence revenue_growth: +1.0% (7626 rows)</title></circle>
+<line x1="238.3" y1="555.0" x2="291.5" y2="555.0" stroke="var(--s2)" stroke-width="2"/>
+<circle cx="263.5" cy="555.0" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><title>no_sequence operating_margin: +9.2% (7020 rows)</title></circle>
+<line x1="244.9" y1="566.0" x2="304.8" y2="566.0" stroke="var(--s3)" stroke-width="2"/>
+<circle cx="274.1" cy="566.0" r="4" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"><title>no_sequence ebitda_margin: +10.2% (6544 rows)</title></circle>
+<line x1="189.0" y1="577.0" x2="225.8" y2="577.0" stroke="var(--s4)" stroke-width="2"/>
+<circle cx="207.6" cy="577.0" r="4" fill="var(--s4)" stroke="var(--surface)" stroke-width="2"><title>no_sequence fcf_margin: +4.0% (6203 rows)</title></circle>
+<line x1="169.4" y1="588.0" x2="251.5" y2="588.0" stroke="var(--s5)" stroke-width="2"/>
+<circle cx="209.5" cy="588.0" r="4" fill="var(--s5)" stroke="var(--surface)" stroke-width="2"><title>no_sequence debt_to_ebitda: +4.2% (2741 rows)</title></circle>
+<text x="122" y="646.0" text-anchor="end">no_static</text>
+<line x1="156.5" y1="620.0" x2="169.6" y2="620.0" stroke="var(--s1)" stroke-width="2"/>
+<circle cx="163.4" cy="620.0" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><title>no_static revenue_growth: -0.0% (7626 rows)</title></circle>
+<line x1="159.9" y1="631.0" x2="175.8" y2="631.0" stroke="var(--s2)" stroke-width="2"/>
+<circle cx="167.9" cy="631.0" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><title>no_static operating_margin: +0.4% (7020 rows)</title></circle>
+<line x1="152.2" y1="642.0" x2="173.0" y2="642.0" stroke="var(--s3)" stroke-width="2"/>
+<circle cx="162.8" cy="642.0" r="4" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"><title>no_static ebitda_margin: -0.1% (6544 rows)</title></circle>
+<line x1="155.6" y1="653.0" x2="169.5" y2="653.0" stroke="var(--s4)" stroke-width="2"/>
+<circle cx="162.6" cy="653.0" r="4" fill="var(--s4)" stroke="var(--surface)" stroke-width="2"><title>no_static fcf_margin: -0.1% (6203 rows)</title></circle>
+<line x1="160.4" y1="664.0" x2="186.7" y2="664.0" stroke="var(--s5)" stroke-width="2"/>
+<circle cx="173.8" cy="664.0" r="4" fill="var(--s5)" stroke="var(--surface)" stroke-width="2"><title>no_static debt_to_ebitda: +0.9% (2741 rows)</title></circle>
+<text x="122" y="722.0" text-anchor="end">other_depth</text>
+<line x1="158.1" y1="696.0" x2="167.0" y2="696.0" stroke="var(--s1)" stroke-width="2"/>
+<circle cx="162.6" cy="696.0" r="4" fill="var(--s1)" stroke="var(--surface)" stroke-width="2"><title>other_depth revenue_growth: -0.1% (7626 rows)</title></circle>
+<line x1="160.6" y1="707.0" x2="174.5" y2="707.0" stroke="var(--s2)" stroke-width="2"/>
+<circle cx="167.6" cy="707.0" r="4" fill="var(--s2)" stroke="var(--surface)" stroke-width="2"><title>other_depth operating_margin: +0.4% (7020 rows)</title></circle>
+<line x1="160.5" y1="718.0" x2="175.8" y2="718.0" stroke="var(--s3)" stroke-width="2"/>
+<circle cx="168.4" cy="718.0" r="4" fill="var(--s3)" stroke="var(--surface)" stroke-width="2"><title>other_depth ebitda_margin: +0.4% (6544 rows)</title></circle>
+<line x1="161.9" y1="729.0" x2="173.1" y2="729.0" stroke="var(--s4)" stroke-width="2"/>
+<circle cx="167.8" cy="729.0" r="4" fill="var(--s4)" stroke="var(--surface)" stroke-width="2"><title>other_depth fcf_margin: +0.4% (6203 rows)</title></circle>
+<line x1="155.4" y1="740.0" x2="183.6" y2="740.0" stroke="var(--s5)" stroke-width="2"/>
+<circle cx="169.3" cy="740.0" r="4" fill="var(--s5)" stroke="var(--surface)" stroke-width="2"><title>other_depth debt_to_ebitda: +0.5% (2741 rows)</title></circle>
+<text x="130.0" y="774.0" text-anchor="middle">-3.1%</text>
+<text x="163.7" y="774.0" text-anchor="middle">+0.0%</text>
+<text x="730.0" y="774.0" text-anchor="middle">+52.2%</text>
+<text x="16" y="804">Right of zero: the model needs that input. Whiskers: 95% interval, bootstrap over firms.</text>
+</svg>

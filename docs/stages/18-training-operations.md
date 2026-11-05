@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 18 — training operations |
 | Дата | 2026-11-05 |
-| Статус | REVIEW |
+| Статус | REVIEW (CI run 42124978629: 7/7 задач зелёные, commit `3095a35`); ждёт приёмки владельца |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/18_TRAINING_OPERATIONS.md` |
 | Основание | `docs/13`, ADR-0003; команды владельца 2026-11-05: «делай дальше и иди к некст шагу», показать прогресс от 1 до 100 |
 | Решение | ADR-0026 — training jobs |

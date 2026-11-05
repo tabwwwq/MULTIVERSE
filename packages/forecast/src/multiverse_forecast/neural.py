@@ -278,7 +278,22 @@ def evaluate_loss(model: GruAttention, data: OnDevice, rows: np.ndarray, config:
     return total / max(weight, 1)
 
 
-def train(data: Arrays, train_rows: np.ndarray, valid_rows: np.ndarray, config: Config) -> Trained:
+@dataclass
+class Progress:
+    """A training between two epochs: everything it needs to go on."""
+
+    model: GruAttention
+    optimizer: torch.optim.Optimizer
+    scheduler: torch.optim.lr_scheduler.ReduceLROnPlateau
+    rng: np.random.Generator
+    epochs: list[EpochLog] = field(default_factory=list)
+    best: float = math.inf
+    best_epoch: int = 1
+    best_state: dict[str, torch.Tensor] | None = None
+    stale: int = 0
+
+
+def begin(data: Arrays, config: Config) -> tuple[Progress, OnDevice]:
     seed_everything(config)
     device = device_for(config)
     model = GruAttention(data.values.shape[-1], data.static.shape[-1], config).to(device)
@@ -287,46 +302,64 @@ def train(data: Arrays, train_rows: np.ndarray, valid_rows: np.ndarray, config: 
         model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay
     )
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=1)
-    rng = np.random.default_rng(config.seed)
-    epochs: list[EpochLog] = []
-    best, best_epoch, best_state, stale = math.inf, 1, None, 0
-    for epoch in range(1, config.max_epochs + 1):
-        started = time.perf_counter()
-        model.train()
-        order = rng.permutation(train_rows)
-        total, weight = 0.0, 0
-        for start in range(0, order.size, config.batch_size):
-            part = order[start : start + config.batch_size]
-            loss = _loss(model, placed.batch(part))
-            if not torch.isfinite(loss):
-                raise FloatingPointError(f"loss is not finite at epoch {epoch}")
-            optimizer.zero_grad()
-            loss.backward()  # type: ignore[no-untyped-call,unused-ignore]
-            nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            optimizer.step()
-            total += float(loss.detach()) * part.size
-            weight += part.size
-        validation = evaluate_loss(model, placed, valid_rows, config)
-        scheduler.step(validation)
-        epochs.append(
-            EpochLog(
-                epoch=epoch,
-                train_loss=total / weight,
-                validation_loss=validation,
-                learning_rate=float(optimizer.param_groups[0]["lr"]),
-                seconds=time.perf_counter() - started,
-            )
+    return Progress(model, optimizer, scheduler, np.random.default_rng(config.seed)), placed
+
+
+def step(
+    progress: Progress,
+    placed: OnDevice,
+    train_rows: np.ndarray,
+    valid_rows: np.ndarray,
+    config: Config,
+) -> bool:
+    """One epoch; False when the training is over."""
+    model, optimizer = progress.model, progress.optimizer
+    epoch = len(progress.epochs) + 1
+    started = time.perf_counter()
+    model.train()
+    order = progress.rng.permutation(train_rows)
+    total, weight = 0.0, 0
+    for start in range(0, order.size, config.batch_size):
+        part = order[start : start + config.batch_size]
+        loss = _loss(model, placed.batch(part))
+        if not torch.isfinite(loss):
+            raise FloatingPointError(f"loss is not finite at epoch {epoch}")
+        optimizer.zero_grad()
+        loss.backward()  # type: ignore[no-untyped-call,unused-ignore]
+        nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        optimizer.step()
+        total += float(loss.detach()) * part.size
+        weight += part.size
+    validation = evaluate_loss(model, placed, valid_rows, config)
+    progress.scheduler.step(validation)
+    progress.epochs.append(
+        EpochLog(
+            epoch=epoch,
+            train_loss=total / weight,
+            validation_loss=validation,
+            learning_rate=float(optimizer.param_groups[0]["lr"]),
+            seconds=time.perf_counter() - started,
         )
-        if validation < best:
-            best, best_epoch, stale = validation, epoch, 0
-            best_state = {k: v.detach().clone() for k, v in model.state_dict().items()}
-        else:
-            stale += 1
-            if stale >= config.patience:
-                break
-    if best_state is not None:
-        model.load_state_dict(best_state)
-    return Trained(model, epochs, best_epoch)
+    )
+    if validation < progress.best:
+        progress.best, progress.best_epoch, progress.stale = validation, epoch, 0
+        progress.best_state = {k: v.detach().clone() for k, v in model.state_dict().items()}
+    else:
+        progress.stale += 1
+    return progress.stale < config.patience and epoch < config.max_epochs
+
+
+def finished(progress: Progress) -> Trained:
+    if progress.best_state is not None:
+        progress.model.load_state_dict(progress.best_state)
+    return Trained(progress.model, progress.epochs, progress.best_epoch)
+
+
+def train(data: Arrays, train_rows: np.ndarray, valid_rows: np.ndarray, config: Config) -> Trained:
+    progress, placed = begin(data, config)
+    while step(progress, placed, train_rows, valid_rows, config):
+        pass
+    return finished(progress)
 
 
 def predict(

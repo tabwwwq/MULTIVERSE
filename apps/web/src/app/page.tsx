@@ -40,12 +40,12 @@ const PHASES: ReadonlyArray<{ name: string; stages: string; status: string }> = 
   {
     name: "Point-in-time data from SEC, FRED, ECB and World Bank",
     stages: "Stages 09 to 14",
-    status: "In progress, no data yet",
+    status: "Done, outside this app",
   },
   {
     name: "Baselines, temporal neural networks and calibration",
     stages: "Stages 15 to 18",
-    status: "Planned",
+    status: "In review, research only",
   },
   {
     name: "Decision registry, causal research, finance and Monte Carlo",

@@ -334,15 +334,11 @@ export const SECTIONS: readonly Section[] = [
     title: "Model Observatory",
     group: "platform",
     icon: Cpu,
-    summary: "Training runs, dataset versions, measured metrics and approved models.",
-    status: "planned",
+    summary: "Training jobs as they run, with progress, budgets and the measured model candidate.",
+    status: "available",
     stage: 18,
     stageName: "Training operations",
-    plans: [
-      "Training runs with their dataset version, seed and configuration.",
-      "Metrics from real runs only.",
-      "Model approval and rollback.",
-    ],
+    plans: [],
   },
   {
     slug: "data-catalog",

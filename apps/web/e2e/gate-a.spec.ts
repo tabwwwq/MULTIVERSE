@@ -72,6 +72,8 @@ test.describe("every route (TC-06, TC-09, TC-14, TC-16, TC-18, TC-19)", () => {
   for (const route of ROUTES) {
     test(`checks ${route}`, async ({ page }) => {
       const errors = watchErrors(page);
+      // No API runs here; the Model Observatory has its own tests for that state.
+      await page.route("**/api/v1/**", (request) => request.fulfill({ json: [] }));
       await page.emulateMedia({ reducedMotion: "reduce" });
       const response = await page.goto(route);
       expect(response?.status(), "HTTP status").toBe(200);

@@ -20,6 +20,7 @@ members = [
     "multiverse-contracts",
     "multiverse-finance",
     "multiverse-forecast",
+    "multiverse-jobs",
     "multiverse-pipelines",
     "multiverse-worker",
 ]
@@ -521,6 +522,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "multiverse-config" },
     { name = "multiverse-contracts" },
+    { name = "multiverse-jobs" },
     { name = "uvicorn" },
 ]
 
@@ -529,6 +531,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
     { name = "multiverse-config", editable = "packages/config" },
     { name = "multiverse-contracts", editable = "packages/contracts/python" },
+    { name = "multiverse-jobs", editable = "packages/jobs" },
     { name = "uvicorn", specifier = ">=0.32" },
 ]
 
@@ -611,6 +614,17 @@ requires-dist = [
 provides-extras = ["boosting", "ml"]
 
 [[package]]
+name = "multiverse-jobs"
+version = "0.1.0"
+source = { editable = "packages/jobs" }
+dependencies = [
+    { name = "multiverse-contracts" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "multiverse-contracts", editable = "packages/contracts/python" }]
+
+[[package]]
 name = "multiverse-pipelines"
 version = "0.1.0"
 source = { editable = "pipelines" }
@@ -636,12 +650,16 @@ source = { editable = "services/worker" }
 dependencies = [
     { name = "multiverse-config" },
     { name = "multiverse-contracts" },
+    { name = "multiverse-forecast" },
+    { name = "multiverse-jobs" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "multiverse-config", editable = "packages/config" },
     { name = "multiverse-contracts", editable = "packages/contracts/python" },
+    { name = "multiverse-forecast", editable = "packages/forecast" },
+    { name = "multiverse-jobs", editable = "packages/jobs" },
 ]
 
 [[package]]

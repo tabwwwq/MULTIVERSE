@@ -29,6 +29,7 @@
 | [0023](0023-forecasting-baselines.md) | Baselines прогноза: один датасет, закреплённый протокол, честное сравнение с persistence | Accepted |
 | [0024](0024-temporal-model.md) | Temporal model: GRU + attention на 24 кварталах PIT-истории, квантили в пространстве цели | Accepted |
 | [0025](0025-probabilistic-evaluation.md) | Вероятностная оценка: семь квантилей, conformal на watch-фирмах, решение на final-годах | Accepted |
+| [0026](0026-training-jobs.md) | Training jobs: очередь в SQLite, аренда с heartbeat, checkpoint со всем состоянием | Accepted |
 
 ADR-0001…0006 перечислены в `docs/03_SYSTEM_ARCHITECTURE.md` комплекта. ADR-0007…0011 приняты на Stage 02.
 

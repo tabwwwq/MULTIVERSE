@@ -39,6 +39,8 @@ class Settings(BaseSettings):
     raw_budget_mb: int = Field(default=200, ge=1)
     api_host: str = "127.0.0.1"
     api_port: int = Field(default=8000, ge=1, le=65535)
+    # The web app on this machine may read the API; nothing else may (Stage 18).
+    web_origins: tuple[str, ...] = ("http://localhost:3000", "http://127.0.0.1:3000")
     # Downloads from SEC, FRED and others stay off until the owner enables them (Stage 09-10).
     allow_network_downloads: bool = False
     sec_user_agent: str | None = None

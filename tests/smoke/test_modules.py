@@ -13,6 +13,7 @@ MODULES = {
     "multiverse_finance": "multiverse-finance",
     "multiverse_causal": "multiverse-causal",
     "multiverse_forecast": "multiverse-forecast",
+    "multiverse_jobs": "multiverse-jobs",
     "multiverse_pipelines": "multiverse-pipelines",
     "multiverse_api": "multiverse-api",
     "multiverse_worker": "multiverse-worker",

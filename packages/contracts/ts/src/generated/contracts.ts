@@ -330,6 +330,20 @@ export type ValueUnit =
 export type MagnitudeBase = "previous_rnd_budget" | "revenue" | "headcount" | "none";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobStatus".
+ */
+export type JobStatus =
+  | "queued"
+  | "validating"
+  | "running"
+  | "pause_requested"
+  | "paused"
+  | "stop_requested"
+  | "stopped"
+  | "failed"
+  | "completed";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "Level".
  */
 export type Level = "low" | "medium" | "high";
@@ -1958,6 +1972,110 @@ export interface ShareMember {
   label: string;
 }
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobDetail".
+ */
+export interface JobDetail {
+  job: JobView;
+  metrics: EpochLog[];
+}
+/**
+ * The state of a job as the screen shows it; the store is the only source of it.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobView".
+ */
+export interface JobView {
+  alerts: string[];
+  approved_at: string | null;
+  approved_by: string | null;
+  /**
+   * Times a worker has taken the job.
+   */
+  attempt: number;
+  batch_size: number;
+  best_epoch: number | null;
+  best_validation_loss: number | null;
+  checkpoint_sha256: string | null;
+  created_at: string;
+  /**
+   * Over all attempts together.
+   */
+  elapsed_seconds: number;
+  epoch: number;
+  estimate: JobEstimate;
+  job_id: string;
+  last_heartbeat: string | null;
+  max_attempts: number;
+  /**
+   * Epochs over the maximum; early stopping jumps to 100.
+   */
+  progress_percent: number;
+  reason: string | null;
+  request: JobRequest;
+  spent_usd: number;
+  status: JobStatus;
+  train_loss: number | null;
+  updated_at: string;
+  validation_loss: number | null;
+  worker: string | null;
+}
+/**
+ * Shown before approval: measured rates, never a promise.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobEstimate".
+ */
+export interface JobEstimate {
+  basis: string;
+  cost_usd: number;
+  disk_mb: number;
+  seconds: number;
+  vram_mb: number;
+}
+/**
+ * Everything a job needs; a second submit with the same key returns the first job.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobRequest".
+ */
+export interface JobRequest {
+  dataset_id: string;
+  dataset_sha256: string;
+  device: "auto" | "cpu" | "cuda";
+  fold_year: number;
+  idempotency_key: string;
+  max_epochs: number;
+  /**
+   * Over all attempts together.
+   */
+  max_runtime_seconds: number;
+  model: "gru_attention" | "tcn";
+  /**
+   * Asked for on purpose: a job may run past the usual limit.
+   */
+  overnight: boolean;
+  owner: string;
+  params: Param[];
+  protocol_path: string;
+  /**
+   * Zero on the owner's own GPU.
+   */
+  rate_usd_per_hour: number;
+  seed: number;
+  spend_limit_usd: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobLogLine".
+ */
+export interface JobLogLine {
+  at: string;
+  level: "info" | "warning" | "error";
+  message: string;
+  seq: number;
+}
+/**
  * Data that only a licensed provider can supply. No provider is chosen in V2.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -2789,7 +2907,7 @@ export interface TrainingRun {
   fold_year: number;
   model: string;
   params: Param[];
-  purpose: "smoke" | "benchmark";
+  purpose: "smoke" | "benchmark" | "job";
   run_id: string;
   seed: number;
   sequences_id: string;

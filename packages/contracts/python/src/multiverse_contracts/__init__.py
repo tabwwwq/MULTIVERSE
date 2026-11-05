@@ -72,6 +72,15 @@ from multiverse_contracts.interventions import (
     ParameterSpec,
     ValueUnit,
 )
+from multiverse_contracts.jobs import (
+    JobDetail,
+    JobEstimate,
+    JobId,
+    JobLogLine,
+    JobRequest,
+    JobStatus,
+    JobView,
+)
 from multiverse_contracts.macro import (
     AvailabilityBasis,
     Frequency,
@@ -250,6 +259,13 @@ __all__ = [
     "InterventionCatalog",
     "InterventionSpec",
     "InterventionType",
+    "JobDetail",
+    "JobEstimate",
+    "JobId",
+    "JobLogLine",
+    "JobRequest",
+    "JobStatus",
+    "JobView",
     "KnowledgeView",
     "Licence",
     "Lineage",

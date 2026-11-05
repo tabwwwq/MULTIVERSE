@@ -219,7 +219,7 @@ class TrainingRun(ContractModel):
 
     run_id: Annotated[str, StringConstraints(pattern=r"^run-[0-9]{8}-[0-9a-f]{12}$")]
     model: Name
-    purpose: Literal["smoke", "benchmark"]
+    purpose: Literal["smoke", "benchmark", "job"]
     dataset_id: str
     sequences_id: str
     fold_year: int

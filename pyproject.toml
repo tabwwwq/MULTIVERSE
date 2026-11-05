@@ -8,6 +8,7 @@ members = [
   "packages/finance",
   "packages/causal",
   "packages/forecast",
+  "packages/jobs",
   "pipelines",
   "services/api",
   "services/worker",
@@ -61,6 +62,7 @@ known-first-party = [
   "multiverse_contracts",
   "multiverse_finance",
   "multiverse_forecast",
+  "multiverse_jobs",
   "multiverse_pipelines",
   "multiverse_worker",
 ]
@@ -79,6 +81,7 @@ packages = [
   "multiverse_contracts",
   "multiverse_finance",
   "multiverse_forecast",
+  "multiverse_jobs",
   "multiverse_pipelines",
   "multiverse_worker",
 ]
@@ -121,6 +124,7 @@ root_packages = [
   "multiverse_contracts",
   "multiverse_finance",
   "multiverse_forecast",
+  "multiverse_jobs",
   "multiverse_pipelines",
   "multiverse_worker",
 ]
@@ -131,7 +135,7 @@ name = "Layers: services -> domain packages -> base (siblings are independent)"
 type = "layers"
 layers = [
   "multiverse_api | multiverse_worker",
-  "multiverse_finance | multiverse_causal | multiverse_forecast | multiverse_pipelines",
+  "multiverse_finance | multiverse_causal | multiverse_forecast | multiverse_jobs | multiverse_pipelines",
   "multiverse_contracts | multiverse_config",
 ]
 
@@ -149,6 +153,7 @@ source_modules = [
   "multiverse_finance",
   "multiverse_causal",
   "multiverse_forecast",
+  "multiverse_jobs",
   "multiverse_pipelines",
 ]
 forbidden_modules = ["fastapi", "starlette", "uvicorn"]

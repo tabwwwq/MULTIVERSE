@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-05 (Stage 18)
+
+- Training jobs outside any HTTP request (ADR-0026): a durable SQLite queue (`multiverse_jobs`), workers with leases and heartbeats, a real checkpoint, stop, pause and resume, budgets, retries and alerts.
+- A job starts only after its estimate of time, GPU memory, disk and cost is approved; the same idempotency key returns the same job, and another request with it is refused.
+- Checkpoints (`multiverse_forecast.resumable`) hold model, optimizer, scheduler, every random state, counters and normalization; `last.pt` after each epoch and `best.pt` on improvement, written atomically with their SHA-256; resume refuses another dataset, fold, feature schema, normalization or architecture.
+- Worker (`multiverse-worker run | status | kill`): exits when the queue is empty, so nothing trains overnight by accident; a loss that is not a number alerts and fails, running out of device memory retries with half the batch, other errors retry from the checkpoint until the attempts end. Budgets of time and money count all attempts together and are checked at safe points; more than four hours needs `overnight: true`.
+- API `/api/v1/jobs`: estimate, submit, list, detail, logs, approve, pause, stop, resume. Logs are stripped of keys, tokens, addresses and long hashes before they are stored.
+- Model Observatory (`/models`): every job with its status, progress from 0 to 100%, epochs, losses, heartbeat, elapsed time, limits, spend, alerts, log and the actions its state allows, plus the honest status of the Stage 17 candidate. The screen only reads and passes on requests, so the browser may close.
+- Acceptance on the real dataset with real processes: a stopped, a paused and a killed worker's job each ended with the same losses and the same checkpoint SHA-256 as an uninterrupted job, which also equals the Stage 16 training.
+- Contracts 0.16.0: `JobRequest`, `JobEstimate`, `JobStatus`, `JobView`, `JobLogLine`, `JobDetail`; the training run purpose `job`.
+
+### Changed — 2026-11-05 (Stage 18)
+
+- The overview page no longer calls finished phases planned: data is done outside this app, and the models are in review, research only.
+
 ### Added — 2026-11-05 (Stage 17)
 
 - Probabilistic evaluation (ADR-0025) under a protocol locked before anything was scored (`data/protocols/stage-17-evaluation.json`): development years 2020–2023 choose the model, final years 2024–2026 give the verdict, and an approval rule is written down in advance. The final years were never used for a choice, but they were part of the pooled test tables of Stages 15 and 16, and the package says so.

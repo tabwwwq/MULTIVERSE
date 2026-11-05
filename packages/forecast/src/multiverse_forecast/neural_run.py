@@ -21,7 +21,7 @@ import hashlib
 import json
 import shutil
 from collections.abc import Callable
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -74,6 +74,8 @@ class Fold:
     data: Arrays
     train_rows: np.ndarray
     valid_rows: np.ndarray
+    normalization: dict[str, list[float]] = field(default_factory=dict)
+    """What the training rows taught the inputs: goes into a resumable checkpoint."""
 
 
 def labels_until(dataset: Dataset, released_before: np.datetime64 | None) -> Floats:
@@ -118,7 +120,13 @@ def fold(
         dataset.x[train_rows], dataset.features, dataset.divisions[train_rows]
     )
     static = static_prep.transform(dataset.x, dataset.divisions)
-    return Fold(year, Arrays(values, mask, static, labels), train_rows, valid_rows)
+    normalization = {
+        "sequence_mean": seq_prep.mean.tolist(),
+        "sequence_std": seq_prep.std.tolist(),
+        "static_mean": static_prep.mean.tolist(),
+        "static_std": static_prep.std.tolist(),
+    }
+    return Fold(year, Arrays(values, mask, static, labels), train_rows, valid_rows, normalization)
 
 
 def svg_plot(epochs: list[EpochLog], title: str) -> str:

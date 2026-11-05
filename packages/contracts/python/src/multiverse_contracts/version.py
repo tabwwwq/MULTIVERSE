@@ -47,6 +47,9 @@ training run of a temporal model with its configuration, losses and checkpoint.
 
 0.15.0 (Stage 17): the evaluation protocol with its approval rule, and the evaluation
 package: quantile scores, slices, firms, ablations, memorization, stability, approvals.
+
+0.16.0 (Stage 18): training jobs: request, estimate, status, log lines and the job view
+with progress, heartbeat, spend and alerts; the training run purpose job.
 """
 
-CONTRACTS_VERSION = "0.15.0"
+CONTRACTS_VERSION = "0.16.0"

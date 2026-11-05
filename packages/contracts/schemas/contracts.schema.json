@@ -3173,6 +3173,426 @@
       "title": "InterventionType",
       "type": "string"
     },
+    "JobDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "job": {
+          "$ref": "#/$defs/JobView"
+        },
+        "metrics": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EpochLog"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "job",
+        "metrics"
+      ],
+      "title": "JobDetail",
+      "type": "object"
+    },
+    "JobEstimate": {
+      "additionalProperties": false,
+      "description": "Shown before approval: measured rates, never a promise.",
+      "properties": {
+        "basis": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "cost_usd": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "disk_mb": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "seconds": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "vram_mb": {
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "seconds",
+        "vram_mb",
+        "disk_mb",
+        "cost_usd",
+        "basis"
+      ],
+      "title": "JobEstimate",
+      "type": "object"
+    },
+    "JobLogLine": {
+      "additionalProperties": false,
+      "properties": {
+        "at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "seq": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "seq",
+        "at",
+        "level",
+        "message"
+      ],
+      "title": "JobLogLine",
+      "type": "object"
+    },
+    "JobRequest": {
+      "additionalProperties": false,
+      "description": "Everything a job needs; a second submit with the same key returns the first job.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^fds-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "dataset_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "device": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "cpu",
+            "cuda"
+          ],
+          "type": "string"
+        },
+        "fold_year": {
+          "maximum": 2100,
+          "minimum": 2000,
+          "type": "integer"
+        },
+        "idempotency_key": {
+          "pattern": "^[A-Za-z0-9._-]{8,80}$",
+          "type": "string"
+        },
+        "max_epochs": {
+          "maximum": 500,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_runtime_seconds": {
+          "description": "Over all attempts together.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "model": {
+          "enum": [
+            "gru_attention",
+            "tcn"
+          ],
+          "type": "string"
+        },
+        "overnight": {
+          "default": false,
+          "description": "Asked for on purpose: a job may run past the usual limit.",
+          "type": "boolean"
+        },
+        "owner": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "params": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Param"
+          },
+          "type": "array"
+        },
+        "protocol_path": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "rate_usd_per_hour": {
+          "default": 0,
+          "description": "Zero on the owner's own GPU.",
+          "minimum": 0,
+          "type": "number"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "spend_limit_usd": {
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "owner",
+        "model",
+        "params",
+        "dataset_id",
+        "dataset_sha256",
+        "protocol_path",
+        "fold_year",
+        "seed",
+        "device",
+        "max_epochs",
+        "max_runtime_seconds",
+        "spend_limit_usd",
+        "rate_usd_per_hour",
+        "overnight"
+      ],
+      "title": "JobRequest",
+      "type": "object"
+    },
+    "JobStatus": {
+      "enum": [
+        "queued",
+        "validating",
+        "running",
+        "pause_requested",
+        "paused",
+        "stop_requested",
+        "stopped",
+        "failed",
+        "completed"
+      ],
+      "title": "JobStatus",
+      "type": "string"
+    },
+    "JobView": {
+      "additionalProperties": false,
+      "description": "The state of a job as the screen shows it; the store is the only source of it.",
+      "properties": {
+        "alerts": {
+          "default": [],
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "approved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "approved_by": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "attempt": {
+          "description": "Times a worker has taken the job.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "batch_size": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "best_epoch": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "best_validation_loss": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "elapsed_seconds": {
+          "description": "Over all attempts together.",
+          "minimum": 0,
+          "type": "number"
+        },
+        "epoch": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "estimate": {
+          "$ref": "#/$defs/JobEstimate"
+        },
+        "job_id": {
+          "pattern": "^job-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "last_heartbeat": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "max_attempts": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "progress_percent": {
+          "description": "Epochs over the maximum; early stopping jumps to 100.",
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "request": {
+          "$ref": "#/$defs/JobRequest"
+        },
+        "spent_usd": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "status": {
+          "$ref": "#/$defs/JobStatus"
+        },
+        "train_loss": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "validation_loss": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "worker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "job_id",
+        "request",
+        "estimate",
+        "status",
+        "approved_by",
+        "approved_at",
+        "attempt",
+        "max_attempts",
+        "epoch",
+        "best_epoch",
+        "best_validation_loss",
+        "train_loss",
+        "validation_loss",
+        "batch_size",
+        "progress_percent",
+        "elapsed_seconds",
+        "spent_usd",
+        "last_heartbeat",
+        "worker",
+        "reason",
+        "alerts",
+        "checkpoint_sha256",
+        "created_at",
+        "updated_at"
+      ],
+      "title": "JobView",
+      "type": "object"
+    },
     "KeyStatus": {
       "description": "Whether a key is needed and who has to obtain it.",
       "enum": [
@@ -7061,7 +7481,8 @@
         "purpose": {
           "enum": [
             "smoke",
-            "benchmark"
+            "benchmark",
+            "job"
           ],
           "type": "string"
         },
@@ -7616,9 +8037,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.15.0",
+  "$id": "urn:multiverse:contracts:0.16.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.15.0"
+  "x-contracts-version": "0.16.0"
 }

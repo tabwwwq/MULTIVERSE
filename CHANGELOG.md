@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-11-06 (Stage 20 accepted)
+
+- Stage 20 (causal feasibility study) accepted by the owner (CI run 42136489532 green). No effect is estimated; the gate of the event registry audit stays closed.
+
 ### Added — 2026-11-06 (Stage 20)
 
 - Causal feasibility study (ADR-0028), labelled as such: no effect is estimated, and no outcome after a treatment is read. The contract has no field for an effect, and the estimator refuses to run until the audit of the event registry says the sample is credible.

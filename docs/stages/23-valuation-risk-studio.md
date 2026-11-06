@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 23 — DCF, valuation bridge, stress and sensitivity |
 | Дата | 2026-11-06 |
-| Статус | REVIEW (CI run 42241750870: 7/7 задач зелёные, commit `f3f76d6`); ждёт приёмки владельца |
+| Статус | ACCEPTED 2026-11-06 (CI run 42241750870: 7/7 задач зелёные, commit `f3f76d6`; финальный `67480dd`, CI 42242972932 7/7; владелец: «Принять и Stage 24») |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/23_VALUATION_RISK_STUDIO.md` |
 | Основание | `docs/07_FINANCIAL_ENGINE.md`, Stages 21–22, команда владельца «Принять и Stage 23» |
 | Решение | ADR-0031 — один отчёт, пересчёт дисконтирования в браузере, цены за акцию нет |

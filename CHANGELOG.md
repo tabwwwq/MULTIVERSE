@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-11-06 (Stage 23 accepted)
+
+- Stage 23 (valuation and risk studio) accepted by the owner (CI run 42242972932 green). Its values stay model values, not verified market values.
+
 ### Added — 2026-11-06 (Stage 23)
 
 - Valuation Studio (`/valuation`, ADR-0031): editable WACC parts, terminal growth or exit multiple, horizon, projected FCFF, tax, bridge and dilution; enterprise value and equity value as separate outputs with a bridge; DCF by quarter and year; both terminal methods compared; a WACC × g matrix where WACC at or below g has no value; a tornado through the full statements; a method panel and CSV files.

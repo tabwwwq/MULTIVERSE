@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 20 — causal research pipeline |
 | Дата | 2026-11-06 |
-| Статус | REVIEW |
+| Статус | REVIEW (CI run 42136489532: 7/7 задач зелёные, commit `8b6b434`); ждёт приёмки владельца |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/20_CAUSAL_RESEARCH_PIPELINE.md` |
 | Основание | `docs/05`, реестр Stage 19; команда владельца «Принять, Stage 20 без выводов» |
 | Решение | ADR-0028 — исследование выполнимости вслепую |

@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-06 (Stage 21)
+
+- Financial engine `multiverse_finance` 0.2.0 (ADR-0029), independent of the UI and of neural frameworks: a baseline and decisions become three linked statements, and `project` refuses a path that does not reconcile to the cent.
+- Event accounting of the six decisions as ledger entries: R&D now and revenue later, severance and payroll, acquisition with funding mix, purchase allocation and late synergies, divestiture with stranded overhead, CAPEX with construction and utilization, refinancing. A decision of the contract reaches the engine through `plan_for`.
+- CFO − CAPEX, FCFF and FCFE kept apart with an exact bridge in every quarter; WACC, a quarterly DCF whose value does not depend on the horizon, and the bridge from EV to equity value. `enterprise_value` reads a path, so only FCFF can meet WACC.
+- Negative cash cannot appear: a deficit above the revolver limit becomes a named funding shortfall. Bad inputs are refused with a code; a sound input without a meaningful answer is undefined and says why.
+- Stress cases: revenue −20%, margin compression, rates +200 bps, closed refinancing, working capital absorption, covenant threshold.
+- Finance whitepaper (`docs/finance/financial-engine-whitepaper.md`) with journals, US GAAP and IFRS limits, EBITDA adjustments and a synthetic worked example checked by a test.
+- Property tests with hypothesis (new dev dependency) and a fourth import-linter contract: finance knows no neural framework. Contracts unchanged (0.18.0).
+
 ### Changed — 2026-11-06 (Stage 20 accepted)
 
 - Stage 20 (causal feasibility study) accepted by the owner (CI run 42136489532 green). No effect is estimated; the gate of the event registry audit stays closed.

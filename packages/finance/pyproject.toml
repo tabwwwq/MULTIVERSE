@@ -1,6 +1,6 @@
 [project]
 name = "multiverse-finance"
-version = "0.1.0"
+version = "0.2.0"
 description = "Pure financial formulas: statements, identities, FCFF, DCF and the EV to equity bridge."
 readme = "README.md"
 requires-python = ">=3.12,<3.14"

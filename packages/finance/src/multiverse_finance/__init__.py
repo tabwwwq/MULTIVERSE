@@ -1,9 +1,10 @@
-"""Pure financial formulas of MULTIVERSE.
+"""Pure financial engine of MULTIVERSE (docs/07, whitepaper in docs/finance).
 
-Responsibility: P&L, cash flow, debt, FCFF / FCFE, DCF and the EV -> equity bridge
-(docs/07). Implemented in Stage 21 and Stage 23.
+Responsibility: three linked statements from a baseline and decisions, FCFF / FCFE, WACC, DCF
+and the EV -> equity bridge. No KPI is set directly: a decision compiles into ledger entries,
+and every path is reconciled before it leaves ``project``.
 
-Rules: no I/O, no web or ML frameworks; money uses decimal.Decimal; every function
-is deterministic and covered by identity / property tests."""
+Rules: no I/O, no web or ML frameworks; money uses decimal.Decimal; every function is
+deterministic and covered by identity / property tests."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

@@ -25,6 +25,7 @@ environments = [
 [dependency-groups]
 dev = [
   "httpx>=0.27",
+  "hypothesis>=6.100",
   "import-linter>=2.1",
   "mypy>=1.13",
   "pytest>=8.3",
@@ -157,3 +158,9 @@ source_modules = [
   "multiverse_pipelines",
 ]
 forbidden_modules = ["fastapi", "starlette", "uvicorn"]
+
+[[tool.importlinter.contracts]]
+name = "The finance engine knows no neural framework: value comes from statements (Stage 21)"
+type = "forbidden"
+source_modules = ["multiverse_finance"]
+forbidden_modules = ["torch", "sklearn", "numpy", "pandas", "multiverse_forecast"]

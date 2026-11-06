@@ -36,6 +36,7 @@ from multiverse_contracts.notebook import NotebookExport
 from multiverse_contracts.pit import ChronologyAlert, PanelCell, PitSnapshotManifest, PitValue
 from multiverse_contracts.quality import GateManifest
 from multiverse_contracts.results import ScenarioResult
+from multiverse_contracts.simulation import SimulationCase, SimulationReport, SimulationRequest
 from multiverse_contracts.sources import SourceCatalog
 from multiverse_contracts.universe import UniverseManifest
 from multiverse_contracts.version import CONTRACTS_VERSION
@@ -79,6 +80,9 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     EventRegistry,
     QualityAudit,
     CausalStudy,
+    SimulationCase,
+    SimulationReport,
+    SimulationRequest,
 )
 
 

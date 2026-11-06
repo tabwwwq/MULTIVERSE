@@ -35,4 +35,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.include_router(health.build_router(settings), prefix="/api/v1")
     app.include_router(jobs.build_router(settings), prefix="/api/v1")
+    app.include_router(jobs.build_simulation_router(settings), prefix="/api/v1")
     return app

@@ -165,7 +165,7 @@ export const SECTIONS: readonly Section[] = [
     plans: [
       "Controllable parameters with allowed and planning ranges.",
       "The source of every default value.",
-      "Locking parameters for paired comparisons arrives with the Monte Carlo engine (Stage 22).",
+      "Locking the macro path for a paired comparison is a setting of a run, not yet a control here.",
     ],
   },
   {
@@ -175,7 +175,7 @@ export const SECTIONS: readonly Section[] = [
     group: "build",
     icon: Rocket,
     summary: "Check data readiness, model version and run cost before starting a scenario.",
-    status: "planned",
+    status: "available",
     stage: 22,
     stageName: "Monte Carlo engine",
     plans: [

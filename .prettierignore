@@ -13,3 +13,4 @@ uv.lock
 packages/contracts/fixtures/demo
 packages/contracts/catalog
 packages/contracts/fixtures/mock
+data/simulation

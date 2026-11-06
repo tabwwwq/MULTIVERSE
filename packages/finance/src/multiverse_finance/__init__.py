@@ -7,4 +7,4 @@ and every path is reconciled before it leaves ``project``.
 Rules: no I/O, no web or ML frameworks; money uses decimal.Decimal; every function is
 deterministic and covered by identity / property tests."""
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"

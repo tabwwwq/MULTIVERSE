@@ -884,6 +884,409 @@
       "title": "CapexExpansion",
       "type": "object"
     },
+    "CapitalInputs": {
+      "additionalProperties": false,
+      "properties": {
+        "beta": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "debt_weight": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "equity_risk_premium": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "pre_tax_cost_of_debt": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "risk_free": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "tax_rate": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "terminal_growth": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "risk_free",
+        "equity_risk_premium",
+        "beta",
+        "pre_tax_cost_of_debt",
+        "tax_rate",
+        "debt_weight",
+        "terminal_growth"
+      ],
+      "title": "CapitalInputs",
+      "type": "object"
+    },
+    "CaseDrivers": {
+      "additionalProperties": false,
+      "properties": {
+        "capex_ratio": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "cogs_share": {
+          "description": "Of cash costs other than R&D.",
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "last_year_revenue": {
+          "description": "The last four known quarters, oldest first.",
+          "items": {
+            "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+            "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "nwc_ratio": {
+          "maximum": 1,
+          "minimum": -1,
+          "type": "number"
+        },
+        "rd_ratio": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "last_year_revenue",
+        "rd_ratio",
+        "cogs_share",
+        "capex_ratio",
+        "nwc_ratio"
+      ],
+      "title": "CaseDrivers",
+      "type": "object"
+    },
+    "CaseHistoryPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "ebitda": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fcf": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "filed_at": {
+          "format": "date",
+          "type": "string"
+        },
+        "fiscal_label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "net_debt": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "revenue": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_id": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "period_end",
+        "fiscal_label",
+        "filed_at",
+        "source_id",
+        "revenue",
+        "ebitda",
+        "fcf",
+        "net_debt"
+      ],
+      "title": "CaseHistoryPoint",
+      "type": "object"
+    },
+    "CaseInput": {
+      "additionalProperties": false,
+      "description": "How one input is known: never leave an assumption looking like a fact.",
+      "properties": {
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "note": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "observed",
+            "implied",
+            "assumed",
+            "model"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "origin",
+        "note"
+      ],
+      "title": "CaseInput",
+      "type": "object"
+    },
+    "CaseOpening": {
+      "additionalProperties": false,
+      "properties": {
+        "cash": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "goodwill": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "intangibles": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "non_operating_assets": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "ppe": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "trade_nwc": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "trailing_ebitda": {
+          "items": {
+            "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+            "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "type": "string"
+          },
+          "maxItems": 3,
+          "type": "array"
+        },
+        "trailing_interest": {
+          "items": {
+            "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+            "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "type": "string"
+          },
+          "maxItems": 3,
+          "type": "array"
+        },
+        "tranches": {
+          "items": {
+            "$ref": "#/$defs/CaseTranche"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "cash",
+        "trade_nwc",
+        "ppe",
+        "intangibles",
+        "goodwill",
+        "non_operating_assets",
+        "tranches",
+        "trailing_ebitda",
+        "trailing_interest"
+      ],
+      "title": "CaseOpening",
+      "type": "object"
+    },
+    "CasePolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "amortization_rate": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "cash_yield": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "depreciation_rate": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "dividend_payout": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "marginal_debt_rate": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "max_leverage": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "min_interest_cover": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "minimum_cash": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "revolver_limit": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "revolver_rate": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "tax_rate": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tax_rate",
+        "depreciation_rate",
+        "amortization_rate",
+        "cash_yield",
+        "minimum_cash",
+        "revolver_limit",
+        "revolver_rate",
+        "marginal_debt_rate",
+        "dividend_payout",
+        "max_leverage",
+        "min_interest_cover"
+      ],
+      "title": "CasePolicy",
+      "type": "object"
+    },
+    "CaseTranche": {
+      "additionalProperties": false,
+      "properties": {
+        "annual_rate": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "floating": {
+          "default": false,
+          "type": "boolean"
+        },
+        "maturity_quarter": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "principal": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "principal",
+        "annual_rate",
+        "maturity_quarter",
+        "floating"
+      ],
+      "title": "CaseTranche",
+      "type": "object"
+    },
     "CausalEdge": {
       "additionalProperties": false,
       "properties": {
@@ -1120,6 +1523,46 @@
       ],
       "title": "CellState",
       "type": "string"
+    },
+    "CentralPath": {
+      "additionalProperties": false,
+      "description": "Where the company goes with no shock. Shocks are deviations from it.",
+      "properties": {
+        "growth": {
+          "description": "Symmetric growth over the same quarter a year earlier.",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "type": "array"
+        },
+        "growth_source": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "margin": {
+          "description": "EBITDA margin of the quarter.",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "type": "array"
+        },
+        "margin_source": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "growth",
+        "margin",
+        "growth_source",
+        "margin_source"
+      ],
+      "title": "CentralPath",
+      "type": "object"
     },
     "ChangeDistribution": {
       "additionalProperties": false,
@@ -1731,6 +2174,50 @@
       ],
       "title": "ConceptRelation",
       "type": "string"
+    },
+    "ConvergenceRow": {
+      "additionalProperties": false,
+      "description": "A statistic on the first ``paths`` paths, against its value on all of them.",
+      "properties": {
+        "gap_to_final": {
+          "description": "Absolute difference from the longest run.",
+          "minimum": 0,
+          "type": "number"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "paths": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "standard_error": {
+          "minimum": 0,
+          "type": "number"
+        },
+        "statistic": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        },
+        "within_two_errors": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "paths",
+        "statistic",
+        "label",
+        "value",
+        "standard_error",
+        "gap_to_final",
+        "within_two_errors"
+      ],
+      "title": "ConvergenceRow",
+      "type": "object"
     },
     "CorporateEvent": {
       "additionalProperties": false,
@@ -4189,6 +4676,11 @@
           "pattern": "^[A-Za-z0-9._-]{8,80}$",
           "type": "string"
         },
+        "kind": {
+          "const": "training",
+          "default": "training",
+          "type": "string"
+        },
         "max_epochs": {
           "maximum": 500,
           "minimum": 1,
@@ -4242,6 +4734,7 @@
         }
       },
       "required": [
+        "kind",
         "idempotency_key",
         "owner",
         "model",
@@ -4393,7 +4886,7 @@
           "type": "integer"
         },
         "progress_percent": {
-          "description": "Epochs over the maximum; early stopping jumps to 100.",
+          "description": "Epochs or paths over the maximum; early stopping jumps to 100.",
           "maximum": 100,
           "minimum": 0,
           "type": "number"
@@ -4412,7 +4905,21 @@
           "default": null
         },
         "request": {
-          "$ref": "#/$defs/JobRequest"
+          "discriminator": {
+            "mapping": {
+              "simulation": "#/$defs/SimulationRequest",
+              "training": "#/$defs/JobRequest"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/JobRequest"
+            },
+            {
+              "$ref": "#/$defs/SimulationRequest"
+            }
+          ]
         },
         "spent_usd": {
           "minimum": 0,
@@ -7209,6 +7716,59 @@
       "title": "RiskCategory",
       "type": "string"
     },
+    "RiskRow": {
+      "additionalProperties": false,
+      "description": "The share of paths where something happens at least once within the horizon.",
+      "properties": {
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "probability": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "risk": {
+          "enum": [
+            "funding_shortfall",
+            "covenant_breach",
+            "below_minimum_cash",
+            "negative_fcff_year"
+          ],
+          "type": "string"
+        },
+        "scenario": {
+          "enum": [
+            "baseline",
+            "alt_a"
+          ],
+          "type": "string"
+        },
+        "standard_error": {
+          "description": "Monte Carlo error only, not model error.",
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "upper_95": {
+          "description": "Wilson bound: no event on n paths still leaves room for a small probability.",
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "risk",
+        "label",
+        "scenario",
+        "probability",
+        "standard_error",
+        "upper_95"
+      ],
+      "title": "RiskRow",
+      "type": "object"
+    },
     "RndChange": {
       "additionalProperties": false,
       "properties": {
@@ -8011,6 +8571,61 @@
       "title": "SectorScore",
       "type": "object"
     },
+    "SensitivityRow": {
+      "additionalProperties": false,
+      "description": "The same run with one choice of the shock model changed.",
+      "properties": {
+        "covenant_probability": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "ebitda_p10": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "ebitda_p50": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "ebitda_p90": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "ev_change_p50": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "paths": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "variant": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "variant",
+        "label",
+        "paths",
+        "ebitda_p10",
+        "ebitda_p50",
+        "ebitda_p90",
+        "ev_change_p50",
+        "covenant_probability"
+      ],
+      "title": "SensitivityRow",
+      "type": "object"
+    },
     "SensitivitySettings": {
       "additionalProperties": false,
       "description": "One-at-a-time sensitivity over uncertain parameters of the decision.",
@@ -8161,6 +8776,657 @@
         "label"
       ],
       "title": "ShareMember",
+      "type": "object"
+    },
+    "ShockHistory": {
+      "additionalProperties": false,
+      "description": "One row per calendar quarter: a draw takes a whole row, so links between columns survive.",
+      "properties": {
+        "base_short_rate": {
+          "description": "Fed funds at the cutoff, as a fraction.",
+          "minimum": 0,
+          "type": "number"
+        },
+        "mean_block_quarters": {
+          "minimum": 1,
+          "type": "number"
+        },
+        "method": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "peers": {
+          "description": "Firms of the division behind the sector columns.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "persistence_growth": {
+          "exclusiveMaximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "persistence_margin": {
+          "exclusiveMaximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/ShockRow"
+          },
+          "minItems": 8,
+          "type": "array"
+        },
+        "variables": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "variables",
+        "rows",
+        "persistence_growth",
+        "persistence_margin",
+        "mean_block_quarters",
+        "base_short_rate",
+        "peers",
+        "method"
+      ],
+      "title": "ShockHistory",
+      "type": "object"
+    },
+    "ShockRow": {
+      "additionalProperties": false,
+      "properties": {
+        "quarter_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "values": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "quarter_end",
+        "values"
+      ],
+      "title": "ShockRow",
+      "type": "object"
+    },
+    "SimulationCase": {
+      "additionalProperties": false,
+      "properties": {
+        "as_of": {
+          "format": "date",
+          "type": "string"
+        },
+        "balance_date": {
+          "description": "Of the opening balance: the last quarter end reported by the cutoff.",
+          "format": "date",
+          "type": "string"
+        },
+        "capital": {
+          "$ref": "#/$defs/CapitalInputs"
+        },
+        "case_id": {
+          "pattern": "^case-[0-9a-z-]{1,60}$",
+          "type": "string"
+        },
+        "central": {
+          "$ref": "#/$defs/CentralPath"
+        },
+        "company_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "company_name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "currency": {
+          "description": "ISO 4217 currency code, for example 'USD'.",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "data_origin": {
+          "$ref": "#/$defs/DataOrigin"
+        },
+        "dataset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "dataset_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "drivers": {
+          "$ref": "#/$defs/CaseDrivers"
+        },
+        "history": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CaseHistoryPoint"
+          },
+          "type": "array"
+        },
+        "inputs": {
+          "items": {
+            "$ref": "#/$defs/CaseInput"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "model_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "opening": {
+          "$ref": "#/$defs/CaseOpening"
+        },
+        "policy": {
+          "$ref": "#/$defs/CasePolicy"
+        },
+        "shocks": {
+          "$ref": "#/$defs/ShockHistory"
+        }
+      },
+      "required": [
+        "contracts_version",
+        "case_id",
+        "company_id",
+        "company_name",
+        "as_of",
+        "balance_date",
+        "currency",
+        "data_origin",
+        "dataset_id",
+        "dataset_sha256",
+        "model_id",
+        "opening",
+        "policy",
+        "drivers",
+        "central",
+        "shocks",
+        "capital",
+        "inputs",
+        "history"
+      ],
+      "title": "SimulationCase",
+      "type": "object"
+    },
+    "SimulationDiagnostics": {
+      "additionalProperties": false,
+      "properties": {
+        "clipped_share": {
+          "description": "Quarters where a shock met a hard bound.",
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "effective_sample_size": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "ev_undefined_share": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "flags": {
+          "default": [],
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "historical_correlation": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "history_quarters": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "invalid_by_code": {
+          "default": [],
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "path_identities_checked": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "paths": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "redraws": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "seconds": {
+          "description": "Not part of the identity of a report.",
+          "minimum": 0,
+          "type": "number"
+        },
+        "simulated_correlation": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Of the sector growth and sector margin shocks drawn."
+        }
+      },
+      "required": [
+        "paths",
+        "redraws",
+        "invalid_by_code",
+        "clipped_share",
+        "ev_undefined_share",
+        "path_identities_checked",
+        "history_quarters",
+        "simulated_correlation",
+        "historical_correlation",
+        "effective_sample_size",
+        "seconds",
+        "flags"
+      ],
+      "title": "SimulationDiagnostics",
+      "type": "object"
+    },
+    "SimulationManifest": {
+      "additionalProperties": false,
+      "description": "Everything needed to replay a report. Two equal manifests give equal numbers.",
+      "properties": {
+        "case_id": {
+          "pattern": "^case-[0-9a-z-]{1,60}$",
+          "type": "string"
+        },
+        "case_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "code_version": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Not part of the hash.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "dataset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "dataset_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "decision_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "finance_version": {
+          "type": "string"
+        },
+        "model_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "report_id": {
+          "pattern": "^sim-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "settings": {
+          "$ref": "#/$defs/SimulationSettings"
+        },
+        "shock_model": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "simulation_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_id",
+        "contracts_version",
+        "finance_version",
+        "simulation_version",
+        "code_version",
+        "case_id",
+        "case_sha256",
+        "decision_sha256",
+        "dataset_id",
+        "dataset_sha256",
+        "model_id",
+        "settings",
+        "shock_model",
+        "created_at"
+      ],
+      "title": "SimulationManifest",
+      "type": "object"
+    },
+    "SimulationReport": {
+      "additionalProperties": false,
+      "description": "One finished run.",
+      "properties": {
+        "convergence": {
+          "items": {
+            "$ref": "#/$defs/ConvergenceRow"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "diagnostics": {
+          "$ref": "#/$defs/SimulationDiagnostics"
+        },
+        "inputs": {
+          "items": {
+            "$ref": "#/$defs/CaseInput"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "manifest": {
+          "$ref": "#/$defs/SimulationManifest"
+        },
+        "probability_label": {
+          "const": "Conditional on the assumed model, not validated",
+          "type": "string"
+        },
+        "result": {
+          "$ref": "#/$defs/ScenarioResult"
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/RiskRow"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "sensitivity": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SensitivityRow"
+          },
+          "type": "array"
+        },
+        "tails": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TailRow"
+          },
+          "type": "array"
+        },
+        "validation": {
+          "const": "conditional_non_validated",
+          "type": "string"
+        },
+        "values": {
+          "items": {
+            "$ref": "#/$defs/ValueRow"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "manifest",
+        "validation",
+        "probability_label",
+        "result",
+        "risks",
+        "values",
+        "convergence",
+        "tails",
+        "sensitivity",
+        "inputs",
+        "diagnostics"
+      ],
+      "title": "SimulationReport",
+      "type": "object"
+    },
+    "SimulationRequest": {
+      "additionalProperties": false,
+      "description": "A run for the queue. Every run goes through a worker, however small it is.",
+      "properties": {
+        "case_id": {
+          "pattern": "^case-[0-9a-z-]{1,60}$",
+          "type": "string"
+        },
+        "decision": {
+          "discriminator": {
+            "mapping": {
+              "acquisition": "#/$defs/Acquisition",
+              "capex_expansion": "#/$defs/CapexExpansion",
+              "debt_refinance": "#/$defs/DebtRefinance",
+              "divestiture": "#/$defs/Divestiture",
+              "rnd_change": "#/$defs/RndChange",
+              "workforce_restructure": "#/$defs/WorkforceRestructure"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/RndChange"
+            },
+            {
+              "$ref": "#/$defs/WorkforceRestructure"
+            },
+            {
+              "$ref": "#/$defs/Acquisition"
+            },
+            {
+              "$ref": "#/$defs/Divestiture"
+            },
+            {
+              "$ref": "#/$defs/CapexExpansion"
+            },
+            {
+              "$ref": "#/$defs/DebtRefinance"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "pattern": "^[A-Za-z0-9._-]{8,80}$",
+          "type": "string"
+        },
+        "kind": {
+          "const": "simulation",
+          "default": "simulation",
+          "type": "string"
+        },
+        "max_runtime_seconds": {
+          "description": "Over all attempts together.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "overnight": {
+          "default": false,
+          "type": "boolean"
+        },
+        "owner": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "rate_usd_per_hour": {
+          "default": 0,
+          "description": "Zero on the owner's machine.",
+          "minimum": 0,
+          "type": "number"
+        },
+        "settings": {
+          "$ref": "#/$defs/SimulationSettings"
+        },
+        "spend_limit_usd": {
+          "default": 0,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "kind",
+        "idempotency_key",
+        "owner",
+        "case_id",
+        "decision",
+        "settings",
+        "max_runtime_seconds",
+        "spend_limit_usd",
+        "rate_usd_per_hour",
+        "overnight"
+      ],
+      "title": "SimulationRequest",
+      "type": "object"
+    },
+    "SimulationSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_paths": {
+          "default": 250,
+          "maximum": 10000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "lock_macro": {
+          "default": false,
+          "description": "Macro columns stay at zero, and sector columns lose what macro explains.",
+          "type": "boolean"
+        },
+        "max_redraws": {
+          "default": 3,
+          "maximum": 10,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "mean_block_quarters": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None takes the block length of the case."
+        },
+        "paths": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "seed": {
+          "maximum": 2147483647,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "shock_scale": {
+          "default": 1.0,
+          "exclusiveMinimum": 0,
+          "maximum": 4,
+          "type": "number"
+        }
+      },
+      "required": [
+        "paths",
+        "seed",
+        "batch_paths",
+        "max_redraws",
+        "lock_macro",
+        "shock_scale",
+        "mean_block_quarters"
+      ],
+      "title": "SimulationSettings",
       "type": "object"
     },
     "SliceScore": {
@@ -8550,6 +9816,72 @@
         "median_holdout_ratio"
       ],
       "title": "SyntheticFit",
+      "type": "object"
+    },
+    "TailDriver": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "unit": {
+          "enum": [
+            "points_of_growth",
+            "points_of_margin",
+            "points_of_rate",
+            "yes_no"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "label",
+        "value",
+        "unit"
+      ],
+      "title": "TailDriver",
+      "type": "object"
+    },
+    "TailRow": {
+      "additionalProperties": false,
+      "description": "One of the worst paths for the alternate, with what drove it.",
+      "properties": {
+        "drivers": {
+          "items": {
+            "$ref": "#/$defs/TailDriver"
+          },
+          "type": "array"
+        },
+        "ev_change": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "path": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rank": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "rank",
+        "path",
+        "ev_change",
+        "drivers"
+      ],
+      "title": "TailRow",
       "type": "object"
     },
     "TargetCount": {
@@ -9252,6 +10584,123 @@
       "title": "ValueRange",
       "type": "object"
     },
+    "ValueRow": {
+      "additionalProperties": false,
+      "description": "Enterprise or equity value across the paths where it is defined.",
+      "properties": {
+        "mean": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "metric": {
+          "enum": [
+            "enterprise_value",
+            "equity_value",
+            "ev_change"
+          ],
+          "type": "string"
+        },
+        "p1": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "p10": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "p50": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "p90": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "p99": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "scenario": {
+          "enum": [
+            "baseline",
+            "alt_a"
+          ],
+          "type": "string"
+        },
+        "undefined_share": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "metric",
+        "scenario",
+        "p1",
+        "p10",
+        "p50",
+        "p90",
+        "p99",
+        "mean",
+        "undefined_share"
+      ],
+      "title": "ValueRow",
+      "type": "object"
+    },
     "ValueUnit": {
       "description": "Unit of a parameter value. Fractions are shares: 0.25 means 25 %.",
       "enum": [
@@ -9460,9 +10909,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.18.0",
+  "$id": "urn:multiverse:contracts:0.19.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.18.0"
+  "x-contracts-version": "0.19.0"
 }

@@ -216,6 +216,28 @@ def test_two_loans_in_one_tranche_blend_the_rate_and_keep_the_earlier_maturity()
     assert path.periods[2].cash_flow.debt_repaid == 400
 
 
+def test_a_rate_shift_reaches_floating_debt_the_revolver_and_rolls_but_not_fixed_debt() -> None:
+    floating = (
+        Tranche("fixed", D(100), D("0.05")),
+        Tranche("floating", D(100), D("0.05"), floating=True),
+        Tranche("due", D(100), D("0.05"), maturity_quarter=2),
+    )
+    moved = replace(drivers(), rate_shift=D("0.02"))
+    path = project(company((moved,) * 4, tranches=floating))
+    assert path.periods[0].income.interest_expense == D(100) * (D("0.05") * 3 + D("0.02")) / 4
+    assert (
+        path.periods[1].income.interest_expense
+        == D(100) * (D("0.05") + D("0.07") + D("0.09") + D("0.02")) / 4
+    )
+
+
+def test_a_rate_stops_at_zero_when_short_rates_fall() -> None:
+    falling = replace(drivers(), rate_shift=D("-0.2"))
+    tranches = (Tranche("floating", D(100), D("0.05"), floating=True),)
+    path = project(company((falling,) * 4, tranches=tranches))
+    assert path.periods[0].income.interest_expense == 0
+
+
 def test_charge_and_payment_move_cash_only_when_paid() -> None:
     plan = Plan("x", (Charge(1, D(8)), Payment(3, D(8))))
     base, path = project(company()), project(company(), [plan])

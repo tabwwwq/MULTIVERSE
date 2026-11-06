@@ -309,6 +309,8 @@ class AcquisitionTerms:
     intangibles_life_quarters: int = 40
     completed: bool = True
     synergy_delay_quarters: int = 0
+    follows_baseline: bool = False
+    """The target moves with the company after closing, instead of staying flat."""
 
     def __post_init__(self) -> None:
         at_least(self.price, ZERO, "acquisition.price")
@@ -359,13 +361,16 @@ def acquisition(baseline: Baseline, terms: AcquisitionTerms) -> Plan:
     need = terms.price + deal_costs
     entries += _fund("acquisition", [(closing, need)], terms.funding, terms.new_debt_rate)
 
-    revenue = terms.target_revenue / QUARTERS_PER_YEAR
+    yearly = terms.target_revenue / QUARTERS_PER_YEAR
+    at_closing = baseline.quarters[closing - 1].revenue
     synergy_start = closing + terms.timing.ramp_quarters + terms.synergy_delay_quarters
     integration = spread(
         terms.price * terms.integration_cost_fraction, closing, terms.timing.ramp_quarters, horizon
     )
     for quarter in range(closing, horizon + 1):
         drivers = baseline.quarters[quarter - 1]
+        moved = terms.follows_baseline and at_closing > 0
+        revenue = yearly * drivers.revenue / at_closing if moved else yearly
         entries.append(Flow(quarter, Line.REVENUE, revenue, "acquired"))
         entries += _split_cost(quarter, revenue * (ONE - terms.target_ebitda_margin), drivers)
         entries.append(Flow(quarter, Line.ONE_OFF, integration[quarter - 1]))

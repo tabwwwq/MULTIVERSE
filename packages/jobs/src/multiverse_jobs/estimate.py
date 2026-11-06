@@ -1,11 +1,12 @@
 """What a job may cost, before anyone approves it (docs/13: dry run before training).
 
-Rates are measured on this project's own trainings (Stages 16 and 17): median seconds of
-one epoch per 10 000 training rows. They are estimates, shown as such. A job on a rented
-GPU states its hourly rate; on the owner's machine the rate is zero.
+Rates are measured on this project's own runs: median seconds of one epoch per 10 000 training
+rows (Stages 16 and 17), seconds per path of a paired run (Stage 22). They are estimates, shown
+as such. A job on a rented GPU states its hourly rate; on the owner's machine the rate is zero.
 """
 
 from multiverse_contracts.jobs import JobEstimate, JobRequest
+from multiverse_contracts.simulation import SimulationRequest
 
 SECONDS_PER_10K_ROWS = {"cpu": 1.44, "cuda": 0.65}
 TYPICAL_ROWS = 19_060
@@ -16,6 +17,9 @@ PEAK_VRAM_MB = 224.0
 """Peak reserved by PyTorch with all rows on the device, measured on the RTX 4070 Laptop GPU;
 the CUDA context itself comes on top."""
 BYTES_PER_PARAMETER = 4
+SECONDS_PER_PATH = 0.006
+"""Both scenarios of one path over 20 quarters, on this machine (Stage 22)."""
+CHECKPOINT_BYTES_PER_PATH = 1800
 MAX_RUNTIME_SECONDS = 4 * 3600
 """The longest job that needs no ``overnight``: nothing runs all night by accident."""
 
@@ -29,7 +33,21 @@ def parameters(request: JobRequest) -> int:
     return layers * per_layer + 8 * hidden * hidden + 300 * hidden
 
 
-def estimate(request: JobRequest, rows: int = TYPICAL_ROWS) -> JobEstimate:
+def simulation_estimate(request: SimulationRequest) -> JobEstimate:
+    paths = request.settings.paths
+    seconds = paths * SECONDS_PER_PATH
+    return JobEstimate(
+        seconds=round(seconds, 1),
+        vram_mb=0.0,
+        disk_mb=round(paths * CHECKPOINT_BYTES_PER_PATH / 1e6 + 1, 1),
+        cost_usd=round(seconds / 3600 * request.rate_usd_per_hour, 4),
+        basis=f"{SECONDS_PER_PATH} s per path measured on Stage 22, CPU only; {paths} paths",
+    )
+
+
+def estimate(request: JobRequest | SimulationRequest, rows: int = TYPICAL_ROWS) -> JobEstimate:
+    if isinstance(request, SimulationRequest):
+        return simulation_estimate(request)
     device = "cpu" if request.device == "cpu" else "cuda"
     epochs = max(1.0, EPOCH_SHARE * request.max_epochs)
     seconds = epochs * rows / 10_000 * SECONDS_PER_10K_ROWS[device]
@@ -47,7 +65,7 @@ def estimate(request: JobRequest, rows: int = TYPICAL_ROWS) -> JobEstimate:
     )
 
 
-def refusals(request: JobRequest) -> list[str]:
+def refusals(request: JobRequest | SimulationRequest) -> list[str]:
     """Why a request may not even wait in the queue."""
     found: list[str] = []
     if request.max_runtime_seconds > MAX_RUNTIME_SECONDS and not request.overnight:

@@ -13,7 +13,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from multiverse_contracts.forecasting import ForecastDatasetManifest, ForecastProtocol
-from multiverse_contracts.jobs import JobView
+from multiverse_contracts.jobs import JobRequest, JobView
 from multiverse_worker.runner import Decision, DeviceMemoryError, RefusedError, Session
 
 
@@ -24,6 +24,12 @@ def code_commit() -> str:
     return found.stdout.strip() or "unknown"
 
 
+def training(job: JobView) -> JobRequest:
+    if not isinstance(job.request, JobRequest):
+        raise RefusedError(f"{job.job_id} is not a training")
+    return job.request
+
+
 class ForecastTrainer:
     def __init__(self, data_dir: Path) -> None:
         self.data_dir = data_dir
@@ -32,11 +38,11 @@ class ForecastTrainer:
         return self.data_dir / "jobs" / job.job_id
 
     def dataset_folder(self, job: JobView) -> Path:
-        return self.data_dir / "forecast" / job.request.dataset_id
+        return self.data_dir / "forecast" / training(job).dataset_id
 
     def validate(self, job: JobView) -> None:
         """Dataset hash, sequences, protocol, device and disk, before any training."""
-        request = job.request
+        request = training(job)
         folder = self.dataset_folder(job)
         manifest_path = folder / "manifest.json"
         if not manifest_path.exists():
@@ -72,7 +78,7 @@ class ForecastTrainer:
         from multiverse_forecast.neural import Config
         from multiverse_forecast.neural_run import fold, save_run, setting
 
-        request = job.request
+        request = training(job)
         dataset_folder = self.dataset_folder(job)
         dataset = load(dataset_folder)
         sequences, sequences_id = load_sequences(dataset_folder, dataset)

@@ -6,6 +6,7 @@ members = [
   "packages/contracts/python",
   "packages/config",
   "packages/finance",
+  "packages/simulation",
   "packages/causal",
   "packages/forecast",
   "packages/jobs",
@@ -84,6 +85,7 @@ packages = [
   "multiverse_forecast",
   "multiverse_jobs",
   "multiverse_pipelines",
+  "multiverse_simulation",
   "multiverse_worker",
 ]
 
@@ -127,6 +129,7 @@ root_packages = [
   "multiverse_forecast",
   "multiverse_jobs",
   "multiverse_pipelines",
+  "multiverse_simulation",
   "multiverse_worker",
 ]
 include_external_packages = true
@@ -136,6 +139,7 @@ name = "Layers: services -> domain packages -> base (siblings are independent)"
 type = "layers"
 layers = [
   "multiverse_api | multiverse_worker",
+  "multiverse_simulation",
   "multiverse_finance | multiverse_causal | multiverse_forecast | multiverse_jobs | multiverse_pipelines",
   "multiverse_contracts | multiverse_config",
 ]
@@ -144,7 +148,12 @@ layers = [
 name = "API never trains, forecasts or ingests inside an HTTP request (ADR-0003)"
 type = "forbidden"
 source_modules = ["multiverse_api"]
-forbidden_modules = ["multiverse_forecast", "multiverse_causal", "multiverse_pipelines"]
+forbidden_modules = [
+  "multiverse_forecast",
+  "multiverse_causal",
+  "multiverse_pipelines",
+  "multiverse_simulation",
+]
 
 [[tool.importlinter.contracts]]
 name = "Contracts and domain packages stay free of web frameworks"
@@ -156,6 +165,7 @@ source_modules = [
   "multiverse_forecast",
   "multiverse_jobs",
   "multiverse_pipelines",
+  "multiverse_simulation",
 ]
 forbidden_modules = ["fastapi", "starlette", "uvicorn"]
 

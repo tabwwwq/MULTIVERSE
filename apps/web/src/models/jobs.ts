@@ -1,8 +1,15 @@
-import type { JobLogLine, JobStatus, JobView } from "@multiverse/contracts";
+import type {
+  JobEstimate,
+  JobLogLine,
+  JobRequest,
+  JobStatus,
+  JobView,
+  SimulationRequest,
+} from "@multiverse/contracts";
 import type { BadgeTone } from "@/components/ui/badge";
 
 /**
- * Training jobs as the screen sees them (Stage 18). The worker owns the state; the screen
+ * Long jobs as the screen sees them (Stages 18 and 22). The worker owns the state; the screen
  * reads it and passes on requests, so closing the browser changes nothing.
  */
 
@@ -87,8 +94,35 @@ async function read<T>(path: string, init?: RequestInit): Promise<T> {
   return (await answer.json()) as T;
 }
 
+export type TrainingJob = JobView & { request: JobRequest };
+export type SimulationJob = JobView & { request: SimulationRequest };
+
+export function isSimulation(job: JobView): job is SimulationJob {
+  return job.request.kind === "simulation";
+}
+
+export function isTraining(job: JobView): job is TrainingJob {
+  return !isSimulation(job);
+}
+
 export function fetchJobs(signal?: AbortSignal): Promise<JobView[]> {
   return read<JobView[]>("/jobs", signal ? { signal } : undefined);
+}
+
+export function estimateRun(request: SimulationRequest): Promise<JobEstimate> {
+  return read<JobEstimate>("/simulations/estimate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+}
+
+export function submitRun(request: SimulationRequest): Promise<JobView> {
+  return read<JobView>("/simulations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
 }
 
 export function fetchLogs(jobId: string): Promise<JobLogLine[]> {

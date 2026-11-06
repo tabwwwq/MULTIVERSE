@@ -142,6 +142,8 @@ class Drivers:
     sga_ratio: Decimal
     capex_ratio: Decimal
     nwc_ratio: Decimal
+    rate_shift: Decimal = ZERO
+    """Change of short rates since the base date: reaches floating debt, the revolver and rolls."""
 
     def __post_init__(self) -> None:
         if not self.segments:
@@ -151,6 +153,7 @@ class Drivers:
         for name in ("cogs_ratio", "rd_ratio", "sga_ratio", "capex_ratio"):
             at_least(getattr(self, name), ZERO, f"drivers.{name}")
         between(self.nwc_ratio, -ONE, ONE, "drivers.nwc_ratio")
+        between(self.rate_shift, -ONE, ONE, "drivers.rate_shift")
 
     @property
     def revenue(self) -> Decimal:

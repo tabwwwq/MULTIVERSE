@@ -22,6 +22,7 @@ members = [
     "multiverse-forecast",
     "multiverse-jobs",
     "multiverse-pipelines",
+    "multiverse-simulation",
     "multiverse-worker",
 ]
 
@@ -640,7 +641,7 @@ requires-dist = [{ name = "pydantic", specifier = ">=2.9" }]
 
 [[package]]
 name = "multiverse-finance"
-version = "0.2.0"
+version = "0.3.0"
 source = { editable = "packages/finance" }
 dependencies = [
     { name = "multiverse-contracts" },
@@ -710,6 +711,29 @@ requires-dist = [
 ]
 
 [[package]]
+name = "multiverse-simulation"
+version = "0.1.0"
+source = { editable = "packages/simulation" }
+dependencies = [
+    { name = "multiverse-config" },
+    { name = "multiverse-contracts" },
+    { name = "multiverse-finance" },
+    { name = "multiverse-forecast" },
+    { name = "multiverse-pipelines" },
+    { name = "numpy" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "multiverse-config", editable = "packages/config" },
+    { name = "multiverse-contracts", editable = "packages/contracts/python" },
+    { name = "multiverse-finance", editable = "packages/finance" },
+    { name = "multiverse-forecast", editable = "packages/forecast" },
+    { name = "multiverse-pipelines", editable = "pipelines" },
+    { name = "numpy", specifier = ">=2.0" },
+]
+
+[[package]]
 name = "multiverse-worker"
 version = "0.1.0"
 source = { editable = "services/worker" }
@@ -718,6 +742,7 @@ dependencies = [
     { name = "multiverse-contracts" },
     { name = "multiverse-forecast" },
     { name = "multiverse-jobs" },
+    { name = "multiverse-simulation" },
 ]
 
 [package.metadata]
@@ -726,6 +751,7 @@ requires-dist = [
     { name = "multiverse-contracts", editable = "packages/contracts/python" },
     { name = "multiverse-forecast", editable = "packages/forecast" },
     { name = "multiverse-jobs", editable = "packages/jobs" },
+    { name = "multiverse-simulation", editable = "packages/simulation" },
 ]
 
 [[package]]

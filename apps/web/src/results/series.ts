@@ -54,6 +54,8 @@ export interface ChartModel {
   lastObserved: string | null;
   axis: Axis;
   note: string | null;
+  /** A mock run says so on every figure; a simulated run says what it is conditional on. */
+  mock: boolean;
 }
 
 export interface ModeOption {
@@ -175,6 +177,7 @@ export function buildChartModel(
     lastObserved: data.observed.at(-1)?.period_end ?? null,
     axis: axisFor(values, mode === "absolute" ? "include_zero" : "symmetric_zero"),
     note,
+    mock: result.mock,
   };
 }
 
@@ -229,8 +232,11 @@ export function toCsv(
   result: ScenarioResult,
   visible: ReadonlySet<SeriesKey>,
 ): string {
+  const origin = result.mock
+    ? "SYNTHETIC DEMO DATA - mock result, not a forecast."
+    : "SIMULATED PATHS - conditional on the assumed model, not validated, not a forecast.";
   const warning =
-    `# SYNTHETIC DEMO DATA - mock result, not a forecast. ${result.title}. ` +
+    `# ${origin} ${result.title}. ` +
     `Metric: ${model.metricLabel}. Mode: ${MODE_LABELS[model.mode]}. ` +
     `Quantiles: conditional model quantiles, not calibrated. Cutoff ${result.as_of}. Result ${result.result_id}.`;
   const unit = model.unit === "fraction" ? "fraction_of_baseline" : result.currency;
@@ -248,7 +254,11 @@ export function toCsv(
           point.raw.p50,
           point.raw.p90,
           unit,
-          point.source ? `${point.source.id} filed ${point.source.filedAt}` : "mock quantiles",
+          point.source
+            ? `${point.source.id} filed ${point.source.filedAt}`
+            : result.mock
+              ? "mock quantiles"
+              : "simulated quantiles",
         ]
           .map(csvCell)
           .join(","),
@@ -263,7 +273,8 @@ export function csvFileName(model: ChartModel, result: ScenarioResult): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
-  return `multiverse_${slug}_${model.metric}_${model.mode}_DEMO.csv`;
+  const suffix = result.mock ? "DEMO" : "CONDITIONAL";
+  return `multiverse_${slug}_${model.metric}_${model.mode}_${suffix}.csv`;
 }
 
 /** Plain-language summary for screen readers and as the visible chart caption. */
@@ -283,7 +294,7 @@ export function chartSummary(model: ChartModel, visible: ReadonlySet<SeriesKey>)
     model.mode === "absolute"
       ? model.metricLabel
       : `${model.metricLabel}, ${MODE_LABELS[model.mode].toLowerCase()}`;
-  return `${what}. ${history}${horizon ? `At ${horizon}: ${parts.join("; ")}.` : ""} Mock data, conditional model quantiles, not calibrated.`;
+  return `${what}. ${history}${horizon ? `At ${horizon}: ${parts.join("; ")}.` : ""} ${model.mock ? "Mock data" : "Simulated paths"}, conditional model quantiles, not calibrated.`;
 }
 
 /** Absolute value with its unit for tooltips and tables. */

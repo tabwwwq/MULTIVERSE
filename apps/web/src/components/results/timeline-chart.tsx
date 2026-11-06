@@ -195,7 +195,7 @@ export function TimelineChart({
       >
         <div className="flex justify-end">
           <span className="chart-watermark" aria-hidden="true">
-            Synthetic · mock
+            {model.mock ? "Synthetic · mock" : "Conditional · not validated"}
           </span>
         </div>
         <svg
@@ -224,7 +224,7 @@ export function TimelineChart({
                   y={-10}
                   className="chart-label"
                 >
-                  Forecast (mock)
+                  {model.mock ? "Forecast (mock)" : "Simulated"}
                 </text>
               </g>
             ) : null}
@@ -366,7 +366,7 @@ export function TimelineChart({
           <p className="text-micro text-ink-muted">
             {rows[0]?.series.kind === "observed"
               ? "Reported, public by the cutoff"
-              : "Mock quantiles p10 to p90"}
+              : `${model.mock ? "Mock" : "Conditional"} quantiles p10 to p90`}
           </p>
           <ul className="mt-2 flex flex-col gap-1.5">
             {rows.map(({ series, point }) => (

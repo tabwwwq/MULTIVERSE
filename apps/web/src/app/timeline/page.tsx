@@ -16,8 +16,8 @@ export default async function TimelineIndexPage() {
       />
       <div className="mb-8 max-w-3xl">
         <Alert tone="info" title="Mock results only">
-          Until the Monte Carlo engine exists (Stage 22), these are fixed mock runs on synthetic
-          companies, built to test the charts. They are not forecasts.
+          These are fixed mock runs on synthetic companies, built to test the charts. They are not
+          forecasts. The first run of the Monte Carlo engine is in the Launch Center.
         </Alert>
       </div>
       <h2 className="mb-4 font-display text-h3 text-ink">Choose a result</h2>

@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-06 (Stage 22)
+
+- Paired Monte Carlo `multiverse_simulation` (ADR-0030): on every path the baseline and the alternate share one draw of exogenous shocks; only the decision and its own parameters differ. Every path goes through the finance engine, so identities hold path by path.
+- Shocks are whole rows of history: macro, sector and firm columns of one calendar quarter, drawn by a stationary block bootstrap, so links between columns and over time survive without a covariance model.
+- One seed per path: a decision never moves a shock, and batch size, stop and resume never change a number. Impossible draws are redrawn and counted; a path that does not reconcile stops the run.
+- Report with quantiles, paired changes, risks with Monte Carlo error and a Wilson bound, convergence at 500, 1000, 3000 and 10 000 paths, the ten worst paths, sensitivity to the shock model and a reproducibility manifest. Contracts 0.19.0 refuse a report that claims calibration: probabilities are labelled conditional on the assumed model, not validated.
+- A research case on real data (`data/simulation`): Hubbell Inc at 2025-12-31, each input marked observed, implied, assumed or from the model, with an invented acquisition. Over 10 000 paths the covenant breach probability is 18.1% against none seen in the baseline; a choice of block length moves it more than Monte Carlo error does.
+- Every run goes through the queue: `POST /api/v1/simulations`, an approved estimate, a worker, budgets and stops at a batch of paths. A job now has a `kind`; rows stored earlier read as trainings.
+- Launch Center (`/launch`): the warning first, readiness, paths, paired change, risks, worst paths, convergence, sensitivity, diagnostics and a way to start a run. Charts and CSV of a real run no longer say mock.
+- Finance 0.3.0: a rate shift per quarter, a chosen value for each uncertain parameter, a target that can follow the company.
+
 ### Changed — 2026-11-06 (Stage 21 accepted)
 
 - Stage 21 (financial engine) accepted by the owner (CI run 42213997840 green). Its numbers are synthetic so far.

@@ -1,6 +1,6 @@
 "use client";
 
-import type { JobLogLine, JobView } from "@multiverse/contracts";
+import type { JobLogLine } from "@multiverse/contracts";
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -17,12 +17,14 @@ import {
   fetchLogs,
   formatDuration,
   silentFor,
+  isTraining,
   type JobAction,
+  type TrainingJob,
 } from "@/models/jobs";
 
-type Board = { state: "loading" } | { state: "offline" } | { state: "ready"; jobs: JobView[] };
+type Board = { state: "loading" } | { state: "offline" } | { state: "ready"; jobs: TrainingJob[] };
 
-function ProgressBar({ job }: { job: JobView }) {
+function ProgressBar({ job }: { job: TrainingJob }) {
   const percent = Math.round(job.progress_percent);
   return (
     <div className="flex items-center gap-3">
@@ -77,7 +79,7 @@ function JobLog({ jobId }: { jobId: string }) {
 }
 
 interface JobCardProps {
-  job: JobView;
+  job: TrainingJob;
   now: number;
   onAction: (jobId: string, action: JobAction) => void;
   busy: boolean;
@@ -169,7 +171,7 @@ export function JobBoard() {
   const refresh = useCallback(async (signal?: AbortSignal) => {
     try {
       const jobs = await fetchJobs(signal);
-      setBoard({ state: "ready", jobs });
+      setBoard({ state: "ready", jobs: jobs.filter(isTraining) });
       setNow(Date.now());
     } catch {
       if (!signal?.aborted) setBoard({ state: "offline" });

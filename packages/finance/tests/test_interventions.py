@@ -263,6 +263,15 @@ def test_integration_is_spread_over_the_ramp_and_synergies_wait_for_its_end() ->
     assert close(after, D(40) + D("0.03") * 200)
 
 
+def test_a_target_can_follow_the_company_after_closing() -> None:
+    flat = book(acquisition(BASE, deal()))
+    moving = book(acquisition(BASE, deal(follows_baseline=True)))
+    assert dict(at(flat, 8).income.segments)["acquired"] == 200
+    expected = D(200) * at(PATH, 8).income.revenue / at(PATH, 3).income.revenue
+    assert close(dict(at(moving, 8).income.segments)["acquired"], expected)
+    assert close(dict(at(moving, 3).income.segments)["acquired"], D(200))
+
+
 def test_delayed_synergies_arrive_later() -> None:
     path = book(acquisition(BASE, deal(synergy_delay_quarters=2)))
     assert close(at(path, 8).income.ebitda - at(PATH, 8).income.ebitda, D(40))

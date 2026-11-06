@@ -1,0 +1,503 @@
+{
+  "contracts_version": "0.19.0",
+  "case_id": "case-48898-20251231",
+  "company_id": "2bf7d553-ffdf-58c8-9d84-e0a143e19cec",
+  "company_name": "HUBBELL INC",
+  "as_of": "2025-12-31",
+  "balance_date": "2025-09-30",
+  "currency": "USD",
+  "data_origin": "empirical",
+  "dataset_id": "fds-20261028-d9e4acd03365",
+  "dataset_sha256": "d9e4acd03365293c250e395569f9c29eb82c8378bcdf0b283e5243c74a57d92c",
+  "model_id": "model-20261028-9ce4d4180aa9",
+  "opening": {
+    "cash": "666800000.00",
+    "trade_nwc": "682344000.00",
+    "ppe": "1581600000.00",
+    "intangibles": "0",
+    "goodwill": "0",
+    "non_operating_assets": "0",
+    "tranches": [
+      {
+        "name": "fixed_debt",
+        "principal": "1011150000.00",
+        "annual_rate": "0.0588",
+        "maturity_quarter": null,
+        "floating": false
+      },
+      {
+        "name": "floating_debt",
+        "principal": "433350000.00",
+        "annual_rate": "0.0588",
+        "maturity_quarter": null,
+        "floating": true
+      }
+    ],
+    "trailing_ebitda": ["285700000.00", "384600000.00", "380000000.00"],
+    "trailing_interest": ["21234150.00", "21234150.00", "21234150.00"]
+  },
+  "policy": {
+    "tax_rate": "0.23",
+    "depreciation_rate": "0.125",
+    "amortization_rate": "0",
+    "cash_yield": "0.0388",
+    "minimum_cash": "113724000.00",
+    "revolver_limit": "284310000.00",
+    "revolver_rate": "0.0588",
+    "marginal_debt_rate": "0.0588",
+    "dividend_payout": "0.25",
+    "max_leverage": "3.5",
+    "min_interest_cover": "3"
+  },
+  "drivers": {
+    "last_year_revenue": ["1334300000.00", "1365200000.00", "1484300000.00", "1502400000.00"],
+    "rd_ratio": 0.0,
+    "cogs_share": 0.80709,
+    "capex_ratio": 0.02891,
+    "nwc_ratio": 0.12
+  },
+  "central": {
+    "growth": [
+      0.05274, 0.05828, 0.06081, 0.06196, 0.06249, 0.06273, 0.06284, 0.06289, 0.06291, 0.06292,
+      0.06292, 0.06293, 0.06293, 0.06293, 0.06293, 0.06293, 0.06293, 0.06293, 0.06293, 0.06293
+    ],
+    "margin": [
+      0.23949, 0.23035, 0.2212, 0.21206, 0.20291, 0.20232, 0.20173, 0.20113, 0.20054, 0.20054,
+      0.20054, 0.20054, 0.20054, 0.20054, 0.20054, 0.20054, 0.20054, 0.20054, 0.20054, 0.20054
+    ],
+    "growth_source": "Transparent rule: the last reported growth decays to the firm's own mean, at the persistence of the shocks. Growth is not signed for any use.",
+    "margin_source": "Median of model-20261028-9ce4d4180aa9 at 4 and 8 quarters, the signed research pairs; straight lines from the last four quarters, flat after 8 quarters."
+  },
+  "shocks": {
+    "variables": [
+      "rate_change",
+      "gdp_change",
+      "sector_growth",
+      "firm_growth",
+      "sector_margin",
+      "firm_margin"
+    ],
+    "rows": [
+      {
+        "quarter_end": "2011-06-30",
+        "values": [-0.0007, -0.004531, 0.054512, 0.018741, -0.002192, -0.008731]
+      },
+      {
+        "quarter_end": "2011-09-30",
+        "values": [0.0001, -0.006918, 0.030877, -0.03751, 0.002654, -0.01456]
+      },
+      {
+        "quarter_end": "2011-12-31",
+        "values": [-0.0002, -0.001722, 0.025816, 0.007123, -0.000725, 0.00142]
+      },
+      {
+        "quarter_end": "2012-03-31",
+        "values": [0.0002, 0.001497, -0.002599, 0.064465, 0.00703, -0.00198]
+      },
+      {
+        "quarter_end": "2012-06-30",
+        "values": [0.0006, 0.003811, -0.002661, -0.003097, 0.000638, -0.002729]
+      },
+      {
+        "quarter_end": "2012-09-30",
+        "values": [-0.0003, 0.001475, -0.01919, 0.034622, 0.001108, -0.00793]
+      },
+      {
+        "quarter_end": "2012-12-31",
+        "values": [0.0003, 0.004576, -0.040943, -0.003034, -0.007839, 0.010095]
+      },
+      {
+        "quarter_end": "2013-03-31",
+        "values": [-0.0001, -0.009276, 0.007077, -0.039456, 0.001758, 0.000421]
+      },
+      {
+        "quarter_end": "2013-06-30",
+        "values": [-0.0004, -0.000458, -0.02678, 0.007194, 0.001024, -0.010562]
+      },
+      {
+        "quarter_end": "2013-09-30",
+        "values": [-0.0003, 0.000098, -0.002316, -0.013065, 0.006309, -0.004986]
+      },
+      {
+        "quarter_end": "2013-12-31",
+        "values": [0.0, 0.003319, 0.016725, -0.007327, 0.003113, 0.008464]
+      },
+      {
+        "quarter_end": "2014-03-31",
+        "values": [-0.0001, 0.006261, 0.009414, -0.000165, 0.015113, -0.009274]
+      },
+      {
+        "quarter_end": "2014-06-30",
+        "values": [0.0002, -0.010495, 0.008566, -0.048573, 0.003834, -0.009549]
+      },
+      {
+        "quarter_end": "2014-09-30",
+        "values": [0.0, 0.010454, 0.025548, -0.005789, 0.016277, -0.013334]
+      },
+      {
+        "quarter_end": "2014-12-31",
+        "values": [0.0, 0.001104, 0.016957, -0.012562, 0.00293, -0.014591]
+      },
+      {
+        "quarter_end": "2015-03-31",
+        "values": [0.0002, -0.003197, -0.007379, -0.007163, 0.005227, 0.003306]
+      },
+      {
+        "quarter_end": "2015-06-30",
+        "values": [0.0001, 0.005022, -0.03665, 0.043153, 0.006314, -0.015556]
+      },
+      {
+        "quarter_end": "2015-09-30",
+        "values": [0.0002, -0.001629, -0.041382, -0.000984, 0.010422, -0.026738]
+      },
+      {
+        "quarter_end": "2015-12-31",
+        "values": [-0.0002, -0.005691, -0.052214, -0.012251, 0.00027, -0.011237]
+      },
+      {
+        "quarter_end": "2016-03-31",
+        "values": [0.0026, -0.00172, -0.047546, 0.0, -0.000293, 0.001299]
+      },
+      {
+        "quarter_end": "2016-06-30",
+        "values": [-0.0001, 0.001087, -0.017597, 0.024297, -0.002258, -0.009183]
+      },
+      {
+        "quarter_end": "2016-09-30",
+        "values": [0.0003, -0.008092, -0.018872, 0.009769, 0.013897, -0.025386]
+      },
+      {
+        "quarter_end": "2016-12-31",
+        "values": [0.0001, 0.003778, -0.01176, -0.006193, -0.000879, -0.008898]
+      },
+      {
+        "quarter_end": "2017-03-31",
+        "values": [0.0025, 0.003026, 0.007507, -0.028168, 0.005655, -0.012446]
+      },
+      {
+        "quarter_end": "2017-06-30",
+        "values": [0.0025, 0.001484, -0.003427, -0.023318, 0.008901, -0.016016]
+      },
+      {
+        "quarter_end": "2017-09-30",
+        "values": [0.0025, 0.001013, -3e-6, -0.001136, 0.007292, -0.024877]
+      },
+      {
+        "quarter_end": "2017-12-31",
+        "values": [0.0, 0.000931, -0.003423, -0.003805, 0.009045, -0.010333]
+      },
+      {
+        "quarter_end": "2018-03-31",
+        "values": [0.0026, 0.002827, 0.031124, -0.014833, 0.00863, -0.012494]
+      },
+      {
+        "quarter_end": "2018-06-30",
+        "values": [0.0028, 0.001905, 0.010186, 0.073587, 0.008385, -0.027642]
+      },
+      {
+        "quarter_end": "2018-09-30",
+        "values": [0.0021, 0.000975, 0.02198, 0.081567, 0.017762, -0.030852]
+      },
+      {
+        "quarter_end": "2018-12-31",
+        "values": [0.0029, 0.00133, 0.003752, 0.082982, 0.006145, -0.01871]
+      },
+      {
+        "quarter_end": "2019-03-31",
+        "values": [0.002, -0.000314, 0.002963, 0.08424, 0.007734, -0.015721]
+      },
+      {
+        "quarter_end": "2019-06-30",
+        "values": [-0.0001, 0.002286, -0.019172, -0.022788, 0.001397, -0.012687]
+      },
+      {
+        "quarter_end": "2019-09-30",
+        "values": [-0.0026, -0.009217, -0.025514, -0.025759, 0.011552, -0.021485]
+      },
+      {
+        "quarter_end": "2019-12-31",
+        "values": [-0.0058, -0.00205, -0.032115, 0.006821, 0.003165, -0.013006]
+      },
+      {
+        "quarter_end": "2020-03-31",
+        "values": [0.0003, 0.002607, -0.024186, -0.055638, 0.008158, -0.009455]
+      },
+      {
+        "quarter_end": "2020-06-30",
+        "values": [-0.0153, -0.020695, -0.055818, 0.040931, -0.007574, -0.0078]
+      },
+      {
+        "quarter_end": "2020-09-30",
+        "values": [0.0005, -0.092974, -0.16674, -0.099154, -0.009566, 0.008525]
+      },
+      {
+        "quarter_end": "2020-12-31",
+        "values": [-0.0001, 0.061844, 0.02589, -0.037455, 0.036919, -0.042801]
+      },
+      {
+        "quarter_end": "2021-03-31",
+        "values": [-0.0001, 0.004617, 0.0, -0.057649, 0.019562, -0.029081]
+      },
+      {
+        "quarter_end": "2021-06-30",
+        "values": [-0.0002, 0.02784, 0.045731, -0.06304, 0.021924, -0.031282]
+      },
+      {
+        "quarter_end": "2021-09-30",
+        "values": [0.0003, 0.118294, 0.160121, 0.037299, 0.012075, -0.031697]
+      },
+      {
+        "quarter_end": "2021-12-31",
+        "values": [-0.0001, -0.072801, 0.003729, -0.050926, 0.007005, -0.027793]
+      },
+      {
+        "quarter_end": "2022-03-31",
+        "values": [0.0, 0.005869, 0.040836, 0.065125, 0.003707, -0.036917]
+      },
+      {
+        "quarter_end": "2022-06-30",
+        "values": [0.0069, -0.020056, 0.052602, 0.019557, 0.010931, -0.000556]
+      },
+      {
+        "quarter_end": "2022-09-30",
+        "values": [0.0156, -0.017318, 0.031383, 0.02269, 0.012488, -0.017395]
+      },
+      {
+        "quarter_end": "2022-12-31",
+        "values": [0.0145, 0.001461, 0.012433, 0.067707, 0.004932, -0.009616]
+      },
+      {
+        "quarter_end": "2023-03-31",
+        "values": [0.0079, -0.010609, -0.009071, -0.010654, 0.001778, 0.008188]
+      },
+      {
+        "quarter_end": "2023-06-30",
+        "values": [0.0049, 0.009189, -0.048138, 0.072828, 0.004826, 0.049743]
+      },
+      {
+        "quarter_end": "2023-09-30",
+        "values": [0.0027, 0.005823, -0.00922, 0.010506, 0.011883, 0.011909]
+      },
+      {
+        "quarter_end": "2023-12-31",
+        "values": [0.0, 0.005444, -0.042172, 0.013984, 0.007364, 0.006832]
+      },
+      {
+        "quarter_end": "2024-03-31",
+        "values": [0.0, 0.002076, -0.036751, 0.08072, 0.009359, 0.00362]
+      },
+      {
+        "quarter_end": "2024-06-30",
+        "values": [0.0, -0.002111, -0.035348, 0.040947, 0.0008, 0.02879]
+      },
+      {
+        "quarter_end": "2024-09-30",
+        "values": [0.0, 0.001135, -0.025387, 0.013973, 0.010443, 0.023772]
+      },
+      {
+        "quarter_end": "2024-12-31",
+        "values": [-0.0069, -0.003181, -0.028936, 0.014084, 0.006118, 0.023022]
+      },
+      {
+        "quarter_end": "2025-03-31",
+        "values": [-0.0031, -0.001851, -0.009213, -0.055212, 0.010476, 0.031547]
+      },
+      {
+        "quarter_end": "2025-06-30",
+        "values": [0.0, -0.005419, -0.032483, -0.02234, 0.008069, 0.008742]
+      },
+      {
+        "quarter_end": "2025-09-30",
+        "values": [0.0, 0.000887, -0.008651, 0.007288, 0.004434, 0.046002]
+      },
+      {
+        "quarter_end": "2025-12-31",
+        "values": [-0.0045, 0.002467, 0.000346, -0.003829, 0.008757, 0.020833]
+      }
+    ],
+    "persistence_growth": 0.4563,
+    "persistence_margin": 0.4383,
+    "mean_block_quarters": 4.0,
+    "base_short_rate": 0.0388,
+    "peers": 420,
+    "method": "Innovations of a pooled AR(1) on firm-demeaned symmetric growth and on deseasonalized EBITDA margin, winsorized at 1%. Sector columns are the cross-section median of division D; firm columns are what remains. Macro columns are quarterly changes of fed funds and of GDP growth. Rows end at the origin."
+  },
+  "capital": {
+    "risk_free": "0.0412",
+    "equity_risk_premium": "0.05",
+    "beta": "1.0",
+    "pre_tax_cost_of_debt": "0.0612",
+    "tax_rate": "0.23",
+    "debt_weight": "0.15",
+    "terminal_growth": "0.025"
+  },
+  "inputs": [
+    {
+      "name": "revenue",
+      "origin": "observed",
+      "note": "SEC filings public at the cutoff."
+    },
+    {
+      "name": "ebitda",
+      "origin": "observed",
+      "note": "Operating income + D&A, calculated."
+    },
+    {
+      "name": "cash",
+      "origin": "observed",
+      "note": "Last balance sheet public at the cutoff."
+    },
+    {
+      "name": "debt",
+      "origin": "observed",
+      "note": "Last balance sheet public at the cutoff."
+    },
+    {
+      "name": "capex_ratio",
+      "origin": "observed",
+      "note": "Last four quarters."
+    },
+    {
+      "name": "rd_ratio",
+      "origin": "observed",
+      "note": "Last four quarters; 0 if not reported."
+    },
+    {
+      "name": "ebitda_margin_path",
+      "origin": "model",
+      "note": "Signed research pairs at 4 and 8 quarters; interpolated, then held flat."
+    },
+    {
+      "name": "growth_path",
+      "origin": "assumed",
+      "note": "Transparent rule; the model is not signed for growth."
+    },
+    {
+      "name": "ppe",
+      "origin": "implied",
+      "note": "D&A of the last year over an assumed 12.5% rate."
+    },
+    {
+      "name": "trade_nwc",
+      "origin": "assumed",
+      "note": "12% of annualized revenue: the warehouse holds no working capital."
+    },
+    {
+      "name": "goodwill",
+      "origin": "assumed",
+      "note": "Zero: not in the warehouse. It moves book equity and gains, not cash."
+    },
+    {
+      "name": "interest_rate",
+      "origin": "assumed",
+      "note": "Fed funds + 2 points, 30% floating: interest is not in the warehouse."
+    },
+    {
+      "name": "liquidity",
+      "origin": "assumed",
+      "note": "Minimum cash 2% and revolver 5% of revenue; covenants 3.5x and 3x."
+    },
+    {
+      "name": "deal_accounting",
+      "origin": "assumed",
+      "note": "The target moves with the company; 15% PP&E, 25% intangibles over 10 years."
+    },
+    {
+      "name": "tax_rate",
+      "origin": "assumed",
+      "note": "23%."
+    },
+    {
+      "name": "dividend_payout",
+      "origin": "assumed",
+      "note": "25% of net income."
+    },
+    {
+      "name": "capital_cost",
+      "origin": "assumed",
+      "note": "ERP 5%, beta 1, debt weight 15%, growth 2.5%; 10-year Treasury observed."
+    }
+  ],
+  "history": [
+    {
+      "period_end": "2023-12-31",
+      "fiscal_label": "2023 Q4",
+      "filed_at": "2025-02-13",
+      "source_id": "sec:0001628280-25-005311",
+      "revenue": "1345800000.00",
+      "ebitda": "265200000.00",
+      "fcf": "283600000.00",
+      "net_debt": "1702100000.00"
+    },
+    {
+      "period_end": "2024-03-31",
+      "fiscal_label": "2024 Q1",
+      "filed_at": "2025-05-02",
+      "source_id": "sec:0001628280-25-021677",
+      "revenue": "1399100000.00",
+      "ebitda": "288400000.00",
+      "fcf": "51900000.00",
+      "net_debt": "1526200000.00"
+    },
+    {
+      "period_end": "2024-06-30",
+      "fiscal_label": "2024 Q2",
+      "filed_at": "2025-07-30",
+      "source_id": "sec:0001628280-25-036564",
+      "revenue": "1452500000.00",
+      "ebitda": "355900000.00",
+      "fcf": "205700000.00",
+      "net_debt": "1514200000.00"
+    },
+    {
+      "period_end": "2024-09-30",
+      "fiscal_label": "2024 Q3",
+      "filed_at": "2025-10-29",
+      "source_id": "sec:0001628280-25-046924",
+      "revenue": "1442600000.00",
+      "ebitda": "362000000.00",
+      "fcf": "188800000.00",
+      "net_debt": "1219600000.00"
+    },
+    {
+      "period_end": "2024-12-31",
+      "fiscal_label": "2024 Q4",
+      "filed_at": "2025-10-29",
+      "source_id": "sec:0001628280-25-046924",
+      "revenue": "1334300000.00",
+      "ebitda": "311500000.00",
+      "fcf": null,
+      "net_debt": "1113600000.00"
+    },
+    {
+      "period_end": "2025-03-31",
+      "fiscal_label": "2025 Q1",
+      "filed_at": "2025-05-02",
+      "source_id": "sec:0001628280-25-021677",
+      "revenue": "1365200000.00",
+      "ebitda": "285700000.00",
+      "fcf": "11400000.00",
+      "net_debt": "1096500000.00"
+    },
+    {
+      "period_end": "2025-06-30",
+      "fiscal_label": "2025 Q2",
+      "filed_at": "2025-07-30",
+      "source_id": "sec:0001628280-25-036564",
+      "revenue": "1484300000.00",
+      "ebitda": "384600000.00",
+      "fcf": "220700000.00",
+      "net_debt": "1061300000.00"
+    },
+    {
+      "period_end": "2025-09-30",
+      "fiscal_label": "2025 Q3",
+      "filed_at": "2025-10-29",
+      "source_id": "sec:0001628280-25-046924",
+      "revenue": "1502400000.00",
+      "ebitda": "380000000.00",
+      "fcf": "253800000.00",
+      "net_debt": "777700000.00"
+    }
+  ]
+}

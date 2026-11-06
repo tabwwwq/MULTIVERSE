@@ -197,6 +197,12 @@ from multiverse_contracts.results import (
     ScenarioResult,
     Waterfall,
 )
+from multiverse_contracts.simulation import (
+    SimulationCase,
+    SimulationReport,
+    SimulationRequest,
+    SimulationSettings,
+)
 from multiverse_contracts.sources import (
     AccessCategory,
     AcquisitionStep,
@@ -381,6 +387,10 @@ __all__ = [
     "SectorScore",
     "SensitivitySettings",
     "SequenceManifest",
+    "SimulationCase",
+    "SimulationReport",
+    "SimulationRequest",
+    "SimulationSettings",
     "SliceScore",
     "SourceCatalog",
     "SourceFact",

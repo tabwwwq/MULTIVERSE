@@ -4,7 +4,13 @@ version = "0.1.0"
 description = "Background worker: queued simulation and training jobs with checkpoints and budgets."
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
-dependencies = ["multiverse-contracts", "multiverse-config", "multiverse-forecast", "multiverse-jobs"]
+dependencies = [
+    "multiverse-contracts",
+    "multiverse-config",
+    "multiverse-forecast",
+    "multiverse-jobs",
+    "multiverse-simulation",
+]
 
 [project.scripts]
 multiverse-worker = "multiverse_worker.main:cli"
@@ -14,6 +20,7 @@ multiverse-contracts = { workspace = true }
 multiverse-config = { workspace = true }
 multiverse-forecast = { workspace = true }
 multiverse-jobs = { workspace = true }
+multiverse-simulation = { workspace = true }
 
 [build-system]
 requires = ["uv_build>=0.8.0,<0.12"]

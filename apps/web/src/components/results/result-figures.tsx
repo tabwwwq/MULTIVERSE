@@ -23,6 +23,13 @@ const METRIC_LABELS: Record<string, string> = {
   ev: "EV (mock)",
 };
 
+/** A real run names its metrics in the result; the mock runs use the labels above. */
+function metricLabel(result: ScenarioResult, metric: string): string {
+  if (result.mock) return METRIC_LABELS[metric] ?? metric;
+  if (metric === "ev") return "Enterprise value (DCF, model)";
+  return result.metrics.find((item) => item.metric === metric)?.label ?? metric;
+}
+
 // A narrow canvas: figures scale to their column, so text stays readable on a 390px screen.
 const WIDTH = 400;
 const HEIGHT = 230;
@@ -36,7 +43,7 @@ export function DistributionFigure({
   result: ScenarioResult;
 }) {
   const label = scenarioLabel(result, distribution.scenario);
-  const metric = METRIC_LABELS[distribution.metric] ?? distribution.metric;
+  const metric = metricLabel(result, distribution.metric);
   const counts = distribution.bins.map((bin) => bin.count);
   const low = Number(distribution.bins[0]?.low ?? 0);
   const high = Number(distribution.bins.at(-1)?.high ?? 1);
@@ -63,9 +70,10 @@ export function DistributionFigure({
           {metric}: {label} minus baseline at {distribution.period_end}
         </span>
         <span className="text-small text-ink-muted">
-          Paired differences across {result.paths} mock paths. Mean{" "}
+          Paired differences across {result.paths} {result.mock ? "mock " : ""}paths. Mean{" "}
           {formatValue(Number(distribution.mean), "usd", { signed: true })}. The alternate is above
-          the baseline on {probability} of paths under the mock model, not validated.
+          the baseline on {probability} of paths under the {result.mock ? "mock" : "assumed"} model,
+          not validated.
         </span>
       </figcaption>
       <svg

@@ -979,6 +979,197 @@ export interface CapexExpansion {
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CapitalInputs".
+ */
+export interface CapitalInputs {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  beta: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  debt_weight: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  equity_risk_premium: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  pre_tax_cost_of_debt: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  risk_free: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  tax_rate: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  terminal_growth: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CaseDrivers".
+ */
+export interface CaseDrivers {
+  capex_ratio: number;
+  /**
+   * Of cash costs other than R&D.
+   */
+  cogs_share: number;
+  /**
+   * The last four known quarters, oldest first.
+   *
+   * @minItems 4
+   * @maxItems 4
+   *
+   * Items: Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  last_year_revenue: [string, string, string, string, ...string[]];
+  nwc_ratio: number;
+  rd_ratio: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CaseHistoryPoint".
+ */
+export interface CaseHistoryPoint {
+  ebitda: string | null;
+  fcf: string | null;
+  filed_at: string;
+  fiscal_label: string;
+  net_debt: string | null;
+  period_end: string;
+  revenue: string | null;
+  source_id: string;
+}
+/**
+ * How one input is known: never leave an assumption looking like a fact.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CaseInput".
+ */
+export interface CaseInput {
+  name: string;
+  note: string;
+  origin: "observed" | "implied" | "assumed" | "model";
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CaseOpening".
+ */
+export interface CaseOpening {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  cash: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  goodwill: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  intangibles: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  non_operating_assets: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ppe: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  trade_nwc: string;
+  /**
+   * @maxItems 3
+   *
+   * Items: Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  trailing_ebitda: string[];
+  /**
+   * @maxItems 3
+   *
+   * Items: Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  trailing_interest: string[];
+  tranches: CaseTranche[];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CaseTranche".
+ */
+export interface CaseTranche {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  annual_rate: string;
+  floating: boolean;
+  maturity_quarter: number | null;
+  name: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  principal: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CasePolicy".
+ */
+export interface CasePolicy {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  amortization_rate: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  cash_yield: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  depreciation_rate: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  dividend_payout: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  marginal_debt_rate: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  max_leverage: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  min_interest_cover: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  minimum_cash: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  revolver_limit: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  revolver_rate: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  tax_rate: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "CausalEdge".
  */
 export interface CausalEdge {
@@ -1207,6 +1398,28 @@ export interface MethodVerdict {
   feasible: boolean;
   method: "matched_cohort" | "weighted_regression" | "did_event_study" | "synthetic_control";
   reasons: string[];
+}
+/**
+ * Where the company goes with no shock. Shocks are deviations from it.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CentralPath".
+ */
+export interface CentralPath {
+  /**
+   * Symmetric growth over the same quarter a year earlier.
+   *
+   * @minItems 4
+   */
+  growth: [number, number, number, number, ...number[]];
+  growth_source: string;
+  /**
+   * EBITDA margin of the quarter.
+   *
+   * @minItems 4
+   */
+  margin: [number, number, number, number, ...number[]];
+  margin_source: string;
 }
 /**
  * Distribution of one paired difference at the horizon (docs/08 delta distributions).
@@ -1541,6 +1754,24 @@ export interface ConceptCheck {
    * Exact decimal number as a string, for example '4213587912' or '-0.25'.
    */
   value: string;
+}
+/**
+ * A statistic on the first ``paths`` paths, against its value on all of them.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ConvergenceRow".
+ */
+export interface ConvergenceRow {
+  /**
+   * Absolute difference from the longest run.
+   */
+  gap_to_final: number;
+  label: string;
+  paths: number;
+  standard_error: number;
+  statistic: string;
+  value: number;
+  within_two_errors: boolean;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -2484,11 +2715,11 @@ export interface JobView {
   last_heartbeat: string | null;
   max_attempts: number;
   /**
-   * Epochs over the maximum; early stopping jumps to 100.
+   * Epochs or paths over the maximum; early stopping jumps to 100.
    */
   progress_percent: number;
   reason: string | null;
-  request: JobRequest;
+  request: JobRequest | SimulationRequest;
   spent_usd: number;
   status: JobStatus;
   train_loss: number | null;
@@ -2521,6 +2752,7 @@ export interface JobRequest {
   device: "auto" | "cpu" | "cuda";
   fold_year: number;
   idempotency_key: string;
+  kind: "training";
   max_epochs: number;
   /**
    * Over all attempts together.
@@ -2540,6 +2772,82 @@ export interface JobRequest {
   rate_usd_per_hour: number;
   seed: number;
   spend_limit_usd: number;
+}
+/**
+ * A run for the queue. Every run goes through a worker, however small it is.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SimulationRequest".
+ */
+export interface SimulationRequest {
+  case_id: string;
+  decision:
+    RndChange | WorkforceRestructure | Acquisition | Divestiture | CapexExpansion | DebtRefinance;
+  idempotency_key: string;
+  kind: "simulation";
+  /**
+   * Over all attempts together.
+   */
+  max_runtime_seconds: number;
+  overnight: boolean;
+  owner: string;
+  /**
+   * Zero on the owner's machine.
+   */
+  rate_usd_per_hour: number;
+  settings: SimulationSettings;
+  spend_limit_usd: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RndChange".
+ */
+export interface RndChange {
+  adoption_delay_quarters: FixedValue | UniformRange | TriangularRange;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  capitalized_fraction: string;
+  financing: FundingMix;
+  magnitude: Magnitude;
+  timing: Timing;
+  type: "rnd_change";
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "WorkforceRestructure".
+ */
+export interface WorkforceRestructure {
+  financing: FundingMix;
+  magnitude: Magnitude;
+  one_off_cost_months: FixedValue | UniformRange | TriangularRange;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  payroll_to_revenue: string;
+  productivity_loss: FixedValue | UniformRange | TriangularRange;
+  savings_realization: FixedValue | UniformRange | TriangularRange;
+  timing: Timing;
+  type: "workforce_restructure";
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SimulationSettings".
+ */
+export interface SimulationSettings {
+  batch_paths: number;
+  /**
+   * Macro columns stay at zero, and sector columns lose what macro explains.
+   */
+  lock_macro: boolean;
+  max_redraws: number;
+  /**
+   * None takes the block length of the case.
+   */
+  mean_block_quarters: number | null;
+  paths: number;
+  seed: number;
+  shock_scale: number;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -2958,38 +3266,6 @@ export interface ScenarioDraft {
   sensitivity: SensitivitySettings;
 }
 /**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "RndChange".
- */
-export interface RndChange {
-  adoption_delay_quarters: FixedValue | UniformRange | TriangularRange;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  capitalized_fraction: string;
-  financing: FundingMix;
-  magnitude: Magnitude;
-  timing: Timing;
-  type: "rnd_change";
-}
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "WorkforceRestructure".
- */
-export interface WorkforceRestructure {
-  financing: FundingMix;
-  magnitude: Magnitude;
-  one_off_cost_months: FixedValue | UniformRange | TriangularRange;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  payroll_to_revenue: string;
-  productivity_loss: FixedValue | UniformRange | TriangularRange;
-  savings_realization: FixedValue | UniformRange | TriangularRange;
-  timing: Timing;
-  type: "workforce_restructure";
-}
-/**
  * One-at-a-time sensitivity over uncertain parameters of the decision.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -3212,6 +3488,26 @@ export interface Risk {
   title: string;
 }
 /**
+ * The share of paths where something happens at least once within the horizon.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RiskRow".
+ */
+export interface RiskRow {
+  label: string;
+  probability: number;
+  risk: "funding_shortfall" | "covenant_breach" | "below_minimum_cash" | "negative_fcff_year";
+  scenario: "baseline" | "alt_a";
+  /**
+   * Monte Carlo error only, not model error.
+   */
+  standard_error: number;
+  /**
+   * Wilson bound: no event on n paths still leaves room for a small probability.
+   */
+  upper_95: number;
+}
+/**
  * A rule of eligibility and the companies still eligible after it.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -3342,6 +3638,34 @@ export interface SectorPriority {
   sic_codes: [string, ...string[]];
 }
 /**
+ * The same run with one choice of the shock model changed.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SensitivityRow".
+ */
+export interface SensitivityRow {
+  covenant_probability: number;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ebitda_p10: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ebitda_p50: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ebitda_p90: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ev_change_p50: string;
+  label: string;
+  paths: number;
+  variant: string;
+}
+/**
  * Quarterly histories aligned with the rows of a forecasting dataset (Stage 16).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -3369,6 +3693,211 @@ export interface SequenceManifest {
   rows: number;
   sequences_id: string;
   sha256: string;
+}
+/**
+ * One row per calendar quarter: a draw takes a whole row, so links between columns survive.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ShockHistory".
+ */
+export interface ShockHistory {
+  /**
+   * Fed funds at the cutoff, as a fraction.
+   */
+  base_short_rate: number;
+  mean_block_quarters: number;
+  method: string;
+  /**
+   * Firms of the division behind the sector columns.
+   */
+  peers: number;
+  persistence_growth: number;
+  persistence_margin: number;
+  /**
+   * @minItems 8
+   */
+  rows: [
+    ShockRow,
+    ShockRow,
+    ShockRow,
+    ShockRow,
+    ShockRow,
+    ShockRow,
+    ShockRow,
+    ShockRow,
+    ...ShockRow[]
+  ];
+  /**
+   * @minItems 1
+   */
+  variables: [string, ...string[]];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ShockRow".
+ */
+export interface ShockRow {
+  quarter_end: string;
+  values: number[];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SimulationCase".
+ */
+export interface SimulationCase {
+  as_of: string;
+  /**
+   * Of the opening balance: the last quarter end reported by the cutoff.
+   */
+  balance_date: string;
+  capital: CapitalInputs;
+  case_id: string;
+  central: CentralPath;
+  company_id: string;
+  company_name: string;
+  contracts_version: string;
+  /**
+   * ISO 4217 currency code, for example 'USD'.
+   */
+  currency: string;
+  data_origin: DataOrigin;
+  dataset_id: string | null;
+  dataset_sha256: string | null;
+  drivers: CaseDrivers;
+  history: CaseHistoryPoint[];
+  /**
+   * @minItems 1
+   */
+  inputs: [CaseInput, ...CaseInput[]];
+  model_id: string | null;
+  opening: CaseOpening;
+  policy: CasePolicy;
+  shocks: ShockHistory;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SimulationDiagnostics".
+ */
+export interface SimulationDiagnostics {
+  /**
+   * Quarters where a shock met a hard bound.
+   */
+  clipped_share: number;
+  effective_sample_size: number;
+  ev_undefined_share: number;
+  flags: string[];
+  historical_correlation: number | null;
+  history_quarters: number;
+  invalid_by_code: [unknown, unknown, ...unknown[]][];
+  path_identities_checked: number;
+  paths: number;
+  redraws: number;
+  /**
+   * Not part of the identity of a report.
+   */
+  seconds: number;
+  /**
+   * Of the sector growth and sector margin shocks drawn.
+   */
+  simulated_correlation: number | null;
+}
+/**
+ * Everything needed to replay a report. Two equal manifests give equal numbers.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SimulationManifest".
+ */
+export interface SimulationManifest {
+  case_id: string;
+  case_sha256: string;
+  code_version: string;
+  contracts_version: string;
+  /**
+   * Not part of the hash.
+   */
+  created_at: string;
+  dataset_id: string | null;
+  dataset_sha256: string | null;
+  decision_sha256: string;
+  finance_version: string;
+  model_id: string | null;
+  report_id: string;
+  settings: SimulationSettings;
+  shock_model: string;
+  simulation_version: string;
+}
+/**
+ * One finished run.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SimulationReport".
+ */
+export interface SimulationReport {
+  /**
+   * @minItems 1
+   */
+  convergence: [ConvergenceRow, ...ConvergenceRow[]];
+  diagnostics: SimulationDiagnostics;
+  /**
+   * @minItems 1
+   */
+  inputs: [CaseInput, ...CaseInput[]];
+  manifest: SimulationManifest;
+  probability_label: "Conditional on the assumed model, not validated";
+  result: ScenarioResult;
+  /**
+   * @minItems 1
+   */
+  risks: [RiskRow, ...RiskRow[]];
+  sensitivity: SensitivityRow[];
+  tails: TailRow[];
+  validation: "conditional_non_validated";
+  /**
+   * @minItems 1
+   */
+  values: [ValueRow, ...ValueRow[]];
+}
+/**
+ * One of the worst paths for the alternate, with what drove it.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TailRow".
+ */
+export interface TailRow {
+  drivers: TailDriver[];
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ev_change: string;
+  path: number;
+  rank: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TailDriver".
+ */
+export interface TailDriver {
+  label: string;
+  name: string;
+  unit: "points_of_growth" | "points_of_margin" | "points_of_rate" | "yes_no";
+  value: number;
+}
+/**
+ * Enterprise or equity value across the paths where it is defined.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ValueRow".
+ */
+export interface ValueRow {
+  mean: string | null;
+  metric: "enterprise_value" | "equity_value" | "ev_change";
+  p1: string | null;
+  p10: string | null;
+  p50: string | null;
+  p90: string | null;
+  p99: string | null;
+  scenario: "baseline" | "alt_a";
+  undefined_share: number;
 }
 /**
  * Every source, risk and planned step, checked as one document.

@@ -51,8 +51,7 @@ export function ResultHeader({ result, summary }: { result: ScenarioResult; summ
           <Alert tone="negative" title="This run failed">
             {result.failure.message} Incident ID:{" "}
             <span className="tabular-nums">{result.failure.incident_id}</span>. A retry with the
-            same settings is safe: it creates no second result. Runs arrive with the Monte Carlo
-            engine (Stage 22).{" "}
+            same settings is safe: it creates no second result.{" "}
             <Link href="/timeline" className="text-mint underline underline-offset-4">
               Back to all results
             </Link>

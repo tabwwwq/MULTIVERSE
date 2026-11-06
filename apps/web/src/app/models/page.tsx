@@ -13,7 +13,7 @@ export default function ModelsPage() {
     <>
       <PageHeader
         title="Model Observatory"
-        summary="Training jobs as they run, and what the evaluation measured. No forecast in this app comes from a model yet."
+        summary="Training jobs as they run, and what the evaluation measured. Only the research case of the Launch Center reads a model, for EBITDA margin."
         meta={<Badge tone="violet">Research only</Badge>}
       />
       <Section

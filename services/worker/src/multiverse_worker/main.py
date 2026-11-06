@@ -17,8 +17,10 @@ import sys
 from collections.abc import Sequence
 
 from multiverse_config import load_settings
+from multiverse_contracts.jobs import JobRequest
 from multiverse_jobs.store import JobStore
 from multiverse_worker.runner import work
+from multiverse_worker.simulation import Dispatcher, SimulationRunner
 from multiverse_worker.training import ForecastTrainer
 
 log = logging.getLogger("multiverse_worker")
@@ -41,9 +43,15 @@ def _parser() -> argparse.ArgumentParser:
 
 def _status(store: JobStore) -> int:
     for job in store.jobs():
+        request = job.request
+        step = (
+            f"epoch {job.epoch}/{request.max_epochs}"
+            if isinstance(request, JobRequest)
+            else f"batch {job.epoch}, {request.settings.paths} paths"
+        )
         print(
-            f"{job.job_id} {job.status.value:<16} {job.progress_percent:5.1f}%  epoch {job.epoch}"
-            f"/{job.request.max_epochs}  {job.elapsed_seconds:.0f} s  {job.reason or ''}"
+            f"{job.job_id} {job.status.value:<16} {job.progress_percent:5.1f}%  {step}"
+            f"  {job.elapsed_seconds:.0f} s  {job.reason or ''}"
         )
     return 0
 
@@ -77,7 +85,7 @@ def main(argv: Sequence[str] = ()) -> int:
     if args.command == "kill":
         return _kill(store, args.job_id, args.yes)
     worker = f"{socket.gethostname()}-{os.getpid()}"
-    trainer = ForecastTrainer(settings.data_dir)
+    trainer = Dispatcher(ForecastTrainer(settings.data_dir), SimulationRunner(settings.data_dir))
     count = work(store, trainer, worker, args.ttl, watch_seconds=args.watch, max_jobs=args.max_jobs)
     log.info("worker %s handled %d jobs", worker, count)
     return 0

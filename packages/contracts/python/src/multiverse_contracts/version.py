@@ -56,6 +56,9 @@ evidence, reviews and unknown fields; the candidate sample, the registry and its
 
 0.18.0 (Stage 20): the causal graph, estimands, assumptions and a feasibility study of every
 treatment and method, which reads no outcome after a treatment and estimates no effect.
+
+0.19.0 (Stage 22): the simulation case, settings and request, and the report of a paired Monte
+Carlo run with risks, convergence, tails and a manifest; job requests gain a kind.
 """
 
-CONTRACTS_VERSION = "0.18.0"
+CONTRACTS_VERSION = "0.19.0"

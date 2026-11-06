@@ -77,6 +77,18 @@ class Session:
             self.elapsed,
             checkpoint_sha256,
         )
+        return self._answer(view, f"epoch {entry.epoch}")
+
+    def after_batch(self, batches: int, paths: int, total: int, checkpoint_sha256: str) -> Decision:
+        """The safe point of a Monte Carlo run: the batch is on disk, ask what to do next."""
+        if self.lease_lost.is_set():
+            raise LeaseLostError(f"{self.job.job_id} was taken by another worker")
+        view = self.store.batch_done(
+            self.job.job_id, self.worker, batches, paths, total, self.elapsed, checkpoint_sha256
+        )
+        return self._answer(view, f"{paths} paths")
+
+    def _answer(self, view: JobView, where: str) -> Decision:
         request = view.request
         if view.elapsed_seconds >= request.max_runtime_seconds:
             self.reason = f"budget: runtime limit of {request.max_runtime_seconds} s reached"
@@ -86,7 +98,7 @@ class Session:
             return "stop"
         command = self.store.heartbeat(self.job.job_id, self.worker, self.ttl_seconds)
         if command is not None:
-            self.reason = f"{command} at a safe point, epoch {entry.epoch}"
+            self.reason = f"{command} at a safe point, {where}"
             return command
         return "continue"
 

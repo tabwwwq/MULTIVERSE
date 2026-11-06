@@ -187,7 +187,7 @@ export function TimelineExplorer({ result, initialMetric, initialMode }: Timelin
                 >
                   <LineKey series={series.key} />
                   {series.label}
-                  {series.kind === "forecast" ? " (mock)" : ""}
+                  {series.kind === "forecast" ? (result.mock ? " (mock)" : " (simulated)") : ""}
                 </button>
               </li>
             );
@@ -218,9 +218,9 @@ export function TimelineExplorer({ result, initialMetric, initialMode }: Timelin
           describedBy={summaryId}
         />
         <p className="text-micro text-ink-muted">
-          Bands: conditional model quantiles p10 to p90 of {result.paths} mock paths, not
-          calibrated: they are not a confidence interval and are not expected to contain the outcome
-          80% of the time.
+          Bands: conditional model quantiles p10 to p90 of {result.paths}{" "}
+          {result.mock ? "mock " : ""}paths, not calibrated: they are not a confidence interval and
+          are not expected to contain the outcome 80% of the time.
           {model.note ? ` ${model.note}` : ""}
         </p>
         <div className="flex flex-wrap gap-3">

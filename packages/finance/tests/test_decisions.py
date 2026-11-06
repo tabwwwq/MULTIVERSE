@@ -82,6 +82,19 @@ def test_a_failed_deal_is_a_different_path() -> None:
     assert closed.periods[-1].balance.goodwill > failed.periods[-1].balance.goodwill
 
 
+def test_a_chosen_value_replaces_the_central_one() -> None:
+    spec = CATALOG.spec("capex_expansion")
+    decision = default_decision(spec)
+    idle = plan_for(decision, SAME_RATE, pick=lambda name, _: D(0))
+    used = plan_for(decision, SAME_RATE)
+    assert project(SAME_RATE, [idle]).periods[-1].income.revenue == (
+        project(SAME_RATE).periods[-1].income.revenue
+    )
+    assert project(SAME_RATE, [used]).periods[-1].income.revenue > (
+        project(SAME_RATE).periods[-1].income.revenue
+    )
+
+
 def test_the_rate_on_the_form_must_match_the_books() -> None:
     spec = CATALOG.spec("debt_refinance")
     decision = default_decision(spec, current_interest_rate="0.12")

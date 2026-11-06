@@ -27,7 +27,9 @@ from multiverse_contracts.jobs import (
     JobRequest,
     JobStatus,
     JobView,
+    parse_request,
 )
+from multiverse_contracts.simulation import SimulationRequest
 from multiverse_jobs.estimate import refusals
 from multiverse_jobs.redact import redact
 
@@ -198,7 +200,7 @@ class JobStore:
         return row
 
     def _view(self, db: sqlite3.Connection, row: sqlite3.Row) -> JobView:
-        request = JobRequest.model_validate_json(row["request"])
+        request = parse_request(row["request"])
         alerts = db.execute(
             "SELECT message FROM alerts WHERE job_id = ? ORDER BY at", (row["job_id"],)
         ).fetchall()
@@ -250,7 +252,7 @@ class JobStore:
 
     def submit(
         self,
-        request: JobRequest,
+        request: JobRequest | SimulationRequest,
         estimate: JobEstimate,
         max_attempts: int = DEFAULT_ATTEMPTS,
     ) -> tuple[JobView, bool]:
@@ -441,6 +443,30 @@ class JobStore:
                 f"epoch {log.epoch}: train {log.train_loss:.4f}, "
                 f"validation {log.validation_loss:.4f}",
             )
+            return self._view(db, self._row(db, job_id))
+
+    def batch_done(
+        self,
+        job_id: str,
+        worker: str,
+        batches: int,
+        paths: int,
+        total: int,
+        elapsed: float,
+        checkpoint_sha256: str,
+    ) -> JobView:
+        """A batch of paths is safe on disk: the Monte Carlo counterpart of an epoch."""
+        with self._write() as db:
+            self._owned(db, job_id, worker)
+            self._update(
+                db,
+                job_id,
+                epoch=batches,
+                progress=min(100.0, 100.0 * paths / total),
+                elapsed=elapsed,
+                checkpoint_sha256=checkpoint_sha256,
+            )
+            self._say(db, job_id, "info", f"{paths} of {total} paths")
             return self._view(db, self._row(db, job_id))
 
     def log(self, job_id: str, level: Level, message: str) -> None:

@@ -217,7 +217,12 @@ def _buy(state: _State, purchase: Purchase, day: _FirstDay) -> None:
     day.nwc_bought += purchase.trade_nwc
 
 
-def _mature(state: _State, policy: Policy, quarter: int, day: _FirstDay) -> None:
+def _shifted(rate: Decimal, shift: Decimal) -> Decimal:
+    """A rate after a move of short rates. It stops at zero."""
+    return max(rate + shift, ZERO)
+
+
+def _mature(state: _State, policy: Policy, quarter: int, shift: Decimal, day: _FirstDay) -> None:
     """A tranche due this quarter rolls at the marginal rate, or is repaid if lenders are shut."""
     for name, tranche in list(state.tranches.items()):
         if tranche.maturity_quarter != quarter:
@@ -226,13 +231,17 @@ def _mature(state: _State, policy: Policy, quarter: int, day: _FirstDay) -> None
         if policy.can_refinance:
             day.drawn += tranche.principal
             state.tranches[name] = replace(
-                tranche, annual_rate=policy.marginal_debt_rate, maturity_quarter=None
+                tranche,
+                annual_rate=_shifted(policy.marginal_debt_rate, shift),
+                maturity_quarter=None,
             )
         else:
             state.tranches[name] = replace(tranche, principal=ZERO, maturity_quarter=None)
 
 
-def _first_day(state: _State, policy: Policy, quarter: int, entries: list[Entry]) -> _FirstDay:
+def _first_day(
+    state: _State, policy: Policy, quarter: int, shift: Decimal, entries: list[Entry]
+) -> _FirstDay:
     day = _FirstDay()
     for entry in entries:
         if isinstance(entry, Sale):
@@ -240,7 +249,7 @@ def _first_day(state: _State, policy: Policy, quarter: int, entries: list[Entry]
     for entry in entries:
         if isinstance(entry, Purchase):
             _buy(state, entry, day)
-    _mature(state, policy, quarter, day)
+    _mature(state, policy, quarter, shift, day)
     for entry in entries:
         if isinstance(entry, Retire):
             repaid = state.repay(entry.amount, keep=entry.keep)
@@ -349,7 +358,8 @@ def _book(
     cash_open, trade_open, provision_open = state.cash, state.trade_nwc, state.provision
     floating_open = state.revolver + state.shortfall
 
-    day = _first_day(state, policy, quarter, entries)
+    shift = drivers.rate_shift
+    day = _first_day(state, policy, quarter, shift, entries)
 
     # Income statement.
     flows: dict[Line, Decimal] = defaultdict(lambda: ZERO)
@@ -379,8 +389,14 @@ def _book(
     d_and_a = depreciation + amortization
     ebit = ebitda - d_and_a
     interest_expense = (
-        sum((t.principal * t.annual_rate for t in state.tranches.values()), ZERO)
-        + floating_open * policy.revolver_rate
+        sum(
+            (
+                t.principal * (_shifted(t.annual_rate, shift) if t.floating else t.annual_rate)
+                for t in state.tranches.values()
+            ),
+            ZERO,
+        )
+        + floating_open * _shifted(policy.revolver_rate, shift)
     ) / QUARTERS_PER_YEAR
     interest_income = cash_open * policy.cash_yield / QUARTERS_PER_YEAR
     fees = flows[Line.FINANCING_FEE]

@@ -1,10 +1,12 @@
-"""Long training jobs (Stage 18): what was asked, what it may cost, how it stands now.
+"""Long jobs (Stages 18 and 22): what was asked, what it may cost, how it stands now.
 
-A job is one training of a temporal model outside any HTTP request. It starts only after
-its estimate was approved, survives the browser and the worker, and stops at a safe point.
-The states are those of the prompt, plus a stop that was asked for and not yet reached.
+A job is one training of a temporal model, or one Monte Carlo run, outside any HTTP request. It
+starts only after its estimate was approved, survives the browser and the worker, and stops at
+a safe point: an epoch or a batch of paths. The states are those of the prompt, plus a stop
+that was asked for and not yet reached.
 """
 
+import json
 from enum import StrEnum
 from typing import Annotated, Literal
 
@@ -14,6 +16,7 @@ from multiverse_contracts.forecasting import EpochLog, Name, Param, Score
 from multiverse_contracts.normalized import Text
 from multiverse_contracts.pit import Sha256
 from multiverse_contracts.primitives import ContractModel
+from multiverse_contracts.simulation import SimulationRequest
 
 JobId = Annotated[str, StringConstraints(pattern=r"^job-[0-9a-f]{12}$")]
 
@@ -33,6 +36,7 @@ class JobStatus(StrEnum):
 class JobRequest(ContractModel):
     """Everything a job needs; a second submit with the same key returns the first job."""
 
+    kind: Literal["training"] = "training"
     idempotency_key: Annotated[str, StringConstraints(pattern=r"^[A-Za-z0-9._-]{8,80}$")]
     owner: Name
     model: Literal["gru_attention", "tcn"]
@@ -50,6 +54,16 @@ class JobRequest(ContractModel):
     overnight: bool = Field(
         default=False, description="Asked for on purpose: a job may run past the usual limit."
     )
+
+
+AnyRequest = Annotated[JobRequest | SimulationRequest, Field(discriminator="kind")]
+
+
+def parse_request(text: str | bytes) -> JobRequest | SimulationRequest:
+    """Stored and submitted requests. Rows written before Stage 22 have no kind: they train."""
+    if json.loads(text).get("kind") == "simulation":
+        return SimulationRequest.model_validate_json(text)
+    return JobRequest.model_validate_json(text)
 
 
 class JobEstimate(ContractModel):
@@ -73,7 +87,7 @@ class JobView(ContractModel):
     """The state of a job as the screen shows it; the store is the only source of it."""
 
     job_id: JobId
-    request: JobRequest
+    request: AnyRequest
     estimate: JobEstimate
     status: JobStatus
     approved_by: Name | None = None
@@ -87,7 +101,9 @@ class JobView(ContractModel):
     validation_loss: Score | None = None
     batch_size: int = Field(ge=1)
     progress_percent: Score = Field(
-        ge=0, le=100, description="Epochs over the maximum; early stopping jumps to 100."
+        ge=0,
+        le=100,
+        description="Epochs or paths over the maximum; early stopping jumps to 100.",
     )
     elapsed_seconds: Score = Field(ge=0, description="Over all attempts together.")
     spent_usd: Score = Field(ge=0)

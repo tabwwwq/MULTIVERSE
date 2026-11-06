@@ -1,8 +1,8 @@
-"""Training jobs over HTTP: the API records requests and reads state, it never trains.
+"""Long jobs over HTTP: the API records requests and reads state, it never trains or simulates.
 
-Workers do the training (ADR-0003). A job needs an approved estimate before any worker
-takes it, a repeated submit with the same key returns the same job, and stop and pause wait
-for a safe point of the worker.
+Workers do the work (ADR-0003), however small a run is. A job needs an approved estimate before
+any worker takes it, a repeated submit with the same key returns the same job, and stop and pause
+wait for a safe point of the worker: an epoch, or a batch of paths.
 """
 
 from pathlib import Path
@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from multiverse_config import Settings
 from multiverse_contracts.jobs import JobDetail, JobEstimate, JobLogLine, JobRequest, JobView
+from multiverse_contracts.simulation import SimulationReport, SimulationRequest
 from multiverse_jobs.estimate import estimate
 from multiverse_jobs.store import JobError, JobStore
 
@@ -32,7 +33,15 @@ async def job_request(request: Request) -> JobRequest:
         raise RequestValidationError(error.errors()) from error
 
 
+async def simulation_request(request: Request) -> SimulationRequest:
+    try:
+        return SimulationRequest.model_validate_json(await request.body())
+    except ValidationError as error:
+        raise RequestValidationError(error.errors()) from error
+
+
 Submitted = Annotated[JobRequest, Depends(job_request)]
+Simulation = Annotated[SimulationRequest, Depends(simulation_request)]
 
 
 def store_of(settings: Settings) -> JobStore:
@@ -104,5 +113,38 @@ def build_router(settings: Settings) -> APIRouter:
     @router.post("/{job_id}/resume")
     def resume(job_id: str) -> JobView:
         return act(job_id, "resume")
+
+    return router
+
+
+def build_simulation_router(settings: Settings) -> APIRouter:
+    """Asked for here, run by a worker; approve, stop and resume are the routes of any job."""
+    router = APIRouter(prefix="/simulations", tags=["simulations"])
+    store = store_of(settings)
+
+    @router.post("/estimate")
+    def estimate_run(request: Simulation) -> JobEstimate:
+        return estimate(request)
+
+    @router.post("", status_code=status.HTTP_201_CREATED)
+    def submit(request: Simulation, response: Response) -> JobView:
+        try:
+            view, created = store.submit(request, estimate(request))
+        except JobError as error:
+            raise HTTPException(status.HTTP_409_CONFLICT, str(error)) from error
+        if not created:
+            response.status_code = status.HTTP_200_OK
+        return view
+
+    @router.get("/{job_id}/report")
+    def report(job_id: str) -> SimulationReport:
+        try:
+            store.get(job_id)
+        except KeyError as error:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, f"no job {job_id}") from error
+        path = Path(settings.data_dir) / "simulations" / job_id / "report.json"
+        if not path.exists():
+            raise HTTPException(status.HTTP_404_NOT_FOUND, f"{job_id} has no report yet")
+        return SimulationReport.model_validate_json(path.read_bytes())
 
     return router

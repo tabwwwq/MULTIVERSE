@@ -38,7 +38,7 @@ from multiverse_contracts.forecasting import (
     TrainingRun,
 )
 from multiverse_forecast.benchmark import Prediction, Runner, boundary, watch_rows
-from multiverse_forecast.data import Dataset, Floats, canonical_sha256
+from multiverse_forecast.data import Dataset, Floats, canonical_sha256, trainable
 from multiverse_forecast.models import Prep, persistence_values
 from multiverse_forecast.neural import (
     HORIZONS,
@@ -289,6 +289,7 @@ def run_fold(
     smoke: bool = False,
     max_train_rows: int | None = None,
 ) -> RunResult:
+    trainable(dataset)
     runner = Runner(dataset, protocol)
     current = fold(runner, sequences, fold_year, config.seed, max_train_rows)
     trained = train(current.data, current.train_rows, current.valid_rows, config)
@@ -356,6 +357,7 @@ def benchmark(
     out: Path,
     progress: Callable[[str], None] = print,
 ) -> NeuralBenchmark:
+    trainable(dataset)
     runner = Runner(dataset, protocol)
     configs: list[ModelConfig] = []
     scores: list[ScoreRow] = []

@@ -13,6 +13,7 @@ import { type Column, DataTable } from "@/components/ui/data-table";
 import { PageHeader, Section } from "@/layouts/page-header";
 import {
   AUTHENTICATION_LABELS,
+  BLOCK_LABELS,
   FIELD_TYPE_LABELS,
   FORMAT_LABELS,
   KEY_LABELS,
@@ -150,6 +151,17 @@ export default async function SourcePage({ params }: PageProps) {
           ]}
         />
       </Section>
+
+      {source.blocks.length > 0 ? (
+        <Section id="blocks" title="Blocked by the terms">
+          <Facts
+            items={source.blocks.map((block) => ({
+              term: BLOCK_LABELS[block.use],
+              detail: `${block.status === "open" ? "Open" : "Resolved"}, found on ${block.found_on}. ${block.note}`,
+            }))}
+          />
+        </Section>
+      ) : null}
 
       <Section id="limits" title="Request limits, retries and checksums">
         <Facts

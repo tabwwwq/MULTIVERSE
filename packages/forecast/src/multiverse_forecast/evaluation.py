@@ -39,7 +39,7 @@ from multiverse_forecast.bands import (
     year_rows,
 )
 from multiverse_forecast.benchmark import Runner
-from multiverse_forecast.data import Dataset, Floats
+from multiverse_forecast.data import Dataset, Floats, trainable
 from multiverse_forecast.evaluation_scores import choose_primary, entries_of, scope_of
 from multiverse_forecast.neural import Arrays, Config, predict, train
 from multiverse_forecast.neural_run import Fold, fold, save_run, setting
@@ -304,6 +304,7 @@ def run_trainings(
     progress: Callable[[str], None],
 ) -> None:
     """Both architectures, then the ablations of the one the development years choose."""
+    trainable(dataset)
     runner = Runner(dataset, base)
     folder = out / "bands"
     years = len(base.test_years)

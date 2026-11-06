@@ -19,7 +19,7 @@ CheckId = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]*$")]
 
 
 class CheckStatus(StrEnum):
-    PASS = "pass"
+    PASS = "pass"  # noqa: S105 (a check outcome, not a password)
     WARNING = "warning"
     FAIL = "fail"
     BLOCKED = "blocked"

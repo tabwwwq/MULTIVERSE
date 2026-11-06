@@ -64,4 +64,4 @@ Carlo run with risks, convergence, tails and a manifest; job requests gain a kin
 the bridge, the sensitivity matrix, tornado, scenarios, stress cases and quality checks.
 """
 
-CONTRACTS_VERSION = "0.20.0"
+CONTRACTS_VERSION = "0.21.0"

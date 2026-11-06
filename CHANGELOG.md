@@ -4,6 +4,22 @@
 
 ## [Unreleased]
 
+### Security — 2026-11-06 (Stage 24)
+
+- The API checks who is asking (ADR-0032): `local` mode serves the loopback only, `token` mode needs a Bearer token with a role and an expiry. Settings refuse `local` in production and off the loopback.
+- A guard outside the app refuses a foreign `Host`, cross-site writes, bodies that are not JSON and bodies above 256 KB. Before this stage a page of any site could create and approve a job on the local API.
+- A job belongs to whoever submits it. Someone else's job answers 404, idempotency keys are per owner, and only an admin approves an estimate, under the name of the token.
+- Limits live in the queue: the cloud spending limit is enforced for the first time, at submit, approval and when a worker takes a job, with limits on active jobs and on compute per day.
+- Every protected read and action is in an audit log with no address and no token, kept 90 days. `GET /me/export` and `POST /me/erase` serve GDPR access and erasure.
+- `protocol_path` takes only protocols of this repository. CSV cells cannot run as formulas, Markdown reports escape markup, pages carry a Content-Security-Policy and other headers.
+- `multiverse-worker backup`, `verify` and `restore`, tried on the real queue.
+- CI actions are pinned to full SHAs, a new job audits dependencies, ruff runs its security rules, setuptools moved to 84.2.1.
+- `docs/security/`: threat model, a register of 36 issues, licence inventory, GDPR data inventory, privacy policy outline, runbooks. `docs/governance/`: model and data cards.
+
+### Found — 2026-11-06 (Stage 24)
+
+- **The FRED terms forbid machine learning on FRED content and archiving it through the API.** Stages 15 to 17 trained on seven FRED features, and the archive holds the series. New training on them is refused and the blocks are shown in the Data Catalog; nothing was deleted or retrained. The owner decides (OQ-21).
+
 ### Changed — 2026-11-06 (Stage 23 accepted)
 
 - Stage 23 (valuation and risk studio) accepted by the owner (CI run 42242972932 green). Its values stay model values, not verified market values.

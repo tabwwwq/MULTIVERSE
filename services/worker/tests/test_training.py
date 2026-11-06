@@ -51,7 +51,7 @@ def job(protocol: Path, **changes: object) -> JobView:
             "model": "gru_attention",
             "dataset_id": DATASET,
             "dataset_sha256": SHA,
-            "protocol_path": str(protocol),
+            "protocol_path": f"data/protocols/{protocol.name}",
             "fold_year": 2020,
             "seed": 1,
             "max_epochs": 5,
@@ -92,7 +92,7 @@ def data_dir(tmp_path: Path) -> Path:
 
 def test_a_job_needs_its_dataset_with_its_hash(data_dir: Path) -> None:
     protocol = data_dir / "protocol.json"
-    trainer = ForecastTrainer(data_dir)
+    trainer = ForecastTrainer(data_dir, protocols=data_dir)
     with pytest.raises(RefusedError, match="no dataset"):
         trainer.validate(job(protocol, dataset_id="fds-20261028-" + "cd" * 6))
     with pytest.raises(RefusedError, match="hash of the job"):
@@ -101,7 +101,7 @@ def test_a_job_needs_its_dataset_with_its_hash(data_dir: Path) -> None:
 
 def test_a_job_needs_sequences_a_protocol_and_a_fold_of_it(data_dir: Path) -> None:
     protocol = data_dir / "protocol.json"
-    trainer = ForecastTrainer(data_dir)
+    trainer = ForecastTrainer(data_dir, protocols=data_dir)
     with pytest.raises(RefusedError, match="no protocol"):
         trainer.validate(job(data_dir / "missing.json"))
     with pytest.raises(RefusedError, match="not a fold"):
@@ -109,3 +109,37 @@ def test_a_job_needs_sequences_a_protocol_and_a_fold_of_it(data_dir: Path) -> No
     (data_dir / "forecast" / DATASET / "sequences.json").unlink()
     with pytest.raises(RefusedError, match="no sequences"):
         trainer.validate(job(protocol))
+
+
+def test_a_stored_path_cannot_leave_the_protocols(data_dir: Path, tmp_path: Path) -> None:
+    trainer = ForecastTrainer(data_dir, protocols=data_dir)
+    honest = job(data_dir / "protocol.json")
+    assert isinstance(honest.request, JobRequest)
+    forged = honest.request.model_copy(update={"protocol_path": "../../secret.json"})
+    (tmp_path / "secret.json").write_text("{}", encoding="utf-8")
+    assert trainer.protocol_file(forged).parent == data_dir.resolve()
+    rooted = honest.request.model_copy(update={"protocol_path": "/etc/passwd"})
+    assert trainer.protocol_file(rooted) == data_dir.resolve() / "passwd"
+    dots = honest.request.model_copy(update={"protocol_path": ".."})
+    with pytest.raises(RefusedError, match="not a protocol"):
+        trainer.protocol_file(dots)
+
+
+def test_a_dataset_with_blocked_series_never_trains(data_dir: Path) -> None:
+    path = data_dir / "forecast" / DATASET / "manifest.json"
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    path.write_text(
+        json.dumps(manifest | {"macro_series": ["fred:FEDFUNDS", "ecb:EXR"]}), encoding="utf-8"
+    )
+    trainer = ForecastTrainer(data_dir, protocols=data_dir)
+    with pytest.raises(RefusedError, match="forbid training on fred:FEDFUNDS"):
+        trainer.validate(job(data_dir / "protocol.json"))
+
+
+def test_a_dataset_without_blocked_series_passes_that_check(data_dir: Path) -> None:
+    path = data_dir / "forecast" / DATASET / "manifest.json"
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    path.write_text(json.dumps(manifest | {"macro_series": ["ecb:EXR"]}), encoding="utf-8")
+    trainer = ForecastTrainer(data_dir, protocols=data_dir)
+    with pytest.raises(RefusedError, match="not a fold"):
+        trainer.validate(job(data_dir / "protocol.json", fold_year=2021))

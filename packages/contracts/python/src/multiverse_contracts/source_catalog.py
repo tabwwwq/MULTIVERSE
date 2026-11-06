@@ -13,6 +13,7 @@ Usage:
 
 import argparse
 import sys
+from collections.abc import Iterable
 from datetime import date
 from pathlib import Path
 
@@ -38,6 +39,7 @@ from multiverse_contracts.sources import (
     KeyStatus,
     Level,
     Licence,
+    LicenceBlock,
     LicensedNeed,
     RateLimit,
     Redistribution,
@@ -53,6 +55,8 @@ from multiverse_contracts.version import CONTRACTS_VERSION
 # multiverse_contracts/source_catalog.py -> packages/contracts/catalog/
 CATALOG_PATH = Path(__file__).resolve().parents[3] / "catalog" / "sources.json"
 VERIFIED_ON = date(2026, 10, 29)
+TERMS_REVIEWED_ON = date(2026, 11, 6)
+FRED_LEGAL = "https://fred.stlouisfed.org/legal/"
 
 AWAITING = DownloadDecision(
     status=DecisionStatus.AWAITING_OWNER,
@@ -450,6 +454,7 @@ FRED_OBSERVATIONS = doc(
 FRED_TERMS = doc(
     "FRED API terms of use", "https://fred.stlouisfed.org/docs/api/terms_of_use.html", DocKind.TERMS
 )
+FRED_LEGAL_DOC = doc("FRED Services terms and legal notices", FRED_LEGAL, DocKind.TERMS)
 
 FRED = DataSource(
     source_id="fred-alfred",
@@ -465,7 +470,9 @@ FRED = DataSource(
         summary=(
             "A registered key is required. Series owned by third parties need the owner's "
             "permission for anything beyond personal use; they carry 'Copyright' in their "
-            "notes. Applications must show that they use the FRED API without endorsement."
+            "notes. Applications must show that they use the FRED API without endorsement. "
+            "The legal notices also forbid machine learning on FRED content and storing it "
+            "through the API: see the blocks of this source."
         ),
         redistribution=Redistribution.PERMISSION_REQUIRED,
         resale=Resale.NOT_GRANTED,
@@ -504,6 +511,7 @@ FRED = DataSource(
     docs=(
         FRED_OBSERVATIONS,
         FRED_TERMS,
+        FRED_LEGAL_DOC,
         doc(
             "Real-time periods",
             "https://fred.stlouisfed.org/docs/api/fred/realtime_period.html",
@@ -626,7 +634,50 @@ FRED = DataSource(
         "accounts.",
         "ALFRED is the same API with real-time parameters.",
     ),
+    blocks=(
+        LicenceBlock(
+            use="machine_learning",
+            terms_url=FRED_LEGAL,
+            found_on=TERMS_REVIEWED_ON,
+            status="open",
+            note=(
+                "The FRED Services terms and the API terms forbid using FRED content or the API "
+                "for the development or training of machine learning. Stages 15-17 trained on "
+                "seven FRED macro features. New training on them is refused until the owner "
+                "decides."
+            ),
+        ),
+        LicenceBlock(
+            use="archive",
+            terms_url=FRED_LEGAL,
+            found_on=TERMS_REVIEWED_ON,
+            status="open",
+            note=(
+                "The API terms forbid storing, caching or archiving FRED content and placing it "
+                "in any database. var/raw/fred and the macro store do that, locally, and no new "
+                "download is planned until the owner decides."
+            ),
+        ),
+        LicenceBlock(
+            use="republication",
+            terms_url=FRED_LEGAL,
+            found_on=TERMS_REVIEWED_ON,
+            status="open",
+            note=(
+                "The public repository holds values derived from FEDFUNDS, GDPC1 and DGS10 in "
+                "the Stage 22 case and the Stage 23 report: 2 columns of 59 quarters and 2 "
+                "rates. The owner decides whether to source them from their publishers."
+            ),
+        ),
+    ),
 )
+
+
+def blocked_for_training(series: Iterable[str]) -> tuple[str, ...]:
+    """Series whose source forbids machine learning, while that block stays open."""
+    closed = any(b.use == "machine_learning" and b.status == "open" for b in FRED.blocks)
+    return tuple(name for name in series if closed and name.startswith("fred:"))
+
 
 ECB_DATA = doc(
     "ECB Data Portal web service: data queries",
@@ -777,8 +828,8 @@ WORLD_BANK = DataSource(
             DocKind.DOCUMENTATION,
         ),
         doc(
-            "Terms of Use for Datasets",
-            "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+            "World Bank Group terms and conditions",
+            "https://www.worldbank.org/ext/en/legal/terms-conditions",
             DocKind.TERMS,
         ),
         doc(

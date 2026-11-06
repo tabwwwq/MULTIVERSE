@@ -44,7 +44,7 @@ def body(**changes: Any) -> dict[str, Any]:
 @pytest.fixture
 def client(tmp_path: Path) -> TestClient:
     settings = Settings(_env_file=None, env="test", data_dir=tmp_path)  # type: ignore[call-arg]
-    return TestClient(create_app(settings))
+    return TestClient(create_app(settings), base_url="http://127.0.0.1:8000")
 
 
 def test_an_estimate_comes_before_any_run(client: TestClient) -> None:
@@ -69,7 +69,7 @@ def test_a_run_is_a_job_like_any_other(client: TestClient) -> None:
     job_id = client.post("/api/v1/simulations", json=body()).json()["job_id"]
     listed = client.get("/api/v1/jobs").json()
     assert listed[0]["request"]["kind"] == "simulation"
-    approved = client.post(f"/api/v1/jobs/{job_id}/approve", json={"by": "owner"}).json()
+    approved = client.post(f"/api/v1/jobs/{job_id}/approve").json()
     assert approved["approved_by"] == "owner"
     stopped = client.post(f"/api/v1/jobs/{job_id}/stop").json()
     assert stopped["status"] == "stopped"

@@ -317,11 +317,17 @@ function wrapDraft(draft: ScenarioDraft, clock: Clock): ScenarioRecord {
   };
 }
 
+/** A notebook of years of work is far smaller; anything larger is not one. */
+export const MAX_IMPORT_BYTES = 5_000_000;
+
 /** Parses an exported notebook, or a decision file from the Decision Builder (migrated). */
 export async function parseNotebookFile(
   text: string,
   clock: Clock = SYSTEM_CLOCK,
 ): Promise<ParseResult> {
+  if (text.length > MAX_IMPORT_BYTES) {
+    return { ok: false, errors: ["The file is too large to be a notebook."] };
+  }
   let value: unknown;
   try {
     value = JSON.parse(text);

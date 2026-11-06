@@ -5,7 +5,7 @@ import time
 import tracemalloc
 from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 import pytest
@@ -268,3 +268,20 @@ def test_load_a_run_keeps_its_pace() -> None:
     started = time.perf_counter()
     simulate(CASE, decision(), settings(200))
     assert time.perf_counter() - started < 60
+
+
+class Payload:
+    """What a hostile file holds: an object that runs code when it is unpickled."""
+
+    ran: ClassVar[list[str]] = []
+
+    def __reduce__(self) -> tuple[Any, tuple[str]]:
+        return (Payload.ran.append, ("the payload ran",))
+
+
+def test_a_hostile_frame_never_runs(tmp_path: Path) -> None:
+    path = tmp_path / "frame.npz"
+    np.savez(path, values=np.array([Payload()], dtype=object))
+    with pytest.raises((ValueError, KeyError)):
+        Frame.load(path)
+    assert Payload.ran == []

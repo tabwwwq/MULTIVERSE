@@ -20,6 +20,7 @@ from multiverse_contracts.forecasting import (
     ForecastTarget,
     SequenceManifest,
 )
+from multiverse_contracts.source_catalog import blocked_for_training
 
 Floats = npt.NDArray[np.float64]
 Bools = npt.NDArray[np.bool_]
@@ -61,6 +62,20 @@ class Dataset:
     @property
     def years(self) -> npt.NDArray[np.int64]:
         return self.origins.astype("datetime64[Y]").astype(np.int64) + 1970
+
+
+class LicenceBlockedError(RuntimeError):
+    """The terms of a source forbid training on this dataset (Stage 24)."""
+
+
+def trainable(dataset: Dataset) -> None:
+    """Every way into a fit passes here; reading stored results does not."""
+    blocked = blocked_for_training(dataset.manifest.macro_series)
+    if blocked:
+        raise LicenceBlockedError(
+            f"the terms of the source forbid training on {', '.join(blocked)}: "
+            "see docs/security/license-inventory.md"
+        )
 
 
 def _float(text: str) -> float:

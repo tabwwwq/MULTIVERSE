@@ -9,7 +9,7 @@ import pytest
 
 from multiverse_contracts.forecasting import EpochLog
 from multiverse_contracts.jobs import JobEstimate, JobRequest, JobStatus, JobView
-from multiverse_jobs.store import JobStore
+from multiverse_jobs.store import JobStore, Limits
 from multiverse_worker.runner import (
     Decision,
     DeviceMemoryError,
@@ -31,7 +31,7 @@ def request(**changes: Any) -> JobRequest:
         "model": "gru_attention",
         "dataset_id": f"fds-20261028-{SHA[:12]}",
         "dataset_sha256": SHA,
-        "protocol_path": "protocol.json",
+        "protocol_path": "data/protocols/protocol.json",
         "fold_year": 2026,
         "seed": 1,
         "max_epochs": 5,
@@ -75,7 +75,7 @@ class Epochs:
 
 @pytest.fixture
 def store(tmp_path: Path) -> JobStore:
-    return JobStore(tmp_path / "jobs.sqlite")
+    return JobStore(tmp_path / "jobs.sqlite", limits=Limits(cloud_spend_usd=100.0))
 
 
 def queued(store: JobStore, **changes: Any) -> str:

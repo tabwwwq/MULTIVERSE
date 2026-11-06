@@ -160,7 +160,7 @@ def zip_row(dataset: str, key: str, path: Path, root: Path) -> RawObject:
         run_id="fixture",
         licence="fixture",
         terms_checked_on=date(2026, 10, 29),
-        catalog_version="0.20.0",
+        catalog_version="0.21.0",
     )
 
 

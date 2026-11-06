@@ -33,6 +33,10 @@ export default function ModelsPage() {
             Model <code>model-20261028-9ce4d4180aa9</code> is signed for research on the 3 of 15
             target and horizon pairs that passed the rule, and on nothing else.
           </p>
+          <p className="mt-2">
+            New training on its macro features is refused: the FRED terms forbid machine learning on
+            FRED content, and the owner has not decided yet what replaces them.
+          </p>
           <ul className="mt-2 list-disc pl-5">
             {APPROVED_PAIRS.map((pair) => (
               <li key={pair}>{pair}</li>

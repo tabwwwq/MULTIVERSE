@@ -44,7 +44,10 @@ VARIANTS: tuple[tuple[str, str, dict[str, object]], ...] = (
 def code_version() -> str:
     try:
         found = subprocess.run(
-            ["git", "describe", "--always", "--dirty"], capture_output=True, text=True, check=True
+            ["git", "describe", "--always", "--dirty"],  # noqa: S607 (fixed arguments, no input)
+            capture_output=True,
+            text=True,
+            check=True,
         )
     except (OSError, subprocess.CalledProcessError):
         return "unversioned"

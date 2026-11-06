@@ -44,7 +44,7 @@ def manifest(**change: Any) -> dict[str, Any]:
         "checks": [check()],
         "verdict": "passed",
         "verdict_reasons": [],
-        "contracts_version": "0.20.0",
+        "contracts_version": "0.21.0",
         "created_at": "2026-10-30T12:00:00Z",
     }
     data.update(change)

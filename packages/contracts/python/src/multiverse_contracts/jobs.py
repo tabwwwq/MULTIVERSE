@@ -19,6 +19,11 @@ from multiverse_contracts.primitives import ContractModel
 from multiverse_contracts.simulation import SimulationRequest
 
 JobId = Annotated[str, StringConstraints(pattern=r"^job-[0-9a-f]{12}$")]
+ProtocolPath = Annotated[
+    str,
+    StringConstraints(pattern=r"^data/protocols/[a-z0-9][a-z0-9._-]{0,100}\.json$"),
+    Field(description="A protocol of this repository: a job never names any other file."),
+]
 
 
 class JobStatus(StrEnum):
@@ -43,7 +48,7 @@ class JobRequest(ContractModel):
     params: tuple[Param, ...] = ()
     dataset_id: Annotated[str, StringConstraints(pattern=r"^fds-[0-9]{8}-[0-9a-f]{12}$")]
     dataset_sha256: Sha256
-    protocol_path: str = Field(min_length=1, max_length=200)
+    protocol_path: ProtocolPath
     fold_year: int = Field(ge=2000, le=2100)
     seed: int
     device: Literal["auto", "cpu", "cuda"] = "auto"
@@ -119,3 +124,35 @@ class JobView(ContractModel):
 class JobDetail(ContractModel):
     job: JobView
     metrics: tuple[EpochLog, ...] = ()
+
+
+class AuditRow(ContractModel):
+    """Who touched what. No address, no token: enough to answer for an action, no more."""
+
+    seq: int = Field(ge=1)
+    at: AwareDatetime
+    actor: Name
+    action: Name
+    job_id: JobId | None = None
+    outcome: Literal["allowed", "denied", "not_found", "limited"]
+
+
+class AccountExport(ContractModel):
+    """Everything the server holds about one account (GDPR art. 15 and 20)."""
+
+    principal: Name
+    exported_at: AwareDatetime
+    jobs: tuple[JobDetail, ...]
+    logs: tuple[JobLogLine, ...]
+    audit: tuple[AuditRow, ...]
+    note: Text = (
+        "Notebooks, reviews and preferences live in your browser: the server holds none of them."
+    )
+
+
+class Erasure(ContractModel):
+    """What was erased. Audit rows stay, with the name replaced."""
+
+    principal: Name
+    jobs_erased: tuple[JobId, ...]
+    audit_rows_anonymized: int = Field(ge=0)

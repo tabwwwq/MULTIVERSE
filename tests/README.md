@@ -4,7 +4,7 @@ Unit tests live next to their module (`packages/*/tests`, `services/*/tests`). T
 
 | Folder | What | Since |
 |---|---|---|
-| `smoke/` | Every module imports, versions agree, no secrets in the repository | Stage 02 |
+| `smoke/` | Every module imports, versions agree, no secrets in the repository, nothing raw or unreviewed is tracked | Stages 02, 24 |
 | `contract/` | Generated contract artifacts match their single source | Stage 02 |
 | `integration/` | Source → parser → storage → PIT view → API; job → worker → artifact | Stage 10+ |
 | `backtesting/` | Rolling-origin and point-in-time leakage tests | Stage 12+ |

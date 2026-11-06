@@ -48,9 +48,20 @@ target-version = "py312"
 extend-exclude = ["var", "node_modules"]
 
 [tool.ruff.lint]
-select = ["E", "W", "F", "I", "N", "B", "UP", "SIM", "PT", "RUF", "TID"]
+select = ["E", "W", "F", "I", "N", "B", "UP", "SIM", "PT", "RUF", "TID", "S"]
+# Seeded generators are here for reproducible samples, never for secrets; tokens use `secrets`.
+# Asserts narrow types inside computations: no check of access or input depends on one.
+ignore = ["S101", "S311"]
 # The typographic minus sign is deliberate in user-facing formulas ("CFO − CAPEX").
 allowed-confusables = ["−", "×"]
+
+[tool.ruff.lint.per-file-ignores]
+# Security rules are for code that ships: tests assert, and spawn the tools they check.
+"**/tests/**" = ["S"]
+"tests/**" = ["S"]
+# Names of tables and columns come from constants of the module; every value is a parameter.
+"packages/jobs/src/multiverse_jobs/*.py" = ["S608"]
+"pipelines/src/multiverse_pipelines/pit/warehouse.py" = ["S608"]
 
 [tool.ruff.lint.flake8-tidy-imports]
 # Absolute imports only: a module's dependencies are visible at a glance.

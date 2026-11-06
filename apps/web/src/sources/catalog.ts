@@ -28,6 +28,12 @@ export function sourceById(id: string): DataSource | undefined {
   return SOURCES.find((source) => source.source_id === id);
 }
 
+export const BLOCK_LABELS: Record<DataSource["blocks"][number]["use"], string> = {
+  machine_learning: "Machine learning",
+  archive: "Archive",
+  republication: "Republication",
+};
+
 export const ACCESS_ORDER: readonly AccessCategory[] = ["public_access", "api_key", "licensed"];
 
 export const ACCESS_LABELS: Record<AccessCategory, string> = {

@@ -54,8 +54,13 @@ function distributionText(
   return `triangular ${formatValue(distribution.low, unit)} to ${formatValue(distribution.high, unit)}, most likely ${formatValue(distribution.mode, unit)}`;
 }
 
+/** Free text in a Markdown file: no tag and no link can come out of it in a viewer. */
+export function markdownText(text: string): string {
+  return text.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("](", "]\\(");
+}
+
 function escapeCell(text: string): string {
-  return text.replaceAll("|", "\\|").replaceAll("\n", " ");
+  return markdownText(text).replaceAll("|", "\\|").replaceAll("\n", " ");
 }
 
 /** Parameter rows of a decision, in catalog order, with units. */
@@ -122,7 +127,7 @@ export function reportMarkdown(
   const lines = [
     "> SYNTHETIC DEMO DATA. The company and its figures are fictional and no model was run. This is not investment advice.",
     "",
-    `# ${record.name} (revision ${revision.revision})`,
+    `# ${markdownText(record.name)} (revision ${revision.revision})`,
     "",
     `- Company: ${company ? `${company.name}${company.ticker ? ` (${company.ticker})` : ""}` : "unknown"}, ID ${draft.company_id}`,
     `- Knowledge cutoff: ${draft.as_of}`,
@@ -137,7 +142,7 @@ export function reportMarkdown(
           `- Duplicated from scenario ${revision.derived_from.scenario_id}, revision ${revision.derived_from.revision}`,
         ]
       : []),
-    `- Tags: ${record.tags.length > 0 ? record.tags.join(", ") : "none"}`,
+    `- Tags: ${record.tags.length > 0 ? markdownText(record.tags.join(", ")) : "none"}`,
     "",
     "## Decision",
     "",
@@ -155,7 +160,7 @@ export function reportMarkdown(
     "",
     "## Notes",
     "",
-    record.notes.trim() === "" ? "No notes." : record.notes.trim(),
+    record.notes.trim() === "" ? "No notes." : markdownText(record.notes.trim()),
     "",
     "## What this does not mean",
     "",

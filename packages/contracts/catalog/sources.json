@@ -1,5 +1,5 @@
 {
-  "contracts_version": "0.20.0",
+  "contracts_version": "0.21.0",
   "verified_on": "2026-10-29",
   "automatic_downloads": "disabled",
   "sources": [
@@ -567,7 +567,8 @@
       "notes": [
         "data.sec.gov does not support CORS: requests come from the server, never the browser.",
         "The SEC offers no technical support for scripted downloads."
-      ]
+      ],
+      "blocks": []
     },
     {
       "source_id": "fred-alfred",
@@ -580,7 +581,7 @@
       "key_status": "owner_must_register",
       "licence": {
         "name": "FRED API terms of use",
-        "summary": "A registered key is required. Series owned by third parties need the owner's permission for anything beyond personal use; they carry 'Copyright' in their notes. Applications must show that they use the FRED API without endorsement.",
+        "summary": "A registered key is required. Series owned by third parties need the owner's permission for anything beyond personal use; they carry 'Copyright' in their notes. Applications must show that they use the FRED API without endorsement. The legal notices also forbid machine learning on FRED content and storing it through the API: see the blocks of this source.",
         "redistribution": "permission_required",
         "resale": "not_granted",
         "attribution": "This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.",
@@ -612,6 +613,11 @@
         {
           "title": "FRED API terms of use",
           "url": "https://fred.stlouisfed.org/docs/api/terms_of_use.html",
+          "kind": "terms"
+        },
+        {
+          "title": "FRED Services terms and legal notices",
+          "url": "https://fred.stlouisfed.org/legal/",
           "kind": "terms"
         },
         {
@@ -866,6 +872,29 @@
       "notes": [
         "Creating the FRED account and key is the owner's step; the assistant never creates accounts.",
         "ALFRED is the same API with real-time parameters."
+      ],
+      "blocks": [
+        {
+          "use": "machine_learning",
+          "terms_url": "https://fred.stlouisfed.org/legal/",
+          "found_on": "2026-11-06",
+          "status": "open",
+          "note": "The FRED Services terms and the API terms forbid using FRED content or the API for the development or training of machine learning. Stages 15-17 trained on seven FRED macro features. New training on them is refused until the owner decides."
+        },
+        {
+          "use": "archive",
+          "terms_url": "https://fred.stlouisfed.org/legal/",
+          "found_on": "2026-11-06",
+          "status": "open",
+          "note": "The API terms forbid storing, caching or archiving FRED content and placing it in any database. var/raw/fred and the macro store do that, locally, and no new download is planned until the owner decides."
+        },
+        {
+          "use": "republication",
+          "terms_url": "https://fred.stlouisfed.org/legal/",
+          "found_on": "2026-11-06",
+          "status": "open",
+          "note": "The public repository holds values derived from FEDFUNDS, GDPC1 and DGS10 in the Stage 22 case and the Stage 23 report: 2 columns of 59 quarters and 2 rates. The owner decides whether to source them from their publishers."
+        }
       ]
     },
     {
@@ -994,7 +1023,8 @@
       },
       "notes": [
         "V2 covers USD reporters only (decision D-04), so ECB series start with FX and euro rates as macro context, low priority."
-      ]
+      ],
+      "blocks": []
     },
     {
       "source_id": "world-bank",
@@ -1043,8 +1073,8 @@
           "kind": "documentation"
         },
         {
-          "title": "Terms of Use for Datasets",
-          "url": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+          "title": "World Bank Group terms and conditions",
+          "url": "https://www.worldbank.org/ext/en/legal/terms-conditions",
           "kind": "terms"
         },
         {
@@ -1178,7 +1208,8 @@
       },
       "notes": [
         "Annual values are never spread over quarters before their release (docs/04)."
-      ]
+      ],
+      "blocks": []
     }
   ],
   "licensed_needs": [

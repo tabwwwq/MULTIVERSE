@@ -1,4 +1,5 @@
 import type { ValuationReport } from "@multiverse/contracts";
+import { csvCell, csvNote } from "@/lib/csv";
 
 /*
  * The DCF of the finance engine, again in the browser, so parameters can be edited without a
@@ -334,17 +335,12 @@ export function weightedValue(
   return values.reduce((sum, value, index) => sum + value * (weights[index] ?? 0), 0);
 }
 
-function cell(value: string | number): string {
-  const text = String(value);
-  return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
-}
-
 const NOTICE = "# Model value, not a verified market value. Not advice. USD.";
 
 export function dcfCsv(title: string, result: Valuation): string {
   const lines = [
     NOTICE,
-    `# ${title}. WACC ${result.wacc.toFixed(6)}.`,
+    `# ${csvNote(title)}. WACC ${result.wacc.toFixed(6)}.`,
     "quarter,label,fcff,discount_factor,present_value",
     ...result.lines.map((line) =>
       [
@@ -354,7 +350,7 @@ export function dcfCsv(title: string, result: Valuation): string {
         line.factor.toFixed(8),
         line.present.toFixed(2),
       ]
-        .map(cell)
+        .map(csvCell)
         .join(","),
     ),
     `explicit,,,,${result.presentExplicit.toFixed(2)}`,
@@ -369,7 +365,7 @@ export function matrixCsv(title: string, cells: readonly Cell[][]): string {
   const growths = (cells[0] ?? []).map((item) => item.growth.toFixed(4));
   const lines = [
     NOTICE,
-    `# ${title}. Rows: WACC. Columns: terminal growth.`,
+    `# ${csvNote(title)}. Rows: WACC. Columns: terminal growth.`,
     ["wacc", ...growths].join(","),
   ];
   for (const row of cells) {
@@ -386,7 +382,7 @@ export function matrixCsv(title: string, cells: readonly Cell[][]): string {
 export function stressCsv(report: ValuationReport): string {
   const lines = [
     NOTICE,
-    `# ${report.company_name}. Hypothetical decision. Central path, no shocks.`,
+    `# ${csvNote(report.company_name)}. Hypothetical decision. Central path, no shocks.`,
     "stress,enterprise_value,ev_change,lowest_cash,peak_leverage,lowest_interest_cover,first_breach,peak_shortfall",
   ];
   for (const row of report.stress) {
@@ -401,7 +397,7 @@ export function stressCsv(report: ValuationReport): string {
         row.first_breach ?? "none",
         row.peak_shortfall,
       ]
-        .map(cell)
+        .map(csvCell)
         .join(","),
     );
   }

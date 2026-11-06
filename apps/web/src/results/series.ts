@@ -4,6 +4,7 @@ import type {
   ResultMetric,
   ScenarioResult,
 } from "@multiverse/contracts";
+import { csvCell, csvNote } from "@/lib/csv";
 import { formatQuantiles, formatValue, type ValueUnit } from "@/results/format";
 import { axisFor, type Axis } from "@/results/scale";
 
@@ -222,10 +223,6 @@ export function quarterCount(model: ChartModel): number {
   return new Set(model.series.flatMap((series) => series.points.map((point) => point.end))).size;
 }
 
-function csvCell(value: string): string {
-  return /[",\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
-}
-
 /** CSV of exactly the plotted points; the first line says the data are synthetic (SYN-05). */
 export function toCsv(
   model: ChartModel,
@@ -236,7 +233,7 @@ export function toCsv(
     ? "SYNTHETIC DEMO DATA - mock result, not a forecast."
     : "SIMULATED PATHS - conditional on the assumed model, not validated, not a forecast.";
   const warning =
-    `# ${origin} ${result.title}. ` +
+    `# ${origin} ${csvNote(result.title)}. ` +
     `Metric: ${model.metricLabel}. Mode: ${MODE_LABELS[model.mode]}. ` +
     `Quantiles: conditional model quantiles, not calibrated. Cutoff ${result.as_of}. Result ${result.result_id}.`;
   const unit = model.unit === "fraction" ? "fraction_of_baseline" : result.currency;

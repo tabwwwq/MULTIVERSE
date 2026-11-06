@@ -18,11 +18,6 @@ export type ForecastTarget =
  */
 export type AccessCategory = "public_access" | "api_key" | "licensed";
 /**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "AccountingStandard".
- */
-export type AccountingStandard = "us_gaap" | "ifrs";
-/**
  * What the size of a decision is measured against (PRD FR-DE-02).
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -34,6 +29,25 @@ export type MagnitudeUnit =
   | "fraction_of_headcount"
   | "fraction_of_revenue"
   | "usd";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobStatus".
+ */
+export type JobStatus =
+  | "queued"
+  | "validating"
+  | "running"
+  | "pause_requested"
+  | "paused"
+  | "stop_requested"
+  | "stopped"
+  | "failed"
+  | "completed";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "AccountingStandard".
+ */
+export type AccountingStandard = "us_gaap" | "ifrs";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "AlertKind".
@@ -349,20 +363,6 @@ export type ValueUnit =
 export type MagnitudeBase = "previous_rnd_budget" | "revenue" | "headcount" | "none";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "JobStatus".
- */
-export type JobStatus =
-  | "queued"
-  | "validating"
-  | "running"
-  | "pause_requested"
-  | "paused"
-  | "stop_requested"
-  | "stopped"
-  | "failed"
-  | "completed";
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "Level".
  */
 export type Level = "low" | "medium" | "high";
@@ -501,36 +501,178 @@ export interface AblationScore {
   target: ForecastTarget;
 }
 /**
+ * Everything the server holds about one account (GDPR art. 15 and 20).
+ *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "Acquisition".
+ * via the `definition` "AccountExport".
  */
-export interface Acquisition {
+export interface AccountExport {
+  audit: AuditRow[];
+  exported_at: string;
+  jobs: JobDetail[];
+  logs: JobLogLine[];
+  note: string;
+  principal: string;
+}
+/**
+ * Who touched what. No address, no token: enough to answer for an action, no more.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "AuditRow".
+ */
+export interface AuditRow {
+  action: string;
+  actor: string;
+  at: string;
+  job_id: string | null;
+  outcome: "allowed" | "denied" | "not_found" | "limited";
+  seq: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobDetail".
+ */
+export interface JobDetail {
+  job: JobView;
+  metrics: EpochLog[];
+}
+/**
+ * The state of a job as the screen shows it; the store is the only source of it.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobView".
+ */
+export interface JobView {
+  alerts: string[];
+  approved_at: string | null;
+  approved_by: string | null;
+  /**
+   * Times a worker has taken the job.
+   */
+  attempt: number;
+  batch_size: number;
+  best_epoch: number | null;
+  best_validation_loss: number | null;
+  checkpoint_sha256: string | null;
+  created_at: string;
+  /**
+   * Over all attempts together.
+   */
+  elapsed_seconds: number;
+  epoch: number;
+  estimate: JobEstimate;
+  job_id: string;
+  last_heartbeat: string | null;
+  max_attempts: number;
+  /**
+   * Epochs or paths over the maximum; early stopping jumps to 100.
+   */
+  progress_percent: number;
+  reason: string | null;
+  request: JobRequest | SimulationRequest;
+  spent_usd: number;
+  status: JobStatus;
+  train_loss: number | null;
+  updated_at: string;
+  validation_loss: number | null;
+  worker: string | null;
+}
+/**
+ * Shown before approval: measured rates, never a promise.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobEstimate".
+ */
+export interface JobEstimate {
+  basis: string;
+  cost_usd: number;
+  disk_mb: number;
+  seconds: number;
+  vram_mb: number;
+}
+/**
+ * Everything a job needs; a second submit with the same key returns the first job.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobRequest".
+ */
+export interface JobRequest {
+  dataset_id: string;
+  dataset_sha256: string;
+  device: "auto" | "cpu" | "cuda";
+  fold_year: number;
+  idempotency_key: string;
+  kind: "training";
+  max_epochs: number;
+  /**
+   * Over all attempts together.
+   */
+  max_runtime_seconds: number;
+  model: "gru_attention" | "tcn";
+  /**
+   * Asked for on purpose: a job may run past the usual limit.
+   */
+  overnight: boolean;
+  owner: string;
+  params: Param[];
+  /**
+   * A protocol of this repository: a job never names any other file.
+   */
+  protocol_path: string;
+  /**
+   * Zero on the owner's own GPU.
+   */
+  rate_usd_per_hour: number;
+  seed: number;
+  spend_limit_usd: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Param".
+ */
+export interface Param {
+  name: string;
+  value: string;
+}
+/**
+ * A run for the queue. Every run goes through a worker, however small it is.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SimulationRequest".
+ */
+export interface SimulationRequest {
+  case_id: string;
+  decision:
+    RndChange | WorkforceRestructure | Acquisition | Divestiture | CapexExpansion | DebtRefinance;
+  idempotency_key: string;
+  kind: "simulation";
+  /**
+   * Over all attempts together.
+   */
+  max_runtime_seconds: number;
+  overnight: boolean;
+  owner: string;
+  /**
+   * Zero on the owner's machine.
+   */
+  rate_usd_per_hour: number;
+  settings: SimulationSettings;
+  spend_limit_usd: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RndChange".
+ */
+export interface RndChange {
+  adoption_delay_quarters: FixedValue | UniformRange | TriangularRange;
   /**
    * Exact decimal number as a string, for example '4213587912' or '-0.25'.
    */
-  completion_probability: string;
-  cost_synergy_fraction: FixedValue | UniformRange | TriangularRange;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  deal_cost_fraction: string;
+  capitalized_fraction: string;
   financing: FundingMix;
-  integration_cost_fraction: FixedValue | UniformRange | TriangularRange;
   magnitude: Magnitude;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  new_debt_interest_rate: string;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  target_ebitda_margin: string;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  target_revenue: string;
   timing: Timing;
-  type: "acquisition";
+  type: "rnd_change";
 }
 /**
  * No uncertainty: the parameter takes exactly this value.
@@ -633,6 +775,181 @@ export interface Timing {
    * Quarters from the start until the full effect.
    */
   ramp_quarters: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "WorkforceRestructure".
+ */
+export interface WorkforceRestructure {
+  financing: FundingMix;
+  magnitude: Magnitude;
+  one_off_cost_months: FixedValue | UniformRange | TriangularRange;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  payroll_to_revenue: string;
+  productivity_loss: FixedValue | UniformRange | TriangularRange;
+  savings_realization: FixedValue | UniformRange | TriangularRange;
+  timing: Timing;
+  type: "workforce_restructure";
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Acquisition".
+ */
+export interface Acquisition {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  completion_probability: string;
+  cost_synergy_fraction: FixedValue | UniformRange | TriangularRange;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  deal_cost_fraction: string;
+  financing: FundingMix;
+  integration_cost_fraction: FixedValue | UniformRange | TriangularRange;
+  magnitude: Magnitude;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  new_debt_interest_rate: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  target_ebitda_margin: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  target_revenue: string;
+  timing: Timing;
+  type: "acquisition";
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "Divestiture".
+ */
+export interface Divestiture {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  disposal_proceeds: string;
+  magnitude: Magnitude;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  segment_ebitda_margin: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  separation_cost_fraction: string;
+  stranded_cost_fraction: FixedValue | UniformRange | TriangularRange;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  tax_rate_on_gain: string;
+  timing: Timing;
+  type: "divestiture";
+  use_of_proceeds: ProceedsAllocation;
+}
+/**
+ * Shares of the net proceeds of a divestiture; they add up to exactly 1.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ProceedsAllocation".
+ */
+export interface ProceedsAllocation {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  cash_retained: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  debt_paydown: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  shareholder_distribution: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CapexExpansion".
+ */
+export interface CapexExpansion {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  capacity_increase: string;
+  financing: FundingMix;
+  magnitude: Magnitude;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  new_debt_interest_rate: string;
+  timing: Timing;
+  type: "capex_expansion";
+  useful_life_years: number;
+  utilization: FixedValue | UniformRange | TriangularRange;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DebtRefinance".
+ */
+export interface DebtRefinance {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  current_interest_rate: string;
+  magnitude: Magnitude;
+  new_interest_rate: FixedValue | UniformRange | TriangularRange;
+  new_maturity_years: number;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  refinancing_fee_fraction: string;
+  timing: Timing;
+  type: "debt_refinance";
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SimulationSettings".
+ */
+export interface SimulationSettings {
+  batch_paths: number;
+  /**
+   * Macro columns stay at zero, and sector columns lose what macro explains.
+   */
+  lock_macro: boolean;
+  max_redraws: number;
+  /**
+   * None takes the block length of the case.
+   */
+  mean_block_quarters: number | null;
+  paths: number;
+  seed: number;
+  shock_scale: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EpochLog".
+ */
+export interface EpochLog {
+  epoch: number;
+  learning_rate: number;
+  seconds: number;
+  train_loss: number;
+  validation_loss: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "JobLogLine".
+ */
+export interface JobLogLine {
+  at: string;
+  level: "info" | "warning" | "error";
+  message: string;
+  seq: number;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -828,14 +1145,6 @@ export interface ModelConfig {
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "Param".
- */
-export interface Param {
-  name: string;
-  value: string;
-}
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "ScoreRow".
  */
 export interface ScoreRow {
@@ -980,26 +1289,6 @@ export interface EventCandidate {
   items: string[];
   stratum: string;
   url: string;
-}
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "CapexExpansion".
- */
-export interface CapexExpansion {
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  capacity_increase: string;
-  financing: FundingMix;
-  magnitude: Magnitude;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  new_debt_interest_rate: string;
-  timing: Timing;
-  type: "capex_expansion";
-  useful_life_years: number;
-  utilization: FixedValue | UniformRange | TriangularRange;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -1943,6 +2232,7 @@ export interface Criterion {
 export interface DataSource {
   access: AccessCategory;
   authentication: Authentication;
+  blocks: LicenceBlock[];
   checksum_policy: string;
   /**
    * @minItems 1
@@ -1978,6 +2268,22 @@ export interface DataSource {
    */
   source_id: string;
   verified_on: string;
+}
+/**
+ * A use the terms forbid, found on review. It stays open until the owner decides.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "LicenceBlock".
+ */
+export interface LicenceBlock {
+  found_on: string;
+  note: string;
+  status: "open" | "resolved";
+  /**
+   * Absolute HTTPS address without credentials or port.
+   */
+  terms_url: string;
+  use: "machine_learning" | "archive" | "republication";
 }
 /**
  * One product of a source, with its data dictionary and revision behaviour.
@@ -2160,25 +2466,6 @@ export interface DcfRow {
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "DebtRefinance".
- */
-export interface DebtRefinance {
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  current_interest_rate: string;
-  magnitude: Magnitude;
-  new_interest_rate: FixedValue | UniformRange | TriangularRange;
-  new_maturity_years: number;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  refinancing_fee_fraction: string;
-  timing: Timing;
-  type: "debt_refinance";
-}
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "DebtRow".
  */
 export interface DebtRow {
@@ -2220,62 +2507,15 @@ export interface DefaultSource {
   note: string;
 }
 /**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "Divestiture".
- */
-export interface Divestiture {
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  disposal_proceeds: string;
-  magnitude: Magnitude;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  segment_ebitda_margin: string;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  separation_cost_fraction: string;
-  stranded_cost_fraction: FixedValue | UniformRange | TriangularRange;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  tax_rate_on_gain: string;
-  timing: Timing;
-  type: "divestiture";
-  use_of_proceeds: ProceedsAllocation;
-}
-/**
- * Shares of the net proceeds of a divestiture; they add up to exactly 1.
+ * What was erased. Audit rows stay, with the name replaced.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "ProceedsAllocation".
+ * via the `definition` "Erasure".
  */
-export interface ProceedsAllocation {
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  cash_retained: string;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  debt_paydown: string;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  shareholder_distribution: string;
-}
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "EpochLog".
- */
-export interface EpochLog {
-  epoch: number;
-  learning_rate: number;
-  seconds: number;
-  train_loss: number;
-  validation_loss: number;
+export interface Erasure {
+  audit_rows_anonymized: number;
+  jobs_erased: string[];
+  principal: string;
 }
 /**
  * Stage 17: what the quantile forecasts are worth, measured, with every failure kept.
@@ -2795,187 +3035,6 @@ export interface ShareGroupSpec {
 export interface ShareMember {
   key: string;
   label: string;
-}
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "JobDetail".
- */
-export interface JobDetail {
-  job: JobView;
-  metrics: EpochLog[];
-}
-/**
- * The state of a job as the screen shows it; the store is the only source of it.
- *
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "JobView".
- */
-export interface JobView {
-  alerts: string[];
-  approved_at: string | null;
-  approved_by: string | null;
-  /**
-   * Times a worker has taken the job.
-   */
-  attempt: number;
-  batch_size: number;
-  best_epoch: number | null;
-  best_validation_loss: number | null;
-  checkpoint_sha256: string | null;
-  created_at: string;
-  /**
-   * Over all attempts together.
-   */
-  elapsed_seconds: number;
-  epoch: number;
-  estimate: JobEstimate;
-  job_id: string;
-  last_heartbeat: string | null;
-  max_attempts: number;
-  /**
-   * Epochs or paths over the maximum; early stopping jumps to 100.
-   */
-  progress_percent: number;
-  reason: string | null;
-  request: JobRequest | SimulationRequest;
-  spent_usd: number;
-  status: JobStatus;
-  train_loss: number | null;
-  updated_at: string;
-  validation_loss: number | null;
-  worker: string | null;
-}
-/**
- * Shown before approval: measured rates, never a promise.
- *
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "JobEstimate".
- */
-export interface JobEstimate {
-  basis: string;
-  cost_usd: number;
-  disk_mb: number;
-  seconds: number;
-  vram_mb: number;
-}
-/**
- * Everything a job needs; a second submit with the same key returns the first job.
- *
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "JobRequest".
- */
-export interface JobRequest {
-  dataset_id: string;
-  dataset_sha256: string;
-  device: "auto" | "cpu" | "cuda";
-  fold_year: number;
-  idempotency_key: string;
-  kind: "training";
-  max_epochs: number;
-  /**
-   * Over all attempts together.
-   */
-  max_runtime_seconds: number;
-  model: "gru_attention" | "tcn";
-  /**
-   * Asked for on purpose: a job may run past the usual limit.
-   */
-  overnight: boolean;
-  owner: string;
-  params: Param[];
-  protocol_path: string;
-  /**
-   * Zero on the owner's own GPU.
-   */
-  rate_usd_per_hour: number;
-  seed: number;
-  spend_limit_usd: number;
-}
-/**
- * A run for the queue. Every run goes through a worker, however small it is.
- *
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "SimulationRequest".
- */
-export interface SimulationRequest {
-  case_id: string;
-  decision:
-    RndChange | WorkforceRestructure | Acquisition | Divestiture | CapexExpansion | DebtRefinance;
-  idempotency_key: string;
-  kind: "simulation";
-  /**
-   * Over all attempts together.
-   */
-  max_runtime_seconds: number;
-  overnight: boolean;
-  owner: string;
-  /**
-   * Zero on the owner's machine.
-   */
-  rate_usd_per_hour: number;
-  settings: SimulationSettings;
-  spend_limit_usd: number;
-}
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "RndChange".
- */
-export interface RndChange {
-  adoption_delay_quarters: FixedValue | UniformRange | TriangularRange;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  capitalized_fraction: string;
-  financing: FundingMix;
-  magnitude: Magnitude;
-  timing: Timing;
-  type: "rnd_change";
-}
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "WorkforceRestructure".
- */
-export interface WorkforceRestructure {
-  financing: FundingMix;
-  magnitude: Magnitude;
-  one_off_cost_months: FixedValue | UniformRange | TriangularRange;
-  /**
-   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
-   */
-  payroll_to_revenue: string;
-  productivity_loss: FixedValue | UniformRange | TriangularRange;
-  savings_realization: FixedValue | UniformRange | TriangularRange;
-  timing: Timing;
-  type: "workforce_restructure";
-}
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "SimulationSettings".
- */
-export interface SimulationSettings {
-  batch_paths: number;
-  /**
-   * Macro columns stay at zero, and sector columns lose what macro explains.
-   */
-  lock_macro: boolean;
-  max_redraws: number;
-  /**
-   * None takes the block length of the case.
-   */
-  mean_block_quarters: number | null;
-  paths: number;
-  seed: number;
-  shock_scale: number;
-}
-/**
- * This interface was referenced by `MultiverseContracts`'s JSON-Schema
- * via the `definition` "JobLogLine".
- */
-export interface JobLogLine {
-  at: string;
-  level: "info" | "warning" | "error";
-  message: string;
-  seq: number;
 }
 /**
  * Data that only a licensed provider can supply. No provider is chosen in V2.

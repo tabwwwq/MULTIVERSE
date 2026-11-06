@@ -27,7 +27,16 @@ from multiverse_contracts.forecasting import (
     TrainingRun,
 )
 from multiverse_contracts.interventions import InterventionCatalog
-from multiverse_contracts.jobs import JobDetail, JobEstimate, JobLogLine, JobRequest, JobView
+from multiverse_contracts.jobs import (
+    AccountExport,
+    AuditRow,
+    Erasure,
+    JobDetail,
+    JobEstimate,
+    JobLogLine,
+    JobRequest,
+    JobView,
+)
 from multiverse_contracts.macro import MacroCell, MacroObservation, MacroSeries
 from multiverse_contracts.manifest import ReproducibilityManifest
 from multiverse_contracts.metrics import MetricValue
@@ -77,6 +86,9 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     JobLogLine,
     JobView,
     JobDetail,
+    AuditRow,
+    AccountExport,
+    Erasure,
     CandidateSample,
     EventRegistry,
     QualityAudit,

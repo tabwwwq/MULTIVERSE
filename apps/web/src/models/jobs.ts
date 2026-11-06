@@ -133,6 +133,6 @@ export function act(jobId: string, action: JobAction): Promise<JobView> {
   return read<JobView>(`/jobs/${jobId}/${action}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: action === "approve" ? JSON.stringify({ by: "owner" }) : "{}",
+    body: "{}",
   });
 }

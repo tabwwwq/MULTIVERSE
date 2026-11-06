@@ -258,6 +258,16 @@ class DownloadDecision(ContractModel):
         return self
 
 
+class LicenceBlock(ContractModel):
+    """A use the terms forbid, found on review. It stays open until the owner decides."""
+
+    use: Literal["machine_learning", "archive", "republication"]
+    terms_url: HttpsUrl
+    found_on: date
+    status: Literal["open", "resolved"]
+    note: Text
+
+
 class DataSource(ContractModel):
     source_id: Slug
     name: Text
@@ -280,6 +290,7 @@ class DataSource(ContractModel):
     verified_on: date
     download: DownloadDecision
     notes: tuple[Text, ...] = ()
+    blocks: tuple[LicenceBlock, ...] = ()
 
     @model_validator(mode="after")
     def _consistent(self) -> Self:

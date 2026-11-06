@@ -4,6 +4,8 @@ import { InferenceModeBadge } from "@/components/trust/inference-mode-badge";
 import { UNCERTAINTY_LABELS } from "@/components/trust/trust-header";
 import { DataTable } from "@/components/ui/data-table";
 import { PageHeader, Section } from "@/layouts/page-header";
+import { safeExternalUrl } from "@/lib/safe-url";
+import { SOURCE_CATALOG } from "@/sources/catalog";
 
 export const metadata: Metadata = { title: "Methodology" };
 
@@ -59,6 +61,8 @@ interface SourceRow {
   provides: string;
   access: string;
 }
+
+const FRED_LEGAL = "https://fred.stlouisfed.org/legal/";
 
 const SOURCES: readonly SourceRow[] = [
   {
@@ -153,6 +157,32 @@ export default function MethodologyPage() {
             { key: "access", header: "Access" },
           ]}
         />
+      </Section>
+
+      <Section id="notices" title="Source notices">
+        <ul className="flex max-w-prose flex-col gap-2 text-body text-ink-muted">
+          {SOURCE_CATALOG.sources.map((source) => (
+            <li key={source.source_id}>
+              {source.name}: {source.licence.attribution ?? source.licence.summary}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 max-w-prose text-body text-ink-muted">
+          By using data from FRED through this application you agree to be bound by the{" "}
+          <a
+            href={safeExternalUrl(FRED_LEGAL) ?? "#"}
+            rel="noopener noreferrer"
+            className="text-blue underline"
+          >
+            FRED terms of use
+          </a>
+          . Licence reviews and open blocks are listed in the Data Catalog.
+        </p>
+        <p className="mt-4 max-w-prose text-body text-ink-muted">
+          Macro series accessed via FRED: FEDFUNDS and DGS10 (Board of Governors of the Federal
+          Reserve System), CPIAUCSL and UNRATE (U.S. Bureau of Labor Statistics), GDPC1 (U.S. Bureau
+          of Economic Analysis), T10Y2Y and USREC (Federal Reserve Bank of St. Louis).
+        </p>
       </Section>
 
       <Section id="limitations" title="Known limitations">

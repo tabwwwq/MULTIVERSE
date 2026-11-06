@@ -10,7 +10,7 @@ from multiverse_contracts.forecasting import EpochLog
 from multiverse_contracts.jobs import JobEstimate, JobRequest, JobStatus
 from multiverse_jobs.estimate import MAX_RUNTIME_SECONDS, estimate, refusals
 from multiverse_jobs.redact import redact
-from multiverse_jobs.store import JobError, JobStore, LeaseLostError, job_id_of
+from multiverse_jobs.store import JobError, JobStore, LeaseLostError, Limits, job_id_of
 
 SHA = "ab" * 32
 
@@ -53,7 +53,7 @@ def clock() -> Clock:
 
 @pytest.fixture
 def store(tmp_path: Path, clock: Clock) -> JobStore:
-    return JobStore(tmp_path / "jobs.sqlite", clock)
+    return JobStore(tmp_path / "jobs.sqlite", clock, Limits(cloud_spend_usd=100.0))
 
 
 def approved(store: JobStore, **changes: Any) -> str:
@@ -73,7 +73,7 @@ def test_a_repeated_submit_returns_the_same_job(store: JobStore) -> None:
     second, again = store.submit(request(), ESTIMATE)
     assert created
     assert not again
-    assert first.job_id == second.job_id == job_id_of("stage-18-test-run")
+    assert first.job_id == second.job_id == job_id_of("owner", "stage-18-test-run")
     assert len(store.jobs()) == 1
     with pytest.raises(JobError, match="another request"):
         store.submit(request(max_epochs=11), ESTIMATE)

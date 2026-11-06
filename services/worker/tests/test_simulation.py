@@ -169,7 +169,7 @@ def test_rows_stored_before_stage_22_are_still_trainings() -> None:
         "model": "gru_attention",
         "dataset_id": "fds-20261028-abababababab",
         "dataset_sha256": "ab" * 32,
-        "protocol_path": "protocol.json",
+        "protocol_path": "data/protocols/protocol.json",
         "fold_year": 2026,
         "seed": 1,
         "max_epochs": 5,

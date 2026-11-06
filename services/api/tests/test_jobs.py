@@ -32,7 +32,7 @@ def body(**changes: Any) -> dict[str, Any]:
 @pytest.fixture
 def client(tmp_path: Path) -> TestClient:
     settings = Settings(_env_file=None, env="test", data_dir=tmp_path)  # type: ignore[call-arg]
-    return TestClient(create_app(settings))
+    return TestClient(create_app(settings), base_url="http://127.0.0.1:8000")
 
 
 def test_an_estimate_comes_before_any_job(client: TestClient) -> None:
@@ -55,7 +55,7 @@ def test_a_repeated_submit_gives_the_same_job(client: TestClient) -> None:
 
 def test_the_requests_of_a_job_are_recorded(client: TestClient) -> None:
     job_id = client.post("/api/v1/jobs", json=body()).json()["job_id"]
-    approved = client.post(f"/api/v1/jobs/{job_id}/approve", json={"by": "owner"}).json()
+    approved = client.post(f"/api/v1/jobs/{job_id}/approve").json()
     assert approved["approved_by"] == "owner"
     stopped = client.post(f"/api/v1/jobs/{job_id}/stop").json()
     assert stopped["status"] == "stopped"

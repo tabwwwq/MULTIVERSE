@@ -56,6 +56,54 @@
       "title": "AccessCategory",
       "type": "string"
     },
+    "AccountExport": {
+      "additionalProperties": false,
+      "description": "Everything the server holds about one account (GDPR art. 15 and 20).",
+      "properties": {
+        "audit": {
+          "items": {
+            "$ref": "#/$defs/AuditRow"
+          },
+          "type": "array"
+        },
+        "exported_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "jobs": {
+          "items": {
+            "$ref": "#/$defs/JobDetail"
+          },
+          "type": "array"
+        },
+        "logs": {
+          "items": {
+            "$ref": "#/$defs/JobLogLine"
+          },
+          "type": "array"
+        },
+        "note": {
+          "default": "Notebooks, reviews and preferences live in your browser: the server holds none of them.",
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "principal": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "principal",
+        "exported_at",
+        "jobs",
+        "logs",
+        "audit",
+        "note"
+      ],
+      "title": "AccountExport",
+      "type": "object"
+    },
     "AccountingStandard": {
       "enum": [
         "us_gaap",
@@ -357,6 +405,59 @@
         "cold_start_tolerance"
       ],
       "title": "ApprovalRule",
+      "type": "object"
+    },
+    "AuditRow": {
+      "additionalProperties": false,
+      "description": "Who touched what. No address, no token: enough to answer for an action, no more.",
+      "properties": {
+        "action": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "actor": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "pattern": "^job-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "outcome": {
+          "enum": [
+            "allowed",
+            "denied",
+            "not_found",
+            "limited"
+          ],
+          "type": "string"
+        },
+        "seq": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "seq",
+        "at",
+        "actor",
+        "action",
+        "job_id",
+        "outcome"
+      ],
+      "title": "AuditRow",
       "type": "object"
     },
     "Authentication": {
@@ -2598,6 +2699,13 @@
         "authentication": {
           "$ref": "#/$defs/Authentication"
         },
+        "blocks": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/LicenceBlock"
+          },
+          "type": "array"
+        },
         "checksum_policy": {
           "maxLength": 1000,
           "minLength": 1,
@@ -2711,7 +2819,8 @@
         "datasets",
         "verified_on",
         "download",
-        "notes"
+        "notes",
+        "blocks"
       ],
       "title": "DataSource",
       "type": "object"
@@ -3374,6 +3483,34 @@
         "seconds"
       ],
       "title": "EpochLog",
+      "type": "object"
+    },
+    "Erasure": {
+      "additionalProperties": false,
+      "description": "What was erased. Audit rows stay, with the name replaced.",
+      "properties": {
+        "audit_rows_anonymized": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "jobs_erased": {
+          "items": {
+            "pattern": "^job-[0-9a-f]{12}$",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "principal": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "principal",
+        "jobs_erased",
+        "audit_rows_anonymized"
+      ],
+      "title": "Erasure",
       "type": "object"
     },
     "EvaluationPackage": {
@@ -4958,8 +5095,8 @@
           "type": "array"
         },
         "protocol_path": {
-          "maxLength": 200,
-          "minLength": 1,
+          "description": "A protocol of this repository: a job never names any other file.",
+          "pattern": "^data/protocols/[a-z0-9][a-z0-9._-]{0,100}\\.json$",
           "type": "string"
         },
         "rate_usd_per_hour": {
@@ -5362,6 +5499,51 @@
         "exceptions"
       ],
       "title": "Licence",
+      "type": "object"
+    },
+    "LicenceBlock": {
+      "additionalProperties": false,
+      "description": "A use the terms forbid, found on review. It stays open until the owner decides.",
+      "properties": {
+        "found_on": {
+          "format": "date",
+          "type": "string"
+        },
+        "note": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "resolved"
+          ],
+          "type": "string"
+        },
+        "terms_url": {
+          "description": "Absolute HTTPS address without credentials or port.",
+          "maxLength": 500,
+          "pattern": "^https://[a-z0-9.-]+(/\\S*)?$",
+          "type": "string"
+        },
+        "use": {
+          "enum": [
+            "machine_learning",
+            "archive",
+            "republication"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "use",
+        "terms_url",
+        "found_on",
+        "status",
+        "note"
+      ],
+      "title": "LicenceBlock",
       "type": "object"
     },
     "LicensedNeed": {
@@ -11978,9 +12160,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.20.0",
+  "$id": "urn:multiverse:contracts:0.21.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.20.0"
+  "x-contracts-version": "0.21.0"
 }

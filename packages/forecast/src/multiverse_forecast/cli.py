@@ -20,7 +20,7 @@ from multiverse_contracts.forecasting import (
 from multiverse_forecast import evaluation_report
 from multiverse_forecast.bands import load_stored, run_baselines
 from multiverse_forecast.benchmark import Runner, run
-from multiverse_forecast.data import Dataset, load, load_sequences
+from multiverse_forecast.data import Dataset, load, load_sequences, trainable
 from multiverse_forecast.report import write_report
 
 PROTOCOL = Path("data/protocols/stage-15-baselines.json")
@@ -166,6 +166,7 @@ def _evaluate(args: argparse.Namespace) -> int:
             show,
         )
     elif args.step == "baselines":
+        trainable(dataset)
         runner = Runner(dataset, base)
         run_baselines(runner, baselines, protocol, base.test_years, root / "bands", show)
     else:

@@ -14,12 +14,18 @@ from pathlib import Path
 
 from multiverse_contracts.forecasting import ForecastDatasetManifest, ForecastProtocol
 from multiverse_contracts.jobs import JobRequest, JobView
+from multiverse_contracts.source_catalog import blocked_for_training
 from multiverse_worker.runner import Decision, DeviceMemoryError, RefusedError, Session
+
+PROTOCOLS = Path("data/protocols")
 
 
 def code_commit() -> str:
     found = subprocess.run(
-        ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=False
+        ["git", "rev-parse", "HEAD"],  # noqa: S607 (fixed arguments, no input)
+        capture_output=True,
+        text=True,
+        check=False,
     )
     return found.stdout.strip() or "unknown"
 
@@ -31,11 +37,20 @@ def training(job: JobView) -> JobRequest:
 
 
 class ForecastTrainer:
-    def __init__(self, data_dir: Path) -> None:
+    def __init__(self, data_dir: Path, protocols: Path = PROTOCOLS) -> None:
         self.data_dir = data_dir
+        self.protocols = protocols
 
     def folder(self, job: JobView) -> Path:
         return self.data_dir / "jobs" / job.job_id
+
+    def protocol_file(self, request: JobRequest) -> Path:
+        """Only the protocols of this repository, whatever a stored request says."""
+        base = self.protocols.resolve()
+        found = (base / Path(request.protocol_path).name).resolve()
+        if found.parent != base:
+            raise RefusedError(f"{request.protocol_path} is not a protocol of this repository")
+        return found
 
     def dataset_folder(self, job: JobView) -> Path:
         return self.data_dir / "forecast" / training(job).dataset_id
@@ -50,9 +65,12 @@ class ForecastTrainer:
         manifest = ForecastDatasetManifest.model_validate_json(manifest_path.read_bytes())
         if manifest.sha256 != request.dataset_sha256:
             raise RefusedError("the dataset does not match the hash of the job")
+        blocked = blocked_for_training(manifest.macro_series)
+        if blocked:
+            raise RefusedError(f"the terms of the source forbid training on {', '.join(blocked)}")
         if not (folder / "sequences.json").exists():
             raise RefusedError("the dataset has no sequences")
-        protocol_path = Path(request.protocol_path)
+        protocol_path = self.protocol_file(request)
         if not protocol_path.exists():
             raise RefusedError(f"no protocol {request.protocol_path}")
         protocol = ForecastProtocol.model_validate_json(protocol_path.read_bytes())
@@ -82,7 +100,7 @@ class ForecastTrainer:
         dataset_folder = self.dataset_folder(job)
         dataset = load(dataset_folder)
         sequences, sequences_id = load_sequences(dataset_folder, dataset)
-        protocol = ForecastProtocol.model_validate_json(Path(request.protocol_path).read_bytes())
+        protocol = ForecastProtocol.model_validate_json(self.protocol_file(request).read_bytes())
         runner = Runner(dataset, protocol)
         current = fold(runner, sequences, request.fold_year, request.seed)
         base = Config(

@@ -32,7 +32,7 @@ from multiverse_contracts.forecasting import (
     SplitName,
 )
 from multiverse_contracts.version import CONTRACTS_VERSION
-from multiverse_forecast.data import Bools, Dataset, Floats, canonical_sha256
+from multiverse_forecast.data import Bools, Dataset, Floats, canonical_sha256, trainable
 from multiverse_forecast.models import Fold, applies, make, persistence_values
 from multiverse_forecast.scoring import Errors, score, sector_scores
 
@@ -168,6 +168,7 @@ def watch_rows(runner: Runner) -> Bools:
 
 
 def run(dataset: Dataset, protocol: ForecastProtocol, protocol_sha256: str) -> BenchmarkReport:
+    trainable(dataset)
     runner = Runner(dataset, protocol)
     seed = protocol.seed
     validation_end = boundary(min(protocol.test_years))

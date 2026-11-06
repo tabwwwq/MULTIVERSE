@@ -72,6 +72,7 @@ export default defineConfig(
       "packages/contracts/ts/src/events.ts",
       "packages/contracts/ts/src/causal.ts",
       "packages/contracts/ts/src/simulation.ts",
+      "packages/contracts/ts/src/valuation.ts",
     ],
     rules: { "no-restricted-imports": "off" },
   },

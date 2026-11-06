@@ -1,0 +1,49 @@
+{
+  "exit_multiple": "12",
+  "other_senior_claims": "0",
+  "diluted_shares": "53400000",
+  "diluted_shares_source": "SEC filing 0001628280-25-046924, weighted diluted shares of 2025 Q3.",
+  "wacc_steps": [
+    "-0.01",
+    "-0.005",
+    "0",
+    "0.005",
+    "0.01"
+  ],
+  "growth_steps": [
+    "-0.01",
+    "-0.005",
+    "0",
+    "0.005",
+    "0.01"
+  ],
+  "margin_points": "0.02",
+  "growth_points": "0.02",
+  "capex_points": "0.01",
+  "scenarios": [
+    {
+      "scenario": "bear",
+      "label": "Bear",
+      "weight": "0.25",
+      "growth_shift": -0.02,
+      "margin_shift": -0.02
+    },
+    {
+      "scenario": "base",
+      "label": "Base",
+      "weight": "0.5",
+      "growth_shift": 0.0,
+      "margin_shift": 0.0
+    },
+    {
+      "scenario": "bull",
+      "label": "Bull",
+      "weight": "0.25",
+      "growth_shift": 0.02,
+      "margin_shift": 0.02
+    }
+  ],
+  "scenario_paths": 2000,
+  "seed": 20261106,
+  "maturity_wall_quarter": 8
+}

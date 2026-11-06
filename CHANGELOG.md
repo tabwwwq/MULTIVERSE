@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-06 (Stage 23)
+
+- Valuation Studio (`/valuation`, ADR-0031): editable WACC parts, terminal growth or exit multiple, horizon, projected FCFF, tax, bridge and dilution; enterprise value and equity value as separate outputs with a bridge; DCF by quarter and year; both terminal methods compared; a WACC × g matrix where WACC at or below g has no value; a tornado through the full statements; a method panel and CSV files.
+- Risk Observatory (`/risk`): credit and liquidity shares of paths under the assumed model, bear, base and bull runs on the same shocks with editable weights, eight stress cases, an adverse story told from the numbers of the path, the worst paths.
+- `ValuationReport` (contracts 0.20.0, `python -m multiverse_simulation studio`) with a manifest and ten quality checks. Seven are required: a report that fails one cannot exist. Every report carries the label "Model value, not a verified market value".
+- Finance 0.4.0: exit multiple, implied growth, the sensitivity matrix, scenario weights, retained share, maturity wall.
+- The browser repeats only the discounting, on statements the engine reconciled, and a test holds it to the Python report on every cell. OQ-12 closed: no price per share in V1 to V3.
+
 ### Changed — 2026-11-06 (Stage 22 accepted)
 
 - Stage 22 (paired Monte Carlo) accepted by the owner (CI run 42228195449 green). Its probabilities stay conditional on the assumed model, not validated.

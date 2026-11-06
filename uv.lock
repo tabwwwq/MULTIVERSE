@@ -641,7 +641,7 @@ requires-dist = [{ name = "pydantic", specifier = ">=2.9" }]
 
 [[package]]
 name = "multiverse-finance"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "packages/finance" }
 dependencies = [
     { name = "multiverse-contracts" },

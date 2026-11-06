@@ -1,0 +1,1996 @@
+{
+  "contracts_version": "0.20.0",
+  "manifest": {
+    "valuation_id": "val-20251231-a826b769686d",
+    "contracts_version": "0.20.0",
+    "finance_version": "0.4.0",
+    "simulation_version": "0.1.0",
+    "code_version": "0c3f06f-dirty",
+    "case_id": "case-48898-20251231",
+    "case_sha256": "efcf7ee5657b12ec38927c58e88cc938ffdc72eed7cab02b396ca3bdf8cd9dfd",
+    "decision_sha256": "2fea60023e270424cf655db9ae105421eb51becf1e3be4c17fda7d35008dbb00",
+    "inputs_sha256": "6280731fe2420b0f0c6f5903916d1bec4d9d0b8e7ee6181818a2af5f199ac550",
+    "simulation_report_id": "sim-20251231-c966cdbf54a4",
+    "created_at": "2026-11-06T15:05:03.086495Z"
+  },
+  "value_label": "Model value, not a verified market value",
+  "sensitivity_label": "Predictive sensitivity, not causal",
+  "company_name": "HUBBELL INC",
+  "as_of": "2025-12-31",
+  "balance_date": "2025-09-30",
+  "currency": "USD",
+  "capital": {
+    "risk_free": "0.0412",
+    "equity_risk_premium": "0.05",
+    "beta": "1.0",
+    "pre_tax_cost_of_debt": "0.0612",
+    "tax_rate": "0.23",
+    "debt_weight": "0.15",
+    "terminal_growth": "0.025"
+  },
+  "wacc": 0.084589,
+  "cost_of_equity": 0.0912,
+  "inputs": {
+    "exit_multiple": "12",
+    "other_senior_claims": "0",
+    "diluted_shares": "53400000",
+    "diluted_shares_source": "SEC filing 0001628280-25-046924, weighted diluted shares of 2025 Q3.",
+    "wacc_steps": [
+      "-0.01",
+      "-0.005",
+      "0",
+      "0.005",
+      "0.01"
+    ],
+    "growth_steps": [
+      "-0.01",
+      "-0.005",
+      "0",
+      "0.005",
+      "0.01"
+    ],
+    "margin_points": "0.02",
+    "growth_points": "0.02",
+    "capex_points": "0.01",
+    "scenarios": [
+      {
+        "scenario": "bear",
+        "label": "Bear",
+        "weight": "0.25",
+        "growth_shift": -0.02,
+        "margin_shift": -0.02
+      },
+      {
+        "scenario": "base",
+        "label": "Base",
+        "weight": "0.5",
+        "growth_shift": 0.0,
+        "margin_shift": 0.0
+      },
+      {
+        "scenario": "bull",
+        "label": "Bull",
+        "weight": "0.25",
+        "growth_shift": 0.02,
+        "margin_shift": 0.02
+      }
+    ],
+    "scenario_paths": 2000,
+    "seed": 20261106,
+    "maturity_wall_quarter": 8
+  },
+  "case_inputs": [
+    {
+      "name": "revenue",
+      "origin": "observed",
+      "note": "SEC filings public at the cutoff."
+    },
+    {
+      "name": "ebitda",
+      "origin": "observed",
+      "note": "Operating income + D&A, calculated."
+    },
+    {
+      "name": "cash",
+      "origin": "observed",
+      "note": "Last balance sheet public at the cutoff."
+    },
+    {
+      "name": "debt",
+      "origin": "observed",
+      "note": "Last balance sheet public at the cutoff."
+    },
+    {
+      "name": "capex_ratio",
+      "origin": "observed",
+      "note": "Last four quarters."
+    },
+    {
+      "name": "rd_ratio",
+      "origin": "observed",
+      "note": "Last four quarters; 0 if not reported."
+    },
+    {
+      "name": "ebitda_margin_path",
+      "origin": "model",
+      "note": "Signed research pairs at 4 and 8 quarters; interpolated, then held flat."
+    },
+    {
+      "name": "growth_path",
+      "origin": "assumed",
+      "note": "Transparent rule; the model is not signed for growth."
+    },
+    {
+      "name": "ppe",
+      "origin": "implied",
+      "note": "D&A of the last year over an assumed 12.5% rate."
+    },
+    {
+      "name": "trade_nwc",
+      "origin": "assumed",
+      "note": "12% of annualized revenue: the warehouse holds no working capital."
+    },
+    {
+      "name": "goodwill",
+      "origin": "assumed",
+      "note": "Zero: not in the warehouse. It moves book equity and gains, not cash."
+    },
+    {
+      "name": "interest_rate",
+      "origin": "assumed",
+      "note": "Fed funds + 2 points, 30% floating: interest is not in the warehouse."
+    },
+    {
+      "name": "liquidity",
+      "origin": "assumed",
+      "note": "Minimum cash 2% and revolver 5% of revenue; covenants 3.5x and 3x."
+    },
+    {
+      "name": "deal_accounting",
+      "origin": "assumed",
+      "note": "The target moves with the company; 15% PP&E, 25% intangibles over 10 years."
+    },
+    {
+      "name": "tax_rate",
+      "origin": "assumed",
+      "note": "23%."
+    },
+    {
+      "name": "dividend_payout",
+      "origin": "assumed",
+      "note": "25% of net income."
+    },
+    {
+      "name": "capital_cost",
+      "origin": "assumed",
+      "note": "ERP 5%, beta 1, debt weight 15%, growth 2.5%; 10-year Treasury observed."
+    }
+  ],
+  "views": [
+    {
+      "scenario": "baseline",
+      "label": "Baseline",
+      "rows": [
+        {
+          "quarter": 1,
+          "period_end": "2025-12-31",
+          "label": "2025 Q4",
+          "revenue": "1406576924.50",
+          "ebitda": "336861107.65",
+          "adjusted_ebitda": "336861107.65",
+          "ebit": "287436107.65",
+          "tax_on_ebit": "66110304.76",
+          "d_and_a": "49425000.00",
+          "capex": "40664138.89",
+          "delta_nwc": "-7187076.24",
+          "transactions": "0.00",
+          "fcff": "237273740.24",
+          "fcff_recurring": "237273740.24",
+          "discount_factor": 0.97990448,
+          "present_value": "232505599.96"
+        },
+        {
+          "quarter": 2,
+          "period_end": "2026-03-31",
+          "label": "2026 Q1",
+          "revenue": "1447151935.40",
+          "ebitda": "333351448.32",
+          "adjusted_ebitda": "333351448.32",
+          "ebit": "284200225.23",
+          "tax_on_ebit": "65366051.80",
+          "d_and_a": "49151223.09",
+          "capex": "41837162.45",
+          "delta_nwc": "19476005.23",
+          "transactions": "0.00",
+          "fcff": "206672228.83",
+          "fcff_recurring": "206672228.83",
+          "discount_factor": 0.96021278,
+          "present_value": "198449315.59"
+        },
+        {
+          "quarter": 3,
+          "period_end": "2026-06-30",
+          "label": "2026 Q2",
+          "revenue": "1577390705.91",
+          "ebitda": "348918824.15",
+          "adjusted_ebitda": "348918824.15",
+          "ebit": "299996165.45",
+          "tax_on_ebit": "68999118.05",
+          "d_and_a": "48922658.70",
+          "capex": "45602365.31",
+          "delta_nwc": "62514609.84",
+          "transactions": "0.00",
+          "fcff": "171802730.94",
+          "fcff_recurring": "171802730.94",
+          "discount_factor": 0.9409168,
+          "present_value": "161652076.06"
+        },
+        {
+          "quarter": 4,
+          "period_end": "2026-09-30",
+          "label": "2026 Q3",
+          "revenue": "1598464791.23",
+          "ebitda": "338970443.63",
+          "adjusted_ebitda": "338970443.63",
+          "ebit": "290151544.10",
+          "tax_on_ebit": "66734855.14",
+          "d_and_a": "48818899.53",
+          "capex": "46211617.11",
+          "delta_nwc": "10115560.95",
+          "transactions": "0.00",
+          "fcff": "215908410.42",
+          "fcff_recurring": "215908410.42",
+          "discount_factor": 0.92200858,
+          "present_value": "199069407.90"
+        },
+        {
+          "quarter": 5,
+          "period_end": "2026-12-31",
+          "label": "2026 Q4",
+          "revenue": "1497308835.06",
+          "ebitda": "303818935.72",
+          "adjusted_ebitda": "303818935.72",
+          "ebit": "255081513.77",
+          "tax_on_ebit": "58668748.17",
+          "d_and_a": "48737421.95",
+          "capex": "43287198.42",
+          "delta_nwc": "-48554858.96",
+          "transactions": "0.00",
+          "fcff": "250417848.09",
+          "fcff_recurring": "250417848.09",
+          "discount_factor": 0.90348034,
+          "present_value": "226247602.15"
+        },
+        {
+          "quarter": 6,
+          "period_end": "2027-03-31",
+          "label": "2027 Q1",
+          "revenue": "1540871283.66",
+          "ebitda": "311749078.11",
+          "adjusted_ebitda": "311749078.11",
+          "ebit": "263181975.64",
+          "tax_on_ebit": "60531854.40",
+          "d_and_a": "48567102.47",
+          "capex": "44546588.81",
+          "delta_nwc": "20909975.33",
+          "transactions": "0.00",
+          "fcff": "185760659.57",
+          "fcff_recurring": "185760659.57",
+          "discount_factor": 0.88532443,
+          "present_value": "164458449.51"
+        },
+        {
+          "quarter": 7,
+          "period_end": "2027-06-30",
+          "label": "2027 Q2",
+          "revenue": "1679729420.28",
+          "ebitda": "338851815.95",
+          "adjusted_ebitda": "338851815.95",
+          "ebit": "290410354.54",
+          "tax_on_ebit": "66794381.54",
+          "d_and_a": "48441461.41",
+          "capex": "48560977.54",
+          "delta_nwc": "66651905.58",
+          "transactions": "0.00",
+          "fcff": "156844551.29",
+          "fcff_recurring": "156844551.29",
+          "discount_factor": 0.86753337,
+          "present_value": "136067881.88"
+        },
+        {
+          "quarter": 8,
+          "period_end": "2027-09-30",
+          "label": "2027 Q3",
+          "revenue": "1702255955.10",
+          "ebitda": "342374740.25",
+          "adjusted_ebitda": "342374740.25",
+          "ebit": "293929543.96",
+          "tax_on_ebit": "67603795.11",
+          "d_and_a": "48445196.29",
+          "capex": "49212219.66",
+          "delta_nwc": "10812736.71",
+          "transactions": "0.00",
+          "fcff": "214745988.76",
+          "fcff_recurring": "214745988.76",
+          "discount_factor": 0.85009983,
+          "present_value": "182555528.57"
+        },
+        {
+          "quarter": 9,
+          "period_end": "2027-12-31",
+          "label": "2027 Q4",
+          "revenue": "1594563685.18",
+          "ebitda": "319773801.43",
+          "adjusted_ebitda": "319773801.43",
+          "ebit": "271304635.65",
+          "tax_on_ebit": "62400066.20",
+          "d_and_a": "48469165.77",
+          "capex": "46098836.14",
+          "delta_nwc": "-51692289.56",
+          "transactions": "0.00",
+          "fcff": "262967188.65",
+          "fcff_recurring": "262967188.65",
+          "discount_factor": 0.83301663,
+          "present_value": "219056040.79"
+        },
+        {
+          "quarter": 10,
+          "period_end": "2028-03-31",
+          "label": "2028 Q1",
+          "revenue": "1640972075.75",
+          "ebitda": "329080540.07",
+          "adjusted_ebitda": "329080540.07",
+          "ebit": "280685447.10",
+          "tax_on_ebit": "64557652.83",
+          "d_and_a": "48395092.97",
+          "capex": "47440502.71",
+          "delta_nwc": "22276027.47",
+          "transactions": "0.00",
+          "fcff": "194806357.05",
+          "fcff_recurring": "194806357.05",
+          "discount_factor": 0.81627672,
+          "present_value": "159015894.55"
+        },
+        {
+          "quarter": 11,
+          "period_end": "2028-06-30",
+          "label": "2028 Q2",
+          "revenue": "1788850959.01",
+          "ebitda": "358736171.32",
+          "adjusted_ebitda": "358736171.32",
+          "ebit": "310370909.29",
+          "tax_on_ebit": "71385309.14",
+          "d_and_a": "48365262.03",
+          "capex": "51715681.22",
+          "delta_nwc": "70981863.96",
+          "transactions": "0.00",
+          "fcff": "164653316.99",
+          "fcff_recurring": "164653316.99",
+          "discount_factor": 0.79987321,
+          "present_value": "131701777.70"
+        },
+        {
+          "quarter": 12,
+          "period_end": "2028-09-30",
+          "label": "2028 Q3",
+          "revenue": "1812859048.70",
+          "ebitda": "363550753.63",
+          "adjusted_ebitda": "363550753.63",
+          "ebit": "315080791.00",
+          "tax_on_ebit": "72468581.93",
+          "d_and_a": "48469962.63",
+          "capex": "52409755.10",
+          "delta_nwc": "11523883.05",
+          "transactions": "0.00",
+          "fcff": "227148533.55",
+          "fcff_recurring": "227148533.55",
+          "discount_factor": 0.78379934,
+          "present_value": "178038870.95"
+        },
+        {
+          "quarter": 13,
+          "period_end": "2028-12-31",
+          "label": "2028 Q4",
+          "revenue": "1698169535.98",
+          "ebitda": "340550918.75",
+          "adjusted_ebitda": "340550918.75",
+          "ebit": "291957837.60",
+          "tax_on_ebit": "67150302.65",
+          "d_and_a": "48593081.14",
+          "capex": "49094081.29",
+          "delta_nwc": "-55050966.11",
+          "transactions": "0.00",
+          "fcff": "279357500.92",
+          "fcff_recurring": "279357500.92",
+          "discount_factor": 0.76804848,
+          "present_value": "214560104.59"
+        },
+        {
+          "quarter": 14,
+          "period_end": "2029-03-31",
+          "label": "2029 Q1",
+          "revenue": "1747593284.82",
+          "ebitda": "350462357.34",
+          "adjusted_ebitda": "350462357.34",
+          "ebit": "301853619.94",
+          "tax_on_ebit": "69426332.59",
+          "d_and_a": "48608737.40",
+          "capex": "50522921.86",
+          "delta_nwc": "23723399.44",
+          "transactions": "0.00",
+          "fcff": "206789703.44",
+          "fcff_recurring": "206789703.44",
+          "discount_factor": 0.75261415,
+          "present_value": "155632855.87"
+        },
+        {
+          "quarter": 15,
+          "period_end": "2029-06-30",
+          "label": "2029 Q2",
+          "revenue": "1905080512.77",
+          "ebitda": "382044846.03",
+          "adjusted_ebitda": "382044846.03",
+          "ebit": "333376290.37",
+          "tax_on_ebit": "76676546.79",
+          "d_and_a": "48668555.66",
+          "capex": "55075877.62",
+          "delta_nwc": "75593869.42",
+          "transactions": "0.00",
+          "fcff": "174698552.21",
+          "fcff_recurring": "174698552.21",
+          "discount_factor": 0.73748997,
+          "present_value": "128838429.85"
+        },
+        {
+          "quarter": 16,
+          "period_end": "2029-09-30",
+          "label": "2029 Q3",
+          "revenue": "1930648514.16",
+          "ebitda": "387172253.03",
+          "adjusted_ebitda": "387172253.03",
+          "ebit": "338303468.56",
+          "tax_on_ebit": "77809797.77",
+          "d_and_a": "48868784.47",
+          "capex": "55815048.54",
+          "delta_nwc": "12272640.67",
+          "transactions": "0.00",
+          "fcff": "241274766.05",
+          "fcff_recurring": "241274766.05",
+          "discount_factor": 0.72266972,
+          "present_value": "174361967.92"
+        },
+        {
+          "quarter": 17,
+          "period_end": "2029-12-31",
+          "label": "2029 Q4",
+          "revenue": "1808507116.87",
+          "ebitda": "362678017.22",
+          "adjusted_ebitda": "362678017.22",
+          "ebit": "313592161.99",
+          "tax_on_ebit": "72126197.26",
+          "d_and_a": "49085855.22",
+          "capex": "52283940.75",
+          "delta_nwc": "-58627870.70",
+          "transactions": "0.00",
+          "fcff": "296895749.91",
+          "fcff_recurring": "296895749.91",
+          "discount_factor": 0.70814729,
+          "present_value": "210245921.91"
+        },
+        {
+          "quarter": 18,
+          "period_end": "2030-03-31",
+          "label": "2030 Q1",
+          "revenue": "1861142145.12",
+          "ebitda": "373233445.78",
+          "adjusted_ebitda": "373233445.78",
+          "ebit": "324047650.39",
+          "tax_on_ebit": "74530959.59",
+          "d_and_a": "49185795.40",
+          "capex": "53805619.42",
+          "delta_nwc": "25264813.56",
+          "transactions": "0.00",
+          "fcff": "219632053.22",
+          "fcff_recurring": "219632053.22",
+          "discount_factor": 0.6939167,
+          "present_value": "152406350.17"
+        },
+        {
+          "quarter": 19,
+          "period_end": "2030-06-30",
+          "label": "2030 Q2",
+          "revenue": "2028862014.39",
+          "ebitda": "406867988.37",
+          "adjusted_ebitda": "406867988.37",
+          "ebit": "357537823.47",
+          "tax_on_ebit": "82233699.40",
+          "d_and_a": "49330164.90",
+          "capex": "58654400.84",
+          "delta_nwc": "80505537.25",
+          "transactions": "0.00",
+          "fcff": "185474350.88",
+          "fcff_recurring": "185474350.88",
+          "discount_factor": 0.67997208,
+          "present_value": "126117380.62"
+        },
+        {
+          "quarter": 20,
+          "period_end": "2030-09-30",
+          "label": "2030 Q3",
+          "revenue": "2056091281.84",
+          "ebitda": "412328545.66",
+          "adjusted_ebitda": "412328545.66",
+          "ebit": "362706998.39",
+          "tax_on_ebit": "83422609.63",
+          "d_and_a": "49621547.27",
+          "capex": "59441598.96",
+          "delta_nwc": "13070048.38",
+          "transactions": "0.00",
+          "fcff": "256394288.70",
+          "fcff_recurring": "256394288.70",
+          "discount_factor": 0.66630769,
+          "present_value": "170837485.41"
+        }
+      ],
+      "debt": [
+        {
+          "period_end": "2025-12-31",
+          "label": "2025 Q4",
+          "cash": "840214814.79",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "604285185.21",
+          "interest_expense": "21234150.00",
+          "leverage": 0.436,
+          "interest_cover": 16.332
+        },
+        {
+          "period_end": "2026-03-31",
+          "label": "2026 Q1",
+          "cash": "984622451.98",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "459877548.02",
+          "interest_expense": "21234150.00",
+          "leverage": 0.321,
+          "interest_cover": 16.893
+        },
+        {
+          "period_end": "2026-06-30",
+          "label": "2026 Q2",
+          "cash": "1091928808.27",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "352571191.73",
+          "interest_expense": "21234150.00",
+          "leverage": 0.252,
+          "interest_cover": 16.473
+        },
+        {
+          "period_end": "2026-09-30",
+          "label": "2026 Q3",
+          "cash": "1245837037.02",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "198662962.98",
+          "interest_expense": "21234150.00",
+          "leverage": 0.146,
+          "interest_cover": 15.99
+        },
+        {
+          "period_end": "2026-12-31",
+          "label": "2026 Q4",
+          "cash": "1441867839.72",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "2632160.28",
+          "interest_expense": "21234150.00",
+          "leverage": 0.002,
+          "interest_cover": 15.601
+        },
+        {
+          "period_end": "2027-03-31",
+          "label": "2027 Q1",
+          "cash": "1572780230.52",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-128280230.52",
+          "interest_expense": "21234150.00",
+          "leverage": -0.098,
+          "interest_cover": 15.346
+        },
+        {
+          "period_end": "2027-06-30",
+          "label": "2027 Q2",
+          "cash": "1670268388.60",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-225768388.60",
+          "interest_expense": "21234150.00",
+          "leverage": -0.175,
+          "interest_cover": 15.228
+        },
+        {
+          "period_end": "2027-09-30",
+          "label": "2027 Q3",
+          "cash": "1825526644.47",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-381026644.47",
+          "interest_expense": "21234150.00",
+          "leverage": -0.294,
+          "interest_cover": 15.268
+        },
+        {
+          "period_end": "2027-12-31",
+          "label": "2027 Q4",
+          "cash": "2034231113.01",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-589731113.01",
+          "interest_expense": "21234150.00",
+          "leverage": -0.449,
+          "interest_cover": 15.456
+        },
+        {
+          "period_end": "2028-03-31",
+          "label": "2028 Q1",
+          "cash": "2174138054.01",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-729638054.01",
+          "interest_expense": "21234150.00",
+          "leverage": -0.549,
+          "interest_cover": 15.66
+        },
+        {
+          "period_end": "2028-06-30",
+          "label": "2028 Q2",
+          "cash": "2278961227.19",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-834461227.19",
+          "interest_expense": "21234150.00",
+          "leverage": -0.618,
+          "interest_cover": 15.894
+        },
+        {
+          "period_end": "2028-09-30",
+          "label": "2028 Q3",
+          "cash": "2445960157.90",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-1001460157.90",
+          "interest_expense": "21234150.00",
+          "leverage": -0.73,
+          "interest_cover": 16.143
+        },
+        {
+          "period_end": "2028-12-31",
+          "label": "2028 Q4",
+          "cash": "2670554710.76",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-1226054710.76",
+          "interest_expense": "21234150.00",
+          "leverage": -0.881,
+          "interest_cover": 16.388
+        },
+        {
+          "period_end": "2029-03-31",
+          "label": "2029 Q1",
+          "cash": "2821934650.59",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-1377434650.59",
+          "interest_expense": "21234150.00",
+          "leverage": -0.975,
+          "interest_cover": 16.639
+        },
+        {
+          "period_end": "2029-06-30",
+          "label": "2029 Q2",
+          "cash": "2936003317.71",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-1491503317.71",
+          "interest_expense": "21234150.00",
+          "leverage": -1.038,
+          "interest_cover": 16.914
+        },
+        {
+          "period_end": "2029-09-30",
+          "label": "2029 Q3",
+          "cash": "3116338701.02",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-1671838701.02",
+          "interest_expense": "21234150.00",
+          "leverage": -1.145,
+          "interest_cover": 17.192
+        },
+        {
+          "period_end": "2029-12-31",
+          "label": "2029 Q4",
+          "cash": "3358062188.44",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-1913562188.44",
+          "interest_expense": "21234150.00",
+          "leverage": -1.291,
+          "interest_cover": 17.453
+        },
+        {
+          "period_end": "2030-03-31",
+          "label": "2030 Q1",
+          "cash": "3521863372.20",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-2077363372.20",
+          "interest_expense": "21234150.00",
+          "leverage": -1.38,
+          "interest_cover": 17.721
+        },
+        {
+          "period_end": "2030-06-30",
+          "label": "2030 Q2",
+          "cash": "3645977568.58",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-2201477568.58",
+          "interest_expense": "21234150.00",
+          "leverage": -1.439,
+          "interest_cover": 18.013
+        },
+        {
+          "period_end": "2030-09-30",
+          "label": "2030 Q3",
+          "cash": "3840711893.31",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "-2396211893.31",
+          "interest_expense": "21234150.00",
+          "leverage": -1.541,
+          "interest_cover": 18.309
+        }
+      ],
+      "present_explicit": "3521818941.96",
+      "terminals": [
+        {
+          "method": "gordon",
+          "label": "Perpetual growth",
+          "terminal_value": "17028296621.13",
+          "present_terminal": "11346084932.04",
+          "enterprise_value": "14867903874.00",
+          "terminal_share": 0.76313,
+          "implied_growth": null,
+          "implied_multiple": 10.95,
+          "reason": null
+        },
+        {
+          "method": "exit_multiple",
+          "label": "Exit multiple",
+          "terminal_value": "18661295964.31",
+          "present_terminal": "12434164946.97",
+          "enterprise_value": "15955983888.93",
+          "terminal_share": 0.77928,
+          "implied_growth": 0.02995,
+          "implied_multiple": null,
+          "reason": null
+        }
+      ],
+      "bridge": {
+        "enterprise_value": "14867903874.00",
+        "debt": "1444500000.00",
+        "cash": "666800000.00",
+        "other_senior_claims": "0.00",
+        "non_operating_assets": "0.00",
+        "equity_value": "14090203874.00"
+      },
+      "sensitivity": [
+        {
+          "wacc": 0.07459,
+          "growth": 0.015,
+          "enterprise_value": "15329358020.24",
+          "equity_value": "14551658020.24"
+        },
+        {
+          "wacc": 0.07459,
+          "growth": 0.02,
+          "enterprise_value": "16466276625.58",
+          "equity_value": "15688576625.58"
+        },
+        {
+          "wacc": 0.07459,
+          "growth": 0.025,
+          "enterprise_value": "17832465386.83",
+          "equity_value": "17054765386.83"
+        },
+        {
+          "wacc": 0.07459,
+          "growth": 0.03,
+          "enterprise_value": "19505052815.28",
+          "equity_value": "18727352815.28"
+        },
+        {
+          "wacc": 0.07459,
+          "growth": 0.035,
+          "enterprise_value": "21600132433.02",
+          "equity_value": "20822432433.02"
+        },
+        {
+          "wacc": 0.07959,
+          "growth": 0.015,
+          "enterprise_value": "14151242540.81",
+          "equity_value": "13373542540.81"
+        },
+        {
+          "wacc": 0.07959,
+          "growth": 0.02,
+          "enterprise_value": "15096219526.21",
+          "equity_value": "14318519526.21"
+        },
+        {
+          "wacc": 0.07959,
+          "growth": 0.025,
+          "enterprise_value": "16214305363.17",
+          "equity_value": "15436605363.17"
+        },
+        {
+          "wacc": 0.07959,
+          "growth": 0.03,
+          "enterprise_value": "17557863554.05",
+          "equity_value": "16780163554.05"
+        },
+        {
+          "wacc": 0.07959,
+          "growth": 0.035,
+          "enterprise_value": "19202744995.90",
+          "equity_value": "18425044995.90"
+        },
+        {
+          "wacc": 0.08459,
+          "growth": 0.015,
+          "enterprise_value": "13142665534.65",
+          "equity_value": "12364965534.65"
+        },
+        {
+          "wacc": 0.08459,
+          "growth": 0.02,
+          "enterprise_value": "13938506730.38",
+          "equity_value": "13160806730.38"
+        },
+        {
+          "wacc": 0.08459,
+          "growth": 0.025,
+          "enterprise_value": "14867903874.00",
+          "equity_value": "14090203874.00"
+        },
+        {
+          "wacc": 0.08459,
+          "growth": 0.03,
+          "enterprise_value": "15967555822.41",
+          "equity_value": "15189855822.41"
+        },
+        {
+          "wacc": 0.08459,
+          "growth": 0.035,
+          "enterprise_value": "17288962760.56",
+          "equity_value": "16511262760.56"
+        },
+        {
+          "wacc": 0.08959,
+          "growth": 0.015,
+          "enterprise_value": "12269526277.73",
+          "equity_value": "11491826277.73"
+        },
+        {
+          "wacc": 0.08959,
+          "growth": 0.02,
+          "enterprise_value": "12947361204.47",
+          "equity_value": "12169661204.47"
+        },
+        {
+          "wacc": 0.08959,
+          "growth": 0.025,
+          "enterprise_value": "13730142658.42",
+          "equity_value": "12952442658.42"
+        },
+        {
+          "wacc": 0.08959,
+          "growth": 0.03,
+          "enterprise_value": "14644288409.23",
+          "equity_value": "13866588409.23"
+        },
+        {
+          "wacc": 0.08959,
+          "growth": 0.035,
+          "enterprise_value": "15725895086.10",
+          "equity_value": "14948195086.10"
+        },
+        {
+          "wacc": 0.09459,
+          "growth": 0.015,
+          "enterprise_value": "11506293458.82",
+          "equity_value": "10728593458.82"
+        },
+        {
+          "wacc": 0.09459,
+          "growth": 0.02,
+          "enterprise_value": "12089280609.51",
+          "equity_value": "11311580609.51"
+        },
+        {
+          "wacc": 0.09459,
+          "growth": 0.025,
+          "enterprise_value": "12756044003.82",
+          "equity_value": "11978344003.82"
+        },
+        {
+          "wacc": 0.09459,
+          "growth": 0.03,
+          "enterprise_value": "13526039763.32",
+          "equity_value": "12748339763.32"
+        },
+        {
+          "wacc": 0.09459,
+          "growth": 0.035,
+          "enterprise_value": "14425254158.53",
+          "equity_value": "13647554158.53"
+        }
+      ]
+    },
+    {
+      "scenario": "alt_a",
+      "label": "With the decision",
+      "rows": [
+        {
+          "quarter": 1,
+          "period_end": "2025-12-31",
+          "label": "2025 Q4",
+          "revenue": "1406576924.50",
+          "ebitda": "336861107.65",
+          "adjusted_ebitda": "336861107.65",
+          "ebit": "287436107.65",
+          "tax_on_ebit": "66110304.76",
+          "d_and_a": "49425000.00",
+          "capex": "40664138.89",
+          "delta_nwc": "-7187076.24",
+          "transactions": "0.00",
+          "fcff": "237273740.24",
+          "fcff_recurring": "237273740.24",
+          "discount_factor": 0.97990448,
+          "present_value": "232505599.96"
+        },
+        {
+          "quarter": 2,
+          "period_end": "2026-03-31",
+          "label": "2026 Q1",
+          "revenue": "1447151935.40",
+          "ebitda": "333351448.32",
+          "adjusted_ebitda": "333351448.32",
+          "ebit": "284200225.23",
+          "tax_on_ebit": "65366051.80",
+          "d_and_a": "49151223.09",
+          "capex": "41837162.45",
+          "delta_nwc": "19476005.23",
+          "transactions": "0.00",
+          "fcff": "206672228.83",
+          "fcff_recurring": "206672228.83",
+          "discount_factor": 0.96021278,
+          "present_value": "198449315.59"
+        },
+        {
+          "quarter": 3,
+          "period_end": "2026-06-30",
+          "label": "2026 Q2",
+          "revenue": "1577390705.91",
+          "ebitda": "348918824.15",
+          "adjusted_ebitda": "348918824.15",
+          "ebit": "299996165.45",
+          "tax_on_ebit": "68999118.05",
+          "d_and_a": "48922658.70",
+          "capex": "45602365.31",
+          "delta_nwc": "62514609.84",
+          "transactions": "0.00",
+          "fcff": "171802730.94",
+          "fcff_recurring": "171802730.94",
+          "discount_factor": 0.9409168,
+          "present_value": "161652076.06"
+        },
+        {
+          "quarter": 4,
+          "period_end": "2026-09-30",
+          "label": "2026 Q3",
+          "revenue": "1598464791.23",
+          "ebitda": "338970443.63",
+          "adjusted_ebitda": "338970443.63",
+          "ebit": "290151544.10",
+          "tax_on_ebit": "66734855.14",
+          "d_and_a": "48818899.53",
+          "capex": "46211617.11",
+          "delta_nwc": "10115560.95",
+          "transactions": "0.00",
+          "fcff": "215908410.42",
+          "fcff_recurring": "215908410.42",
+          "discount_factor": 0.92200858,
+          "present_value": "199069407.90"
+        },
+        {
+          "quarter": 5,
+          "period_end": "2026-12-31",
+          "label": "2026 Q4",
+          "revenue": "1872308835.06",
+          "ebitda": "273818935.72",
+          "adjusted_ebitda": "378818935.72",
+          "ebit": "181331513.77",
+          "tax_on_ebit": "41706248.17",
+          "d_and_a": "92487421.95",
+          "capex": "54128448.42",
+          "delta_nwc": "-48554858.96",
+          "transactions": "-4000000000.00",
+          "fcff": "-3773460901.91",
+          "fcff_recurring": "307389098.09",
+          "discount_factor": 0.90348034,
+          "present_value": "-3409247732.77"
+        },
+        {
+          "quarter": 6,
+          "period_end": "2027-03-31",
+          "label": "2027 Q1",
+          "revenue": "1926781469.88",
+          "ebitda": "363931115.35",
+          "adjusted_ebitda": "388931115.35",
+          "ebit": "271861161.33",
+          "tax_on_ebit": "62528067.11",
+          "d_and_a": "92069954.03",
+          "capex": "55703252.29",
+          "delta_nwc": "26146864.72",
+          "transactions": "0.00",
+          "fcff": "219552931.24",
+          "fcff_recurring": "238802931.24",
+          "discount_factor": 0.88532443,
+          "present_value": "194375573.06"
+        },
+        {
+          "quarter": 7,
+          "period_end": "2027-06-30",
+          "label": "2027 Q2",
+          "revenue": "2100416534.29",
+          "ebitda": "397989238.76",
+          "adjusted_ebitda": "422989238.76",
+          "ebit": "306274494.16",
+          "tax_on_ebit": "70443133.66",
+          "d_and_a": "91714744.60",
+          "capex": "60723042.01",
+          "delta_nwc": "83344830.92",
+          "transactions": "0.00",
+          "fcff": "183478232.18",
+          "fcff_recurring": "202728232.18",
+          "discount_factor": 0.86753337,
+          "present_value": "159173488.77"
+        },
+        {
+          "quarter": 8,
+          "period_end": "2027-09-30",
+          "label": "2027 Q3",
+          "revenue": "2128584824.75",
+          "ebitda": "402640514.18",
+          "adjusted_ebitda": "427640514.18",
+          "ebit": "311113010.29",
+          "tax_on_ebit": "71555992.37",
+          "d_and_a": "91527503.89",
+          "capex": "61537387.28",
+          "delta_nwc": "13520779.42",
+          "transactions": "0.00",
+          "fcff": "256026355.11",
+          "fcff_recurring": "275276355.11",
+          "discount_factor": 0.85009983,
+          "present_value": "217647960.99"
+        },
+        {
+          "quarter": 9,
+          "period_end": "2027-12-31",
+          "label": "2027 Q4",
+          "revenue": "1993921097.59",
+          "ebitda": "374645283.91",
+          "adjusted_ebitda": "399645283.91",
+          "ebit": "283273721.16",
+          "tax_on_ebit": "65152955.87",
+          "d_and_a": "91371562.75",
+          "capex": "57644258.93",
+          "delta_nwc": "-64638589.04",
+          "transactions": "0.00",
+          "fcff": "316486658.15",
+          "fcff_recurring": "335736658.15",
+          "discount_factor": 0.83301663,
+          "present_value": "263638648.81"
+        },
+        {
+          "quarter": 10,
+          "period_end": "2028-03-31",
+          "label": "2028 Q1",
+          "revenue": "2051952438.65",
+          "ebitda": "386276612.65",
+          "adjusted_ebitda": "411276612.65",
+          "ebit": "295177778.15",
+          "tax_on_ebit": "67890888.97",
+          "d_and_a": "91098834.51",
+          "capex": "59321945.00",
+          "delta_nwc": "27855043.71",
+          "transactions": "0.00",
+          "fcff": "231208734.97",
+          "fcff_recurring": "250458734.97",
+          "discount_factor": 0.81627672,
+          "present_value": "188730308.27"
+        },
+        {
+          "quarter": 11,
+          "period_end": "2028-06-30",
+          "label": "2028 Q2",
+          "revenue": "2236867489.68",
+          "ebitda": "423339477.45",
+          "adjusted_ebitda": "448339477.45",
+          "ebit": "332452420.75",
+          "tax_on_ebit": "76464056.77",
+          "d_and_a": "90887056.71",
+          "capex": "64667839.13",
+          "delta_nwc": "88759224.50",
+          "transactions": "0.00",
+          "fcff": "193448357.06",
+          "fcff_recurring": "212698357.06",
+          "discount_factor": 0.79987321,
+          "present_value": "154734158.92"
+        },
+        {
+          "quarter": 12,
+          "period_end": "2028-09-30",
+          "label": "2028 Q3",
+          "revenue": "2266888389.44",
+          "ebitda": "429356621.77",
+          "adjusted_ebitda": "454356621.77",
+          "ebit": "338507665.62",
+          "tax_on_ebit": "77856763.09",
+          "d_and_a": "90848956.16",
+          "capex": "65535743.34",
+          "delta_nwc": "14410031.88",
+          "transactions": "0.00",
+          "fcff": "271554083.46",
+          "fcff_recurring": "290804083.46",
+          "discount_factor": 0.78379934,
+          "present_value": "212843911.72"
+        },
+        {
+          "quarter": 13,
+          "period_end": "2028-12-31",
+          "label": "2028 Q4",
+          "revenue": "2123474964.68",
+          "ebitda": "438371167.35",
+          "adjusted_ebitda": "438371167.35",
+          "ebit": "347531999.09",
+          "tax_on_ebit": "79932359.79",
+          "d_and_a": "90839168.26",
+          "capex": "61389661.23",
+          "delta_nwc": "-68838443.88",
+          "transactions": "0.00",
+          "fcff": "365887590.21",
+          "fcff_recurring": "365887590.21",
+          "discount_factor": 0.76804848,
+          "present_value": "281019408.34"
+        },
+        {
+          "quarter": 14,
+          "period_end": "2029-03-31",
+          "label": "2029 Q1",
+          "revenue": "2185276858.48",
+          "ebitda": "451129579.28",
+          "adjusted_ebitda": "451129579.28",
+          "ebit": "360429458.12",
+          "tax_on_ebit": "82898775.37",
+          "d_and_a": "90700121.16",
+          "capex": "63176353.98",
+          "delta_nwc": "29664909.03",
+          "transactions": "0.00",
+          "fcff": "275389540.91",
+          "fcff_recurring": "275389540.91",
+          "discount_factor": 0.75261415,
+          "present_value": "207262063.90"
+        },
+        {
+          "quarter": 15,
+          "period_end": "2029-06-30",
+          "label": "2029 Q2",
+          "revenue": "2382206657.73",
+          "ebitda": "491783859.37",
+          "adjusted_ebitda": "491783859.37",
+          "ebit": "401162605.93",
+          "tax_on_ebit": "92267399.36",
+          "d_and_a": "90621253.44",
+          "capex": "68869594.48",
+          "delta_nwc": "94526303.64",
+          "transactions": "0.00",
+          "fcff": "236120561.89",
+          "fcff_recurring": "236120561.89",
+          "discount_factor": 0.73748997,
+          "present_value": "174136545.88"
+        },
+        {
+          "quarter": 16,
+          "period_end": "2029-09-30",
+          "label": "2029 Q3",
+          "revenue": "2414178148.03",
+          "ebitda": "498384068.82",
+          "adjusted_ebitda": "498384068.82",
+          "ebit": "407661304.72",
+          "tax_on_ebit": "93762100.09",
+          "d_and_a": "90722764.10",
+          "capex": "69793890.26",
+          "delta_nwc": "15346315.34",
+          "transactions": "0.00",
+          "fcff": "319481763.13",
+          "fcff_recurring": "319481763.13",
+          "discount_factor": 0.72266972,
+          "present_value": "230879796.69"
+        },
+        {
+          "quarter": 17,
+          "period_end": "2029-12-31",
+          "label": "2029 Q4",
+          "revenue": "2261446519.18",
+          "ebitda": "466854079.75",
+          "adjusted_ebitda": "466854079.75",
+          "ebit": "376004092.96",
+          "tax_on_ebit": "86480941.38",
+          "d_and_a": "90849986.79",
+          "capex": "65378418.87",
+          "delta_nwc": "-73311181.85",
+          "transactions": "0.00",
+          "fcff": "388305901.35",
+          "fcff_recurring": "388305901.35",
+          "discount_factor": 0.70814729,
+          "present_value": "274977773.30"
+        },
+        {
+          "quarter": 18,
+          "period_end": "2030-03-31",
+          "label": "2030 Q1",
+          "revenue": "2327263955.18",
+          "ebitda": "480441462.10",
+          "adjusted_ebitda": "480441462.10",
+          "ebit": "389606211.81",
+          "tax_on_ebit": "89609428.72",
+          "d_and_a": "90835250.29",
+          "capex": "67281200.94",
+          "delta_nwc": "31592369.28",
+          "transactions": "0.00",
+          "fcff": "291958463.16",
+          "fcff_recurring": "291958463.16",
+          "discount_factor": 0.6939167,
+          "present_value": "202594854.08"
+        },
+        {
+          "quarter": 19,
+          "period_end": "2030-06-30",
+          "label": "2030 Q2",
+          "revenue": "2536989153.95",
+          "ebitda": "523737230.46",
+          "adjusted_ebitda": "523737230.46",
+          "ebit": "432856794.22",
+          "tax_on_ebit": "99557062.67",
+          "d_and_a": "90880436.25",
+          "capex": "73344356.44",
+          "delta_nwc": "100668095.41",
+          "transactions": "0.00",
+          "fcff": "250167715.95",
+          "fcff_recurring": "250167715.95",
+          "discount_factor": 0.67997208,
+          "present_value": "170107062.79"
+        },
+        {
+          "quarter": 20,
+          "period_end": "2030-09-30",
+          "label": "2030 Q3",
+          "revenue": "2571037973.29",
+          "ebitda": "530766284.69",
+          "adjusted_ebitda": "530766284.69",
+          "ebit": "439652600.94",
+          "tax_on_ebit": "101120098.22",
+          "d_and_a": "91113683.76",
+          "capex": "74328707.81",
+          "delta_nwc": "16343433.28",
+          "transactions": "0.00",
+          "fcff": "338974045.39",
+          "fcff_recurring": "338974045.39",
+          "discount_factor": 0.66630769,
+          "present_value": "225861012.07"
+        }
+      ],
+      "debt": [
+        {
+          "period_end": "2025-12-31",
+          "label": "2025 Q4",
+          "cash": "840214814.79",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "604285185.21",
+          "interest_expense": "21234150.00",
+          "leverage": 0.436,
+          "interest_cover": 16.332
+        },
+        {
+          "period_end": "2026-03-31",
+          "label": "2026 Q1",
+          "cash": "984622451.98",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "459877548.02",
+          "interest_expense": "21234150.00",
+          "leverage": 0.321,
+          "interest_cover": 16.893
+        },
+        {
+          "period_end": "2026-06-30",
+          "label": "2026 Q2",
+          "cash": "1091928808.27",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "352571191.73",
+          "interest_expense": "21234150.00",
+          "leverage": 0.252,
+          "interest_cover": 16.473
+        },
+        {
+          "period_end": "2026-09-30",
+          "label": "2026 Q3",
+          "cash": "1245837037.02",
+          "term_debt": "1444500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "198662962.98",
+          "interest_expense": "21234150.00",
+          "leverage": 0.146,
+          "interest_cover": 15.99
+        },
+        {
+          "period_end": "2026-12-31",
+          "label": "2026 Q4",
+          "cash": "1069726539.72",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "4046773460.28",
+          "interest_expense": "80904150.00",
+          "leverage": 3.125,
+          "interest_cover": 8.956
+        },
+        {
+          "period_end": "2027-03-31",
+          "label": "2027 Q1",
+          "cash": "1196216391.42",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "3920283608.58",
+          "interest_expense": "80904150.00",
+          "leverage": 2.957,
+          "interest_cover": 6.489
+        },
+        {
+          "period_end": "2027-06-30",
+          "label": "2027 Q2",
+          "cash": "1280715542.02",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "3835784457.98",
+          "interest_expense": "80904150.00",
+          "leverage": 2.79,
+          "interest_cover": 5.208
+        },
+        {
+          "period_end": "2027-09-30",
+          "label": "2027 Q3",
+          "cash": "1437304744.31",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "3679195255.69",
+          "interest_expense": "80904150.00",
+          "leverage": 2.558,
+          "interest_cover": 4.445
+        },
+        {
+          "period_end": "2027-12-31",
+          "label": "2027 Q4",
+          "cash": "1660590486.36",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "3455909513.64",
+          "interest_expense": "80904150.00",
+          "leverage": 2.245,
+          "interest_cover": 4.756
+        },
+        {
+          "period_end": "2028-03-31",
+          "label": "2028 Q1",
+          "cash": "1797557565.17",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "3318942434.83",
+          "interest_expense": "80904150.00",
+          "leverage": 2.125,
+          "interest_cover": 4.825
+        },
+        {
+          "period_end": "2028-06-30",
+          "label": "2028 Q2",
+          "cash": "1890356152.70",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "3226143847.30",
+          "interest_expense": "80904150.00",
+          "leverage": 2.033,
+          "interest_cover": 4.904
+        },
+        {
+          "period_end": "2028-09-30",
+          "label": "2028 Q3",
+          "cash": "2060614666.48",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "3055885333.52",
+          "interest_expense": "80904150.00",
+          "leverage": 1.894,
+          "interest_cover": 4.986
+        },
+        {
+          "period_end": "2028-12-31",
+          "label": "2028 Q4",
+          "cash": "2324423248.45",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "2792076751.55",
+          "interest_expense": "80904150.00",
+          "leverage": 1.665,
+          "interest_cover": 5.183
+        },
+        {
+          "period_end": "2029-03-31",
+          "label": "2029 Q1",
+          "cash": "2496728809.98",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "2619771190.02",
+          "interest_expense": "80904150.00",
+          "leverage": 1.504,
+          "interest_cover": 5.384
+        },
+        {
+          "period_end": "2029-06-30",
+          "label": "2029 Q2",
+          "cash": "2622889474.22",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "2493610525.78",
+          "interest_expense": "80904150.00",
+          "leverage": 1.377,
+          "interest_cover": 5.595
+        },
+        {
+          "period_end": "2029-09-30",
+          "label": "2029 Q3",
+          "cash": "2831867060.68",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "2284632939.32",
+          "interest_expense": "80904150.00",
+          "leverage": 1.215,
+          "interest_cover": 5.808
+        },
+        {
+          "period_end": "2029-12-31",
+          "label": "2029 Q4",
+          "cash": "3116933438.81",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "1999566561.19",
+          "interest_expense": "80904150.00",
+          "leverage": 1.048,
+          "interest_cover": 5.896
+        },
+        {
+          "period_end": "2030-03-31",
+          "label": "2030 Q1",
+          "cash": "3304630841.46",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "1811869158.54",
+          "interest_expense": "80904150.00",
+          "leverage": 0.935,
+          "interest_cover": 5.987
+        },
+        {
+          "period_end": "2030-06-30",
+          "label": "2030 Q2",
+          "cash": "3443263193.71",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "1673236806.29",
+          "interest_expense": "80904150.00",
+          "leverage": 0.85,
+          "interest_cover": 6.086
+        },
+        {
+          "period_end": "2030-09-30",
+          "label": "2030 Q3",
+          "cash": "3670170266.39",
+          "term_debt": "5116500000.00",
+          "revolver": "0.00",
+          "shortfall": "0.00",
+          "net_debt": "1446329733.61",
+          "interest_expense": "80904150.00",
+          "leverage": 0.723,
+          "interest_cover": 6.186
+        }
+      ],
+      "present_explicit": "540411234.32",
+      "terminals": [
+        {
+          "method": "gordon",
+          "label": "Perpetual growth",
+          "terminal_value": "22551166184.59",
+          "present_terminal": "15026015375.46",
+          "enterprise_value": "15566426609.77",
+          "terminal_share": 0.96528,
+          "implied_growth": null,
+          "implied_multiple": 11.265,
+          "reason": null
+        },
+        {
+          "method": "exit_multiple",
+          "label": "Exit multiple",
+          "terminal_value": "24021588684.03",
+          "present_terminal": "16005769189.71",
+          "enterprise_value": "16546180424.02",
+          "terminal_share": 0.96734,
+          "implied_growth": 0.02846,
+          "implied_multiple": null,
+          "reason": null
+        }
+      ],
+      "bridge": {
+        "enterprise_value": "15566426609.77",
+        "debt": "1444500000.00",
+        "cash": "666800000.00",
+        "other_senior_claims": "0.00",
+        "non_operating_assets": "0.00",
+        "equity_value": "14788726609.77"
+      },
+      "sensitivity": [
+        {
+          "wacc": 0.07459,
+          "growth": 0.015,
+          "enterprise_value": "16129883875.59",
+          "equity_value": "15352183875.59"
+        },
+        {
+          "wacc": 0.07459,
+          "growth": 0.02,
+          "enterprise_value": "17635567790.32",
+          "equity_value": "16857867790.32"
+        },
+        {
+          "wacc": 0.07459,
+          "growth": 0.025,
+          "enterprise_value": "19444886797.53",
+          "equity_value": "18667186797.53"
+        },
+        {
+          "wacc": 0.07459,
+          "growth": 0.03,
+          "enterprise_value": "21659986431.91",
+          "equity_value": "20882286431.91"
+        },
+        {
+          "wacc": 0.07459,
+          "growth": 0.035,
+          "enterprise_value": "24434615737.55",
+          "equity_value": "23656915737.55"
+        },
+        {
+          "wacc": 0.07959,
+          "growth": 0.015,
+          "enterprise_value": "14593611955.87",
+          "equity_value": "13815911955.87"
+        },
+        {
+          "wacc": 0.07959,
+          "growth": 0.02,
+          "enterprise_value": "15845087433.04",
+          "equity_value": "15067387433.04"
+        },
+        {
+          "wacc": 0.07959,
+          "growth": 0.025,
+          "enterprise_value": "17325818739.67",
+          "equity_value": "16548118739.67"
+        },
+        {
+          "wacc": 0.07959,
+          "growth": 0.03,
+          "enterprise_value": "19105153214.48",
+          "equity_value": "18327453214.48"
+        },
+        {
+          "wacc": 0.07959,
+          "growth": 0.035,
+          "enterprise_value": "21283543608.26",
+          "equity_value": "20505843608.26"
+        },
+        {
+          "wacc": 0.08459,
+          "growth": 0.015,
+          "enterprise_value": "13281633399.72",
+          "equity_value": "12503933399.72"
+        },
+        {
+          "wacc": 0.08459,
+          "growth": 0.02,
+          "enterprise_value": "14335593608.46",
+          "equity_value": "13557893608.46"
+        },
+        {
+          "wacc": 0.08459,
+          "growth": 0.025,
+          "enterprise_value": "15566426609.77",
+          "equity_value": "14788726609.77"
+        },
+        {
+          "wacc": 0.08459,
+          "growth": 0.03,
+          "enterprise_value": "17022733977.77",
+          "equity_value": "16245033977.77"
+        },
+        {
+          "wacc": 0.08459,
+          "growth": 0.035,
+          "enterprise_value": "18772719200.75",
+          "equity_value": "17995019200.75"
+        },
+        {
+          "wacc": 0.08959,
+          "growth": 0.015,
+          "enterprise_value": "12148786478.04",
+          "equity_value": "11371086478.04"
+        },
+        {
+          "wacc": 0.08959,
+          "growth": 0.02,
+          "enterprise_value": "13046460048.81",
+          "equity_value": "12268760048.81"
+        },
+        {
+          "wacc": 0.08959,
+          "growth": 0.025,
+          "enterprise_value": "14083116903.13",
+          "equity_value": "13305416903.13"
+        },
+        {
+          "wacc": 0.08959,
+          "growth": 0.03,
+          "enterprise_value": "15293742747.21",
+          "equity_value": "14516042747.21"
+        },
+        {
+          "wacc": 0.08959,
+          "growth": 0.035,
+          "enterprise_value": "16726141240.54",
+          "equity_value": "15948441240.54"
+        },
+        {
+          "wacc": 0.09459,
+          "growth": 0.015,
+          "enterprise_value": "11161259386.12",
+          "equity_value": "10383559386.12"
+        },
+        {
+          "wacc": 0.09459,
+          "growth": 0.02,
+          "enterprise_value": "11933317847.48",
+          "equity_value": "11155617847.48"
+        },
+        {
+          "wacc": 0.09459,
+          "growth": 0.025,
+          "enterprise_value": "12816322420.88",
+          "equity_value": "12038622420.88"
+        },
+        {
+          "wacc": 0.09459,
+          "growth": 0.03,
+          "enterprise_value": "13836039134.43",
+          "equity_value": "13058339134.43"
+        },
+        {
+          "wacc": 0.09459,
+          "growth": 0.035,
+          "enterprise_value": "15026881988.46",
+          "equity_value": "14249181988.46"
+        }
+      ]
+    }
+  ],
+  "tornado": [
+    {
+      "driver": "margin",
+      "label": "EBITDA margin",
+      "low_label": "−2 points",
+      "high_label": "+2 points",
+      "low_value": "13731537414.01",
+      "high_value": "17401315805.54"
+    },
+    {
+      "driver": "capex",
+      "label": "CAPEX of revenue",
+      "low_label": "+1 point",
+      "high_label": "−1 point",
+      "low_value": "14202342231.70",
+      "high_value": "16930510987.85"
+    },
+    {
+      "driver": "growth",
+      "label": "Revenue growth",
+      "low_label": "−2 points",
+      "high_label": "+2 points",
+      "low_value": "14456942468.45",
+      "high_value": "16759237471.69"
+    },
+    {
+      "driver": "synergies",
+      "label": "Cost synergies",
+      "low_label": "0% of target revenue",
+      "high_label": "6% of target revenue",
+      "low_value": "14974686721.57",
+      "high_value": "16158166497.98"
+    }
+  ],
+  "base_value": "15566426609.77",
+  "scenarios": [
+    {
+      "scenario": "bear",
+      "label": "Bear",
+      "weight": "0.25",
+      "paths": 2000,
+      "ev_p10": "9963153222.95",
+      "ev_p50": "12584372186.67",
+      "ev_p90": "16231982109.79",
+      "ev_mean": "12861208192.10",
+      "equity_p50": "11806672186.67",
+      "covenant_probability": 0.636,
+      "shortfall_probability": 0.0
+    },
+    {
+      "scenario": "base",
+      "label": "Base",
+      "weight": "0.5",
+      "paths": 2000,
+      "ev_p10": "12327012449.12",
+      "ev_p50": "15354389583.83",
+      "ev_p90": "19474566330.03",
+      "ev_mean": "15673842207.34",
+      "equity_p50": "14576689583.83",
+      "covenant_probability": 0.183,
+      "shortfall_probability": 0.0
+    },
+    {
+      "scenario": "bull",
+      "label": "Bull",
+      "weight": "0.25",
+      "paths": 2000,
+      "ev_p10": "15052556078.23",
+      "ev_p50": "18575827988.69",
+      "ev_p90": "23272927986.77",
+      "ev_mean": "18909819224.69",
+      "equity_p50": "17798127988.69",
+      "covenant_probability": 0.001,
+      "shortfall_probability": 0.0
+    }
+  ],
+  "weighted_enterprise_value": "15779677957.87",
+  "stress": [
+    {
+      "key": "revenue_fall",
+      "label": "Revenue −20%",
+      "enterprise_value": "12816742007.20",
+      "ev_change": "-2749684602.57",
+      "lowest_cash": "944471569.39",
+      "peak_leverage": 3.933,
+      "lowest_interest_cover": 3.643,
+      "first_breach": "2026 Q4",
+      "peak_shortfall": "0.00"
+    },
+    {
+      "key": "margin_compression",
+      "label": "Gross margin −3 points",
+      "enterprise_value": "12814092816.13",
+      "ev_change": "-2752333793.65",
+      "lowest_cash": "815845869.58",
+      "peak_leverage": 3.76,
+      "lowest_interest_cover": 3.85,
+      "first_breach": "2026 Q4",
+      "peak_shortfall": "0.00"
+    },
+    {
+      "key": "rates_up",
+      "label": "Rates +200 bps",
+      "enterprise_value": "15566426609.77",
+      "ev_change": "0.00",
+      "lowest_cash": "838963516.67",
+      "peak_leverage": 3.13,
+      "lowest_interest_cover": 4.329,
+      "first_breach": null,
+      "peak_shortfall": "0.00"
+    },
+    {
+      "key": "working_capital",
+      "label": "Working capital takes 5 more points of revenue",
+      "enterprise_value": "14811774583.52",
+      "ev_change": "-754652026.26",
+      "lowest_cash": "558899429.89",
+      "peak_leverage": 3.361,
+      "lowest_interest_cover": 4.445,
+      "first_breach": null,
+      "peak_shortfall": "0.00"
+    },
+    {
+      "key": "refinancing_closed",
+      "label": "Lenders shut, debt due in quarter 8",
+      "enterprise_value": "15566426609.77",
+      "ev_change": "0.00",
+      "lowest_cash": "113724000.00",
+      "peak_leverage": 3.125,
+      "lowest_interest_cover": 4.757,
+      "first_breach": null,
+      "peak_shortfall": "0.00"
+    },
+    {
+      "key": "synergies_late",
+      "label": "Synergies two years late",
+      "enterprise_value": "14974686721.57",
+      "ev_change": "-591739888.20",
+      "lowest_cash": "840214814.79",
+      "peak_leverage": 3.125,
+      "lowest_interest_cover": 4.445,
+      "first_breach": null,
+      "peak_shortfall": "0.00"
+    },
+    {
+      "key": "deal_fails",
+      "label": "The deal fails",
+      "enterprise_value": "14812249485.15",
+      "ev_change": "-754177124.62",
+      "lowest_cash": "840214814.79",
+      "peak_leverage": 0.436,
+      "lowest_interest_cover": 14.286,
+      "first_breach": null,
+      "peak_shortfall": "0.00"
+    },
+    {
+      "key": "recession",
+      "label": "Recession: all of revenue, margin and rates",
+      "enterprise_value": "10614874972.28",
+      "ev_change": "-4951551637.49",
+      "lowest_cash": "923725115.09",
+      "peak_leverage": 4.714,
+      "lowest_interest_cover": 3.085,
+      "first_breach": "2026 Q4",
+      "peak_shortfall": "0.00"
+    }
+  ],
+  "adverse_title": "What the worst stress does, quarter by quarter",
+  "adverse_story": [
+    "Revenue falls 20% and the gross margin loses 3 points from the first quarter, and rates rise 200 basis points, on top of the deal.",
+    "Net debt / EBITDA peaks at 4.7x in 2026 Q4, above the limit of 3.5x.",
+    "Interest cover falls to 3.1x, above the floor of 3.0x.",
+    "The first covenant breach comes in 2026 Q4.",
+    "Cash stays at USD 924 million or above, with no funding shortfall.",
+    "Enterprise value falls by USD 4,952 million, to USD 10,615 million.",
+    "For scale: on 18.1% of the simulated paths a covenant breaks, conditional on the assumed model, without this stress being imposed."
+  ],
+  "checks": [
+    {
+      "key": "must_reconciliation",
+      "label": "Statements reconcile",
+      "passed": true,
+      "detail": "10 central and stress paths, largest residual 4.00e-30 USD."
+    },
+    {
+      "key": "must_currency",
+      "label": "One currency",
+      "passed": true,
+      "detail": "Every amount is in USD; nothing is converted (D-04)."
+    },
+    {
+      "key": "must_discount_factors",
+      "label": "Quarterly factors match the annual rate",
+      "passed": true,
+      "detail": "Four quarters at 8.4589% compound to exactly one year; a quarter is not rate / 4."
+    },
+    {
+      "key": "must_wacc_above_growth",
+      "label": "WACC above terminal growth",
+      "passed": true,
+      "detail": "WACC 8.46%, terminal growth 2.50%."
+    },
+    {
+      "key": "must_value_adds_up",
+      "label": "EV and the bridge add up",
+      "passed": true,
+      "detail": "Explicit years plus terminal value give EV; EV less claims gives equity value."
+    },
+    {
+      "key": "must_scenario_weights",
+      "label": "Scenario weights are a whole",
+      "passed": true,
+      "detail": "Weights add up to 100%, and the weighted value lies between the scenarios."
+    },
+    {
+      "key": "must_matrix_direction",
+      "label": "Value falls as WACC rises",
+      "passed": true,
+      "detail": "In every column of the sensitivity matrix."
+    },
+    {
+      "key": "terminal_growth_bound",
+      "label": "Terminal growth at or below the risk-free rate",
+      "passed": true,
+      "detail": "Terminal growth 2.50%, risk-free 4.12%."
+    },
+    {
+      "key": "terminal_share",
+      "label": "Terminal value below 75% of EV",
+      "passed": false,
+      "detail": "It is 96.5% of EV: most of this value lies beyond the forecast."
+    },
+    {
+      "key": "terminal_methods",
+      "label": "Terminal methods within 15% of each other",
+      "passed": true,
+      "detail": "Perpetual growth and exit multiple differ by 5.9%."
+    }
+  ]
+}

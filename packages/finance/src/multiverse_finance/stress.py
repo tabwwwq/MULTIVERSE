@@ -68,6 +68,16 @@ def rate_shock(baseline: Baseline, points: Decimal) -> Baseline:
     )
 
 
+def maturity_wall(baseline: Baseline, quarter: int) -> Baseline:
+    """Term debt with no known maturity falls due in ``quarter``: an assumption made to test it."""
+    whole(quarter, 1, "stress.quarter")
+    tranches = tuple(
+        tranche if tranche.maturity_quarter else replace(tranche, maturity_quarter=quarter)
+        for tranche in baseline.opening.tranches
+    )
+    return replace(baseline, opening=replace(baseline.opening, tranches=tranches))
+
+
 def refinancing_closed(baseline: Baseline) -> Baseline:
     """Lenders roll nothing: every maturity must be paid from cash or the revolver."""
     return replace(baseline, policy=replace(baseline.policy, can_refinance=False))

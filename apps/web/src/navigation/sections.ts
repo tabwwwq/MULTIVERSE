@@ -239,7 +239,7 @@ export const SECTIONS: readonly Section[] = [
     group: "analyse",
     icon: ShieldAlert,
     summary: "Downside, leverage, liquidity and tail risks of a scenario.",
-    status: "planned",
+    status: "available",
     stage: 23,
     stageName: "Valuation and risk studio",
     plans: [
@@ -256,7 +256,7 @@ export const SECTIONS: readonly Section[] = [
     icon: Calculator,
     summary:
       "DCF on free cash flow to the firm, with enterprise value and equity value kept apart.",
-    status: "planned",
+    status: "available",
     stage: 23,
     stageName: "Valuation and risk studio",
     plans: [

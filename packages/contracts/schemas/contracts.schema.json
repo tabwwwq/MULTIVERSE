@@ -709,6 +709,67 @@
       "title": "BenchmarkReport",
       "type": "object"
     },
+    "BridgeView": {
+      "additionalProperties": false,
+      "properties": {
+        "cash": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "debt": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "enterprise_value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "equity_value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "non_operating_assets": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "other_senior_claims": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "enterprise_value",
+        "debt",
+        "cash",
+        "other_senior_claims",
+        "non_operating_assets",
+        "equity_value"
+      ],
+      "title": "BridgeView",
+      "type": "object"
+    },
     "BulkFile": {
       "additionalProperties": false,
       "description": "One archived bulk ZIP file the universe was drawn from.",
@@ -2812,6 +2873,109 @@
       "title": "DatedName",
       "type": "object"
     },
+    "DcfRow": {
+      "additionalProperties": false,
+      "description": "One quarter: from statements to present value. Every column is shown, so it can be redone.",
+      "properties": {
+        "adjusted_ebitda": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "capex": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "d_and_a": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "delta_nwc": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "discount_factor": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "type": "number"
+        },
+        "ebit": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "ebitda": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "fcff": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "fcff_recurring": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "present_value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "quarter": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "revenue": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "tax_on_ebit": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "transactions": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "quarter",
+        "period_end",
+        "label",
+        "revenue",
+        "ebitda",
+        "adjusted_ebitda",
+        "ebit",
+        "tax_on_ebit",
+        "d_and_a",
+        "capex",
+        "delta_nwc",
+        "transactions",
+        "fcff",
+        "fcff_recurring",
+        "discount_factor",
+        "present_value"
+      ],
+      "title": "DcfRow",
+      "type": "object"
+    },
     "DebtRefinance": {
       "additionalProperties": false,
       "properties": {
@@ -2870,6 +3034,85 @@
         "refinancing_fee_fraction"
       ],
       "title": "DebtRefinance",
+      "type": "object"
+    },
+    "DebtRow": {
+      "additionalProperties": false,
+      "properties": {
+        "cash": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "interest_cover": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "interest_expense": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "leverage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "net_debt": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "period_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "revolver": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "shortfall": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "term_debt": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "period_end",
+        "label",
+        "cash",
+        "term_debt",
+        "revolver",
+        "shortfall",
+        "net_debt",
+        "interest_expense",
+        "leverage",
+        "interest_cover"
+      ],
+      "title": "DebtRow",
       "type": "object"
     },
     "DecisionStatus": {
@@ -7212,6 +7455,35 @@
       "title": "QualityAudit",
       "type": "object"
     },
+    "QualityCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "key": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "passed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "passed",
+        "detail"
+      ],
+      "title": "QualityCheck",
+      "type": "object"
+    },
     "QualityFlag": {
       "enum": [
         "restated",
@@ -8215,6 +8487,82 @@
       "title": "ScenarioRevision",
       "type": "object"
     },
+    "ScenarioRow": {
+      "additionalProperties": false,
+      "properties": {
+        "covenant_probability": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "equity_p50": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "ev_mean": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "ev_p10": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "ev_p50": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "ev_p90": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "paths": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "scenario": {
+          "enum": [
+            "bear",
+            "base",
+            "bull"
+          ],
+          "type": "string"
+        },
+        "shortfall_probability": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "weight": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scenario",
+        "label",
+        "weight",
+        "paths",
+        "ev_p10",
+        "ev_p50",
+        "ev_p90",
+        "ev_mean",
+        "equity_p50",
+        "covenant_probability",
+        "shortfall_probability"
+      ],
+      "title": "ScenarioRow",
+      "type": "object"
+    },
     "ScenarioRun": {
       "additionalProperties": false,
       "properties": {
@@ -8569,6 +8917,52 @@
         "mae"
       ],
       "title": "SectorScore",
+      "type": "object"
+    },
+    "SensitivityCell": {
+      "additionalProperties": false,
+      "properties": {
+        "enterprise_value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None where WACC is at or below growth: no value exists."
+        },
+        "equity_value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "growth": {
+          "type": "number"
+        },
+        "wacc": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "wacc",
+        "growth",
+        "enterprise_value",
+        "equity_value"
+      ],
+      "title": "SensitivityCell",
       "type": "object"
     },
     "SensitivityRow": {
@@ -9775,6 +10169,256 @@
       "title": "StateCount",
       "type": "object"
     },
+    "StressRow": {
+      "additionalProperties": false,
+      "properties": {
+        "enterprise_value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "ev_change": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "first_breach": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The quarter, if any."
+        },
+        "key": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "lowest_cash": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "lowest_interest_cover": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "peak_leverage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "peak_shortfall": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "enterprise_value",
+        "ev_change",
+        "lowest_cash",
+        "peak_leverage",
+        "lowest_interest_cover",
+        "first_breach",
+        "peak_shortfall"
+      ],
+      "title": "StressRow",
+      "type": "object"
+    },
+    "StudioInputs": {
+      "additionalProperties": false,
+      "description": "What the studio assumes beyond the case. Each of these is a choice, and editable.",
+      "properties": {
+        "capex_points": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "diluted_shares": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "diluted_shares_source": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "exit_multiple": {
+          "description": "EV / EBITDA, assumed: no market data here.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "growth_points": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "growth_steps": {
+          "description": "Around g.",
+          "items": {
+            "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+            "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "type": "string"
+          },
+          "minItems": 3,
+          "type": "array"
+        },
+        "margin_points": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "maturity_wall_quarter": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "other_senior_claims": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "scenario_paths": {
+          "maximum": 10000,
+          "minimum": 100,
+          "type": "integer"
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "#/$defs/StudioScenario"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "seed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "wacc_steps": {
+          "description": "Around WACC.",
+          "items": {
+            "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+            "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+            "type": "string"
+          },
+          "minItems": 3,
+          "type": "array"
+        }
+      },
+      "required": [
+        "exit_multiple",
+        "other_senior_claims",
+        "diluted_shares",
+        "diluted_shares_source",
+        "wacc_steps",
+        "growth_steps",
+        "margin_points",
+        "growth_points",
+        "capex_points",
+        "scenarios",
+        "scenario_paths",
+        "seed",
+        "maturity_wall_quarter"
+      ],
+      "title": "StudioInputs",
+      "type": "object"
+    },
+    "StudioScenario": {
+      "additionalProperties": false,
+      "properties": {
+        "growth_shift": {
+          "description": "Added to central growth in every quarter.",
+          "type": "number"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "margin_shift": {
+          "description": "Added to the central EBITDA margin.",
+          "type": "number"
+        },
+        "scenario": {
+          "enum": [
+            "bear",
+            "base",
+            "bull"
+          ],
+          "type": "string"
+        },
+        "weight": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scenario",
+        "label",
+        "weight",
+        "growth_shift",
+        "margin_shift"
+      ],
+      "title": "StudioScenario",
+      "type": "object"
+    },
     "SupportStatus": {
       "description": "Whether MULTIVERSE can work with a company (PRD FC-01, FC-02).",
       "enum": [
@@ -9914,6 +10558,121 @@
       "title": "TargetCount",
       "type": "object"
     },
+    "TerminalRow": {
+      "additionalProperties": false,
+      "properties": {
+        "enterprise_value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "implied_growth": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "implied_multiple": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "method": {
+          "enum": [
+            "gordon",
+            "exit_multiple"
+          ],
+          "type": "string"
+        },
+        "present_terminal": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "terminal_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Of EV; above 1 when explicit years are negative in sum."
+        },
+        "terminal_value": {
+          "anyOf": [
+            {
+              "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+              "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "method",
+        "label",
+        "terminal_value",
+        "present_terminal",
+        "enterprise_value",
+        "terminal_share",
+        "implied_growth",
+        "implied_multiple",
+        "reason"
+      ],
+      "title": "TerminalRow",
+      "type": "object"
+    },
     "TickerListing": {
       "additionalProperties": false,
       "description": "A ticker on an exchange for a period. Tickers are aliases, never identifiers.",
@@ -10038,6 +10797,47 @@
         "ramp_quarters"
       ],
       "title": "Timing",
+      "type": "object"
+    },
+    "TornadoRow": {
+      "additionalProperties": false,
+      "properties": {
+        "driver": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "high_label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "high_value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "low_label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "low_value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "driver",
+        "label",
+        "low_label",
+        "high_label",
+        "low_value",
+        "high_value"
+      ],
+      "title": "TornadoRow",
       "type": "object"
     },
     "TrainingRun": {
@@ -10539,6 +11339,275 @@
       "title": "UniverseStratum",
       "type": "object"
     },
+    "ValuationManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "pattern": "^case-[0-9a-z-]{1,60}$",
+          "type": "string"
+        },
+        "case_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "code_version": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Not part of the hash.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "decision_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "finance_version": {
+          "type": "string"
+        },
+        "inputs_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "simulation_report_id": {
+          "pattern": "^sim-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "simulation_version": {
+          "type": "string"
+        },
+        "valuation_id": {
+          "pattern": "^val-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "valuation_id",
+        "contracts_version",
+        "finance_version",
+        "simulation_version",
+        "code_version",
+        "case_id",
+        "case_sha256",
+        "decision_sha256",
+        "inputs_sha256",
+        "simulation_report_id",
+        "created_at"
+      ],
+      "title": "ValuationManifest",
+      "type": "object"
+    },
+    "ValuationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "adverse_story": {
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "adverse_title": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "as_of": {
+          "format": "date",
+          "type": "string"
+        },
+        "balance_date": {
+          "format": "date",
+          "type": "string"
+        },
+        "base_value": {
+          "description": "EV of the view the tornado moves.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "capital": {
+          "$ref": "#/$defs/CapitalInputs"
+        },
+        "case_inputs": {
+          "items": {
+            "$ref": "#/$defs/CaseInput"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/QualityCheck"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "company_name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "cost_of_equity": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "currency": {
+          "description": "ISO 4217 currency code, for example 'USD'.",
+          "pattern": "^[A-Z]{3}$",
+          "type": "string"
+        },
+        "inputs": {
+          "$ref": "#/$defs/StudioInputs"
+        },
+        "manifest": {
+          "$ref": "#/$defs/ValuationManifest"
+        },
+        "scenarios": {
+          "items": {
+            "$ref": "#/$defs/ScenarioRow"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "sensitivity_label": {
+          "const": "Predictive sensitivity, not causal",
+          "type": "string"
+        },
+        "stress": {
+          "items": {
+            "$ref": "#/$defs/StressRow"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "tornado": {
+          "items": {
+            "$ref": "#/$defs/TornadoRow"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "value_label": {
+          "const": "Model value, not a verified market value",
+          "type": "string"
+        },
+        "views": {
+          "items": {
+            "$ref": "#/$defs/ValuationView"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "wacc": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "weighted_enterprise_value": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contracts_version",
+        "manifest",
+        "value_label",
+        "sensitivity_label",
+        "company_name",
+        "as_of",
+        "balance_date",
+        "currency",
+        "capital",
+        "wacc",
+        "cost_of_equity",
+        "inputs",
+        "case_inputs",
+        "views",
+        "tornado",
+        "base_value",
+        "scenarios",
+        "weighted_enterprise_value",
+        "stress",
+        "adverse_title",
+        "adverse_story",
+        "checks"
+      ],
+      "title": "ValuationReport",
+      "type": "object"
+    },
+    "ValuationView": {
+      "additionalProperties": false,
+      "properties": {
+        "bridge": {
+          "$ref": "#/$defs/BridgeView"
+        },
+        "debt": {
+          "items": {
+            "$ref": "#/$defs/DebtRow"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "present_explicit": {
+          "description": "Exact decimal number as a string, for example '4213587912' or '-0.25'.",
+          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/DcfRow"
+          },
+          "minItems": 4,
+          "type": "array"
+        },
+        "scenario": {
+          "enum": [
+            "baseline",
+            "alt_a"
+          ],
+          "type": "string"
+        },
+        "sensitivity": {
+          "items": {
+            "$ref": "#/$defs/SensitivityCell"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "terminals": {
+          "items": {
+            "$ref": "#/$defs/TerminalRow"
+          },
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "scenario",
+        "label",
+        "rows",
+        "debt",
+        "present_explicit",
+        "terminals",
+        "bridge",
+        "sensitivity"
+      ],
+      "title": "ValuationView",
+      "type": "object"
+    },
     "ValueChange": {
       "description": "Why a new interval of knowledge began for one period.",
       "enum": [
@@ -10909,9 +11978,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.19.0",
+  "$id": "urn:multiverse:contracts:0.20.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.19.0"
+  "x-contracts-version": "0.20.0"
 }

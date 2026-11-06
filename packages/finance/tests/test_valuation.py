@@ -11,12 +11,18 @@ from multiverse_finance.exact import FinanceError, exact
 from multiverse_finance.example import illustrative_baseline, illustrative_capital
 from multiverse_finance.stress import revenue_shock
 from multiverse_finance.valuation import (
+    NO_EBITDA,
     NO_TERMINAL,
     CapitalCost,
     discount_factor,
     discounted,
     enterprise_value,
     equity_bridge,
+    implied_growth,
+    retained_share,
+    sensitivity,
+    weighted_value,
+    with_exit_multiple,
 )
 
 D = Decimal
@@ -206,3 +212,80 @@ def test_a_lower_revenue_path_is_worth_less() -> None:
     assert base.enterprise_value is not None
     assert low.enterprise_value is not None
     assert low.enterprise_value < base.enterprise_value
+
+
+def test_an_exit_multiple_by_hand() -> None:
+    dcf = with_exit_multiple([*ZERO_YEAR, D(100)], [D(50)] * 4, D("0.10"), D(10))
+    assert dcf.terminal_value == 2000
+    assert dcf.enterprise_value is not None
+    assert close(dcf.enterprise_value, (D(100) + 2000) / D("1.10"))
+
+
+def test_an_exit_multiple_needs_positive_ebitda() -> None:
+    dcf = with_exit_multiple([D(10)] * 4, [D(-1)] * 4, D("0.10"), D(10))
+    assert dcf.enterprise_value is None
+    assert dcf.reason == NO_EBITDA
+
+
+@pytest.mark.parametrize("multiple", ["0", "-3"])
+def test_a_multiple_at_or_below_zero_is_refused(multiple: str) -> None:
+    with pytest.raises(FinanceError, match="multiple_not_positive"):
+        with_exit_multiple([D(10)] * 4, [D(1)] * 4, D("0.10"), D(multiple))
+
+
+def test_implied_growth_recovers_the_growth_of_a_gordon_value() -> None:
+    flows = [D(10), D(20), D(30), D(40)]
+    dcf = discounted(flows, flows, D("0.09"), D("0.025"))
+    assert dcf.terminal_value is not None
+    found = implied_growth(dcf.terminal_value, flows, D("0.09"))
+    assert found is not None
+    assert close(found, D("0.025"))
+
+
+def test_implied_growth_has_no_answer_without_a_positive_flow() -> None:
+    assert implied_growth(D(100), [D(-1)] * 4, D("0.09")) is None
+
+
+def test_the_sensitivity_matrix_by_hand_and_without_impossible_cells() -> None:
+    year = [*ZERO_YEAR, D(100)]
+    grid = sensitivity(year, year, [D("0.02"), D("0.10")], [D(0), D("0.02")])
+    assert grid[0][1] is None
+    assert grid[1][0] is not None
+    assert close(grid[1][0], D(1000))
+    assert grid[1][1] is not None
+    assert close(grid[1][1], D(1250))
+
+
+def test_value_falls_with_wacc_and_rises_with_growth_across_the_matrix() -> None:
+    year = [D(25)] * 4
+    grid = sensitivity(year, year, [D("0.08"), D("0.09"), D("0.10")], [D("0.01"), D("0.02")])
+    assert grid[0][0] > grid[1][0] > grid[2][0]  # type: ignore[operator]
+    assert grid[0][1] > grid[0][0]  # type: ignore[operator]
+
+
+def test_a_weighted_value_by_hand() -> None:
+    assert weighted_value([D(80), D(100), D(130)], [D("0.25"), D("0.5"), D("0.25")]) == D("102.5")
+
+
+@pytest.mark.parametrize(
+    ("weights", "code"),
+    [
+        (["0.5", "0.4", "0.2"], "shares_sum"),
+        (["-0.1", "0.6", "0.5"], "out_of_range"),
+        (["0.5", "0.5"], "weights"),
+    ],
+)
+def test_impossible_weights_are_refused(weights: list[str], code: str) -> None:
+    with pytest.raises(FinanceError, match=code):
+        weighted_value([D(1), D(2), D(3)], [D(w) for w in weights])
+
+
+def test_dilution_is_a_share_of_equity_not_a_price() -> None:
+    assert retained_share(D(90), D(10)) == D("0.9")
+    assert retained_share(D(90), D(0)) == 1
+
+
+@pytest.mark.parametrize(("diluted", "new"), [("0", "1"), ("-5", "1"), ("100", "-1"), ("NaN", "1")])
+def test_an_ill_defined_share_count_is_refused(diluted: str, new: str) -> None:
+    with pytest.raises(FinanceError):
+        retained_share(D(diluted), D(new))

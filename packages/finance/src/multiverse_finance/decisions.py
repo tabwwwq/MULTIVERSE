@@ -59,6 +59,7 @@ class Accounting:
     acquired_intangibles_share: Decimal = Decimal("0.25")
     acquired_intangibles_life_years: int = 10
     target_follows_baseline: bool = False
+    synergy_delay_quarters: int = 0
 
 
 def quarter_of(base_date: date, day: date) -> int:
@@ -146,6 +147,7 @@ def _acquisition(
         intangibles_life_quarters=accounting.acquired_intangibles_life_years * QUARTERS_PER_YEAR,
         completed=completed,
         follows_baseline=accounting.target_follows_baseline,
+        synergy_delay_quarters=accounting.synergy_delay_quarters,
     )
     return acquisition(baseline, terms)
 

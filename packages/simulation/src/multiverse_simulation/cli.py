@@ -16,8 +16,15 @@ import numpy as np
 
 from multiverse_config import load_settings
 from multiverse_contracts.decisions import DECISION_MODELS, DecisionModel
-from multiverse_contracts.simulation import SensitivityRow, SimulationCase, SimulationSettings
+from multiverse_contracts.simulation import (
+    SensitivityRow,
+    SimulationCase,
+    SimulationReport,
+    SimulationSettings,
+)
+from multiverse_contracts.valuation import StudioInputs
 from multiverse_simulation.run import ALTERNATE, METRICS, RISKS, Answer, Frame, simulate
+from multiverse_simulation.studio import build_studio
 from multiverse_simulation.summary import build_report, ev_change, money
 
 DATASET = "fds-20261028-d9e4acd03365"
@@ -138,6 +145,20 @@ def case_file(args: argparse.Namespace) -> int:
     return 0
 
 
+def studio_file(args: argparse.Namespace) -> int:
+    case = SimulationCase.model_validate_json(Path(args.case).read_bytes())
+    report = build_studio(
+        case,
+        load_decision(Path(args.decision)),
+        StudioInputs.model_validate_json(Path(args.inputs).read_bytes()),
+        SimulationReport.model_validate_json(Path(args.report).read_bytes()),
+        code_version=code_version(),
+    )
+    write(Path(args.out), report.model_dump_json(indent=2))
+    print(f"{report.manifest.valuation_id} -> {args.out}")
+    return 0
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="multiverse_simulation")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -153,9 +174,16 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--batch", type=int, default=250)
     run.add_argument("--sensitivity", action="store_true")
     run.add_argument("--out", required=True)
+    studio = commands.add_parser("studio", help="build the valuation report of a run")
+    studio.add_argument("--case", required=True)
+    studio.add_argument("--decision", required=True)
+    studio.add_argument("--inputs", required=True)
+    studio.add_argument("--report", required=True)
+    studio.add_argument("--out", required=True)
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
-    return case_file(args) if args.command == "case" else run_file(args)
+    commands = {"case": case_file, "run": run_file, "studio": studio_file}
+    return commands[args.command](args)

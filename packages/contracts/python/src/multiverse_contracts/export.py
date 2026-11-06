@@ -39,6 +39,7 @@ from multiverse_contracts.results import ScenarioResult
 from multiverse_contracts.simulation import SimulationCase, SimulationReport, SimulationRequest
 from multiverse_contracts.sources import SourceCatalog
 from multiverse_contracts.universe import UniverseManifest
+from multiverse_contracts.valuation import ValuationReport
 from multiverse_contracts.version import CONTRACTS_VERSION
 
 # packages/contracts/python/src/multiverse_contracts/export.py -> packages/contracts/schemas/
@@ -80,6 +81,7 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     EventRegistry,
     QualityAudit,
     CausalStudy,
+    ValuationReport,
     SimulationCase,
     SimulationReport,
     SimulationRequest,

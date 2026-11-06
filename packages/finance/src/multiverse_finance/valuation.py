@@ -26,6 +26,7 @@ from multiverse_finance.statements import StatementPath
 
 NO_TERMINAL = "undefined: the last four quarters of recurring FCFF are not positive"
 NO_EV = "undefined: enterprise value <= 0"
+NO_EBITDA = "undefined: EBITDA of the last four quarters is not positive"
 
 
 @dataclass(frozen=True, slots=True)
@@ -123,6 +124,97 @@ def discounted(
     return Dcf(
         present, terminal, present_terminal, enterprise, ratio(present_terminal, enterprise, NO_EV)
     )
+
+
+@exact
+def with_exit_multiple(
+    flows: Sequence[Decimal],
+    last_year_ebitda: Sequence[Decimal],
+    annual_rate: Decimal,
+    multiple: Decimal,
+) -> Dcf:
+    """The same explicit quarters, with TV = EBITDA of the last year × multiple."""
+    finite(annual_rate, "dcf.annual_rate")
+    if annual_rate <= 0:
+        raise FinanceError("rate_not_positive", "dcf.annual_rate", f"{annual_rate} is not above 0")
+    if finite(multiple, "dcf.multiple") <= 0:
+        raise FinanceError("multiple_not_positive", "dcf.multiple", f"{multiple} is not above 0")
+    if len(last_year_ebitda) != QUARTERS_PER_YEAR:
+        raise FinanceError("short_horizon", "dcf.last_year", "a terminal year has four quarters")
+    present = sum(
+        (flow * discount_factor(quarter, annual_rate) for quarter, flow in enumerate(flows, 1)),
+        ZERO,
+    )
+    ebitda = sum(last_year_ebitda, ZERO)
+    if ebitda <= 0:
+        return Dcf(present, None, None, None, Ratio(None, NO_EBITDA), NO_EBITDA)
+    terminal = ebitda * multiple
+    present_terminal = terminal * discount_factor(len(flows), annual_rate)
+    enterprise = present + present_terminal
+    return Dcf(
+        present, terminal, present_terminal, enterprise, ratio(present_terminal, enterprise, NO_EV)
+    )
+
+
+@exact
+def implied_growth(
+    terminal_value: Decimal, last_year: Sequence[Decimal], annual_rate: Decimal
+) -> Decimal | None:
+    """The g a Gordon perpetuity would need to reach this terminal value: a check on a multiple.
+
+    From TV = (1 + g)(1 + r) / (r − g) × Y, with Y the last year discounted within its year.
+    """
+    year = sum(
+        (flow * discount_factor(k, annual_rate) for k, flow in enumerate(last_year, 1)), ZERO
+    )
+    if year <= 0 or terminal_value <= 0:
+        return None
+    grown = (ONE + annual_rate) * year
+    return (terminal_value * annual_rate - grown) / (terminal_value + grown)
+
+
+@exact
+def sensitivity(
+    flows: Sequence[Decimal],
+    last_year: Sequence[Decimal],
+    rates: Sequence[Decimal],
+    growths: Sequence[Decimal],
+) -> tuple[tuple[Decimal | None, ...], ...]:
+    """EV for each rate and growth. A cell with WACC at or below growth has no value at all."""
+    return tuple(
+        tuple(
+            discounted(flows, last_year, rate, growth).enterprise_value if rate > growth else None
+            for growth in growths
+        )
+        for rate in rates
+    )
+
+
+@exact
+def weighted_value(values: Sequence[Decimal], weights: Sequence[Decimal]) -> Decimal:
+    """Scenario weights are shares of a whole: they add up to exactly 1."""
+    if len(values) != len(weights) or not values:
+        raise FinanceError("weights", "scenarios", "one weight for each value")
+    for weight in weights:
+        share(weight, "scenarios.weight")
+    if sum(weights, ZERO) != ONE:
+        raise FinanceError("shares_sum", "scenarios.weight", "weights add up to exactly 100%")
+    return sum(
+        (finite(v, "scenarios.value") * w for v, w in zip(values, weights, strict=True)), ZERO
+    )
+
+
+@exact
+def retained_share(diluted_shares: Decimal, new_shares: Decimal) -> Decimal:
+    """Share of equity value left to today's holders after new shares at no consideration.
+
+    A count of shares, never a price: price per share stays out of V1 to V3 (D-06), because it
+    needs corporate actions and market data this project does not hold.
+    """
+    if finite(diluted_shares, "shares.diluted") <= 0:
+        raise FinanceError("shares_not_positive", "shares.diluted", "a company has shares")
+    at_least(new_shares, ZERO, "shares.new")
+    return diluted_shares / (diluted_shares + new_shares)
 
 
 def enterprise_value(path: StatementPath, capital: CapitalCost, growth: Decimal) -> Dcf:

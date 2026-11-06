@@ -225,6 +225,7 @@ from multiverse_contracts.universe import (
     UniverseManifest,
     UniverseStratum,
 )
+from multiverse_contracts.valuation import StudioInputs, ValuationReport
 from multiverse_contracts.version import CONTRACTS_VERSION
 
 __version__ = "0.1.0"
@@ -397,6 +398,7 @@ __all__ = [
     "SourceTiming",
     "SplitName",
     "StabilityScore",
+    "StudioInputs",
     "SupportStatus",
     "SyntheticFit",
     "TargetCount",
@@ -412,6 +414,7 @@ __all__ = [
     "UniverseCompany",
     "UniverseManifest",
     "UniverseStratum",
+    "ValuationReport",
     "ValueChange",
     "ValueKind",
     "ValueUnit",

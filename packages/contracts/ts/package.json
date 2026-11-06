@@ -8,6 +8,7 @@
     ".": "./src/index.ts",
     "./causal": "./src/causal.ts",
     "./simulation": "./src/simulation.ts",
+    "./valuation": "./src/valuation.ts",
     "./demo": "./src/demo.ts",
     "./events": "./src/events.ts",
     "./interventions": "./src/interventions.ts",

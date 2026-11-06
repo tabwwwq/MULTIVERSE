@@ -16,6 +16,7 @@ from multiverse_finance.interventions import (
 from multiverse_finance.stress import (
     covenant,
     margin_compression,
+    maturity_wall,
     rate_shock,
     refinancing_closed,
     revenue_shock,
@@ -116,3 +117,11 @@ def test_a_debt_funded_deal_with_a_revenue_shock_breaks_the_covenant_and_still_r
     weak = revenue_shock(BASE, D("0.2"))
     path = project(weak, [acquisition(weak, terms())])
     assert any("leverage_breach" in period.alerts for period in path.periods)
+
+
+def test_a_maturity_wall_gives_a_date_to_debt_that_had_none() -> None:
+    wall = maturity_wall(BASE, 6)
+    dates = {tranche.name: tranche.maturity_quarter for tranche in wall.opening.tranches}
+    assert dates == {"senior_notes": 8, "term_loan": 6}
+    path = project(refinancing_closed(wall))
+    assert path.periods[5].cash_flow.debt_repaid == 500

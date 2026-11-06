@@ -20,7 +20,7 @@
 | OQ-09 | Бюджет вычислений | Только CPU, облачные расходы 0 без отдельного разрешения | Мастер-промпт запрещает самовольные расходы | Stage 16 | Низкая |
 | OQ-10 | Определение EBITDA | OperatingIncomeLoss + D&A, подпись «EBITDA (calculated)» (D-05) | В XBRL нет стандартной EBITDA | Stage 11 | Средняя |
 | OQ-11 | Какой FCF показывать в истории компании | «FCF (simple) = CFO − CAPEX» в dossier, FCFF — только в valuation | Simple FCF считается из отчётности напрямую, FCFF требует допущения о налоге | Stage 04 | Низкая |
-| OQ-12 | Показывать ли price per share | Нет в V1–V3 (D-06) | Нужны лицензированные market data и corporate actions | Stage 23 | Средняя |
+| OQ-12 | Показывать ли price per share | **Закрыт на Stage 23: нет в V1–V3 (D-06).** Студия показывает только долю equity у нынешних владельцев | Нужны лицензированные market data и corporate actions | Stage 23 | Средняя |
 | OQ-13 | Leases в net debt | Finance leases включаются, если отдельно тегированы. Operating leases исключаются с пометкой | Минимально неоднозначный вариант, раскрытый явно | Stage 21 | Средняя |
 | OQ-14 | Число путей Monte Carlo по умолчанию | Preview 500, research 2 000; больше — по convergence diagnostics | `docs/08`: 100–500 preview, 1 000–10 000 research | Stage 22 | Низкая |
 | OQ-15 | Горизонт прогноза по умолчанию | 12 кварталов, максимум 20 | `docs/06`: горизонты 1 / 4 / 8 / 12 / 20, длинные — менее надёжны | Stage 05 | Низкая |

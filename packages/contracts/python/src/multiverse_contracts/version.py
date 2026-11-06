@@ -59,6 +59,9 @@ treatment and method, which reads no outcome after a treatment and estimates no 
 
 0.19.0 (Stage 22): the simulation case, settings and request, and the report of a paired Monte
 Carlo run with risks, convergence, tails and a manifest; job requests gain a kind.
+
+0.20.0 (Stage 23): the inputs and report of the valuation studio: DCF tables, terminal methods,
+the bridge, the sensitivity matrix, tornado, scenarios, stress cases and quality checks.
 """
 
-CONTRACTS_VERSION = "0.19.0"
+CONTRACTS_VERSION = "0.20.0"

@@ -881,6 +881,30 @@ export interface SectorScore {
   target: ForecastTarget;
 }
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "BridgeView".
+ */
+export interface BridgeView {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  cash: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  debt: string;
+  enterprise_value: string | null;
+  equity_value: string | null;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  non_operating_assets: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  other_senior_claims: string;
+}
+/**
  * One archived bulk ZIP file the universe was drawn from.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -2075,6 +2099,66 @@ export interface RateLimit {
   documented_requests_per_second: string | null;
 }
 /**
+ * One quarter: from statements to present value. Every column is shown, so it can be redone.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DcfRow".
+ */
+export interface DcfRow {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  adjusted_ebitda: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  capex: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  d_and_a: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  delta_nwc: string;
+  discount_factor: number;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ebit: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ebitda: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  fcff: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  fcff_recurring: string;
+  label: string;
+  period_end: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  present_value: string;
+  quarter: number;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  revenue: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  tax_on_ebit: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  transactions: string;
+}
+/**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "DebtRefinance".
  */
@@ -2092,6 +2176,40 @@ export interface DebtRefinance {
   refinancing_fee_fraction: string;
   timing: Timing;
   type: "debt_refinance";
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "DebtRow".
+ */
+export interface DebtRow {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  cash: string;
+  interest_cover: number | null;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  interest_expense: string;
+  label: string;
+  leverage: number | null;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  net_debt: string;
+  period_end: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  revolver: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  shortfall: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  term_debt: string;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -3453,6 +3571,16 @@ export interface QualityAudit {
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "QualityCheck".
+ */
+export interface QualityCheck {
+  detail: string;
+  key: string;
+  label: string;
+  passed: boolean;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "ResultFailure".
  */
 export interface ResultFailure {
@@ -3625,6 +3753,41 @@ export interface WaterfallStep {
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ScenarioRow".
+ */
+export interface ScenarioRow {
+  covenant_probability: number;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  equity_p50: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ev_mean: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ev_p10: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ev_p50: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  ev_p90: string;
+  label: string;
+  paths: number;
+  scenario: "bear" | "base" | "bull";
+  shortfall_probability: number;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  weight: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "SectorPriority".
  */
 export interface SectorPriority {
@@ -3636,6 +3799,19 @@ export interface SectorPriority {
    * @minItems 1
    */
   sic_codes: [string, ...string[]];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SensitivityCell".
+ */
+export interface SensitivityCell {
+  /**
+   * None where WACC is at or below growth: no value exists.
+   */
+  enterprise_value: string | null;
+  equity_value: string | null;
+  growth: number;
+  wacc: number;
 }
 /**
  * The same run with one choice of the shock model changed.
@@ -3939,6 +4115,140 @@ export interface SourceCatalog {
   verified_on: string;
 }
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "StressRow".
+ */
+export interface StressRow {
+  enterprise_value: string | null;
+  ev_change: string | null;
+  /**
+   * The quarter, if any.
+   */
+  first_breach: string | null;
+  key: string;
+  label: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  lowest_cash: string;
+  lowest_interest_cover: number | null;
+  peak_leverage: number | null;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  peak_shortfall: string;
+}
+/**
+ * What the studio assumes beyond the case. Each of these is a choice, and editable.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "StudioInputs".
+ */
+export interface StudioInputs {
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  capex_points: string;
+  diluted_shares: string | null;
+  diluted_shares_source: string | null;
+  /**
+   * EV / EBITDA, assumed: no market data here.
+   */
+  exit_multiple: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  growth_points: string;
+  /**
+   * Around g.
+   *
+   * @minItems 3
+   *
+   * Items: Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  growth_steps: [string, string, string, ...string[]];
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  margin_points: string;
+  maturity_wall_quarter: number;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  other_senior_claims: string;
+  scenario_paths: number;
+  /**
+   * @minItems 3
+   * @maxItems 3
+   */
+  scenarios: [StudioScenario, StudioScenario, StudioScenario, ...StudioScenario[]];
+  seed: number;
+  /**
+   * Around WACC.
+   *
+   * @minItems 3
+   *
+   * Items: Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  wacc_steps: [string, string, string, ...string[]];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "StudioScenario".
+ */
+export interface StudioScenario {
+  /**
+   * Added to central growth in every quarter.
+   */
+  growth_shift: number;
+  label: string;
+  /**
+   * Added to the central EBITDA margin.
+   */
+  margin_shift: number;
+  scenario: "bear" | "base" | "bull";
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  weight: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TerminalRow".
+ */
+export interface TerminalRow {
+  enterprise_value: string | null;
+  implied_growth: number | null;
+  implied_multiple: number | null;
+  label: string;
+  method: "gordon" | "exit_multiple";
+  present_terminal: string | null;
+  reason: string | null;
+  /**
+   * Of EV; above 1 when explicit years are negative in sum.
+   */
+  terminal_share: number | null;
+  terminal_value: string | null;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TornadoRow".
+ */
+export interface TornadoRow {
+  driver: string;
+  high_label: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  high_value: string;
+  label: string;
+  low_label: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  low_value: string;
+}
+/**
  * One training of a temporal model: what it saw, how it went, where it is stored.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -4041,4 +4351,113 @@ export interface UniverseStratum {
   quota: number;
   selected: number;
   title: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ValuationManifest".
+ */
+export interface ValuationManifest {
+  case_id: string;
+  case_sha256: string;
+  code_version: string;
+  contracts_version: string;
+  /**
+   * Not part of the hash.
+   */
+  created_at: string;
+  decision_sha256: string;
+  finance_version: string;
+  inputs_sha256: string;
+  simulation_report_id: string;
+  simulation_version: string;
+  valuation_id: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ValuationReport".
+ */
+export interface ValuationReport {
+  /**
+   * @minItems 1
+   */
+  adverse_story: [string, ...string[]];
+  adverse_title: string;
+  as_of: string;
+  balance_date: string;
+  /**
+   * EV of the view the tornado moves.
+   */
+  base_value: string;
+  capital: CapitalInputs;
+  /**
+   * @minItems 1
+   */
+  case_inputs: [CaseInput, ...CaseInput[]];
+  /**
+   * @minItems 1
+   */
+  checks: [QualityCheck, ...QualityCheck[]];
+  company_name: string;
+  contracts_version: string;
+  cost_of_equity: number;
+  /**
+   * ISO 4217 currency code, for example 'USD'.
+   */
+  currency: string;
+  inputs: StudioInputs;
+  manifest: ValuationManifest;
+  /**
+   * @minItems 3
+   * @maxItems 3
+   */
+  scenarios: [ScenarioRow, ScenarioRow, ScenarioRow, ...ScenarioRow[]];
+  sensitivity_label: "Predictive sensitivity, not causal";
+  /**
+   * @minItems 1
+   */
+  stress: [StressRow, ...StressRow[]];
+  /**
+   * @minItems 1
+   */
+  tornado: [TornadoRow, ...TornadoRow[]];
+  value_label: "Model value, not a verified market value";
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  views: [ValuationView, ValuationView, ...ValuationView[]];
+  wacc: number;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  weighted_enterprise_value: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ValuationView".
+ */
+export interface ValuationView {
+  bridge: BridgeView;
+  /**
+   * @minItems 1
+   */
+  debt: [DebtRow, ...DebtRow[]];
+  label: string;
+  /**
+   * Exact decimal number as a string, for example '4213587912' or '-0.25'.
+   */
+  present_explicit: string;
+  /**
+   * @minItems 4
+   */
+  rows: [DcfRow, DcfRow, DcfRow, DcfRow, ...DcfRow[]];
+  scenario: "baseline" | "alt_a";
+  /**
+   * @minItems 1
+   */
+  sensitivity: [SensitivityCell, ...SensitivityCell[]];
+  /**
+   * @minItems 2
+   */
+  terminals: [TerminalRow, TerminalRow, ...TerminalRow[]];
 }

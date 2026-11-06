@@ -70,6 +70,7 @@ export default defineConfig(
       "packages/contracts/ts/src/mock-results.ts",
       "packages/contracts/ts/src/sources.ts",
       "packages/contracts/ts/src/events.ts",
+      "packages/contracts/ts/src/causal.ts",
     ],
     rules: { "no-restricted-imports": "off" },
   },

@@ -53,6 +53,9 @@ with progress, heartbeat, spend and alerts; the training run purpose job.
 
 0.17.0 (Stage 19): corporate events with announced intention and executed treatment apart,
 evidence, reviews and unknown fields; the candidate sample, the registry and its audit.
+
+0.18.0 (Stage 20): the causal graph, estimands, assumptions and a feasibility study of every
+treatment and method, which reads no outcome after a treatment and estimates no effect.
 """
 
-CONTRACTS_VERSION = "0.17.0"
+CONTRACTS_VERSION = "0.18.0"

@@ -1,0 +1,2357 @@
+{
+  "study_id": "cst-20261106-b225726a46d3",
+  "sha256": "b225726a46d39bc7f6acf857547f00f1c3c87ab029f2e2c9473b11f74ca3da01",
+  "label": "feasibility_study_no_effect_estimated",
+  "effects_estimated": 0,
+  "outcomes_after_treatment_read": false,
+  "data_cutoff": "2026-10-29T03:59:59.999999Z",
+  "dataset_id": "fds-20261028-d9e4acd03365",
+  "registry_version": "0.1.0",
+  "sample_id": "evs-20261106-3cc4abd6372b",
+  "audit_credible": false,
+  "audit_blockers": [
+    "rnd_change: 3 events, at least 30 are needed",
+    "acquisition: 18 events, at least 30 are needed",
+    "layoff: 8 events, at least 30 are needed",
+    "divestiture: 4 events, at least 30 are needed",
+    "capex_change: 6 events, at least 30 are needed",
+    "refinancing: 9 events, at least 30 are needed",
+    "0 of 48 events have a human review",
+    "no event has two reviewers"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "node_id": "macro",
+        "label": "Macro conditions",
+        "role": "macro",
+        "observed": true,
+        "measured_by": "Macro vintages at the origin (Stage 13)."
+      },
+      {
+        "node_id": "firm_state",
+        "label": "Firm state before the decision",
+        "role": "state",
+        "observed": true,
+        "measured_by": "Size, margins, growth, debt, cash and intensities at the last origin before."
+      },
+      {
+        "node_id": "expectations",
+        "label": "Management expectations",
+        "role": "unobserved",
+        "observed": false,
+        "measured_by": "Nothing here: plans and private forecasts are not in filings."
+      },
+      {
+        "node_id": "action",
+        "label": "Decision",
+        "role": "action",
+        "observed": true,
+        "measured_by": "The verified event registry (Stage 19)."
+      },
+      {
+        "node_id": "other_decisions",
+        "label": "Other decisions at the same time",
+        "role": "state",
+        "observed": true,
+        "measured_by": "Confounders named in documents, and 8-K items of the filing index."
+      },
+      {
+        "node_id": "costs",
+        "label": "Costs and capacity",
+        "role": "mediator",
+        "observed": true,
+        "measured_by": "Margins and capital intensity after the decision."
+      },
+      {
+        "node_id": "demand",
+        "label": "Demand for the firm",
+        "role": "mediator",
+        "observed": false,
+        "measured_by": "Not measured directly; revenue mixes it with price and competition."
+      },
+      {
+        "node_id": "outcome",
+        "label": "Revenue growth and margins",
+        "role": "outcome",
+        "observed": true,
+        "measured_by": "Point-in-time quarterly values in the forecasting dataset (Stage 15)."
+      }
+    ],
+    "edges": [
+      {
+        "source": "macro",
+        "target": "action",
+        "rationale": "Credit and demand conditions shape what firms decide."
+      },
+      {
+        "source": "macro",
+        "target": "outcome",
+        "rationale": "A recession moves results of every firm."
+      },
+      {
+        "source": "macro",
+        "target": "firm_state",
+        "rationale": "Past conditions are already in the balance sheet."
+      },
+      {
+        "source": "firm_state",
+        "target": "action",
+        "rationale": "Weak firms cut staff, cash-rich firms buy: decisions follow the state."
+      },
+      {
+        "source": "firm_state",
+        "target": "outcome",
+        "rationale": "Growth and margins persist and revert by themselves."
+      },
+      {
+        "source": "expectations",
+        "target": "action",
+        "rationale": "Managers act on what they expect and outsiders cannot see."
+      },
+      {
+        "source": "expectations",
+        "target": "outcome",
+        "rationale": "What they expect tends to happen, with or without the decision."
+      },
+      {
+        "source": "firm_state",
+        "target": "other_decisions",
+        "rationale": "The same state triggers several decisions at once."
+      },
+      {
+        "source": "other_decisions",
+        "target": "outcome",
+        "rationale": "A merger and a layoff in one year cannot be told apart by their results."
+      },
+      {
+        "source": "action",
+        "target": "costs",
+        "rationale": "Most decisions change costs or capacity first."
+      },
+      {
+        "source": "action",
+        "target": "demand",
+        "rationale": "Products and reach change what customers buy."
+      },
+      {
+        "source": "costs",
+        "target": "outcome",
+        "rationale": "Costs reach margins with a lag."
+      },
+      {
+        "source": "demand",
+        "target": "outcome",
+        "rationale": "Demand reaches revenue with a lag."
+      }
+    ],
+    "omitted": [
+      "Competitors' moves and market structure.",
+      "Management quality and turnover.",
+      "Accounting choices around a decision, such as restructuring charges.",
+      "Effects on other firms: a rival's layoff or merger is not independent of this one."
+    ]
+  },
+  "rules": [
+    "Audit: no effect is estimated until the event registry audit says credible.",
+    "Sample: at least 30 usable events for matched, weighted and event-study designs.",
+    "Support: at least 90% of treated firms inside the controls' propensity range.",
+    "Balance: every standardized mean difference at most 0.25 after matching.",
+    "Pre-trends: at most one lead per outcome with its 95% interval away from zero.",
+    "Placebo dates: at most one in ten away from zero.",
+    "Null: at most 10% of pseudo-event draws rejected at a nominal 5%.",
+    "Synthetic control: half of the events usable, holdout error at most 1.5 times the fit."
+  ],
+  "treatments": [
+    {
+      "treatment": "rnd_change",
+      "estimand": "Average effect of a yearly change of R&D expense on growth and margins 4 to 7 quarters after it was reported, against matched firms without such a change.",
+      "assumptions": [
+        "Conditional parallel trends: without the action, treated firms would have moved like their matched controls.",
+        "No anticipation before the first public document.",
+        "Overlap: firms like the treated also exist without the action.",
+        "One version of the treatment: the same label means the same action.",
+        "No interference between firms.",
+        "Effects of R&D may take longer than any window here."
+      ],
+      "untested": [
+        "Management expectations are not measured: pre-trends can look fine and still be driven by a plan outsiders cannot see.",
+        "Parallel trends after the event can never be tested, only made plausible before it.",
+        "No interference between firms is assumed, not checked."
+      ],
+      "events": 3,
+      "usable": 2,
+      "candidate_pool": 495,
+      "controls": 984,
+      "support": 0.5,
+      "balance": [
+        {
+          "covariate": "log_rev_ttm",
+          "before": -0.10300684703258449,
+          "after": 0.1293718360836334
+        },
+        {
+          "covariate": "rev_growth_l1",
+          "before": 0.3718557496077218,
+          "after": -0.041996359579650824
+        },
+        {
+          "covariate": "op_margin_l1",
+          "before": -0.6516048782349239,
+          "after": -0.3142485744164029
+        },
+        {
+          "covariate": "fcf_margin_l1",
+          "before": -1.0321150058481248,
+          "after": -0.4420106146511303
+        },
+        {
+          "covariate": "capex_intensity_ttm",
+          "before": -0.12172677818094632,
+          "after": -0.04100450549252017
+        },
+        {
+          "covariate": "cash_to_rev_ttm",
+          "before": 0.8830501944488118,
+          "after": 0.29665222838021454
+        },
+        {
+          "covariate": "net_debt_to_rev_ttm",
+          "before": -0.01603088068526604,
+          "after": 0.05029272897052283
+        }
+      ],
+      "leads": [
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -8,
+          "mean": 0.13482793066999998,
+          "low": -0.10299357123120001,
+          "high": 0.3726494325712,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -7,
+          "mean": -0.11975304859000002,
+          "low": -4.341373887877601,
+          "high": 4.101867790697601,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -6,
+          "mean": -1.4334323082800002,
+          "low": -4.5648221889872005,
+          "high": 1.6979575724271998,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -5,
+          "mean": -1.2421754225689998,
+          "low": -3.7318699659097594,
+          "high": 1.2475191207717597,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -4,
+          "mean": -0.7006411306000001,
+          "low": -2.0446764211560002,
+          "high": 0.6433941599559999,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -3,
+          "mean": 0.44233688952,
+          "low": -0.6911425243048002,
+          "high": 1.5758163033448,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -2,
+          "mean": 0.6172864341150001,
+          "low": -0.8484551682492,
+          "high": 2.0830280364792,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -8,
+          "mean": 1.7425389752599596,
+          "low": -0.8327083807309239,
+          "high": 4.3177863312508435,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -7,
+          "mean": -0.4313939541863979,
+          "low": -1.642537860836594,
+          "high": 0.779749952463798,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -6,
+          "mean": -0.11693145930225357,
+          "low": -1.5380627389803938,
+          "high": 1.3041998203758869,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -5,
+          "mean": 0.22923087910651896,
+          "low": -0.2719209580887644,
+          "high": 0.7303827163018023,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -4,
+          "mean": 0.8258107506977893,
+          "low": -0.29535296406698264,
+          "high": 1.9469744654625614,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -3,
+          "mean": 0.47347808927422635,
+          "low": -1.9235756491769922,
+          "high": 2.870531827725445,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -2,
+          "mean": 0.20332893243444994,
+          "low": -0.5543287907470102,
+          "high": 0.9609866556159101,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -8,
+          "mean": 1.5635542492376135,
+          "low": -0.5624478608271324,
+          "high": 3.6895563593023595,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -7,
+          "mean": 0.04838437787982941,
+          "low": 0.035498544776758276,
+          "high": 0.061270210982900544,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -5,
+          "mean": 0.26616157426130754,
+          "low": -0.31383693257543205,
+          "high": 0.8461600810980472,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -4,
+          "mean": 0.9415523561610588,
+          "low": 0.5490833503052517,
+          "high": 1.334021362016866,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -3,
+          "mean": 0.868860591197292,
+          "low": -0.17710709149324244,
+          "high": 1.9148282738878264,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -2,
+          "mean": 0.7191924083770924,
+          "low": -0.14568768036368018,
+          "high": 1.584072497117865,
+          "events": 2
+        }
+      ],
+      "placebo": [
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 6,
+          "estimate": -0.405499484009375,
+          "low": -1.2691566816778501,
+          "high": 0.4581577136591,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 8,
+          "estimate": -0.4634553304855834,
+          "low": -1.3201817642733067,
+          "high": 0.3932711033021399,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 10,
+          "estimate": 0.09676431266833331,
+          "low": -0.31437458791059997,
+          "high": 0.5079032132472666,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 6,
+          "estimate": -0.2167959937299178,
+          "low": -0.9428560799652976,
+          "high": 0.5092640925054619,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 8,
+          "estimate": -1.894922049485663,
+          "low": -5.18828834117755,
+          "high": 1.398444242206224,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 10,
+          "estimate": -0.7531248359239999,
+          "low": -1.3136243975965625,
+          "high": -0.19262527425143738,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 6,
+          "estimate": -0.15264605681534382,
+          "low": -0.8078536984247043,
+          "high": 0.5025615847940167,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 8,
+          "estimate": -1.8859382099664082,
+          "low": -4.7329489307354,
+          "high": 0.9610725108025844,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 10,
+          "estimate": -1.949502881355321,
+          "low": -4.80187777096895,
+          "high": 0.9028720082583077,
+          "events": 2
+        }
+      ],
+      "null": [
+        {
+          "outcome": "rev_growth_l1",
+          "draws": 500,
+          "pseudo_events": 2,
+          "spread": 0.38878138059111944,
+          "false_positive_rate": 0.242,
+          "minimum_effect_now": 1.0676743459187614,
+          "minimum_effect_pool": 0.0678658364220531,
+          "e_value": 11.597451439125969
+        },
+        {
+          "outcome": "op_margin_l1",
+          "draws": 500,
+          "pseudo_events": 2,
+          "spread": 0.7656601872825402,
+          "false_positive_rate": 0.226,
+          "minimum_effect_now": 2.236608934215469,
+          "minimum_effect_pool": 0.14216819636979372,
+          "e_value": 11.597451439125969
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "draws": 500,
+          "pseudo_events": 2,
+          "spread": 0.668402255209098,
+          "false_positive_rate": 0.258,
+          "minimum_effect_now": 1.842466175704354,
+          "minimum_effect_pool": 0.11711483803229986,
+          "e_value": 11.597451439125972
+        }
+      ],
+      "synthetic": {
+        "usable": 2,
+        "median_donors": 119.0,
+        "median_holdout_ratio": 0.7477783709669912
+      },
+      "confounded_share": 0.6666666666666666,
+      "near_decision_share": 1.0,
+      "divisions": {
+        "D": 2
+      },
+      "verdicts": [
+        {
+          "method": "matched_cohort",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "2 usable events, 30 are needed.",
+            "Support is 50%, at least 90% is needed.",
+            "The largest difference after matching is 0.44, at most 0.25 allowed."
+          ]
+        },
+        {
+          "method": "weighted_regression",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "2 usable events, 30 are needed.",
+            "Support is 50%, at least 90% is needed."
+          ]
+        },
+        {
+          "method": "did_event_study",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "2 usable events, 30 are needed.",
+            "2 leads of fcf_margin_l1 are away from zero.",
+            "11% of placebo dates are away from zero.",
+            "The null rejects 26% of the time at a nominal 5%."
+          ]
+        },
+        {
+          "method": "synthetic_control",
+          "feasible": false,
+          "reasons": ["The registry audit says the sample is not credible."]
+        }
+      ]
+    },
+    {
+      "treatment": "acquisition",
+      "estimand": "Average effect on firms that closed an acquisition, on growth and margins 4 to 7 quarters after the first public document, against matched firms without one.",
+      "assumptions": [
+        "Conditional parallel trends: without the action, treated firms would have moved like their matched controls.",
+        "No anticipation before the first public document.",
+        "Overlap: firms like the treated also exist without the action.",
+        "One version of the treatment: the same label means the same action.",
+        "No interference between firms.",
+        "The target's results enter the buyer's: growth is not organic."
+      ],
+      "untested": [
+        "Management expectations are not measured: pre-trends can look fine and still be driven by a plan outsiders cannot see.",
+        "Parallel trends after the event can never be tested, only made plausible before it.",
+        "No interference between firms is assumed, not checked."
+      ],
+      "events": 18,
+      "usable": 8,
+      "candidate_pool": 1995,
+      "controls": 950,
+      "support": 1.0,
+      "balance": [
+        {
+          "covariate": "log_rev_ttm",
+          "before": 0.20175090278049798,
+          "after": 0.05861046675273565
+        },
+        {
+          "covariate": "rev_growth_l1",
+          "before": 0.08589494859745939,
+          "after": -0.1710029860958653
+        },
+        {
+          "covariate": "op_margin_l1",
+          "before": -0.2618027820570188,
+          "after": -0.1239858398336538
+        },
+        {
+          "covariate": "fcf_margin_l1",
+          "before": 0.31394869471338427,
+          "after": 0.6940976787791443
+        },
+        {
+          "covariate": "capex_intensity_ttm",
+          "before": -0.4722385300315411,
+          "after": 0.09921727883902032
+        },
+        {
+          "covariate": "cash_to_rev_ttm",
+          "before": 0.2891283558372238,
+          "after": -0.09476571519538184
+        },
+        {
+          "covariate": "net_debt_to_rev_ttm",
+          "before": -0.043062150696778344,
+          "after": 0.0026669055861403175
+        }
+      ],
+      "leads": [
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -8,
+          "mean": 0.31335301443240005,
+          "low": -0.09610985189194277,
+          "high": 0.7228158807567429,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -7,
+          "mean": -0.1203200301832,
+          "low": -0.4077649052447221,
+          "high": 0.1671248448783221,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -6,
+          "mean": 0.40354982832639996,
+          "low": -0.18416608450809646,
+          "high": 0.9912657411608964,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -5,
+          "mean": 0.1533540093884,
+          "low": -0.12145982123206428,
+          "high": 0.42816784000886426,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -4,
+          "mean": 0.01985518018799999,
+          "low": -0.3125372207009254,
+          "high": 0.35224758107692533,
+          "events": 4
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -3,
+          "mean": -0.005608880780833335,
+          "low": -0.21310707841256124,
+          "high": 0.2018893168508946,
+          "events": 6
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -2,
+          "mean": -0.5134259496296666,
+          "low": -1.3327244164052994,
+          "high": 0.3058725171459663,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -8,
+          "mean": 0.034340496360599215,
+          "low": -0.4139232067888747,
+          "high": 0.4826041995100731,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -7,
+          "mean": 0.3028427179827927,
+          "low": -0.046289561682746616,
+          "high": 0.651974997648332,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -6,
+          "mean": -0.07976407252641474,
+          "low": -0.24433941328494366,
+          "high": 0.08481126823211418,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -5,
+          "mean": -0.18502569405576114,
+          "low": -0.39176072261522316,
+          "high": 0.021709334503700883,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -4,
+          "mean": 0.16354942054439509,
+          "low": -0.1731906509591648,
+          "high": 0.500289492047955,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -3,
+          "mean": 0.09392928098145359,
+          "low": -0.35701150560941,
+          "high": 0.5448700675723172,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -2,
+          "mean": -0.5418501855802853,
+          "low": -1.4757659932205343,
+          "high": 0.39206562205996376,
+          "events": 6
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -8,
+          "mean": -0.09355121061549204,
+          "low": -1.352135384706136,
+          "high": 1.1650329634751517,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -7,
+          "mean": -0.5764200952901165,
+          "low": -1.7234430724241623,
+          "high": 0.5706028818439292,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -6,
+          "mean": -1.494015220028419,
+          "low": -2.8074495466262013,
+          "high": -0.18058089343063677,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -5,
+          "mean": -0.026200592781924586,
+          "low": -0.4473864158064224,
+          "high": 0.3949852302425732,
+          "events": 3
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -4,
+          "mean": 0.13885745627779655,
+          "low": -0.6703531852999056,
+          "high": 0.9480680978554987,
+          "events": 3
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -3,
+          "mean": -0.9535236336730688,
+          "low": -1.9331902844241469,
+          "high": 0.026143017078009256,
+          "events": 3
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -2,
+          "mean": -0.5176277256627599,
+          "low": -1.7364039835287888,
+          "high": 0.7011485322032689,
+          "events": 3
+        }
+      ],
+      "placebo": [
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 6,
+          "estimate": -0.22151837989700002,
+          "low": -0.8432802815952865,
+          "high": 0.40024352180128636,
+          "events": 7
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 8,
+          "estimate": 1.0423236766828887,
+          "low": -0.4421714718016214,
+          "high": 2.526818825167399,
+          "events": 6
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 10,
+          "estimate": 0.6501685711259029,
+          "low": -0.24833124462900025,
+          "high": 1.548668386880806,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 6,
+          "estimate": -0.30804046423976544,
+          "low": -1.077175845346267,
+          "high": 0.46109491686673604,
+          "events": 7
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 8,
+          "estimate": 0.18814646093996404,
+          "low": -0.8916294771215812,
+          "high": 1.2679223990015094,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 10,
+          "estimate": 0.17943792500975472,
+          "low": -0.6251587575995453,
+          "high": 0.9840346076190548,
+          "events": 6
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 6,
+          "estimate": -0.0834666664794603,
+          "low": -1.0145239418059016,
+          "high": 0.8475906088469809,
+          "events": 5
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 8,
+          "estimate": 0.5295757761969727,
+          "low": -0.6170763691764757,
+          "high": 1.6762279215704212,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 10,
+          "estimate": -0.16610635094465123,
+          "low": -0.770439980097327,
+          "high": 0.43822727820802454,
+          "events": 4
+        }
+      ],
+      "null": [
+        {
+          "outcome": "rev_growth_l1",
+          "draws": 500,
+          "pseudo_events": 8,
+          "spread": 0.19780904808194585,
+          "false_positive_rate": 0.054,
+          "minimum_effect_now": 0.5353889162776221,
+          "minimum_effect_pool": 0.033903373926509266,
+          "e_value": 4.358619195772733
+        },
+        {
+          "outcome": "op_margin_l1",
+          "draws": 500,
+          "pseudo_events": 8,
+          "spread": 0.3612086328782671,
+          "false_positive_rate": 0.068,
+          "minimum_effect_now": 1.0863371058440452,
+          "minimum_effect_pool": 0.06879203507936342,
+          "e_value": 4.358619195772732
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "draws": 500,
+          "pseudo_events": 8,
+          "spread": 0.30544559878454763,
+          "false_positive_rate": 0.074,
+          "minimum_effect_now": 0.9021988828489766,
+          "minimum_effect_pool": 0.057131526543307845,
+          "e_value": 4.358619195772733
+        }
+      ],
+      "synthetic": {
+        "usable": 4,
+        "median_donors": 28.0,
+        "median_holdout_ratio": 1.8239260974791547
+      },
+      "confounded_share": 0.3888888888888889,
+      "near_decision_share": 0.6666666666666666,
+      "divisions": {
+        "D": 5,
+        "F": 1,
+        "G": 1,
+        "I": 1
+      },
+      "verdicts": [
+        {
+          "method": "matched_cohort",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "8 usable events, 30 are needed.",
+            "The largest difference after matching is 0.69, at most 0.25 allowed."
+          ]
+        },
+        {
+          "method": "weighted_regression",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "8 usable events, 30 are needed."
+          ]
+        },
+        {
+          "method": "did_event_study",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "8 usable events, 30 are needed."
+          ]
+        },
+        {
+          "method": "synthetic_control",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "The fit does not hold on the last pre-quarters."
+          ]
+        }
+      ]
+    },
+    {
+      "treatment": "layoff",
+      "estimand": "Average effect on firms that announced a workforce reduction, by intention to treat, on margins and growth 4 to 7 quarters after, against matched firms without one.",
+      "assumptions": [
+        "Conditional parallel trends: without the action, treated firms would have moved like their matched controls.",
+        "No anticipation before the first public document.",
+        "Overlap: firms like the treated also exist without the action.",
+        "One version of the treatment: the same label means the same action.",
+        "No interference between firms.",
+        "Firms cut staff because results are falling: reversion to the mean."
+      ],
+      "untested": [
+        "Management expectations are not measured: pre-trends can look fine and still be driven by a plan outsiders cannot see.",
+        "Parallel trends after the event can never be tested, only made plausible before it.",
+        "No interference between firms is assumed, not checked."
+      ],
+      "events": 8,
+      "usable": 6,
+      "candidate_pool": 448,
+      "controls": 975,
+      "support": 1.0,
+      "balance": [
+        {
+          "covariate": "log_rev_ttm",
+          "before": 0.5346038561740516,
+          "after": -0.0786337724877261
+        },
+        {
+          "covariate": "rev_growth_l1",
+          "before": 0.26008744301281966,
+          "after": 0.26806298238713194
+        },
+        {
+          "covariate": "op_margin_l1",
+          "before": 0.1226707837534893,
+          "after": -0.03754056846194518
+        },
+        {
+          "covariate": "fcf_margin_l1",
+          "before": -0.3087961930567246,
+          "after": -0.14713375671957207
+        },
+        {
+          "covariate": "capex_intensity_ttm",
+          "before": -0.3759971359277325,
+          "after": 0.03477450361692151
+        },
+        {
+          "covariate": "cash_to_rev_ttm",
+          "before": 0.03143332766874678,
+          "after": 0.15973940548301616
+        },
+        {
+          "covariate": "net_debt_to_rev_ttm",
+          "before": -0.0027320151861303455,
+          "after": 0.07690389209475705
+        }
+      ],
+      "leads": [
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -8,
+          "mean": 0.208419437555,
+          "low": -0.42751503713668304,
+          "high": 0.8443539122466831,
+          "events": 4
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -7,
+          "mean": -0.320809685193825,
+          "low": -0.44831674648272357,
+          "high": -0.19330262390492647,
+          "events": 4
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -6,
+          "mean": -0.15220368403200002,
+          "low": -0.43572054697562324,
+          "high": 0.1313131789116232,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -5,
+          "mean": -0.017530107223119974,
+          "low": -0.8700033490733986,
+          "high": 0.8349431346271586,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -4,
+          "mean": -0.051462089754000004,
+          "low": -0.6537832645867541,
+          "high": 0.550859085078754,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -3,
+          "mean": 0.11568954138166666,
+          "low": -0.39738811260220086,
+          "high": 0.6287671953655342,
+          "events": 6
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -2,
+          "mean": -0.05162076422499998,
+          "low": -0.16644171474979397,
+          "high": 0.06320018629979401,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -8,
+          "mean": 0.628643482428914,
+          "low": 0.19840885768622762,
+          "high": 1.0588781071716005,
+          "events": 4
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -7,
+          "mean": 0.2190579421120925,
+          "low": -0.1321619084858418,
+          "high": 0.5702777927100269,
+          "events": 4
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -6,
+          "mean": -0.09363262970708086,
+          "low": -0.529172070053028,
+          "high": 0.34190681063886624,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -5,
+          "mean": -0.4180217811289898,
+          "low": -1.2320282823222135,
+          "high": 0.3959847200642339,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -4,
+          "mean": -0.34899204756628854,
+          "low": -1.0444657092945444,
+          "high": 0.3464816141619673,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -3,
+          "mean": 0.03736102528702742,
+          "low": -0.21090383158744985,
+          "high": 0.2856258821615047,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -2,
+          "mean": -0.20969033512232496,
+          "low": -0.5542570807558689,
+          "high": 0.13487641051121899,
+          "events": 6
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -8,
+          "mean": 0.442876630603421,
+          "low": -0.6092901434727448,
+          "high": 1.4950434046795866,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -7,
+          "mean": 0.30090003445391456,
+          "low": -1.3934113400403325,
+          "high": 1.9952114089481616,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -6,
+          "mean": 0.7105083288904123,
+          "low": -0.07415877150241867,
+          "high": 1.4951754292832433,
+          "events": 5
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -5,
+          "mean": -0.11392260585822474,
+          "low": -0.6423310787654651,
+          "high": 0.41448586704901563,
+          "events": 5
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -4,
+          "mean": -0.693940729033074,
+          "low": -1.6285653678251435,
+          "high": 0.24068390975899545,
+          "events": 5
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -3,
+          "mean": -0.6916902944794318,
+          "low": -1.827565029111947,
+          "high": 0.44418444015308356,
+          "events": 5
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -2,
+          "mean": 0.16268289454019708,
+          "low": -0.5191775952164959,
+          "high": 0.8445433842968899,
+          "events": 5
+        }
+      ],
+      "placebo": [
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 6,
+          "estimate": -0.11285916454893753,
+          "low": -0.5019678767169203,
+          "high": 0.27624954761904524,
+          "events": 4
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 8,
+          "estimate": -0.0808209554720438,
+          "low": -0.3996631486781814,
+          "high": 0.23802123773409378,
+          "events": 4
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 10,
+          "estimate": 0.031217819247831263,
+          "low": -0.10760989876429525,
+          "high": 0.17004553725995777,
+          "events": 4
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 6,
+          "estimate": -0.09894745077978473,
+          "low": -0.36362630728631934,
+          "high": 0.16573140572674988,
+          "events": 4
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 8,
+          "estimate": -0.20111959463403217,
+          "low": -0.8839874353711372,
+          "high": 0.4817482461030729,
+          "events": 4
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 10,
+          "estimate": 0.14827491406968185,
+          "low": -0.4458269104359086,
+          "high": 0.7423767385752723,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 6,
+          "estimate": -0.5661948748351814,
+          "low": -0.9658174943337748,
+          "high": -0.16657225533658793,
+          "events": 3
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 8,
+          "estimate": -0.02380561837877,
+          "low": -0.1958207228019376,
+          "high": 0.14820948604439763,
+          "events": 3
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 10,
+          "estimate": 0.0774628659499527,
+          "low": -0.46856695463562065,
+          "high": 0.623492686535526,
+          "events": 3
+        }
+      ],
+      "null": [
+        {
+          "outcome": "rev_growth_l1",
+          "draws": 500,
+          "pseudo_events": 6,
+          "spread": 0.22719513500065022,
+          "false_positive_rate": 0.068,
+          "minimum_effect_now": 0.6473998889370273,
+          "minimum_effect_pool": 0.07492197872105216,
+          "e_value": 5.105375639446391
+        },
+        {
+          "outcome": "op_margin_l1",
+          "draws": 500,
+          "pseudo_events": 6,
+          "spread": 0.470853165577879,
+          "false_positive_rate": 0.068,
+          "minimum_effect_now": 1.337255797289786,
+          "minimum_effect_pool": 0.15475728695853155,
+          "e_value": 5.105375639446391
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "draws": 500,
+          "pseudo_events": 6,
+          "spread": 0.37765699378513196,
+          "false_positive_rate": 0.08,
+          "minimum_effect_now": 1.0862444191424707,
+          "minimum_effect_pool": 0.12570836456348242,
+          "e_value": 5.105375639446393
+        }
+      ],
+      "synthetic": {
+        "usable": 4,
+        "median_donors": 71.5,
+        "median_holdout_ratio": 10.395660426334608
+      },
+      "confounded_share": 0.625,
+      "near_decision_share": 1.0,
+      "divisions": {
+        "D": 5,
+        "I": 1
+      },
+      "verdicts": [
+        {
+          "method": "matched_cohort",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "6 usable events, 30 are needed.",
+            "The largest difference after matching is 0.27, at most 0.25 allowed."
+          ]
+        },
+        {
+          "method": "weighted_regression",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "6 usable events, 30 are needed."
+          ]
+        },
+        {
+          "method": "did_event_study",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "6 usable events, 30 are needed.",
+            "11% of placebo dates are away from zero."
+          ]
+        },
+        {
+          "method": "synthetic_control",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "The fit does not hold on the last pre-quarters."
+          ]
+        }
+      ]
+    },
+    {
+      "treatment": "divestiture",
+      "estimand": "Average effect on firms that sold or spun off a business, on growth and margins 4 to 7 quarters after, against matched firms without one.",
+      "assumptions": [
+        "Conditional parallel trends: without the action, treated firms would have moved like their matched controls.",
+        "No anticipation before the first public document.",
+        "Overlap: firms like the treated also exist without the action.",
+        "One version of the treatment: the same label means the same action.",
+        "No interference between firms.",
+        "Revenue falls by construction when a business leaves."
+      ],
+      "untested": [
+        "Management expectations are not measured: pre-trends can look fine and still be driven by a plan outsiders cannot see.",
+        "Parallel trends after the event can never be tested, only made plausible before it.",
+        "No interference between firms is assumed, not checked."
+      ],
+      "events": 4,
+      "usable": 2,
+      "candidate_pool": 1995,
+      "controls": 955,
+      "support": 0.5,
+      "balance": [
+        {
+          "covariate": "log_rev_ttm",
+          "before": 1.3075499357822356,
+          "after": 0.6099337851758757
+        },
+        {
+          "covariate": "rev_growth_l1",
+          "before": -0.20102986083650956,
+          "after": -0.3028934886892717
+        },
+        {
+          "covariate": "op_margin_l1",
+          "before": 0.16788595220337757,
+          "after": 0.008998154145750312
+        },
+        {
+          "covariate": "fcf_margin_l1",
+          "before": -0.10135168227930533,
+          "after": -0.056704403412901644
+        },
+        {
+          "covariate": "capex_intensity_ttm",
+          "before": -0.022610048667546,
+          "after": 0.2658515742026579
+        },
+        {
+          "covariate": "cash_to_rev_ttm",
+          "before": -0.08824058765396146,
+          "after": 0.23842858012163134
+        },
+        {
+          "covariate": "net_debt_to_rev_ttm",
+          "before": -0.2071904096137884,
+          "after": -0.15301235848878483
+        }
+      ],
+      "leads": [
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -6,
+          "mean": 0.036969117632500006,
+          "low": -0.26640868452500005,
+          "high": 0.34034691979000004,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -5,
+          "mean": -0.054460480165000005,
+          "low": -0.43368418573760004,
+          "high": 0.32476322540760005,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -4,
+          "mean": -0.02323557658449999,
+          "low": -0.15574090934892001,
+          "high": 0.10926975617992005,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -3,
+          "mean": -0.261668014635,
+          "low": -0.6535529586268001,
+          "high": 0.13021692935680002,
+          "events": 2
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -2,
+          "mean": 0.13664755394,
+          "low": 0.009676922163199986,
+          "high": 0.2636181857168,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -6,
+          "mean": -0.5074496252776153,
+          "low": -2.617358002602426,
+          "high": 1.6024587520471956,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -5,
+          "mean": 0.34640297917771395,
+          "low": 0.22208915299771398,
+          "high": 0.47071680535771393,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -4,
+          "mean": 0.029439587691015123,
+          "low": -0.35543084994726165,
+          "high": 0.4143100253292919,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -3,
+          "mean": -0.35335241201720113,
+          "low": -0.6610027801383549,
+          "high": -0.04570204389604737,
+          "events": 2
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -2,
+          "mean": 0.24126837739607904,
+          "low": -1.74879993769525,
+          "high": 2.231336692487408,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -6,
+          "mean": -0.5880855415040098,
+          "low": -1.600667054889178,
+          "high": 0.4244959718811583,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -5,
+          "mean": 0.28651480000252993,
+          "low": -2.8130000671342046,
+          "high": 3.3860296671392645,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -4,
+          "mean": -0.07908953565302013,
+          "low": -1.5522405193872137,
+          "high": 1.3940614480811735,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -3,
+          "mean": 1.3971480945772743,
+          "low": -0.06789630907875632,
+          "high": 2.8621924982333047,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -2,
+          "mean": -0.18668253204026458,
+          "low": -2.122217597843564,
+          "high": 1.7488525337630347,
+          "events": 2
+        }
+      ],
+      "placebo": [],
+      "null": [
+        {
+          "outcome": "rev_growth_l1",
+          "draws": 500,
+          "pseudo_events": 2,
+          "spread": 0.38389161478987216,
+          "false_positive_rate": 0.208,
+          "minimum_effect_now": 1.0734589075649994,
+          "minimum_effect_pool": 0.033988263140515354,
+          "e_value": 11.597451439125965
+        },
+        {
+          "outcome": "op_margin_l1",
+          "draws": 500,
+          "pseudo_events": 2,
+          "spread": 0.7620568636457398,
+          "false_positive_rate": 0.198,
+          "minimum_effect_now": 2.1782310948598416,
+          "minimum_effect_pool": 0.0689679792223125,
+          "e_value": 11.597451439125972
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "draws": 500,
+          "pseudo_events": 2,
+          "spread": 0.6185634836497993,
+          "false_positive_rate": 0.29,
+          "minimum_effect_now": 1.8098786919956398,
+          "minimum_effect_pool": 0.05730506571089657,
+          "e_value": 11.597451439125972
+        }
+      ],
+      "synthetic": {
+        "usable": 1,
+        "median_donors": 31.0,
+        "median_holdout_ratio": 27.240922906701805
+      },
+      "confounded_share": 0.25,
+      "near_decision_share": 0.75,
+      "divisions": {
+        "D": 1,
+        "I": 1
+      },
+      "verdicts": [
+        {
+          "method": "matched_cohort",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "2 usable events, 30 are needed.",
+            "Support is 50%, at least 90% is needed.",
+            "The largest difference after matching is 0.61, at most 0.25 allowed."
+          ]
+        },
+        {
+          "method": "weighted_regression",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "2 usable events, 30 are needed.",
+            "Support is 50%, at least 90% is needed."
+          ]
+        },
+        {
+          "method": "did_event_study",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "2 usable events, 30 are needed.",
+            "2 leads of op_margin_l1 are away from zero.",
+            "No placebo date could be measured.",
+            "The null rejects 29% of the time at a nominal 5%."
+          ]
+        },
+        {
+          "method": "synthetic_control",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "The fit does not hold on the last pre-quarters."
+          ]
+        }
+      ]
+    },
+    {
+      "treatment": "capex_change",
+      "estimand": "Average effect of a yearly change of capital expenditure on growth and margins 4 to 7 quarters after it was reported, against matched firms without one.",
+      "assumptions": [
+        "Conditional parallel trends: without the action, treated firms would have moved like their matched controls.",
+        "No anticipation before the first public document.",
+        "Overlap: firms like the treated also exist without the action.",
+        "One version of the treatment: the same label means the same action.",
+        "No interference between firms.",
+        "A rise can be a finished project, not a decision of that year."
+      ],
+      "untested": [
+        "Management expectations are not measured: pre-trends can look fine and still be driven by a plan outsiders cannot see.",
+        "Parallel trends after the event can never be tested, only made plausible before it.",
+        "No interference between firms is assumed, not checked."
+      ],
+      "events": 6,
+      "usable": 5,
+      "candidate_pool": 1645,
+      "controls": 984,
+      "support": 0.8,
+      "balance": [
+        {
+          "covariate": "log_rev_ttm",
+          "before": 0.5085312847200976,
+          "after": 0.04540675551579486
+        },
+        {
+          "covariate": "rev_growth_l1",
+          "before": -0.01096636226924991,
+          "after": 0.07065865817733182
+        },
+        {
+          "covariate": "op_margin_l1",
+          "before": 0.16022046600314907,
+          "after": -0.0215694144788724
+        },
+        {
+          "covariate": "fcf_margin_l1",
+          "before": 0.3327329984935014,
+          "after": 0.24893701668388438
+        },
+        {
+          "covariate": "capex_intensity_ttm",
+          "before": 0.1516709408937981,
+          "after": 0.22901643194308116
+        },
+        {
+          "covariate": "cash_to_rev_ttm",
+          "before": 0.38649692840556543,
+          "after": 0.1597052434662773
+        },
+        {
+          "covariate": "net_debt_to_rev_ttm",
+          "before": 0.116414815821075,
+          "after": 0.10732497353656803
+        }
+      ],
+      "leads": [
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -8,
+          "mean": 0.068855058514,
+          "low": -0.2176781784022048,
+          "high": 0.3553882954302048,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -7,
+          "mean": 0.25964630687400003,
+          "low": -0.1929279362600998,
+          "high": 0.7122205500080998,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -6,
+          "mean": 0.154128113936,
+          "low": -0.20801146856916958,
+          "high": 0.5162676964411697,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -5,
+          "mean": 0.127546644828,
+          "low": -0.3352282846237203,
+          "high": 0.5903215742797203,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -4,
+          "mean": 0.10213846850799999,
+          "low": -0.2457017876818419,
+          "high": 0.44997872469784184,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -3,
+          "mean": 0.05983693269799999,
+          "low": -0.21463007063180856,
+          "high": 0.33430393602780856,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -2,
+          "mean": 0.10638188220399998,
+          "low": -0.2531148785739534,
+          "high": 0.4658786429819533,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -8,
+          "mean": -1.363283145633015,
+          "low": -3.4528581976264445,
+          "high": 0.7262919063604145,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -7,
+          "mean": 0.6352508295288563,
+          "low": -1.3374461599322398,
+          "high": 2.607947818989952,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -6,
+          "mean": 0.9029123338841158,
+          "low": -0.8849857005946189,
+          "high": 2.6908103683628504,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -5,
+          "mean": 0.05903894202374334,
+          "low": -0.7972716163162598,
+          "high": 0.9153495003637465,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -4,
+          "mean": 0.935850630157901,
+          "low": -1.1165157841846123,
+          "high": 2.9882170445004146,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -3,
+          "mean": 0.8723064206660585,
+          "low": -0.697181003497138,
+          "high": 2.441793844829255,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -2,
+          "mean": 1.1276022747407524,
+          "low": -0.5619988747048601,
+          "high": 2.817203424186365,
+          "events": 5
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -8,
+          "mean": 1.5435711985375247,
+          "low": 0.16672418676342238,
+          "high": 2.920418210311627,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -7,
+          "mean": -0.49704448308965266,
+          "low": -1.6502339361287826,
+          "high": 0.6561449699494774,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -6,
+          "mean": 0.36282108047910855,
+          "low": -1.0611228199522857,
+          "high": 1.7867649809105028,
+          "events": 3
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -5,
+          "mean": 0.28125060281194303,
+          "low": -0.5470839056432298,
+          "high": 1.109585111267116,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -4,
+          "mean": 0.32293966449971473,
+          "low": -0.4349209511437216,
+          "high": 1.080800280143151,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -3,
+          "mean": -0.10779052604294684,
+          "low": -1.1868462237909525,
+          "high": 0.9712651717050589,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -2,
+          "mean": 0.9567521960314609,
+          "low": 0.22126359926404038,
+          "high": 1.6922407927988814,
+          "events": 4
+        }
+      ],
+      "placebo": [
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 6,
+          "estimate": -0.09948218776105001,
+          "low": -0.9219457555109811,
+          "high": 0.7229813799888811,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 8,
+          "estimate": 0.22231927207663507,
+          "low": -0.061998644964500776,
+          "high": 0.5066371891177709,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 10,
+          "estimate": 0.04730293892720005,
+          "low": -0.16415315167150363,
+          "high": 0.25875902952590374,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 6,
+          "estimate": 0.2899410985816406,
+          "low": -0.5025883994319555,
+          "high": 1.0824705965952366,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 8,
+          "estimate": 0.7989243277008656,
+          "low": -0.3231524476790081,
+          "high": 1.9210011030807395,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 10,
+          "estimate": -0.05670027681234173,
+          "low": -0.2953164451538555,
+          "high": 0.18191589152917204,
+          "events": 5
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 6,
+          "estimate": 1.0195920738145123,
+          "low": -1.357728648352338,
+          "high": 3.396912795981363,
+          "events": 3
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 8,
+          "estimate": 1.2593977587053111,
+          "low": 0.7399078350093545,
+          "high": 1.7788876824012676,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 10,
+          "estimate": -0.387397578657078,
+          "low": -1.8194585916573291,
+          "high": 1.044663434343173,
+          "events": 4
+        }
+      ],
+      "null": [
+        {
+          "outcome": "rev_growth_l1",
+          "draws": 500,
+          "pseudo_events": 5,
+          "spread": 0.24265981854332974,
+          "false_positive_rate": 0.076,
+          "minimum_effect_now": 0.6780304873085983,
+          "minimum_effect_pool": 0.03738103080700601,
+          "e_value": 5.7023571118784755
+        },
+        {
+          "outcome": "op_margin_l1",
+          "draws": 500,
+          "pseudo_events": 5,
+          "spread": 0.5137682681923211,
+          "false_positive_rate": 0.098,
+          "minimum_effect_now": 1.4187537905226348,
+          "minimum_effect_pool": 0.07821842843911102,
+          "e_value": 5.7023571118784755
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "draws": 500,
+          "pseudo_events": 5,
+          "spread": 0.43475432473968645,
+          "false_positive_rate": 0.104,
+          "minimum_effect_now": 1.1698258357672031,
+          "minimum_effect_pool": 0.06449458604616175,
+          "e_value": 5.7023571118784755
+        }
+      ],
+      "synthetic": {
+        "usable": 4,
+        "median_donors": 84.5,
+        "median_holdout_ratio": 21.32783241064608
+      },
+      "confounded_share": 0.6666666666666666,
+      "near_decision_share": 0.8333333333333334,
+      "divisions": {
+        "B": 1,
+        "D": 2,
+        "E": 1,
+        "I": 1
+      },
+      "verdicts": [
+        {
+          "method": "matched_cohort",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "5 usable events, 30 are needed.",
+            "Support is 80%, at least 90% is needed."
+          ]
+        },
+        {
+          "method": "weighted_regression",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "5 usable events, 30 are needed.",
+            "Support is 80%, at least 90% is needed."
+          ]
+        },
+        {
+          "method": "did_event_study",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "5 usable events, 30 are needed.",
+            "2 leads of fcf_margin_l1 are away from zero.",
+            "11% of placebo dates are away from zero.",
+            "The null rejects 10% of the time at a nominal 5%."
+          ]
+        },
+        {
+          "method": "synthetic_control",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "The fit does not hold on the last pre-quarters."
+          ]
+        }
+      ]
+    },
+    {
+      "treatment": "refinancing",
+      "estimand": "Average effect on firms that replaced or amended debt, on margins and growth 4 to 7 quarters after, against matched firms without one.",
+      "assumptions": [
+        "Conditional parallel trends: without the action, treated firms would have moved like their matched controls.",
+        "No anticipation before the first public document.",
+        "Overlap: firms like the treated also exist without the action.",
+        "One version of the treatment: the same label means the same action.",
+        "No interference between firms.",
+        "Debt is often raised for another decision, not for itself."
+      ],
+      "untested": [
+        "Management expectations are not measured: pre-trends can look fine and still be driven by a plan outsiders cannot see.",
+        "Parallel trends after the event can never be tested, only made plausible before it.",
+        "No interference between firms is assumed, not checked."
+      ],
+      "events": 9,
+      "usable": 6,
+      "candidate_pool": 6422,
+      "controls": 862,
+      "support": 0.6666666666666666,
+      "balance": [
+        {
+          "covariate": "log_rev_ttm",
+          "before": 0.966381000126597,
+          "after": 0.4320656863920062
+        },
+        {
+          "covariate": "rev_growth_l1",
+          "before": -0.08235234998053907,
+          "after": -0.4982928490425038
+        },
+        {
+          "covariate": "op_margin_l1",
+          "before": 0.8167742473348617,
+          "after": 0.09229513782154504
+        },
+        {
+          "covariate": "fcf_margin_l1",
+          "before": 0.5223726223370493,
+          "after": 0.047100463523159226
+        },
+        {
+          "covariate": "capex_intensity_ttm",
+          "before": 0.7621264093408184,
+          "after": 1.2949307286046465
+        },
+        {
+          "covariate": "cash_to_rev_ttm",
+          "before": -0.7280769922429825,
+          "after": -0.03565636953533142
+        },
+        {
+          "covariate": "net_debt_to_rev_ttm",
+          "before": 0.1975456838376949,
+          "after": 0.12954887900116854
+        }
+      ],
+      "leads": [
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -8,
+          "mean": 0.174065514825,
+          "low": -0.14292176091816122,
+          "high": 0.4910527905681612,
+          "events": 4
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -7,
+          "mean": 0.6200792061249999,
+          "low": -0.40934024331174135,
+          "high": 1.6494986555617412,
+          "events": 6
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -6,
+          "mean": 0.4064904103298333,
+          "low": -0.18421643906486346,
+          "high": 0.99719725972453,
+          "events": 6
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -5,
+          "mean": 0.048766852760000014,
+          "low": -0.2922530241425243,
+          "high": 0.38978672966252437,
+          "events": 4
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -4,
+          "mean": 0.5254916777719999,
+          "low": -0.1797821006481234,
+          "high": 1.230765456192123,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -3,
+          "mean": 0.16911367160299995,
+          "low": -0.15298107868729238,
+          "high": 0.4912084218932923,
+          "events": 6
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "lead": -2,
+          "mean": 0.20920136459966665,
+          "low": -0.36242997797270393,
+          "high": 0.7808327071720372,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -8,
+          "mean": 0.036078004171803124,
+          "low": -1.557258264702434,
+          "high": 1.6294142730460404,
+          "events": 4
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -7,
+          "mean": -0.6643385501525122,
+          "low": -2.226301573787744,
+          "high": 0.8976244734827196,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -6,
+          "mean": -0.17547772119034066,
+          "low": -1.4174862175029748,
+          "high": 1.0665307751222934,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -5,
+          "mean": -0.15594855139534716,
+          "low": -1.2698918030322754,
+          "high": 0.9579947002415812,
+          "events": 4
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -4,
+          "mean": 0.7003211818570924,
+          "low": -1.9893076976677198,
+          "high": 3.3899500613819042,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -3,
+          "mean": 0.8368732460636997,
+          "low": -1.0365167736984309,
+          "high": 2.71026326582583,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "lead": -2,
+          "mean": 0.714097056151744,
+          "low": -1.1000595967233124,
+          "high": 2.5282537090268002,
+          "events": 6
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -8,
+          "mean": 0.034318282973325585,
+          "low": -1.5281073295754086,
+          "high": 1.5967438955220596,
+          "events": 3
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -7,
+          "mean": -1.1572941551285871,
+          "low": -2.6965777822704573,
+          "high": 0.38198947201328304,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -6,
+          "mean": -0.45034431698801464,
+          "low": -1.9753325397355541,
+          "high": 1.074643905759525,
+          "events": 5
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -5,
+          "mean": -1.2098590167286825,
+          "low": -2.0519787266003533,
+          "high": -0.3677393068570114,
+          "events": 3
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -4,
+          "mean": -0.11113445431205579,
+          "low": -0.5428447018807012,
+          "high": 0.3205757932565897,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -3,
+          "mean": 1.2114363248723437,
+          "low": -3.922697984894118,
+          "high": 6.345570634638806,
+          "events": 2
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "lead": -2,
+          "mean": 0.13539579109164174,
+          "low": -2.5832236814633625,
+          "high": 2.8540152636466463,
+          "events": 5
+        }
+      ],
+      "placebo": [
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 6,
+          "estimate": -0.0395441819520972,
+          "low": -0.2403089764267244,
+          "high": 0.16122061252253003,
+          "events": 6
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 8,
+          "estimate": 0.176582597755,
+          "low": -0.05326095059181671,
+          "high": 0.4064261461018167,
+          "events": 5
+        },
+        {
+          "outcome": "rev_growth_l1",
+          "shift": 10,
+          "estimate": -0.07523688201624167,
+          "low": -0.1798876935022204,
+          "high": 0.029413929469737074,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 6,
+          "estimate": 0.5452768312334869,
+          "low": 0.09375131037948509,
+          "high": 0.9968023520874887,
+          "events": 6
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 8,
+          "estimate": -0.5528933095589791,
+          "low": -1.3090320426779107,
+          "high": 0.20324542355995256,
+          "events": 5
+        },
+        {
+          "outcome": "op_margin_l1",
+          "shift": 10,
+          "estimate": -0.09701096403381633,
+          "low": -0.35737275900973203,
+          "high": 0.1633508309420994,
+          "events": 6
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 6,
+          "estimate": -0.06377151935035189,
+          "low": -1.223625870107742,
+          "high": 1.0960828314070383,
+          "events": 4
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 8,
+          "estimate": -0.405483292059432,
+          "low": -0.8679533582093163,
+          "high": 0.056986774090452275,
+          "events": 3
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "shift": 10,
+          "estimate": -0.4965977600728005,
+          "low": -1.29441686796557,
+          "high": 0.3012213478199692,
+          "events": 5
+        }
+      ],
+      "null": [
+        {
+          "outcome": "rev_growth_l1",
+          "draws": 500,
+          "pseudo_events": 6,
+          "spread": 0.32465615569284034,
+          "false_positive_rate": 0.076,
+          "minimum_effect_now": 0.8991084289970701,
+          "minimum_effect_pool": 0.02748226630884318,
+          "e_value": 5.105375639446391
+        },
+        {
+          "outcome": "op_margin_l1",
+          "draws": 500,
+          "pseudo_events": 6,
+          "spread": 0.565047664325799,
+          "false_positive_rate": 0.048,
+          "minimum_effect_now": 1.730858097556496,
+          "minimum_effect_pool": 0.052905635900806686,
+          "e_value": 5.105375639446391
+        },
+        {
+          "outcome": "fcf_margin_l1",
+          "draws": 500,
+          "pseudo_events": 6,
+          "spread": 0.4171819937728142,
+          "false_positive_rate": 0.092,
+          "minimum_effect_now": 1.1990215207470285,
+          "minimum_effect_pool": 0.036649449254925574,
+          "e_value": 5.105375639446391
+        }
+      ],
+      "synthetic": {
+        "usable": 1,
+        "median_donors": 20.0,
+        "median_holdout_ratio": 2.889131012811254
+      },
+      "confounded_share": 0.3333333333333333,
+      "near_decision_share": 0.7777777777777778,
+      "divisions": {
+        "D": 1,
+        "E": 3,
+        "F": 1,
+        "I": 1
+      },
+      "verdicts": [
+        {
+          "method": "matched_cohort",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "6 usable events, 30 are needed.",
+            "Support is 67%, at least 90% is needed.",
+            "The largest difference after matching is 1.29, at most 0.25 allowed."
+          ]
+        },
+        {
+          "method": "weighted_regression",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "6 usable events, 30 are needed.",
+            "Support is 67%, at least 90% is needed."
+          ]
+        },
+        {
+          "method": "did_event_study",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "6 usable events, 30 are needed.",
+            "11% of placebo dates are away from zero."
+          ]
+        },
+        {
+          "method": "synthetic_control",
+          "feasible": false,
+          "reasons": [
+            "The registry audit says the sample is not credible.",
+            "Too few events have enough quarters and donors.",
+            "The fit does not hold on the last pre-quarters."
+          ]
+        }
+      ]
+    }
+  ],
+  "findings": [
+    "No effect was estimated, and no outcome after a treatment was read.",
+    "rnd_change: 2 of 3 events usable, 0 of 4 methods feasible; smallest growth effect detectable now 1.068",
+    "acquisition: 8 of 18 events usable, 0 of 4 methods feasible; smallest growth effect detectable now 0.535",
+    "layoff: 6 of 8 events usable, 0 of 4 methods feasible; smallest growth effect detectable now 0.647",
+    "divestiture: 2 of 4 events usable, 0 of 4 methods feasible; smallest growth effect detectable now 1.073",
+    "capex_change: 5 of 6 events usable, 0 of 4 methods feasible; smallest growth effect detectable now 0.678",
+    "refinancing: 6 of 9 events usable, 0 of 4 methods feasible; smallest growth effect detectable now 0.899"
+  ],
+  "seed": 20261106,
+  "contracts_version": "0.18.0",
+  "created_at": "2026-11-06T00:10:08.666196Z"
+}

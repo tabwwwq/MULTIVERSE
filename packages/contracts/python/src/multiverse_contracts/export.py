@@ -13,6 +13,7 @@ from pathlib import Path
 from pydantic import BaseModel
 from pydantic.json_schema import models_json_schema
 
+from multiverse_contracts.causal import CausalStudy
 from multiverse_contracts.companies import CompanyDossier
 from multiverse_contracts.decisions import ScenarioDraft
 from multiverse_contracts.events import CandidateSample, EventRegistry, QualityAudit
@@ -77,6 +78,7 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     CandidateSample,
     EventRegistry,
     QualityAudit,
+    CausalStudy,
 )
 
 

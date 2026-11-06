@@ -283,15 +283,11 @@ export const SECTIONS: readonly Section[] = [
     title: "Causal Map",
     group: "analyse",
     icon: Network,
-    summary: "The assumed cause-and-effect graph, with confounders and untested assumptions.",
-    status: "planned",
+    summary: "The assumed cause-and-effect graph, and how far the data are from any claim.",
+    status: "available",
     stage: 20,
     stageName: "Causal research pipeline",
-    plans: [
-      "Hypothesised graph of macro conditions, firm state, decision and outcomes.",
-      "Confounders and mediators with the reasoning behind them.",
-      "Which assumptions are tested and which are not.",
-    ],
+    plans: [],
   },
   {
     slug: "explainability",

@@ -705,6 +705,21 @@ export interface ApprovalRule {
   min_examples: number;
 }
 /**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "BalanceRow".
+ */
+export interface BalanceRow {
+  /**
+   * Against the matched controls.
+   */
+  after: number;
+  /**
+   * Standardized mean difference against all controls.
+   */
+  before: number;
+  covariate: string;
+}
+/**
  * The quantile forecasts of one model on one set of rows, in the target's training space.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -961,6 +976,237 @@ export interface CapexExpansion {
   type: "capex_expansion";
   useful_life_years: number;
   utilization: FixedValue | UniformRange | TriangularRange;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CausalEdge".
+ */
+export interface CausalEdge {
+  rationale: string;
+  source: string;
+  target: string;
+}
+/**
+ * A hypothesis, never a finding: drawn from reasoning, not discovered from data.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CausalGraph".
+ */
+export interface CausalGraph {
+  /**
+   * @minItems 1
+   */
+  edges: [CausalEdge, ...CausalEdge[]];
+  /**
+   * @minItems 1
+   */
+  nodes: [CausalNode, ...CausalNode[]];
+  /**
+   * What the graph leaves out, said aloud.
+   */
+  omitted: string[];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CausalNode".
+ */
+export interface CausalNode {
+  label: string;
+  /**
+   * The data behind it, or why there is none.
+   */
+  measured_by: string;
+  node_id: string;
+  observed: boolean;
+  role: "macro" | "state" | "unobserved" | "action" | "mediator" | "outcome";
+}
+/**
+ * Labelled as what it is: a feasibility study, with no effect estimated.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "CausalStudy".
+ */
+export interface CausalStudy {
+  audit_blockers: string[];
+  audit_credible: boolean;
+  contracts_version: string;
+  /**
+   * Not part of the hash.
+   */
+  created_at: string;
+  data_cutoff: string;
+  dataset_id: string;
+  effects_estimated: 0;
+  findings: string[];
+  graph: CausalGraph;
+  label: "feasibility_study_no_effect_estimated";
+  outcomes_after_treatment_read: false;
+  registry_version: string;
+  /**
+   * What makes a method feasible, set beforehand.
+   */
+  rules: string[];
+  sample_id: string;
+  seed: number;
+  sha256: string;
+  study_id: string;
+  /**
+   * @minItems 1
+   */
+  treatments: [TreatmentStudy, ...TreatmentStudy[]];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "TreatmentStudy".
+ */
+export interface TreatmentStudy {
+  /**
+   * @minItems 1
+   */
+  assumptions: [string, ...string[]];
+  balance: BalanceRow[];
+  /**
+   * Unread candidates of the filing index.
+   */
+  candidate_pool: number;
+  /**
+   * Events whose document names another event.
+   */
+  confounded_share: number;
+  /**
+   * Firms without the action around the events.
+   */
+  controls: number;
+  /**
+   * Usable events per SIC division.
+   */
+  divisions: {
+    [k: string]: number;
+  };
+  estimand: string;
+  /**
+   * In the registry.
+   */
+  events: number;
+  leads: LeadRow[];
+  /**
+   * Events with another decision item nearby.
+   */
+  near_decision_share: number;
+  null: NullRow[];
+  placebo: PlaceboRow[];
+  /**
+   * Treated inside the controls' range.
+   */
+  support: number | null;
+  synthetic: SyntheticFit | null;
+  treatment: EventType;
+  /**
+   * Assumptions no diagnostic here can check.
+   */
+  untested: string[];
+  /**
+   * With enough history in the panel.
+   */
+  usable: number;
+  /**
+   * @minItems 1
+   */
+  verdicts: [MethodVerdict, ...MethodVerdict[]];
+}
+/**
+ * Treated minus matched control before the event, against the last quarter before it.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "LeadRow".
+ */
+export interface LeadRow {
+  events: number;
+  high: number;
+  /**
+   * Quarters before the event quarter.
+   */
+  lead: number;
+  low: number;
+  mean: number;
+  outcome: string;
+}
+/**
+ * Pseudo-events on firms without the action: what chance alone produces.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "NullRow".
+ */
+export interface NullRow {
+  draws: number;
+  /**
+   * Hidden confounding that could explain that minimum.
+   */
+  e_value: number;
+  /**
+   * Draws rejected at a nominal 5%.
+   */
+  false_positive_rate: number;
+  /**
+   * Detectable at 80% power with today's events.
+   */
+  minimum_effect_now: number;
+  /**
+   * The same with every candidate of the index.
+   */
+  minimum_effect_pool: number;
+  outcome: string;
+  /**
+   * Per draw, as many as usable treated events.
+   */
+  pseudo_events: number;
+  /**
+   * Standard deviation of the mean over the draws.
+   */
+  spread: number;
+}
+/**
+ * A false event date inside the pre-period: any effect found here is not one.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "PlaceboRow".
+ */
+export interface PlaceboRow {
+  estimate: number;
+  events: number;
+  high: number;
+  low: number;
+  outcome: string;
+  /**
+   * Quarters before the true event.
+   */
+  shift: number;
+}
+/**
+ * Fit of a synthetic control on the pre-period only.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SyntheticFit".
+ */
+export interface SyntheticFit {
+  median_donors: number;
+  /**
+   * Error on held-out pre-quarters over the error of the fit.
+   */
+  median_holdout_ratio: number | null;
+  /**
+   * Events with enough quarters and donors.
+   */
+  usable: number;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "MethodVerdict".
+ */
+export interface MethodVerdict {
+  feasible: boolean;
+  method: "matched_cohort" | "weighted_regression" | "did_event_study" | "synthetic_control";
+  reasons: string[];
 }
 /**
  * Distribution of one paired difference at the horizon (docs/08 delta distributions).

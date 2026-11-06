@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Causal research: DAGs, identification assumptions, estimators and diagnostics."
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
-dependencies = ["multiverse-contracts"]
+dependencies = ["multiverse-contracts", "numpy>=2.0"]
 
 [tool.uv.sources]
 multiverse-contracts = { workspace = true }

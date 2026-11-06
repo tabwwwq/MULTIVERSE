@@ -47,6 +47,7 @@ const PAGES = [
   { path: "/notebook", name: "notebook-empty", heading: "Research Notebook" },
   { path: "/settings", name: "settings", heading: "Settings & Privacy" },
   { path: "/events", name: "events", heading: "Event Registry" },
+  { path: "/causal-map", name: "causal-map", heading: "Causal Map" },
   {
     path: "/compare/2d7c9e41-5b3a-4f6e-8c1d-9a0b7e6f5c34",
     name: "compare",
@@ -98,7 +99,7 @@ for (const target of PAGES) {
 
 test("every planned section shows an honest placeholder without data", async ({ page }) => {
   const planned = SECTIONS.filter((section) => section.status === "planned");
-  expect(planned.length).toBe(8);
+  expect(planned.length).toBe(7);
   for (const section of planned) {
     const response = await page.goto(section.href);
     expect(response?.status(), section.href).toBe(200);

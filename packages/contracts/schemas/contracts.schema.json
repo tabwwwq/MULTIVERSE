@@ -380,6 +380,30 @@
       "title": "AvailabilityBasis",
       "type": "string"
     },
+    "BalanceRow": {
+      "additionalProperties": false,
+      "properties": {
+        "after": {
+          "description": "Against the matched controls.",
+          "type": "number"
+        },
+        "before": {
+          "description": "Standardized mean difference against all controls.",
+          "type": "number"
+        },
+        "covariate": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "covariate",
+        "before",
+        "after"
+      ],
+      "title": "BalanceRow",
+      "type": "object"
+    },
     "BandScore": {
       "additionalProperties": false,
       "description": "The quantile forecasts of one model on one set of rows, in the target's training space.",
@@ -860,6 +884,110 @@
       "title": "CapexExpansion",
       "type": "object"
     },
+    "CausalEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "rationale": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "source": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "target": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "rationale"
+      ],
+      "title": "CausalEdge",
+      "type": "object"
+    },
+    "CausalGraph": {
+      "additionalProperties": false,
+      "description": "A hypothesis, never a finding: drawn from reasoning, not discovered from data.",
+      "properties": {
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/CausalEdge"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/CausalNode"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "omitted": {
+          "description": "What the graph leaves out, said aloud.",
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "nodes",
+        "edges",
+        "omitted"
+      ],
+      "title": "CausalGraph",
+      "type": "object"
+    },
+    "CausalNode": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 60,
+          "minLength": 1,
+          "type": "string"
+        },
+        "measured_by": {
+          "description": "The data behind it, or why there is none.",
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "node_id": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "observed": {
+          "type": "boolean"
+        },
+        "role": {
+          "enum": [
+            "macro",
+            "state",
+            "unobserved",
+            "action",
+            "mediator",
+            "outcome"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "node_id",
+        "label",
+        "role",
+        "observed",
+        "measured_by"
+      ],
+      "title": "CausalNode",
+      "type": "object"
+    },
     "CausalStatus": {
       "description": "Identification status of a result. Never raised automatically (PRD FR-CA-02).",
       "enum": [
@@ -869,6 +997,116 @@
       ],
       "title": "CausalStatus",
       "type": "string"
+    },
+    "CausalStudy": {
+      "additionalProperties": false,
+      "description": "Labelled as what it is: a feasibility study, with no effect estimated.",
+      "properties": {
+        "audit_blockers": {
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "audit_credible": {
+          "type": "boolean"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Not part of the hash.",
+          "format": "date-time",
+          "type": "string"
+        },
+        "data_cutoff": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "dataset_id": {
+          "type": "string"
+        },
+        "effects_estimated": {
+          "const": 0,
+          "type": "integer"
+        },
+        "findings": {
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "graph": {
+          "$ref": "#/$defs/CausalGraph"
+        },
+        "label": {
+          "const": "feasibility_study_no_effect_estimated",
+          "type": "string"
+        },
+        "outcomes_after_treatment_read": {
+          "const": false,
+          "type": "boolean"
+        },
+        "registry_version": {
+          "type": "string"
+        },
+        "rules": {
+          "description": "What makes a method feasible, set beforehand.",
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sample_id": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "study_id": {
+          "pattern": "^cst-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "treatments": {
+          "items": {
+            "$ref": "#/$defs/TreatmentStudy"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "study_id",
+        "sha256",
+        "label",
+        "effects_estimated",
+        "outcomes_after_treatment_read",
+        "data_cutoff",
+        "dataset_id",
+        "registry_version",
+        "sample_id",
+        "audit_credible",
+        "audit_blockers",
+        "graph",
+        "rules",
+        "treatments",
+        "findings",
+        "seed",
+        "contracts_version",
+        "created_at"
+      ],
+      "title": "CausalStudy",
+      "type": "object"
     },
     "CellState": {
       "enum": [
@@ -4270,6 +4508,44 @@
       "title": "KnowledgeView",
       "type": "string"
     },
+    "LeadRow": {
+      "additionalProperties": false,
+      "description": "Treated minus matched control before the event, against the last quarter before it.",
+      "properties": {
+        "events": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "high": {
+          "type": "number"
+        },
+        "lead": {
+          "description": "Quarters before the event quarter.",
+          "maximum": -2,
+          "type": "integer"
+        },
+        "low": {
+          "type": "number"
+        },
+        "mean": {
+          "type": "number"
+        },
+        "outcome": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "outcome",
+        "lead",
+        "mean",
+        "low",
+        "high",
+        "events"
+      ],
+      "title": "LeadRow",
+      "type": "object"
+    },
     "Level": {
       "enum": [
         "low",
@@ -5062,6 +5338,38 @@
       "title": "MemorizationScore",
       "type": "object"
     },
+    "MethodVerdict": {
+      "additionalProperties": false,
+      "properties": {
+        "feasible": {
+          "type": "boolean"
+        },
+        "method": {
+          "enum": [
+            "matched_cohort",
+            "weighted_regression",
+            "did_event_study",
+            "synthetic_control"
+          ],
+          "type": "string"
+        },
+        "reasons": {
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "method",
+        "feasible",
+        "reasons"
+      ],
+      "title": "MethodVerdict",
+      "type": "object"
+    },
     "MetricResult": {
       "additionalProperties": false,
       "properties": {
@@ -5497,6 +5805,57 @@
         "reports"
       ],
       "title": "NotebookExport",
+      "type": "object"
+    },
+    "NullRow": {
+      "additionalProperties": false,
+      "description": "Pseudo-events on firms without the action: what chance alone produces.",
+      "properties": {
+        "draws": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "e_value": {
+          "description": "Hidden confounding that could explain that minimum.",
+          "type": "number"
+        },
+        "false_positive_rate": {
+          "description": "Draws rejected at a nominal 5%.",
+          "type": "number"
+        },
+        "minimum_effect_now": {
+          "description": "Detectable at 80% power with today's events.",
+          "type": "number"
+        },
+        "minimum_effect_pool": {
+          "description": "The same with every candidate of the index.",
+          "type": "number"
+        },
+        "outcome": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "pseudo_events": {
+          "description": "Per draw, as many as usable treated events.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "spread": {
+          "description": "Standard deviation of the mean over the draws.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "outcome",
+        "draws",
+        "pseudo_events",
+        "spread",
+        "false_positive_rate",
+        "minimum_effect_now",
+        "minimum_effect_pool",
+        "e_value"
+      ],
+      "title": "NullRow",
       "type": "object"
     },
     "ObservedPoint": {
@@ -6137,6 +6496,44 @@
         "timings"
       ],
       "title": "PitValue",
+      "type": "object"
+    },
+    "PlaceboRow": {
+      "additionalProperties": false,
+      "description": "A false event date inside the pre-period: any effect found here is not one.",
+      "properties": {
+        "estimate": {
+          "type": "number"
+        },
+        "events": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "high": {
+          "type": "number"
+        },
+        "low": {
+          "type": "number"
+        },
+        "outcome": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "type": "string"
+        },
+        "shift": {
+          "description": "Quarters before the true event.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "outcome",
+        "shift",
+        "estimate",
+        "low",
+        "high",
+        "events"
+      ],
+      "title": "PlaceboRow",
       "type": "object"
     },
     "Population": {
@@ -8122,6 +8519,39 @@
       "title": "SupportStatus",
       "type": "string"
     },
+    "SyntheticFit": {
+      "additionalProperties": false,
+      "description": "Fit of a synthetic control on the pre-period only.",
+      "properties": {
+        "median_donors": {
+          "type": "number"
+        },
+        "median_holdout_ratio": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Error on held-out pre-quarters over the error of the fit."
+        },
+        "usable": {
+          "description": "Events with enough quarters and donors.",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "usable",
+        "median_donors",
+        "median_holdout_ratio"
+      ],
+      "title": "SyntheticFit",
+      "type": "object"
+    },
     "TargetCount": {
       "additionalProperties": false,
       "properties": {
@@ -8389,6 +8819,152 @@
       ],
       "title": "Transform",
       "type": "string"
+    },
+    "TreatmentStudy": {
+      "additionalProperties": false,
+      "properties": {
+        "assumptions": {
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "balance": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/BalanceRow"
+          },
+          "type": "array"
+        },
+        "candidate_pool": {
+          "description": "Unread candidates of the filing index.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "confounded_share": {
+          "description": "Events whose document names another event.",
+          "type": "number"
+        },
+        "controls": {
+          "description": "Firms without the action around the events.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "divisions": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "Usable events per SIC division.",
+          "type": "object"
+        },
+        "estimand": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "events": {
+          "description": "In the registry.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "leads": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/LeadRow"
+          },
+          "type": "array"
+        },
+        "near_decision_share": {
+          "description": "Events with another decision item nearby.",
+          "type": "number"
+        },
+        "null": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/NullRow"
+          },
+          "type": "array"
+        },
+        "placebo": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PlaceboRow"
+          },
+          "type": "array"
+        },
+        "support": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Treated inside the controls' range."
+        },
+        "synthetic": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SyntheticFit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "treatment": {
+          "$ref": "#/$defs/EventType"
+        },
+        "untested": {
+          "description": "Assumptions no diagnostic here can check.",
+          "items": {
+            "maxLength": 400,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "usable": {
+          "description": "With enough history in the panel.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "verdicts": {
+          "items": {
+            "$ref": "#/$defs/MethodVerdict"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "treatment",
+        "estimand",
+        "assumptions",
+        "untested",
+        "events",
+        "usable",
+        "candidate_pool",
+        "controls",
+        "support",
+        "balance",
+        "leads",
+        "placebo",
+        "null",
+        "synthetic",
+        "confounded_share",
+        "near_decision_share",
+        "divisions",
+        "verdicts"
+      ],
+      "title": "TreatmentStudy",
+      "type": "object"
     },
     "TriangularRange": {
       "additionalProperties": false,
@@ -8884,9 +9460,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.17.0",
+  "$id": "urn:multiverse:contracts:0.18.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.17.0"
+  "x-contracts-version": "0.18.0"
 }

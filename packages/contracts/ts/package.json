@@ -6,6 +6,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./causal": "./src/causal.ts",
     "./demo": "./src/demo.ts",
     "./events": "./src/events.ts",
     "./interventions": "./src/interventions.ts",

@@ -541,10 +541,14 @@ version = "0.1.0"
 source = { editable = "packages/causal" }
 dependencies = [
     { name = "multiverse-contracts" },
+    { name = "numpy" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "multiverse-contracts", editable = "packages/contracts/python" }]
+requires-dist = [
+    { name = "multiverse-contracts", editable = "packages/contracts/python" },
+    { name = "numpy", specifier = ">=2.0" },
+]
 
 [[package]]
 name = "multiverse-config"

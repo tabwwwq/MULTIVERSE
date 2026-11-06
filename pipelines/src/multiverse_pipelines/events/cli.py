@@ -7,6 +7,7 @@ python -m multiverse_pipelines.events audit
 """
 
 import argparse
+import csv
 import json
 import sys
 import zipfile
@@ -22,7 +23,7 @@ from multiverse_contracts.events import CandidateSample, EventRegistry
 from multiverse_contracts.source_catalog import SOURCE_CATALOG
 from multiverse_contracts.sources import DownloadScope
 from multiverse_contracts.universe import UniverseManifest
-from multiverse_pipelines.events.audit import audit, markdown
+from multiverse_pipelines.events.audit import INDEX_ITEMS, audit, markdown
 from multiverse_pipelines.events.candidates import filings_of, sample
 from multiverse_pipelines.events.fetch import fetch_documents, stored_path
 from multiverse_pipelines.events.reviews import merge_reviews
@@ -54,6 +55,7 @@ def _parser() -> argparse.ArgumentParser:
     show.add_argument("--stratum")
     show.add_argument("--chars", type=int, default=1500)
     commands.add_parser("audit", help="the quality report of the registry")
+    commands.add_parser("index", help="decision items of the filing index, for Stage 20")
     merge = commands.add_parser("reviews", help="add reviews exported from the event screen")
     merge.add_argument("--file", type=Path, required=True)
     return parser
@@ -149,6 +151,33 @@ def _audit(settings: Settings) -> int:
     return 0
 
 
+def _index(settings: Settings) -> int:
+    """Every 8-K decision item of the universe: what the causal package may read of it."""
+    universe = UniverseManifest.model_validate_json(UNIVERSE.read_bytes())
+    archive = archive_for(settings)
+    row = next(
+        r
+        for r in archive.objects()
+        if r.dataset_id == "sec-submissions" and r.path.endswith(".zip")
+    )
+    with zipfile.ZipFile(archive.root / row.path) as bulk:
+        filings = filings_of(bulk, [c.cik for c in universe.companies])
+    folder = settings.data_dir / "events"
+    folder.mkdir(parents=True, exist_ok=True)
+    count = 0
+    with (folder / "decisions.csv").open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle, lineterminator="\n")
+        writer.writerow(("cik", "filed_on", "item"))
+        for cik, rows in sorted(filings.items()):
+            for filing in rows:
+                for item in filing.items:
+                    if filing.form == "8-K" and item in INDEX_ITEMS:
+                        writer.writerow((cik, filing.filed_on.isoformat(), item))
+                        count += 1
+    print(f"{count} decision items")
+    return 0
+
+
 def _reviews(args: argparse.Namespace) -> int:
     registry = EventRegistry.model_validate_json(REGISTRY.read_bytes())
     rows = json.loads(args.file.read_text(encoding="utf-8"))
@@ -173,6 +202,8 @@ def main(argv: Sequence[str] | None = None, *, transport: httpx.BaseTransport | 
             return _excerpts(args, settings)
         if args.command == "reviews":
             return _reviews(args)
+        if args.command == "index":
+            return _index(settings)
         return _audit(settings)
     except (OSError, ValueError, IngestionError) as error:
         print(f"refused: {error}", file=sys.stderr)

@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-06 (Stage 20)
+
+- Causal feasibility study (ADR-0028), labelled as such: no effect is estimated, and no outcome after a treatment is read. The contract has no field for an effect, and the estimator refuses to run until the audit of the event registry says the sample is credible.
+- The causal graph with unobserved management expectations, rationale for every edge, what it leaves out, and an estimand, assumptions and untestable assumptions for each of the six decisions.
+- Blind diagnostics (`python -m multiverse_causal study`): propensity support, balance, pre-trends, placebo dates, a null from pseudo-events on firms without the action, the smallest detectable effect, E-values and the pre-period fit of synthetic controls. A test replaces every treated value after the event and no number changes.
+- Study `cst-20261106-b225726a46d3`: 0 of 24 method and decision pairs are feasible. 29 of 48 events are usable. With today's events only a shift of 0.5 to 1.1 in symmetric growth could be seen; with every candidate read, about 0.03 to 0.08.
+- Causal Map (`/causal-map`): the warning first, the graph drawn and in words, feasibility by decision, and why each method is closed.
+- `events index`: the 8-K decision items of the universe for the causal package. Contracts 0.18.0: `CausalGraph`, `TreatmentStudy`, `CausalStudy`.
+
 ### Changed — 2026-11-06 (Stage 19 accepted)
 
 - Stage 19 (event registry) accepted by the owner (CI run 42131812836 green). Causal work stays blocked by its audit.

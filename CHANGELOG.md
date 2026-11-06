@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-11-06 (Stage 22 accepted)
+
+- Stage 22 (paired Monte Carlo) accepted by the owner (CI run 42228195449 green). Its probabilities stay conditional on the assumed model, not validated.
+
 ### Added — 2026-11-06 (Stage 22)
 
 - Paired Monte Carlo `multiverse_simulation` (ADR-0030): on every path the baseline and the alternate share one draw of exogenous shocks; only the decision and its own parameters differ. Every path goes through the finance engine, so identities hold path by path.

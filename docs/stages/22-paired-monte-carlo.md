@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 22 — paired Monte Carlo universe simulator |
 | Дата | 2026-11-06 |
-| Статус | REVIEW (CI run 42225889227: 7/7 задач зелёные, commit `cafc2e1`); ждёт приёмки владельца |
+| Статус | ACCEPTED 2026-11-06 (CI run 42225889227: 7/7 задач зелёные, commit `cafc2e1`; финальный `7b29aeb`, CI 42228195449 7/7; владелец: «Принять и Stage 23») |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/22_MONTE_CARLO_UNIVERSE_ENGINE.md` |
 | Основание | `docs/08_SIMULATION_ENGINE.md`, команда владельца «Принять и Stage 22» |
 | Решение | ADR-0030 — блочный бутстрэп истории, движок на каждом пути, условные вероятности |
@@ -152,7 +152,7 @@
 
 ### Next prompt
 
-`23_*.md` (DCF, valuation bridge, stress and sensitivity) — только по команде владельца.
+`23_VALUATION_RISK_STUDIO.md`: начат по команде владельца 2026-11-06.
 
 ## 4. Acceptance
 

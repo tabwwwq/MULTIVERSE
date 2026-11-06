@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 24 — app security, privacy and license review |
 | Дата | 2026-11-06 |
-| Статус | REVIEW (CI: запись после пуша); ждёт приёмки владельца |
+| Статус | REVIEW (CI run 42270739506: 8/8 задач зелёные, commit `73f6d86`); ждёт приёмки владельца |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/24_SECURITY_PRIVACY_GOVERNANCE.md` |
 | Основание | `docs/12_SECURITY_AND_GOVERNANCE.md`, команда владельца «Принять и Stage 24» |
 | Решение | ADR-0032 — локальный режим и токены, владелец объекта, лимиты в очереди |
@@ -107,7 +107,7 @@
 | То же | Сборка `.next/static`, 33 файла | 0 |
 | То же | `var/`, 4 102 файла | Ключ и User-Agent: 0 |
 | detect-secrets 1.5.0 | Tracked-файлы | 65 срабатываний, все ложные: 61 хэш SHA и номера документов, 4 метки `api_key` |
-| gitleaks | CI, вся история | Job `Secret scan`, результат в записи CI |
+| gitleaks | CI, вся история, run 42270739506 | Job `Secret scan` зелёный |
 
 Email владельца есть в метаданных коммитов и в `var/ci.json`. Это не секрет, а PRV-001.
 

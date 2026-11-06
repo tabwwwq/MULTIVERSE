@@ -44,6 +44,11 @@ def code_version() -> str:
     return found.stdout.strip() or "unversioned"
 
 
+def write(path: Path, text: str) -> None:
+    """The same bytes on every system: these files are committed."""
+    path.write_bytes(text.encode("utf-8") + b"\n")
+
+
 def load_decision(path: Path) -> DecisionModel:
     payload = path.read_text(encoding="utf-8")
     model = DECISION_MODELS[json.loads(payload)["type"]]
@@ -101,7 +106,7 @@ def run_file(args: argparse.Namespace) -> int:
         seconds=seconds,
         sensitivity=rows,
     )
-    Path(args.out).write_text(report.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    write(Path(args.out), report.model_dump_json(indent=2))
     print(f"{report.manifest.report_id}: {settings.paths} paths in {seconds:.1f} s -> {args.out}")
     return 0
 
@@ -128,7 +133,7 @@ def case_file(args: argparse.Namespace) -> int:
         date.fromisoformat(args.origin),
         MODEL_ID,
     )
-    Path(args.out).write_text(case.model_dump_json(indent=2) + "\n", encoding="utf-8")
+    write(Path(args.out), case.model_dump_json(indent=2))
     print(f"{case.case_id}: {len(case.shocks.rows)} quarters of shocks -> {args.out}")
     return 0
 

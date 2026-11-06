@@ -4,7 +4,7 @@
     "contracts_version": "0.19.0",
     "finance_version": "0.3.0",
     "simulation_version": "0.1.0",
-    "code_version": "17d43d0-dirty",
+    "code_version": "cafc2e1",
     "case_id": "case-48898-20251231",
     "case_sha256": "efcf7ee5657b12ec38927c58e88cc938ffdc72eed7cab02b396ca3bdf8cd9dfd",
     "decision_sha256": "2fea60023e270424cf655db9ae105421eb51becf1e3be4c17fda7d35008dbb00",
@@ -21,7 +21,7 @@
       "mean_block_quarters": null
     },
     "shock_model": "stationary block bootstrap of 59 calendar quarters, mean block 4, scale 1, macro free",
-    "created_at": "2026-11-06T13:00:32.554224Z"
+    "created_at": "2026-11-06T13:31:10.278461Z"
   },
   "validation": "conditional_non_validated",
   "probability_label": "Conditional on the assumed model, not validated",
@@ -2685,13 +2685,13 @@
       "causal_status": "assumption_based",
       "as_of": "2025-12-31T23:59:59Z",
       "seed": 20261106,
-      "code_version": "17d43d0-dirty",
+      "code_version": "cafc2e1",
       "dataset_snapshot_id": "fds-20261028-d9e4acd03365",
       "model_id": "model-20261028-9ce4d4180aa9",
       "source_ids": [],
-      "generated_at": "2026-11-06T13:00:32.554224Z"
+      "generated_at": "2026-11-06T13:31:10.278461Z"
     },
-    "created_at": "2026-11-06T13:00:32.554224Z"
+    "created_at": "2026-11-06T13:31:10.278461Z"
   },
   "risks": [
     {
@@ -3604,7 +3604,7 @@
     "simulated_correlation": 0.418,
     "historical_correlation": 0.4191,
     "effective_sample_size": 10000.0,
-    "seconds": 55.6,
+    "seconds": 54.12,
     "flags": []
   }
 }

@@ -5,13 +5,13 @@
     "contracts_version": "0.20.0",
     "finance_version": "0.4.0",
     "simulation_version": "0.1.0",
-    "code_version": "0c3f06f-dirty",
+    "code_version": "f3f76d6",
     "case_id": "case-48898-20251231",
     "case_sha256": "efcf7ee5657b12ec38927c58e88cc938ffdc72eed7cab02b396ca3bdf8cd9dfd",
     "decision_sha256": "2fea60023e270424cf655db9ae105421eb51becf1e3be4c17fda7d35008dbb00",
     "inputs_sha256": "6280731fe2420b0f0c6f5903916d1bec4d9d0b8e7ee6181818a2af5f199ac550",
     "simulation_report_id": "sim-20251231-c966cdbf54a4",
-    "created_at": "2026-11-06T15:05:03.086495Z"
+    "created_at": "2026-11-06T15:19:04.806474Z"
   },
   "value_label": "Model value, not a verified market value",
   "sensitivity_label": "Predictive sensitivity, not causal",

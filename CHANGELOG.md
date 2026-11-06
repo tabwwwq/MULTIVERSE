@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-11-06 (Stage 19 accepted)
+
+- Stage 19 (event registry) accepted by the owner (CI run 42131812836 green). Causal work stays blocked by its audit.
+
 ### Added — 2026-11-06 (Stage 19)
 
 - Corporate event registry (ADR-0027): a taxonomy of six decisions, annotation guidelines, and a first hand-read sample. An event exists only after its primary document was read; the announced intention and the executed treatment are separate fields, and every value is read in a named place or listed as unknown.

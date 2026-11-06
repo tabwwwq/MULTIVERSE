@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-11-06 (Stage 21 accepted)
+
+- Stage 21 (financial engine) accepted by the owner (CI run 42213997840 green). Its numbers are synthetic so far.
+
 ### Added — 2026-11-06 (Stage 21)
 
 - Financial engine `multiverse_finance` 0.2.0 (ADR-0029), independent of the UI and of neural frameworks: a baseline and decisions become three linked statements, and `project` refuses a path that does not reconcile to the cent.

@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 21 — accounting-consistent forecast engine |
 | Дата | 2026-11-06 |
-| Статус | REVIEW (CI run 42213997840: 7/7 задач зелёные, commit `55f5739`); ждёт приёмки владельца |
+| Статус | ACCEPTED 2026-11-06 (CI run 42213997840: 7/7 задач зелёные, commit `55f5739`; владелец: «Принять и Stage 22») |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/21_FINANCIAL_STATEMENT_ENGINE.md` |
 | Основание | `docs/07_FINANCIAL_ENGINE.md`, команда владельца «Принять и Stage 21» |
 | Решение | ADR-0029 — решение становится проводками, стоимость следует из отчётности |
@@ -113,7 +113,7 @@
 
 ### Next prompt
 
-`22_*.md` (Paired Monte Carlo universe simulator) — только по команде владельца.
+`22_*.md` (Paired Monte Carlo universe simulator): начат по команде владельца 2026-11-06.
 
 ## 4. Acceptance
 

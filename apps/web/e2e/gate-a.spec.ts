@@ -168,6 +168,9 @@ test("the whole journey works: search, cutoff, decision, mock run, comparison, s
   await page.route("**/api/v1/**", (route) => route.fulfill({ json: [] }));
   await page.goto("/universe");
   await page.getByRole("searchbox", { name: "Search" }).fill("nwsc");
+  // The list is drawn again by the server after the debounced search: click the final link.
+  await expect(page).toHaveURL(/q=nwsc/);
+  await page.waitForLoadState("networkidle");
   await page.getByRole("link", { name: "Northwind Semiconductors Inc." }).click();
   await expect(
     page.getByRole("heading", { level: 1, name: "Northwind Semiconductors Inc." }),

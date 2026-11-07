@@ -43,8 +43,11 @@ test.describe("Universe Explorer", () => {
     await expect(page).toHaveURL(/q=nwmd/);
     await expect(page.getByText("Matched former ticker NWMD, used until 2019-06-30")).toBeVisible();
 
+    // The list is drawn again by the server after the debounced search: focus the final link.
+    await page.waitForLoadState("networkidle");
     const result = page.getByRole("link", { name: "Northwind Semiconductors Inc." });
     await result.focus();
+    await expect(result).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(new RegExp(`${NORTHWIND}$`));
   });

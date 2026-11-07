@@ -103,9 +103,17 @@ def test_every_claim_matches_the_run_where_the_run_exists(run: Path) -> None:
         assert str(resolve(view, claim.pointer)) == claim.value, claim.claim_id
 
 
-@pytest.mark.parametrize(
-    "page", sorted((ROOT / "docs" / "portfolio").glob("*.md")), ids=lambda p: p.name
+PUBLISHED_PAGES = sorted(
+    [
+        *(ROOT / "docs" / "portfolio").glob("*.md"),
+        *(ROOT / "docs" / "releases").glob("*.md"),
+        ROOT / "docs" / "governance" / "source-card.md",
+        ROOT / "SUPPORT.md",
+    ]
 )
+
+
+@pytest.mark.parametrize("page", PUBLISHED_PAGES, ids=lambda p: p.name)
 def test_the_links_of_the_portfolio_resolve(page: Path) -> None:
     text = page.read_text(encoding="utf-8")
     for target in re.findall(r"\]\(([^)#]+)\)", text):

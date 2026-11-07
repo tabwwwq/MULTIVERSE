@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-07 (Stage 26, final review)
+
+- Acceptance audit against docs/17 with the evidence of each requirement: 25 of 31 met, 5 partial, 1 blocked. The six gaps (live screen reader, user study, second human reviewer of events, placebo diagnostics, cold rebuild from raw data, Safari and Firefox on phones) are in the issue register, now 42 entries.
+- Release criteria for the demo, research and empirical tiers: the empirical tier is not met, so no release presents forecasts or scenarios as validated; a public deployment may show the demo tier only until TLS and a browser login exist.
+- Maintenance runbook (start, monitoring hooks, backup before upgrades, upgrade and rollback, data and model refresh with measured times, incidents), `SUPPORT.md`, a source card and a draft release note for v2.0.0-research. Nothing was published.
+- `npm run smoke`; Playwright runs in another time zone with `E2E_TZ`. A fresh clone of the public repository reached green smoke tests in 148 s; the desktop browser suite passed in UTC+14 and in Los Angeles.
+
+### Changed — 2026-11-07 (Stage 25 accepted)
+
+- Stage 25 (Report Studio, case studies, portfolio; CI run 42392124203 green) accepted by the owner.
+
 ### Added — 2026-11-07 (Stage 25)
 
 - **Report Studio** (ADR-0034): the research report of a finished run in ten sections, with every number a claim that points into the run and every claim citing its sources; Markdown, CSV, the document as JSON, print to PDF from `/reports`, and a manifest. `python -m multiverse_simulation replay` builds a report again and compares it byte for byte; a real report of Intel replayed identically in 63 s.

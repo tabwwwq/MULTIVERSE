@@ -18,6 +18,8 @@ export default defineConfig({
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
     trace: "retain-on-failure",
+    // Stage 26: the same tests in another time zone, for example E2E_TZ=Pacific/Kiritimati.
+    ...(process.env["E2E_TZ"] ? { timezoneId: process.env["E2E_TZ"] } : {}),
   },
   projects: [
     {

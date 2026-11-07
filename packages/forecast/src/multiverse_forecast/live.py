@@ -19,7 +19,6 @@ import numpy as np
 
 from multiverse_contracts.forecasting import (
     ForecastProtocol,
-    ForecastTarget,
     LiveBand,
     LiveCompany,
     LiveForecast,
@@ -170,14 +169,6 @@ def fit(
         built.model_dump_json(), encoding="utf-8", newline="\n"
     )
     return built
-
-
-def median_of(company: LiveCompany, target: ForecastTarget, horizon: int) -> float | None:
-    middle = len(LEVELS) // 2
-    for band in company.bands:
-        if band.target is target and band.horizon == horizon:
-            return band.values[middle]
-    return None
 
 
 def read(path: Path) -> LiveForecast:

@@ -16,11 +16,11 @@ from multiverse_forecast.live import (  # noqa: E402
     assemble,
     known_targets,
     last_rows,
-    median_of,
     quarter_after,
     without_unseen,
 )
 from multiverse_forecast.neural import HORIZONS, TARGETS  # noqa: E402
+from multiverse_forecast.probabilistic import median_of  # noqa: E402
 
 DAYS = np.array(["2026-06-30", "2026-09-30", "2026-03-31", "2026-06-30"], dtype="datetime64[D]")
 CIKS = np.array(["0000000001", "0000000001", "0000000002", "0000000002"])

@@ -18,7 +18,7 @@ survive a monotone map, and a margin of -30 000 no longer decides a mean of many
 
 import numpy as np
 
-from multiverse_contracts.forecasting import ForecastTarget
+from multiverse_contracts.forecasting import ForecastTarget, LiveCompany
 from multiverse_forecast.data import Bools, Floats, Texts
 
 LEVELS = (0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95)
@@ -146,3 +146,12 @@ def ratio_interval(
         float(np.quantile(boot, 0.025)),
         float(np.quantile(boot, 0.975)),
     )
+
+
+def median_of(company: LiveCompany, target: ForecastTarget, horizon: int) -> float | None:
+    """The median of a live band; without PyTorch, so that a case can read it."""
+    middle = len(LEVELS) // 2
+    for band in company.bands:
+        if band.target is target and band.horizon == horizon:
+            return band.values[middle]
+    return None

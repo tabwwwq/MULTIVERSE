@@ -41,7 +41,7 @@ from multiverse_contracts.primitives import DataOrigin, MeasureUnit, Quantity, V
 from multiverse_contracts.real import RankEvidence, RealCompany, RealCompanyRow, RealIndex
 from multiverse_contracts.universe import UniverseCompany, UniverseManifest
 from multiverse_forecast.data import Dataset
-from multiverse_forecast.live import median_of
+from multiverse_forecast.probabilistic import median_of
 from multiverse_pipelines.pit.clock import day_end
 from multiverse_pipelines.pit.panel import Panel, build_panel
 from multiverse_pipelines.pit.warehouse import Warehouse

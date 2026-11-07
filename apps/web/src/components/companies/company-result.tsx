@@ -19,6 +19,10 @@ const MATCH_TEXT: Record<CompanyMatch["field"], string> = {
   former_name: "Matched former name",
 };
 
+function floatText(value: number): string {
+  return value >= 1e12 ? `$${(value / 1e12).toFixed(2)}T` : `$${(value / 1e9).toFixed(1)}B`;
+}
+
 function matchDescription(match: CompanyMatch): string {
   const until =
     match.until && match.field.startsWith("former") ? `, used until ${match.until}` : "";
@@ -56,7 +60,13 @@ export function CompanyResult({ hit }: { hit: CompanyHit }) {
       <div className="flex flex-wrap gap-2">
         <Badge>{SECTOR_LABELS[company.sector]}</Badge>
         <Badge>{countryName(company.country)}</Badge>
-        <SyntheticBadge />
+        {hit.evidence ? (
+          <Badge tone="mint">
+            #{hit.evidence.rank}, public float {floatText(hit.evidence.public_float_usd)}
+          </Badge>
+        ) : (
+          <SyntheticBadge />
+        )}
       </div>
       <CoverageMeter
         label="Revenue history"

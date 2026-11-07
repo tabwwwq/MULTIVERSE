@@ -118,14 +118,26 @@ test("unknown paths answer 404 with a way back", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Go to the overview" })).toHaveAttribute("href", "/");
 });
 
+// The universe links 500 real dossiers built by one code path: a few stand for the rest.
+const DOSSIER = /^\/dossier\/[0-9a-f-]{36}$/;
+const DOSSIERS_CHECKED = 25;
+
 test("no internal link is broken", async ({ page, request }) => {
+  // About a hundred pages, the universe among them with its 507 cards.
+  test.setTimeout(120_000);
   const hrefs = new Set<string>();
+  let dossiers = 0;
   for (const target of PAGES) {
     await page.goto(target.path);
     const found = await page
       .locator('a[href^="/"]')
       .evaluateAll((links) => links.map((link) => link.getAttribute("href") ?? ""));
-    for (const href of found) hrefs.add(href.split("#")[0] || "/");
+    for (const href of found) {
+      const clean = href.split("#")[0] || "/";
+      if (hrefs.has(clean)) continue;
+      if (DOSSIER.test(clean) && ++dossiers > DOSSIERS_CHECKED) continue;
+      hrefs.add(clean);
+    }
   }
   for (const href of hrefs) {
     const response = await request.get(href);

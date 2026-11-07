@@ -83,7 +83,7 @@ const LIMITATIONS = [
   "Corporate decisions are not random, so a difference after a decision is not its effect without a research design.",
   "Scenarios like a company without its flagship product have no observed ground truth and stay fictional.",
   "A good forecast error says nothing about the accuracy of an estimated policy effect.",
-  "Coverage of companies and metrics is unknown until the data audit in Stage 14.",
+  "Companies are ranked by public float, not by market capitalization, and only filers of a 10-K are covered.",
 ];
 
 export default function MethodologyPage() {

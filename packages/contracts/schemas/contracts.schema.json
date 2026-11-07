@@ -5651,6 +5651,65 @@
       "title": "LineageMethod",
       "type": "string"
     },
+    "LiveBand": {
+      "additionalProperties": false,
+      "description": "Quantiles of one target at one horizon, in the units of the target.",
+      "properties": {
+        "horizon": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "quarter_end": {
+          "format": "date",
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/ForecastTarget"
+        },
+        "values": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "type": "array"
+        }
+      },
+      "required": [
+        "target",
+        "horizon",
+        "quarter_end",
+        "values"
+      ],
+      "title": "LiveBand",
+      "type": "object"
+    },
+    "LiveCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "bands": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/LiveBand"
+          },
+          "type": "array"
+        },
+        "cik": {
+          "pattern": "^[0-9]{10}$",
+          "type": "string"
+        },
+        "origin": {
+          "format": "date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cik",
+        "origin",
+        "bands"
+      ],
+      "title": "LiveCompany",
+      "type": "object"
+    },
     "MacroCell": {
       "additionalProperties": false,
       "description": "One macro feature for one company quarter, as available at the cutoff.",
@@ -7768,6 +7827,37 @@
       "title": "Quantity",
       "type": "object"
     },
+    "RankEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "float_as_of": {
+          "format": "date",
+          "type": "string"
+        },
+        "float_correction": {
+          "default": 1,
+          "description": "What the filed value was divided by: a scale error of the filer.",
+          "minimum": 1,
+          "type": "number"
+        },
+        "public_float_usd": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "rank": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "rank",
+        "public_float_usd",
+        "float_as_of",
+        "float_correction"
+      ],
+      "title": "RankEvidence",
+      "type": "object"
+    },
     "RateLimit": {
       "additionalProperties": false,
       "description": "What the provider documents, and the slower rate MULTIVERSE will use.",
@@ -7802,6 +7892,194 @@
         "chosen_requests_per_second"
       ],
       "title": "RateLimit",
+      "type": "object"
+    },
+    "RealCompany": {
+      "additionalProperties": false,
+      "description": "One file of ``data/companies``.",
+      "properties": {
+        "case_id": {
+          "anyOf": [
+            {
+              "pattern": "^case-[0-9a-z-]{1,60}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "case_note": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why a run cannot start here, or what stands in for missing tags."
+        },
+        "dossier": {
+          "$ref": "#/$defs/CompanyDossier"
+        },
+        "evidence": {
+          "$ref": "#/$defs/RankEvidence"
+        },
+        "financial": {
+          "description": "Bank, insurer or REIT: margins and capex do not apply.",
+          "type": "boolean"
+        },
+        "forecast": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LiveCompany"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "forecast_note": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why there is no forecast."
+        }
+      },
+      "required": [
+        "dossier",
+        "evidence",
+        "financial",
+        "forecast",
+        "forecast_note",
+        "case_id",
+        "case_note"
+      ],
+      "title": "RealCompany",
+      "type": "object"
+    },
+    "RealCompanyRow": {
+      "additionalProperties": false,
+      "description": "One line of the index: enough to search and to show a result.",
+      "properties": {
+        "cik": {
+          "type": "string"
+        },
+        "company_id": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/RankEvidence"
+        },
+        "has_case": {
+          "type": "boolean"
+        },
+        "has_forecast": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "revenue_quarters": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "sector": {
+          "$ref": "#/$defs/Sector"
+        },
+        "support_status": {
+          "$ref": "#/$defs/SupportStatus"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "company_id",
+        "cik",
+        "name",
+        "ticker",
+        "sector",
+        "country",
+        "evidence",
+        "support_status",
+        "revenue_quarters",
+        "has_forecast",
+        "has_case"
+      ],
+      "title": "RealCompanyRow",
+      "type": "object"
+    },
+    "RealIndex": {
+      "additionalProperties": false,
+      "properties": {
+        "as_of": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "companies": {
+          "items": {
+            "$ref": "#/$defs/RealCompanyRow"
+          },
+          "type": "array"
+        },
+        "forecast_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "forecast_label": {
+          "default": "Research forecast, not approved for the product and not advice",
+          "type": "string"
+        },
+        "rank_label": {
+          "default": "Ranked by public float from the 10-K cover, not by market capitalization",
+          "type": "string"
+        },
+        "universe_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "universe_id",
+        "as_of",
+        "forecast_id",
+        "rank_label",
+        "forecast_label",
+        "companies"
+      ],
+      "title": "RealIndex",
       "type": "object"
     },
     "Redistribution": {
@@ -9006,7 +9284,16 @@
         "utilities",
         "logistics",
         "instruments",
-        "industrial_machinery"
+        "industrial_machinery",
+        "technology_hardware",
+        "transport_equipment",
+        "healthcare",
+        "media_telecom",
+        "energy_mining",
+        "retail_wholesale",
+        "finance",
+        "consumer_goods",
+        "other"
       ],
       "title": "Sector",
       "type": "string"
@@ -11362,6 +11649,18 @@
           "pattern": "^[0-9]{10}$",
           "type": "string"
         },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Of the business address, when abroad."
+        },
         "deregistered": {
           "description": "A Form 15 is on file: no longer reporting.",
           "type": "boolean"
@@ -11370,9 +11669,50 @@
           "pattern": "^[A-K]$",
           "type": "string"
         },
+        "exchanges": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "financial": {
+          "default": false,
+          "description": "Banks, insurers, REITs: the engine has no model of them.",
+          "type": "boolean"
+        },
         "first_xbrl_filed": {
           "format": "date",
           "type": "string"
+        },
+        "fiscal_year_end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "float_as_of": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "float_correction": {
+          "default": 1,
+          "description": "What the filed value was divided by: a scale error of the filer.",
+          "minimum": 1,
+          "type": "number"
         },
         "last_filed": {
           "format": "date",
@@ -11383,9 +11723,42 @@
           "minLength": 1,
           "type": "string"
         },
+        "public_float_usd": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "From the cover of the 10-K: not market capitalization."
+        },
+        "rank": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "By public float, largest first."
+        },
         "sic": {
           "pattern": "^[0-9]{4}$",
           "type": "string"
+        },
+        "tickers": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         },
         "xbrl_10k": {
           "description": "XBRL 10-K filings on file.",
@@ -11408,7 +11781,16 @@
         "first_xbrl_filed",
         "last_filed",
         "deregistered",
-        "candidate"
+        "candidate",
+        "rank",
+        "public_float_usd",
+        "float_as_of",
+        "float_correction",
+        "tickers",
+        "exchanges",
+        "country",
+        "fiscal_year_end",
+        "financial"
       ],
       "title": "UniverseCompany",
       "type": "object"
@@ -12160,9 +12542,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.21.0",
+  "$id": "urn:multiverse:contracts:0.22.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.21.0"
+  "x-contracts-version": "0.22.0"
 }

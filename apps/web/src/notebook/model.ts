@@ -86,7 +86,7 @@ function newRevision(
     derived_from: derivedFrom,
     created_at: clock.now(),
     draft,
-    mode: "demo",
+    mode: draft.data_origin === "synthetic" ? "demo" : "fictional_exploratory",
     currency: "USD",
     result_status: "not_run",
     result_id: null,

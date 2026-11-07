@@ -166,7 +166,7 @@ export function eligibilityIssues(
       warning(
         "segment_data_unavailable",
         "decision.magnitude.value",
-        "Segment figures are not in the demo data, so the size and margin of the unit are your assumptions.",
+        "Segment figures are not in the data, so the size and margin of the unit are your assumptions.",
       ),
     );
   }
@@ -177,7 +177,7 @@ export function eligibilityIssues(
         warning(
           "net_cash_position",
           "decision.magnitude.value",
-          `${context.name} held net cash at ${facts.asOf} (net debt ${formatUsd(netDebt)}). Gross debt is not in the demo data; check that there is debt to refinance.`,
+          `${context.name} held net cash at ${facts.asOf} (net debt ${formatUsd(netDebt)}). Gross debt is not in the data; check that there is debt to refinance.`,
         ),
       );
     }

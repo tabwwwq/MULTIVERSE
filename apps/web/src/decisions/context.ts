@@ -47,6 +47,10 @@ export interface CompanyContext {
   status: CompanyStatus;
   statusDate: string | null;
   statusNote: string | null;
+  /** The case a run starts from; null for a company that cannot be simulated. */
+  caseId: string | null;
+  /** Why not, for the run dialog. */
+  caseNote: string | null;
   /** First filing the company ever published, YYYY-MM-DD (PRD FC-03). */
   firstFiled: string | null;
   /** One entry per selectable cutoff, latest first. */
@@ -147,6 +151,8 @@ export function buildCompanyContext(dossier: CompanyDossier): CompanyContext {
     status: company.status,
     statusDate: company.status_date,
     statusNote: company.status_note,
+    caseId: null,
+    caseNote: "This company is fictional, so there is nothing to simulate.",
     firstFiled,
     cutoffs: cutoffChoices(dossier).map((cutoff) => factsAt(dossier, cutoff)),
   };

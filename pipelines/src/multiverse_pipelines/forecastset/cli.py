@@ -46,8 +46,9 @@ from multiverse_pipelines.forecastset.sequences import (
     to_sequence_csv,
 )
 from multiverse_pipelines.macro.store import MacroStore
+from multiverse_pipelines.macro.treasury import load as load_treasury
 from multiverse_pipelines.pit.clock import eastern_date, from_stamp, parse_cutoff
-from multiverse_pipelines.pit.panel import quarter_ends
+from multiverse_pipelines.pit.panel import _next_quarter_end, quarter_ends
 from multiverse_pipelines.pit.warehouse import Warehouse
 from multiverse_pipelines.sec.universe import division, read_manifest
 
@@ -61,10 +62,17 @@ def _parser() -> argparse.ArgumentParser:
     build.add_argument("--universe", type=Path, required=True)
     build.add_argument("--cutoff", default="2026-10-28", help="data cutoff (end of day, ET)")
     build.add_argument("--workers", type=int, default=WORKERS)
+    build.add_argument("--db", type=Path, help="default: <data dir>/pit/warehouse.sqlite")
+    build.add_argument(
+        "--nowcast",
+        action="store_true",
+        help="add the coming quarter end as an origin, with what is public at the cutoff",
+    )
     build.add_argument("--out", type=Path, help="default: <data dir>/forecast")
     sequences = commands.add_parser("sequences", help="24-quarter histories of a dataset's rows")
     sequences.add_argument("--dataset", type=Path, required=True, help="a dataset folder")
     sequences.add_argument("--workers", type=int, default=WORKERS)
+    sequences.add_argument("--db", type=Path, help="default: <data dir>/pit/warehouse.sqlite")
     return parser
 
 
@@ -102,7 +110,7 @@ def _progress(number: int, total: int) -> None:
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     settings = load_settings()
-    db_path = settings.data_dir / "pit" / "warehouse.sqlite"
+    db_path = args.db or settings.data_dir / "pit" / "warehouse.sqlite"
     if args.command == "sequences":
         try:
             return _sequences(args, db_path)
@@ -119,11 +127,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"refused: {exc}", file=sys.stderr)
         return 2
     last = quarter_ends(eastern_date(data_cutoff), 1)[0]
+    if args.nowcast:
+        # One origin ahead: what is public today is what that origin will know of the last quarter.
+        last = _next_quarter_end(last)
     when = origins(FIRST_ORIGIN, last)
     divisions = {c.cik: division(c.sic)[0] for c in universe.companies}
     macro_path = settings.data_dir / "macro" / "macro.sqlite"
     store = MacroStore.open(macro_path) if macro_path.exists() else None
-    macro = macro_features(store, when)
+    macro = macro_features(store, when, load_treasury(settings.raw_dir / "treasury"))
     if store is not None:
         store.close()
     rows = build_rows(db_path, divisions, when, data_cutoff, args.workers, _progress)

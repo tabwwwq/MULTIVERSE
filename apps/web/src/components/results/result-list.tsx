@@ -14,7 +14,7 @@ export function ResultList({
     return (
       <p className="text-body text-ink-muted">
         No results yet. Results appear here after a run; until the Monte Carlo engine exists (Stage
-        22) only mock results are listed.
+        22) the examples are listed here.
       </p>
     );
   }

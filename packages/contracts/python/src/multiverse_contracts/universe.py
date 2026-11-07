@@ -55,6 +55,23 @@ class UniverseCompany(ContractModel):
     last_filed: date
     deregistered: bool = Field(description="A Form 15 is on file: no longer reporting.")
     candidate: bool = Field(description="One of the ten catalog candidates, always included.")
+    rank: int | None = Field(default=None, ge=1, description="By public float, largest first.")
+    public_float_usd: float | None = Field(
+        default=None, gt=0, description="From the cover of the 10-K: not market capitalization."
+    )
+    float_as_of: date | None = None
+    float_correction: float = Field(
+        default=1,
+        ge=1,
+        description="What the filed value was divided by: a scale error of the filer.",
+    )
+    tickers: tuple[str, ...] = ()
+    exchanges: tuple[str, ...] = ()
+    country: str | None = Field(default=None, description="Of the business address, when abroad.")
+    fiscal_year_end: str | None = None
+    financial: bool = Field(
+        default=False, description="Banks, insurers, REITs: the engine has no model of them."
+    )
 
 
 class UniverseManifest(ContractModel):

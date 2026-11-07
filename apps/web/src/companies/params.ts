@@ -76,13 +76,25 @@ export function parseExplorerParams(raw: RawParams): ParsedExplorerParams {
 }
 
 /** Builds an explorer URL from accepted values only. */
-export function explorerHref(query: Partial<ExplorerQuery>): string {
+export function explorerHref(query: Partial<ExplorerQuery>, page = 1): string {
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(query)) {
     if (typeof value === "string" && value !== "") params.set(key, value);
   }
+  if (page > 1) params.set("page", String(page));
   const search = params.toString();
   return search ? `/universe?${search}` : "/universe";
+}
+
+/** Results per page: 507 cards at once weigh 2.5 MB, too much for a phone. */
+export const PAGE_SIZE = 50;
+
+/** The page asked for in the link, or the first when it is not a page of these results. */
+export function pageOf(raw: RawParams, results: number): number {
+  const pages = Math.max(1, Math.ceil(results / PAGE_SIZE));
+  const value = first(raw["page"]);
+  const page = value !== undefined && /^[0-9]{1,4}$/.test(value) ? Number(value) : 1;
+  return page >= 1 && page <= pages ? page : 1;
 }
 
 export type Scale = "m" | "bn";

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { RawParams } from "@/companies/params";
 import { cutoffChoices } from "@/companies/pit";
+import { realCompany } from "@/companies/real-data";
 import { getCompanyRepository } from "@/companies/repository";
 import { currentListing, currentName } from "@/companies/search";
 import { SupportBadge, SyntheticBadge } from "@/components/companies/company-badges";
@@ -39,7 +40,13 @@ export default async function DecisionsPage({ searchParams }: PageProps) {
     },
   );
   const dossier = companyId ? dossiers.get(companyId) : undefined;
-  const context = dossier ? buildCompanyContext(dossier) : null;
+  const record = companyId ? realCompany(companyId) : null;
+  const context = dossier
+    ? {
+        ...buildCompanyContext(dossier),
+        ...(record ? { caseId: record.case_id ?? null, caseNote: record.case_note ?? null } : {}),
+      }
+    : null;
 
   const ignoredAlert =
     ignored.length > 0 ? (
@@ -58,7 +65,7 @@ export default async function DecisionsPage({ searchParams }: PageProps) {
     });
     return (
       <>
-        <PageHeader title="Decision Builder" summary={SUMMARY} meta={<SyntheticBadge />} />
+        <PageHeader title="Decision Builder" summary={SUMMARY} />
         <div className="mb-8 flex max-w-3xl flex-col gap-4 empty:hidden">{ignoredAlert}</div>
         <h2 className="mb-4 font-display text-h3 text-ink">Choose a company</h2>
         <ul className="flex max-w-3xl flex-col divide-y divide-line rounded-panel border border-line bg-surface">
@@ -89,7 +96,11 @@ export default async function DecisionsPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <PageHeader title="Decision Builder" summary={SUMMARY} meta={<SyntheticBadge />} />
+      <PageHeader
+        title="Decision Builder"
+        summary={SUMMARY}
+        meta={context.dataOrigin === "synthetic" ? <SyntheticBadge /> : undefined}
+      />
       <div className="mb-8 flex max-w-3xl flex-col gap-4">
         {ignoredAlert}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-panel border border-line bg-surface px-4 py-3">
@@ -121,9 +132,14 @@ export default async function DecisionsPage({ searchParams }: PageProps) {
             No quarter of this company has data yet.
           </Alert>
         ) : (
-          <Alert tone="info" title="Demo only">
-            The company and its figures are synthetic, and no model is calibrated. Validation checks
-            the decision and translates it into dollars; it predicts nothing.
+          <Alert
+            tone="info"
+            title={context.dataOrigin === "synthetic" ? "Demo only" : "Research only"}
+          >
+            {context.dataOrigin === "synthetic"
+              ? "The company and its figures are synthetic, and no model is calibrated."
+              : "Figures come from SEC filings; a run is conditional on the assumed model."}{" "}
+            Validation checks the decision and translates it into dollars; it predicts nothing.
           </Alert>
         )}
       </div>

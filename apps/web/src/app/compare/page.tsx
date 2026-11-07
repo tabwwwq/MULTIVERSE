@@ -15,9 +15,9 @@ export default async function CompareIndexPage() {
         summary="Scenarios side by side: KPIs at the horizon, waterfalls from the baseline and the distribution of paired differences."
       />
       <div className="mb-8 max-w-3xl">
-        <Alert tone="info" title="Mock results only">
-          The scenarios are fixed mock runs on synthetic companies until the Monte Carlo engine
-          exists (Stage 22).
+        <Alert tone="info" title="Fixed examples on fictional companies">
+          These scenarios are built to show the comparison. A run of your own decision on a real
+          company opens with its paired values and risks.
         </Alert>
       </div>
       <h2 className="mb-4 font-display text-h3 text-ink">Choose a result</h2>

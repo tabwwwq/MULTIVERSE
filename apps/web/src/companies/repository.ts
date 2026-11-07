@@ -3,10 +3,13 @@ import type {
   CompanyDossier,
   CoverageEntry,
   DataOrigin,
+  RankEvidence,
   Sector,
   SupportStatus,
 } from "@multiverse/contracts";
+import { DEMO_DOSSIERS } from "@multiverse/contracts/demo";
 import { createFixtureRepository } from "@/companies/fixture-repository";
+import { realData } from "@/companies/real-data";
 import type { ExplorerQuery } from "@/companies/params";
 import type { CompanyMatch } from "@/companies/search";
 
@@ -21,6 +24,8 @@ export interface CompanyHit {
   supportStatus: SupportStatus;
   revenueCoverage: CoverageEntry | null;
   match: CompanyMatch | null;
+  /** Rank by public float; null for the fictional companies. */
+  evidence: RankEvidence | null;
 }
 
 export interface CompanyFacets {
@@ -44,9 +49,12 @@ export interface CompanyRepository {
 
 let repository: CompanyRepository | undefined;
 
-/** Fixtures until the SEC pipeline exists; the API adapter replaces this in Stage 10-12. */
+/** Real companies first, when `data/companies` is there, then the fictional ones. */
 export function getCompanyRepository(): CompanyRepository {
-  const current = repository ?? createFixtureRepository();
+  if (repository) return repository;
+  const real = realData();
+  const evidence = new Map(real?.index.companies.map((row) => [row.company_id, row.evidence]));
+  const current = createFixtureRepository([...(real?.dossiers ?? []), ...DEMO_DOSSIERS], evidence);
   repository = current;
   return current;
 }

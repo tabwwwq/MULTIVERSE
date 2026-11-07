@@ -79,7 +79,7 @@ test.describe("Model Observatory", () => {
     await page.route("**/api/v1/jobs**", (route) => route.abort());
     await page.goto("/models");
     await expect(page.getByText("The job service is not running")).toBeVisible();
-    await expect(page.getByText("Not approved for the product")).toBeVisible();
+    await expect(page.getByText("Not approved for the product", { exact: true })).toBeVisible();
   });
 
   test("shows the progress of a running job from 0 to 100", async ({ page }) => {

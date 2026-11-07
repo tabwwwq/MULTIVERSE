@@ -11,8 +11,9 @@ import argparse
 import json
 import sys
 import uuid
+import zipfile
 from collections.abc import Callable, Sequence
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
@@ -28,12 +29,25 @@ from multiverse_pipelines.sec.errors import IngestionError, PermissionRefusedErr
 from multiverse_pipelines.sec.gate import check_user_agent, require_permission
 from multiverse_pipelines.sec.ingest import BULK_TARGETS, SecIngestor
 from multiverse_pipelines.sec.models import RunManifest, RunStatus
+from multiverse_pipelines.sec.top import (
+    SIZE,
+    corrected,
+    listing_from,
+    load_floats,
+    ranked,
+    read_exchange_list,
+    save_floats,
+    scan_floats,
+    top_manifest,
+    with_exchange_list,
+)
 from multiverse_pipelines.sec.universe import (
     bulk_rows,
     eligibility,
     excluded_ranges,
     extract,
     manifest,
+    read_manifest,
     scan,
     select,
     write_manifest,
@@ -85,6 +99,13 @@ def _parser() -> argparse.ArgumentParser:
     universe.add_argument(
         "--no-extract", action="store_true", help="choose only; do not copy files out"
     )
+    top = commands.add_parser(
+        "top", help="the largest filers by public float, from the archived bulk files (no network)"
+    )
+    top.add_argument("--size", type=int, default=SIZE)
+    top.add_argument("--day", help="the day of the ranking; default: today", default=None)
+    top.add_argument("--also", type=Path, help="a universe to add, for training only")
+    top.add_argument("--out", type=Path, help=f"default: {UNIVERSE_DIR}/sec-top<size>-<day>.json")
     bulk = commands.add_parser("bulk", help="one bulk ZIP; needs the owner's bulk approval")
     bulk.add_argument("target", choices=BULK_TARGETS)
     bulk.add_argument("--quarter", help="for fsds, for example 2024q1")
@@ -173,6 +194,56 @@ def _progress(label: str) -> Callable[[int, int], None]:
     return show
 
 
+def _top(args: argparse.Namespace, archive: RawArchive) -> int:
+    """Ranks every filer by its float and copies the chosen companies into the archive."""
+    day = date.fromisoformat(args.day) if args.day else date.today()
+    facts_row, submissions_row = bulk_rows(archive)
+    facts_zip = archive.root / facts_row.path
+    submissions_zip = archive.root / submissions_row.path
+    cache = archive.root.parent / "data" / f"top-floats-{facts_row.sha256[:12]}.json"
+    if cache.exists():
+        floats = load_floats(cache)
+    else:
+        floats = scan_floats(facts_zip, day, _progress("floats"))
+        save_floats(floats, cache)
+    plausible = [item for item in map(corrected, floats) if item is not None]
+    listed = read_exchange_list(archive.root / "sec" / "company_tickers_exchange.json")
+    with zipfile.ZipFile(submissions_zip) as submissions:
+        listings = {}
+        for number, item in enumerate(sorted(plausible, key=lambda c: -c.public_float)):
+            if number >= args.size * 6:
+                break
+            found = listing_from(submissions, item.cik)
+            if found is not None:
+                listings[item.cik] = with_exchange_list(found, listed, item.cik)
+    chosen = ranked(plausible, listings, args.size)
+    universe = top_manifest(
+        universe_id=f"sec-top{args.size}-{day:%Y%m%d}",
+        chosen=chosen,
+        listings=listings,
+        scanned=len(floats),
+        plausible=len(plausible),
+        rows=(facts_row, submissions_row),
+    )
+    path = write_manifest(universe, args.out or UNIVERSE_DIR / f"{universe.universe_id}.json")
+    ciks = [company.cik for company in universe.companies]
+    if args.also:
+        ciks += [c.cik for c in read_manifest(args.also).companies if c.cik not in set(ciks)]
+    report = extract(
+        archive,
+        ciks,
+        facts_row,
+        submissions_row,
+        run_id=new_run_id(),
+        progress=_progress("extract"),
+    )
+    print(
+        f"{path}: {len(universe.companies)} companies, largest {chosen[0].name}, "
+        f"{report.stored} files stored, {report.unchanged} unchanged"
+    )
+    return 0
+
+
 def _universe(args: argparse.Namespace, archive: RawArchive) -> int:
     source = sec_source()
     decision = source.download
@@ -254,6 +325,8 @@ def main(argv: Sequence[str] | None = None, *, transport: httpx.BaseTransport | 
             return 0
         if args.command == "universe":
             return _universe(args, archive)
+        if args.command == "top":
+            return _top(args, archive)
         return _network(args, settings, archive, transport)
     except (IngestionError, ValueError) as exc:
         print(f"refused: {exc}", file=sys.stderr)

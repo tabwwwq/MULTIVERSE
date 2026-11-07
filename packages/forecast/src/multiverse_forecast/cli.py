@@ -54,6 +54,12 @@ def _parser() -> argparse.ArgumentParser:
     full.add_argument("--baselines", type=Path, required=True, help="the Stage 15 report.json")
     full.add_argument("--device", default="auto", help="auto, cpu or cuda")
     full.add_argument("--out", type=Path, default=OUT)
+    live = commands.add_parser("live", help="today's forecast of every company")
+    live.add_argument("--dataset", type=Path, required=True, help="a dataset folder")
+    live.add_argument("--protocol", type=Path, default=LARGE)
+    live.add_argument("--seeds", type=int, default=10)
+    live.add_argument("--device", default="auto", help="auto, cpu or cuda")
+    live.add_argument("--out", type=Path, default=OUT / "live")
     judge = commands.add_parser("evaluate", help="the quantile forecasts of Stage 17")
     judge.add_argument("step", choices=("train", "baselines", "report"))
     judge.add_argument("--dataset", type=Path, required=True, help="a dataset folder")
@@ -97,6 +103,22 @@ def _neural_benchmark(
         print(line)
     print(f"{built.benchmark_id}: {len(result.runs)} trainings, {len(built.scores)} scores")
     print(f"wrote {folder}")
+    return 0
+
+
+def _live(args: argparse.Namespace, dataset: Dataset, protocol: ForecastProtocol) -> int:
+    from multiverse_forecast import live
+    from multiverse_forecast.neural import Config
+
+    sequences, _ = load_sequences(args.dataset, dataset)
+
+    def show(line: str) -> None:
+        print(line, file=sys.stderr, flush=True)
+
+    built = live.fit(
+        dataset, sequences, protocol, Config(device=args.device), args.out, args.seeds, show
+    )
+    print(f"{built.forecast_id}: {len(built.companies)} companies, {built.train_rows} rows")
     return 0
 
 
@@ -202,6 +224,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         dataset = load(args.dataset)
         if args.command == "neural":
             return _neural(args, dataset, protocol)
+        if args.command == "live":
+            return _live(args, dataset, protocol)
         if args.command == "neural-benchmark":
             return _neural_benchmark(args, dataset, protocol, hashlib.sha256(raw).hexdigest())
     except (OSError, ValueError) as exc:

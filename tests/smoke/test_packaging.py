@@ -37,6 +37,7 @@ FORBIDDEN_SUFFIXES = {
 }
 REVIEWED_DATA = {
     "causal": "derived study, no raw source text",
+    "companies": "values of public SEC filings and forecasts of our model, no FRED input",
     "events": "48 events with short notes and links to public SEC filings",
     "protocols": "our own protocols",
     "reconciliation": "10 manual checks of public filings",

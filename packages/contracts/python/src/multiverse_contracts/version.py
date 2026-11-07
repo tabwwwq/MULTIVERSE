@@ -62,6 +62,12 @@ Carlo run with risks, convergence, tails and a manifest; job requests gain a kin
 
 0.20.0 (Stage 23): the inputs and report of the valuation studio: DCF tables, terminal methods,
 the bridge, the sensitivity matrix, tornado, scenarios, stress cases and quality checks.
+
+0.21.0 (Stage 24): the owner of a job, the audit row, the account export and erasure, and the
+licence block of a data source.
+
+0.22.0 (Stage 24b): the ranked universe company, the live forecast, the real company and its
+index, and the sectors of real filers.
 """
 
-CONTRACTS_VERSION = "0.21.0"
+CONTRACTS_VERSION = "0.22.0"

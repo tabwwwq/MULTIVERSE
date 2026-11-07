@@ -11,6 +11,7 @@ from multiverse_contracts.forecasting import ForecastTarget
 from multiverse_contracts.macro import AvailabilityBasis, MacroObservation
 from multiverse_pipelines.forecastset import sequences
 from multiverse_pipelines.forecastset.build import (
+    MACRO,
     UNDEFINED,
     _growth,
     features_at,
@@ -29,6 +30,7 @@ from multiverse_pipelines.forecastset.sequences import (
     to_sequence_csv,
 )
 from multiverse_pipelines.macro.store import MacroStore
+from multiverse_pipelines.macro.treasury import Yields
 from multiverse_pipelines.pit.clock import day_end
 
 ORIGIN = date(2021, 12, 31)
@@ -92,7 +94,8 @@ def test_targets_carry_their_release_and_say_undefined() -> None:
 
 def test_macro_features_use_only_what_was_available_at_the_origin() -> None:
     store = MacroStore.create(None, synthetic=False, built_at=datetime(2026, 1, 1, tzinfo=UTC))
-    store.register(["fred:FEDFUNDS", "fred:GDPC1"])
+    gdp = "wb:USA.NY.GDP.MKTP.KD.ZG"
+    store.register([gdp])
 
     def obs(series: str, start: date, value: str, public: date) -> MacroObservation:
         return MacroObservation(
@@ -107,17 +110,25 @@ def test_macro_features_use_only_what_was_available_at_the_origin() -> None:
 
     store.add(
         [
-            obs("fred:FEDFUNDS", date(2021, 11, 1), "0.08", date(2021, 12, 1)),
-            obs("fred:FEDFUNDS", date(2021, 12, 1), "0.25", date(2022, 1, 3)),
-            obs("fred:GDPC1", date(2020, 7, 1), "100", date(2020, 10, 29)),
-            obs("fred:GDPC1", date(2021, 7, 1), "105", date(2021, 10, 28)),
+            obs(gdp, date(2020, 1, 1), "1.5", date(2021, 7, 1)),
+            obs(gdp, date(2021, 1, 1), "5.0", date(2022, 7, 1)),
         ]
     )
-    row = macro_features(store, [ORIGIN])[ORIGIN]
-    assert row["macro_fedfunds"] == 0.08  # December was published in January
-    assert row["macro_gdp_yoy"] == float(Decimal(105) / Decimal(100) - 1)
-    assert row["macro_unrate"] is None
+    yields = [
+        Yields(date(2021, 12, 30), 0.05, 1.5),
+        Yields(date(2021, 12, 31), 0.06, 1.52),
+        Yields(date(2022, 1, 3), 0.08, 1.63),
+    ]
+    row = macro_features(store, [ORIGIN], yields)[ORIGIN]
+    assert row["macro_gdp_growth"] == 1.5  # 2021 was published in July 2022
+    assert row["macro_ust3m"] == 0.06  # the day of the origin, not the next
+    assert row["macro_ust10y"] == 1.52
+    assert row["macro_unemployment"] is None
     store.close()
+
+
+def test_no_macro_feature_comes_from_fred() -> None:
+    assert not [series for _, series, _ in MACRO if series.startswith("fred:")]
 
 
 def test_the_csv_is_sorted_and_stable() -> None:
@@ -131,11 +142,11 @@ def test_the_csv_is_sorted_and_stable() -> None:
             "y_revenue_growth_h1": UNDEFINED,
         },
     ]
-    text = to_csv(rows, {ORIGIN: {"macro_fedfunds": 0.25}})
+    text = to_csv(rows, {ORIGIN: {"macro_ust3m": 0.25}})
     lines = text.splitlines()
     assert lines[1].startswith("0000000001,2021-12-31,I,,")
     assert lines[2].startswith("0000000002,2021-12-31,D,1,")
-    assert to_csv(list(reversed(rows)), {ORIGIN: {"macro_fedfunds": 0.25}}) == text
+    assert to_csv(list(reversed(rows)), {ORIGIN: {"macro_ust3m": 0.25}}) == text
     counts = {(c.target, c.horizon): c for c in target_counts(rows)}
     assert counts[(ForecastTarget.REVENUE_GROWTH, 1)].undefined == 1
 

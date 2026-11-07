@@ -149,7 +149,16 @@ export type Sector =
   | "utilities"
   | "logistics"
   | "instruments"
-  | "industrial_machinery";
+  | "industrial_machinery"
+  | "technology_hardware"
+  | "transport_equipment"
+  | "healthcare"
+  | "media_telecom"
+  | "energy_mining"
+  | "retail_wholesale"
+  | "finance"
+  | "consumer_goods"
+  | "other";
 /**
  * Lifecycle of a listed company. Leavers stay in the data to avoid survivorship bias.
  *
@@ -3058,6 +3067,30 @@ export interface LicensedNeed {
   without_it: string;
 }
 /**
+ * Quantiles of one target at one horizon, in the units of the target.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "LiveBand".
+ */
+export interface LiveBand {
+  horizon: number;
+  quarter_end: string;
+  target: ForecastTarget;
+  /**
+   * @minItems 3
+   */
+  values: [number, number, number, ...number[]];
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "LiveCompany".
+ */
+export interface LiveCompany {
+  bands: LiveBand[];
+  cik: string;
+  origin: string;
+}
+/**
  * One macro feature for one company quarter, as available at the cutoff.
  *
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -3637,6 +3670,74 @@ export interface QualityCheck {
   key: string;
   label: string;
   passed: boolean;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RankEvidence".
+ */
+export interface RankEvidence {
+  float_as_of: string;
+  /**
+   * What the filed value was divided by: a scale error of the filer.
+   */
+  float_correction: number;
+  public_float_usd: number;
+  rank: number;
+}
+/**
+ * One file of ``data/companies``.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RealCompany".
+ */
+export interface RealCompany {
+  case_id: string | null;
+  /**
+   * Why a run cannot start here, or what stands in for missing tags.
+   */
+  case_note: string | null;
+  dossier: CompanyDossier;
+  evidence: RankEvidence;
+  /**
+   * Bank, insurer or REIT: margins and capex do not apply.
+   */
+  financial: boolean;
+  forecast: LiveCompany | null;
+  /**
+   * Why there is no forecast.
+   */
+  forecast_note: string | null;
+}
+/**
+ * One line of the index: enough to search and to show a result.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RealCompanyRow".
+ */
+export interface RealCompanyRow {
+  cik: string;
+  company_id: string;
+  country: string;
+  evidence: RankEvidence;
+  has_case: boolean;
+  has_forecast: boolean;
+  name: string;
+  revenue_quarters: number;
+  sector: Sector;
+  support_status: SupportStatus;
+  ticker: string | null;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "RealIndex".
+ */
+export interface RealIndex {
+  as_of: string;
+  companies: RealCompanyRow[];
+  forecast_id: string | null;
+  forecast_label: string;
+  rank_label: string;
+  universe_id: string;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
@@ -4349,14 +4450,38 @@ export interface UniverseCompany {
   candidate: boolean;
   cik: string;
   /**
+   * Of the business address, when abroad.
+   */
+  country: string | null;
+  /**
    * A Form 15 is on file: no longer reporting.
    */
   deregistered: boolean;
   division: string;
+  exchanges: string[];
+  /**
+   * Banks, insurers, REITs: the engine has no model of them.
+   */
+  financial: boolean;
   first_xbrl_filed: string;
+  fiscal_year_end: string | null;
+  float_as_of: string | null;
+  /**
+   * What the filed value was divided by: a scale error of the filer.
+   */
+  float_correction: number;
   last_filed: string;
   name: string;
+  /**
+   * From the cover of the 10-K: not market capitalization.
+   */
+  public_float_usd: number | null;
+  /**
+   * By public float, largest first.
+   */
+  rank: number | null;
   sic: string;
+  tickers: string[];
   /**
    * XBRL 10-K filings on file.
    */

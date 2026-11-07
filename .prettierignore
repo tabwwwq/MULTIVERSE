@@ -15,3 +15,7 @@ packages/contracts/catalog
 packages/contracts/fixtures/mock
 data/simulation
 data/valuation
+data/companies
+data/universe
+# Locked before scoring: its SHA-256 goes into the evaluation package.
+data/protocols/stage-24b-evaluation.json

@@ -1,5 +1,5 @@
 {
-  "contracts_version": "0.21.0",
+  "contracts_version": "0.22.0",
   "verified_on": "2026-10-29",
   "automatic_downloads": "disabled",
   "sources": [
@@ -1024,6 +1024,114 @@
       "notes": [
         "V2 covers USD reporters only (decision D-04), so ECB series start with FX and euro rates as macro context, low priority."
       ],
+      "blocks": []
+    },
+    {
+      "source_id": "us-treasury",
+      "name": "U.S. Treasury daily par yield curve",
+      "publisher": "U.S. Department of the Treasury",
+      "region": "United States",
+      "priority": 3,
+      "access": "public_access",
+      "authentication": "none",
+      "key_status": "not_required",
+      "licence": {
+        "name": "Work of the U.S. Government",
+        "summary": "Rates published by the Treasury as a work of the U.S. Government, which has no copyright in the United States (17 U.S.C. 105). They replace the FRED rates, whose terms forbid machine learning.",
+        "redistribution": "public_information",
+        "resale": "not_granted",
+        "attribution": "Source: U.S. Department of the Treasury.",
+        "exceptions": "The seal and logos of the Treasury are not free to use."
+      },
+      "rate_limit": {
+        "documented": "No limit is published.",
+        "documented_requests_per_second": null,
+        "chosen_requests_per_second": "1"
+      },
+      "request_rules": [
+        "HTTPS only, one CSV per year, earlier years are not fetched again."
+      ],
+      "retry_policy": "No automatic retry: a failed year is fetched again by hand.",
+      "checksum_policy": "The CSV of each year is kept as received in the raw folder.",
+      "official_hosts": [
+        "home.treasury.gov"
+      ],
+      "docs": [
+        {
+          "title": "Daily Treasury par yield curve rates",
+          "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve",
+          "kind": "documentation"
+        },
+        {
+          "title": "Privacy and legal notices",
+          "url": "https://home.treasury.gov/subfooter/privacy-and-legal-notices",
+          "kind": "terms"
+        }
+      ],
+      "datasets": [
+        {
+          "dataset_id": "treasury-par-yields",
+          "title": "Daily par yields",
+          "description": "3-month and 10-year Treasury par yields, one row per business day.",
+          "endpoints": [
+            "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{year}/all"
+          ],
+          "formats": [
+            "csv"
+          ],
+          "update_frequency": "Every business day.",
+          "knowledge_time": "Known at the close of the day it is dated.",
+          "revision_semantics": "Not revised in normal practice.",
+          "coverage": "Since 1990; MULTIVERSE reads 2009 onwards.",
+          "identifiers": [
+            "Date",
+            "Maturity"
+          ],
+          "provenance": [
+            "Request URL and the User-Agent or key reference used (never the key itself)",
+            "downloaded_at in UTC",
+            "HTTP status, Content-Length, Last-Modified and ETag when present",
+            "SHA-256 of the file as published, after HTTP gzip is removed",
+            "Licence name and terms version in force on the download date"
+          ],
+          "fields": [
+            {
+              "name": "Date",
+              "type": "date",
+              "role": "period",
+              "description": "Business day, month/day/year."
+            },
+            {
+              "name": "3 Mo",
+              "type": "decimal",
+              "role": "value",
+              "description": "3-month par yield, percent."
+            },
+            {
+              "name": "10 Yr",
+              "type": "decimal",
+              "role": "value",
+              "description": "10-year par yield, percent."
+            }
+          ],
+          "size": null,
+          "docs": [
+            {
+              "title": "Daily Treasury par yield curve rates",
+              "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve",
+              "kind": "documentation"
+            }
+          ]
+        }
+      ],
+      "verified_on": "2026-11-06",
+      "download": {
+        "status": "approved",
+        "decided_on": "2026-11-06",
+        "scope": "bulk",
+        "note": "Decision D-14 (owner in chat, 2026-11-06): collect all the data that can be had. Yearly files of the daily par yield curve, 2009 to 2026."
+      },
+      "notes": [],
       "blocks": []
     },
     {

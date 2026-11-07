@@ -31,7 +31,7 @@ export function StorageBanner({ status, unreadable, onReset }: StorageBannerProp
           <p className="text-small text-ink-muted">
             The notebook is saved in this browser, nowhere else. Another browser or device will not
             see it, and clearing site data deletes it. Export the notebook as JSON to keep a copy.
-            Server storage arrives with accounts (Stage 24).
+            There is no server storage yet.
           </p>
         </div>
       </div>

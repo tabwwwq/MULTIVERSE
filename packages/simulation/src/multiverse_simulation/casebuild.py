@@ -1,21 +1,25 @@
 """A real case from local data: the warehouse, the forecasting dataset and the signed model.
 
 Everything read here was public at the origin. Rows of the history end at the origin, the panel
-stops at the cutoff, and the model median comes from a fold that never saw these years.
+stops at the cutoff, and the model median comes from a fold that never saw these years. GDP growth
+comes from the World Bank as known on the day of the case: it has no dated vintages, so a history
+of it is fair for a case of today and has no place among the features of the model.
 
 The warehouse has no PP&E, goodwill, working capital or interest. What it lacks is implied or
 assumed, and each input says which. A case is an honest sketch of a company, not its books.
+
+Many large filers tag no EBITDA parts: Exxon Mobil and Eli Lilly file no operating income, Microsoft
+no quarterly D&A. Such a case stands on the nearest figure they do file, and says so.
 """
 
 import uuid
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from pathlib import Path
 
 import numpy as np
 
-from multiverse_contracts.forecasting import ForecastTarget
 from multiverse_contracts.primitives import DataOrigin
 from multiverse_contracts.simulation import (
     CapitalInputs,
@@ -31,9 +35,7 @@ from multiverse_contracts.simulation import (
     SimulationCase,
 )
 from multiverse_contracts.version import CONTRACTS_VERSION
-from multiverse_forecast.bands import HORIZONS, TARGETS
 from multiverse_forecast.data import Dataset
-from multiverse_forecast.probabilistic import from_target_space
 from multiverse_pipelines.pit.clock import day_end
 from multiverse_pipelines.pit.panel import build_panel
 from multiverse_pipelines.pit.warehouse import Warehouse
@@ -44,6 +46,8 @@ METRICS = (
     "cogs",
     "rnd",
     "ebitda",
+    "operating_income",
+    "cfo",
     "depreciation_amortization",
     "free_cash_flow",
     "capex",
@@ -56,7 +60,21 @@ SIGNED_HORIZONS = (4, 8)
 """EBITDA margin pairs of the signed model (`model-20261028-9ce4d4180aa9`): research only."""
 MEDIAN_LEVEL = 3
 WINSOR = 0.01
-MIN_ROWS = 40
+MIN_ROWS = 16
+"""Four years of shocks: fewer, and a block draw would mostly repeat itself."""
+MARGINS = (
+    ("ebitda_margin_l1", "EBITDA margin"),
+    ("op_margin_l1", "operating margin"),
+    ("fcf_margin_l1", "free cash flow margin"),
+)
+"""The margin whose shocks a firm can show, nearest to EBITDA first."""
+BASES = {
+    "ebitda": None,
+    "operating_income": "No EBITDA in the filings: operating income plus D&A stands for it.",
+    "cfo": "No operating income in the filings: cash from operations stands for EBITDA.",
+}
+COGS_SHARE = 0.5
+"""Of cash costs other than R&D, for a filer that reports no cost of revenue."""
 MEAN_BLOCK = 4.0
 HORIZON = 20
 HISTORY = 8
@@ -136,13 +154,49 @@ def _innovations(grid: Floats) -> tuple[Floats, float]:
     return now - persistence * before, persistence
 
 
-def shock_history(ds: Dataset, cik: str, origin: date) -> ShockHistory:
-    """Macro, sector and firm columns of every quarter up to the origin."""
+def _margin_of(ds: Dataset, cik: str, day: np.datetime64) -> tuple[str, str, bool]:
+    """The margin a firm has enough quarters of. Without one it moves with its sector alone."""
+    own = (ds.ciks == cik) & (ds.origins <= day)
+    for feature, label in MARGINS:
+        if feature in ds.features and np.isfinite(_column(ds, feature)[own]).sum() > MIN_ROWS:
+            return feature, label, True
+    feature, label = MARGINS[0]
+    return feature, f"sector {label} only", False
+
+
+def central_margins(
+    medians: Mapping[str, Mapping[int, float]],
+    d_and_a_share: float,
+    capex_share: float,
+    last_margin: float,
+) -> tuple[float, float, str | None]:
+    """EBITDA margin at 4 and 8 quarters: of the model, or built from what it forecasts."""
+    first, second = SIGNED_HORIZONS
+    for target, extra, note in (
+        ("ebitda_margin", 0.0, None),
+        ("operating_margin", d_and_a_share, "Model operating margin plus D&A share of revenue."),
+        ("fcf_margin", capex_share, "Model free cash flow margin plus capex share of revenue."),
+    ):
+        found = medians.get(target, {})
+        if first in found and second in found:
+            return found[first] + extra, found[second] + extra, note
+    return last_margin, last_margin, "No model margin: the last four quarters held flat."
+
+
+def gdp_of(gdp: Mapping[int, float], year: int) -> float:
+    """Annual growth of a year, or of the last year published while it is still running."""
+    known = [item for item in gdp if item <= year]
+    return gdp[max(known)] if known else float("nan")
+
+
+def shock_history(ds: Dataset, cik: str, origin: date, gdp: Mapping[int, float]) -> ShockHistory:
+    """Macro, sector and firm columns of every quarter up to the origin; ``gdp`` is by year."""
     division = ds.divisions[ds.ciks == cik][0]
     day = np.datetime64(origin, "D")
     rows = np.flatnonzero((ds.divisions == division) & (ds.origins <= day))
     growth, quarters, ciks = _matrix(ds, rows, _column(ds, "rev_growth_l1"))
-    margin, _, _ = _matrix(ds, rows, _column(ds, "ebitda_margin_l1"))
+    feature, label, own_margin = _margin_of(ds, cik, day)
+    margin, _, _ = _matrix(ds, rows, _column(ds, feature))
     margin = _deseasonalized(margin, quarters)
     growth_shocks, persistence_growth = _innovations(growth)
     margin_shocks, persistence_margin = _innovations(margin)
@@ -152,12 +206,15 @@ def shock_history(ds: Dataset, cik: str, origin: date) -> ShockHistory:
     index = ciks.index(cik)
     firm_growth = growth_shocks[index] - sector_growth
     firm_margin = margin_shocks[index] - sector_margin
+    if not own_margin:
+        firm_margin = np.zeros_like(sector_margin)
 
     all_rows = np.flatnonzero(ds.origins <= day)
     macro: dict[np.datetime64, tuple[float, float]] = {}
-    rates, gdp = _column(ds, "macro_fedfunds"), _column(ds, "macro_gdp_yoy")
+    rates = _column(ds, "macro_ust3m")
     for row in all_rows:
-        macro[ds.origins[row]] = (float(rates[row]) / 100, float(gdp[row]))
+        year = int(ds.origins[row].astype("datetime64[Y]").astype(np.int64)) + 1970
+        macro[ds.origins[row]] = (float(rates[row]) / 100, gdp_of(gdp, year) / 100)
     kept: list[ShockRow] = []
     for column, quarter in enumerate(quarters[1:]):
         before = macro.get(quarters[column])
@@ -200,31 +257,12 @@ def shock_history(ds: Dataset, cik: str, origin: date) -> ShockHistory:
         peers=len(ciks),
         method=(
             "Innovations of a pooled AR(1) on firm-demeaned symmetric growth and on "
-            "deseasonalized EBITDA margin, winsorized at 1%. Sector columns are the cross-section "
+            f"deseasonalized {label}, winsorized at 1%. Sector columns are the cross-section "
             f"median of division {division}; firm columns are what remains. Macro columns are "
-            "quarterly changes of fed funds and of GDP growth. Rows end at the origin."
+            "quarterly changes of the 3-month Treasury yield and of annual GDP growth "
+            "(World Bank, CC BY 4.0). Rows end at the origin."
         ),
     )
-
-
-def signed_margins(ds: Dataset, bands: Path, cik: str, origin: date) -> dict[int, float]:
-    """Median EBITDA margin of the signed model at its two signed horizons, for this firm."""
-    day = np.datetime64(origin, "D")
-    row = np.flatnonzero((ds.ciks == cik) & (ds.origins == day))
-    if row.size != 1:
-        raise ValueError(f"{cik} has no single row at {origin}")
-    with np.load(bands) as found:
-        where = np.flatnonzero(found["rows"] == row[0])
-        if where.size != 1:
-            raise ValueError(f"the signed model did not forecast {cik} at {origin}")
-        target = TARGETS.index(ForecastTarget.EBITDA_MARGIN)
-        quantiles = found["q"][where[0], target]
-    values = {}
-    for horizon in SIGNED_HORIZONS:
-        space = quantiles[HORIZONS.index(horizon), MEDIAN_LEVEL]
-        value = from_target_space(ForecastTarget.EBITDA_MARGIN, np.array([space], dtype=np.float64))
-        values[horizon] = float(value[0])
-    return values
 
 
 def _cells(
@@ -245,12 +283,16 @@ def _text(value: Decimal) -> str:
 def build_case(
     warehouse: Warehouse,
     ds: Dataset,
-    bands: Path,
+    medians: Mapping[str, Mapping[int, float]],
     cik: str,
     name: str,
     origin: date,
     model_id: str,
+    gdp: Mapping[int, float],
+    as_of: date | None = None,
 ) -> SimulationCase:
+    """``medians`` are the margins of the model by target and horizon. ``as_of`` is the day of the
+    data when the origin is the quarter end after it."""
     cells = _cells(warehouse, cik, origin)
     lags = sorted({lag for metric, lag in cells if metric == "revenue" and lag >= 1})
     if lags[:4] != [1, 2, 3, 4]:
@@ -276,18 +318,69 @@ def build_case(
         return noncurrent + (get("debt_current", lag) or Decimal(0))
 
     year = (1, 2, 3, 4)
-    revenue = sum((need("revenue", k) for k in year), Decimal(0))
-    ebitda = sum((need("ebitda", k) for k in year), Decimal(0))
-    d_and_a = sum((need("depreciation_amortization", k) for k in year), Decimal(0))
-    capex = sum((need("capex", k) for k in year), Decimal(0))
-    cogs = sum((need("cogs", k) for k in year), Decimal(0))
+
+    def filed(metric: str) -> bool:
+        return all(get(metric, k) is not None for k in year)
+
+    def total(metric: str) -> Decimal:
+        return sum((need(metric, k) for k in year), Decimal(0))
+
+    basis = next((metric for metric in BASES if filed(metric)), None)
+    if basis is None:
+        raise ValueError(f"{cik}: no earnings of any kind for the last four quarters at {origin}")
+    has_d_and_a, has_capex = filed("depreciation_amortization"), filed("capex")
+    if not has_d_and_a and not has_capex:
+        raise ValueError(f"{cik}: neither D&A nor capex for the last four quarters at {origin}")
+    revenue = total("revenue")
+    d_and_a = total("depreciation_amortization") if has_d_and_a else total("capex")
+    capex = total("capex") if has_capex else d_and_a
+    ebitda = total(basis) + (d_and_a if basis == "operating_income" else Decimal(0))
+    has_cogs = filed("cogs")
+
+    def earnings(lag: int) -> Decimal:
+        return need(basis, lag) + (d_and_a / 4 if basis == "operating_income" else Decimal(0))
+
+    cogs = sum((get("cogs", k) or Decimal(0) for k in year), Decimal(0))
     rnd = sum((get("rnd", k) or Decimal(0) for k in year), Decimal(0))
     cash = need("cash", 1)
-    debt = debt_at(1)
-    if debt is None:
-        raise ValueError(f"{cik}: debt is not known at {origin}")
+    filed_debt = debt_at(1)
+    debt = filed_debt if filed_debt is not None else Decimal(0)
+    assumed: list[CaseInput] = []
+    note = BASES[basis]
+    if note is not None:
+        assumed.append(CaseInput(name="ebitda_basis", origin="assumed", note=note))
+    if not has_d_and_a:
+        assumed.append(
+            CaseInput(
+                name="d_and_a_missing",
+                origin="assumed",
+                note="No quarterly D&A in the filings: capital expenditure stands for it.",
+            )
+        )
+    if not has_capex:
+        assumed.append(
+            CaseInput(
+                name="capex_missing",
+                origin="assumed",
+                note="No capital expenditure in the filings: D&A stands for it.",
+            )
+        )
+    if filed_debt is None:
+        assumed.append(
+            CaseInput(
+                name="debt_missing", origin="assumed", note="No debt in the filings: zero assumed."
+            )
+        )
+    if not has_cogs:
+        assumed.append(
+            CaseInput(
+                name="cogs_missing",
+                origin="assumed",
+                note="No cost of revenue in the filings: half of cash costs assumed.",
+            )
+        )
 
-    shocks = shock_history(ds, cik, origin)
+    shocks = shock_history(ds, cik, origin, gdp)
     short_rate = Decimal(str(shocks.base_short_rate))
     rate = short_rate + SPREAD
     floating = debt * FLOATING_SHARE
@@ -295,13 +388,17 @@ def build_case(
     cash_costs = revenue - ebitda - rnd
     cash_cogs = max(cogs - d_and_a, Decimal(0))
     last_margin = float(ebitda / revenue)
-    medians = signed_margins(ds, bands, cik, origin)
+    at_first, at_second, margin_note = central_margins(
+        medians, float(d_and_a / revenue), float(capex / revenue), last_margin
+    )
+    if margin_note is not None:
+        assumed.append(CaseInput(name="margin_source", origin="assumed", note=margin_note))
 
     # Quarter 1 of the path is the quarter that ended at the origin: reported later.
     margins = np.interp(
         np.arange(1, HORIZON + 1),
         (1, SIGNED_HORIZONS[0] + 1, SIGNED_HORIZONS[1] + 1),
-        (last_margin, medians[SIGNED_HORIZONS[0]], medians[SIGNED_HORIZONS[1]]),
+        (last_margin, at_first, at_second),
     )
     row = np.flatnonzero((ds.ciks == cik) & (ds.origins == np.datetime64(origin, "D")))[0]
     start_growth = float(_column(ds, "rev_growth_l1")[row])
@@ -338,10 +435,10 @@ def build_case(
     balance_date = cells[("revenue", 1)][1].quarter_end  # type: ignore[attr-defined]
     return SimulationCase(
         contracts_version=CONTRACTS_VERSION,
-        case_id=f"case-{cik.lstrip('0')}-{origin:%Y%m%d}",
+        case_id=f"case-{cik.lstrip('0')}-{as_of or origin:%Y%m%d}",
         company_id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"sec:{cik}")),
         company_name=name,
-        as_of=origin,
+        as_of=as_of or origin,
         balance_date=balance_date,
         currency="USD",
         data_origin=DataOrigin.EMPIRICAL,
@@ -366,7 +463,7 @@ def build_case(
                     floating=True,
                 ),
             ),
-            trailing_ebitda=tuple(_text(need("ebitda", k)) for k in (3, 2, 1)),
+            trailing_ebitda=tuple(_text(earnings(k)) for k in (3, 2, 1)),
             trailing_interest=(_text(quarterly_interest),) * 3,
         ),
         policy=CasePolicy(
@@ -385,7 +482,9 @@ def build_case(
         drivers=CaseDrivers(
             last_year_revenue=tuple(_text(need("revenue", k)) for k in (4, 3, 2, 1)),
             rd_ratio=round(float(rnd / revenue), 5),
-            cogs_share=round(min(float(cash_cogs / cash_costs), 1.0), 5),
+            cogs_share=round(min(float(cash_cogs / cash_costs), 1.0), 5)
+            if has_cogs and cash_costs > 0
+            else COGS_SHARE,
             capex_ratio=round(float(capex / revenue), 5),
             nwc_ratio=NWC_RATIO,
         ),
@@ -397,8 +496,8 @@ def build_case(
                 "persistence of the shocks. Growth is not signed for any use."
             ),
             margin_source=(
-                f"Median of {model_id} at 4 and 8 quarters, the signed research pairs; straight "
-                "lines from the last four quarters, flat after 8 quarters."
+                f"Median of {model_id} at 4 and 8 quarters, research only; straight lines "
+                "from the last four quarters, flat after 8 quarters."
             ),
         ),
         shocks=shocks,
@@ -411,7 +510,7 @@ def build_case(
             debt_weight=DEBT_WEIGHT,
             terminal_growth=TERMINAL_GROWTH,
         ),
-        inputs=_inputs(),
+        inputs=(*_inputs(), *assumed),
         history=tuple(points),
     )
 
@@ -429,7 +528,7 @@ def _inputs() -> tuple[CaseInput, ...]:
         CaseInput(
             name="ebitda_margin_path",
             origin="model",
-            note="Signed research pairs at 4 and 8 quarters; interpolated, then held flat.",
+            note="Model median at 4 and 8 quarters, research only; interpolated, then flat.",
         ),
         CaseInput(
             name="growth_path",
@@ -452,7 +551,7 @@ def _inputs() -> tuple[CaseInput, ...]:
         CaseInput(
             name="interest_rate",
             origin="assumed",
-            note="Fed funds + 2 points, 30% floating: interest is not in the warehouse.",
+            note="3-month Treasury + 2 points, 30% floating: interest is not in the warehouse.",
         ),
         CaseInput(
             name="liquidity",

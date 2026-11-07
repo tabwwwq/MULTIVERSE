@@ -484,3 +484,26 @@ def test_the_archived_fixture_parses_into_facts() -> None:
     facts = facts_from_companyfacts(doc)
     assert len(facts) == 4
     assert {fact.concept for fact in facts} >= {"dei:EntityCommonStockSharesOutstanding"}
+
+
+def test_a_year_before_1990_is_left_out_of_the_calendar() -> None:
+    fact = Fact(
+        concept="us-gaap:Revenues",
+        unit="USD",
+        start=date(1989, 1, 1),
+        end=date(1989, 12, 31),
+        value=Decimal(1),
+        accession=K1,
+        form="10-K",
+        filed=date(2011, 2, 14),
+        fy=1989,
+        fp="FY",
+    )
+    assert FiscalCalendar.from_facts([fact]).years == ()
+
+
+def test_filing_fee_tables_are_not_facts_of_the_accounts() -> None:
+    row = {"end": "2025-01-31", "val": 1, "accn": K1, "form": "424B2", "filed": "2025-02-01"}
+    body = {"units": {"USD": [row]}}
+    doc = {"facts": {"ffd": {"NrrtvMaxAggtOfferingPric": body}, "us-gaap": {"Goodwill": body}}}
+    assert [fact.concept for fact in facts_from_companyfacts(doc)] == ["us-gaap:Goodwill"]

@@ -4,6 +4,7 @@ import type {
   JobRequest,
   JobStatus,
   JobView,
+  SimulationReport,
   SimulationRequest,
 } from "@multiverse/contracts";
 import type { BadgeTone } from "@/components/ui/badge";
@@ -123,6 +124,15 @@ export function submitRun(request: SimulationRequest): Promise<JobView> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),
   });
+}
+
+export async function fetchJob(jobId: string): Promise<JobView> {
+  const detail = await read<{ job: JobView }>(`/jobs/${jobId}`);
+  return detail.job;
+}
+
+export function fetchReport(jobId: string, signal?: AbortSignal): Promise<SimulationReport> {
+  return read<SimulationReport>(`/simulations/${jobId}/report`, signal ? { signal } : undefined);
 }
 
 export function fetchLogs(jobId: string): Promise<JobLogLine[]> {

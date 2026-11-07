@@ -12,6 +12,7 @@ const ALLOWED_HOSTS = new Set([
   "data.ecb.europa.eu",
   "data-api.ecb.europa.eu",
   "www.ecb.europa.eu",
+  "home.treasury.gov",
   "data.worldbank.org",
   "api.worldbank.org",
   "www.worldbank.org",

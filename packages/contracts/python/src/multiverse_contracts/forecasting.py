@@ -432,3 +432,32 @@ class EvaluationPackage(ContractModel):
         if self.evaluation_id.rsplit("-", 1)[1] != self.sha256[:12]:
             raise ValueError("the evaluation is named by its SHA-256")
         return self
+
+
+class LiveBand(ContractModel):
+    """Quantiles of one target at one horizon, in the units of the target."""
+
+    target: ForecastTarget
+    horizon: int = Field(ge=1)
+    quarter_end: date
+    values: tuple[Score, ...] = Field(min_length=3)
+
+
+class LiveCompany(ContractModel):
+    cik: Annotated[str, StringConstraints(pattern=r"^[0-9]{10}$")]
+    origin: date
+    bands: tuple[LiveBand, ...] = ()
+
+
+class LiveForecast(ContractModel):
+    """What the model says today. Its targets have not happened: nothing here is a score."""
+
+    forecast_id: Annotated[str, StringConstraints(pattern=r"^live-[0-9]{8}-[0-9a-f]{12}$")]
+    dataset_id: Annotated[str, StringConstraints(pattern=r"^fds-[0-9]{8}-[0-9a-f]{12}$")]
+    dataset_sha256: Sha256
+    model: Name
+    seeds: int = Field(ge=1)
+    levels: tuple[Score, ...] = Field(min_length=3)
+    train_rows: int = Field(ge=0)
+    created_at: AwareDatetime
+    companies: tuple[LiveCompany, ...]

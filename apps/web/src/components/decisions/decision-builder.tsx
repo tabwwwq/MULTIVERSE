@@ -581,6 +581,7 @@ export function DecisionBuilder({
           <RunDialog
             draft={state?.state === "fresh" ? (result?.draft ?? null) : null}
             blockedReason={blockedReason}
+            target={{ caseId: context.caseId, note: context.caseNote }}
           />
           <SaveToNotebook
             draft={state?.state === "fresh" ? (result?.draft ?? null) : null}

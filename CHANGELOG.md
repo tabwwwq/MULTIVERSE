@@ -4,6 +4,20 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-07 (Stage 24b, decision D-14)
+
+- **Real companies on the screens** (ADR-0033): the 500 largest SEC filers by the public float on the cover of their 10-K, NVIDIA first. The rank is labelled as not market capitalization; companies without a 10-K (Saudi Aramco, Samsung, TSMC) are not there. The seven fictional companies follow them, labelled.
+- **A forecast for 496 of them** from a temporal network trained without FRED: SEC filings of 1,429 companies, U.S. Treasury yields read from the Treasury, ECB rates. On the test years 2020 to 2026 it beats persistence by MAE on revenue growth at 4 quarters by 31.7% (33.4 to 29.9%) and the best baseline by 4.7%; at 1 quarter it is 11.8% worse than gradient boosting. Its p10 to p90 ranges held 82.2% of outcomes for revenue growth over 4 quarters on 2024 to 2026 (80% stated); under the approval rule of Stage 17, 2 of 15 target and horizon pairs pass (revenue growth over 4 and 8 quarters). Research only, not approved for the product.
+- **Run works**: the Decision Builder sends a real company's case through the queue, the worker computes paired Monte Carlo paths and `/run?job=` shows the report. 373 companies have a case; 88 of them stand on a substitute for EBITDA (operating income plus D&A, or cash from operations), and the dialog says so before the run. Banks, insurers and REITs have none.
+- `npm run app` starts the API, the worker and the site (or only the first two when the site already runs).
+- `sec top`, `multiverse_forecast live` and `multiverse_simulation companies` (which replaces `case`); the U.S. Treasury as a source; contracts 0.22.0.
+
+### Fixed — 2026-11-07 (Stage 24b)
+
+- Filing fee tables (`ffd`) no longer enter the warehouse: JPMorgan alone filed 4,260, and each one recomputed its whole history. The build of 1,429 companies took 23.5 minutes.
+- Fiscal years before 1990 are left out of the calendar: a filer had typed 1989.
+- The forecast no longer feeds a feature to the model that no training row had (World Bank series have no dated vintages).
+
 ### Security — 2026-11-06 (Stage 24)
 
 - The API checks who is asking (ADR-0032): `local` mode serves the loopback only, `token` mode needs a Bearer token with a role and an expiry. Settings refuse `local` in production and off the loopback.

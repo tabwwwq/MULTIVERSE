@@ -142,7 +142,10 @@ function checkRevision(
     typeof value["created_at"] === "string" && DATETIME.test(value["created_at"]),
     `${here}: created_at must be a date and time with a time zone.`,
   );
-  checker.check(value["mode"] === "demo", `${here}: only demo scenarios exist in this version.`);
+  checker.check(
+    value["mode"] === "demo" || value["mode"] === "fictional_exploratory",
+    `${here}: only demo and hypothetical scenarios exist in this version.`,
+  );
   checker.check(value["currency"] === "USD", `${here}: the currency is USD (decision D-04).`);
   const status = value["result_status"];
   const resultId = value["result_id"];
@@ -307,7 +310,7 @@ function wrapDraft(draft: ScenarioDraft, clock: Clock): ScenarioRecord {
         derived_from: null,
         created_at: now,
         draft,
-        mode: "demo",
+        mode: draft.data_origin === "synthetic" ? "demo" : "fictional_exploratory",
         currency: "USD",
         result_status: "not_run",
         result_id: null,

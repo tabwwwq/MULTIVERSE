@@ -44,6 +44,10 @@ class Fact:
         return self.form.endswith("/A")
 
 
+FEE_TAXONOMIES = frozenset({"ffd"})
+"""Filing fee tables say nothing of the accounts, and a bank files thousands: JPMorgan, 4,260."""
+
+
 @dataclass(frozen=True)
 class Observation:
     """One concept, unit and period across every filing that reported it."""
@@ -57,6 +61,8 @@ class Observation:
 def facts_from_companyfacts(doc: Mapping[str, Any]) -> list[Fact]:
     facts: list[Fact] = []
     for taxonomy, concepts in doc["facts"].items():
+        if taxonomy in FEE_TAXONOMIES:
+            continue
         for tag, body in concepts.items():
             for unit, values in body["units"].items():
                 for value in values:

@@ -33,10 +33,11 @@ class SimulationRunner:
         return self.data_dir / "simulations" / job.job_id
 
     def case(self, request: SimulationRequest) -> SimulationCase:
-        path = self.cases / f"{request.case_id}.json"
-        if not path.exists():
-            raise RefusedError(f"no case {request.case_id}")
-        return SimulationCase.model_validate_json(path.read_bytes())
+        for folder in (self.cases, self.data_dir / "cases"):
+            path = folder / f"{request.case_id}.json"
+            if path.exists():
+                return SimulationCase.model_validate_json(path.read_bytes())
+        raise RefusedError(f"no case {request.case_id}")
 
     def validate(self, job: JobView) -> None:
         self.case(request_of(job))

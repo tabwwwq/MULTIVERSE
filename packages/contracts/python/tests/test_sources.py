@@ -43,6 +43,9 @@ def test_downloads_follow_the_owners_decisions_d09_to_d12() -> None:
     sec = decisions.pop("sec-edgar")
     assert (sec.status, sec.scope) == (DecisionStatus.APPROVED, DownloadScope.BULK)
     assert "D-09" in sec.note and "D-10" in sec.note  # noqa: PT018
+    treasury = decisions.pop("us-treasury")
+    assert (treasury.status, treasury.scope) == (DecisionStatus.APPROVED, DownloadScope.BULK)
+    assert "D-14" in treasury.note
     for source_id, decision in decisions.items():
         assert (decision.status, decision.scope) == (DecisionStatus.APPROVED, DownloadScope.SAMPLE)
         assert ("D-11" if source_id == "fred-alfred" else "D-12") in decision.note

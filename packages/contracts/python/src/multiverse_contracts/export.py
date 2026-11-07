@@ -44,6 +44,7 @@ from multiverse_contracts.normalized import NormalizedValue
 from multiverse_contracts.notebook import NotebookExport
 from multiverse_contracts.pit import ChronologyAlert, PanelCell, PitSnapshotManifest, PitValue
 from multiverse_contracts.quality import GateManifest
+from multiverse_contracts.real import RealCompany, RealIndex
 from multiverse_contracts.results import ScenarioResult
 from multiverse_contracts.simulation import SimulationCase, SimulationReport, SimulationRequest
 from multiverse_contracts.sources import SourceCatalog
@@ -64,6 +65,8 @@ EXPORTED_MODELS: tuple[type[BaseModel], ...] = (
     ScenarioResult,
     NotebookExport,
     SourceCatalog,
+    RealCompany,
+    RealIndex,
     NormalizedValue,
     PitValue,
     PanelCell,

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { SECTOR_LABELS } from "@/companies/labels";
 import { type RawParams, parseDossierParams } from "@/companies/params";
 import { buildDossierView, cutoffChoices, dateOnly } from "@/companies/pit";
+import { realCompany, realData } from "@/companies/real-data";
 import { getCompanyRepository } from "@/companies/repository";
 import { currentListing, currentName } from "@/companies/search";
 import {
@@ -11,6 +12,7 @@ import {
   SupportBadge,
   SyntheticBadge,
 } from "@/components/companies/company-badges";
+import { ForecastPanel } from "@/components/companies/forecast-panel";
 import {
   CoverageList,
   DossierControls,
@@ -51,6 +53,7 @@ export default async function CompanyDossierPage({ params, searchParams }: PageP
   if (!dossier) notFound();
 
   const { company } = dossier;
+  const record = realCompany(companyId);
   const { asOf, scale, ignored } = parseDossierParams(await searchParams, dateOnly(dossier.as_of));
   const view = buildDossierView(dossier, asOf);
   const listing = currentListing(company);
@@ -67,7 +70,13 @@ export default async function CompanyDossierPage({ params, searchParams }: PageP
         }
         meta={
           <>
-            <SyntheticBadge />
+            {record ? (
+              <Badge tone="mint">
+                #{record.evidence.rank} by public float, {record.evidence.float_as_of}
+              </Badge>
+            ) : (
+              <SyntheticBadge />
+            )}
             <SupportBadge status={dossier.support_status} />
             <LifecycleBadge company={company} />
           </>
@@ -110,6 +119,25 @@ export default async function CompanyDossierPage({ params, searchParams }: PageP
             Build a decision for this company
           </ButtonLink>
         </div>
+      ) : null}
+
+      {record?.forecast ? (
+        <Section
+          id="forecast"
+          title="Model forecast"
+          intro={`From the filings public on ${dateOnly(dossier.as_of)}. p50 is the middle of the model's range.`}
+        >
+          <ForecastPanel
+            dossier={dossier}
+            forecast={record.forecast}
+            id={realData()?.index.forecast_id ?? null}
+          />
+        </Section>
+      ) : null}
+      {record && !record.forecast ? (
+        <Section id="forecast" title="Model forecast">
+          <p className="max-w-prose text-body text-ink-muted">{record.forecast_note}</p>
+        </Section>
       ) : null}
 
       <Section id="identity" title="Identity">
@@ -166,11 +194,20 @@ export default async function CompanyDossierPage({ params, searchParams }: PageP
 
       <div className="mt-16 max-w-3xl">
         <NotClaims
-          items={[
-            "This is not a real company: every name, ticker, CIK and figure is synthetic.",
-            "Values are not forecasts or scenarios; they stand in for reported history.",
-            "Missing values are not zero, and nothing is converted between currencies.",
-          ]}
+          items={
+            record
+              ? [
+                  "Values come from SEC filings; EBITDA and net debt are calculated from them.",
+                  "The rank uses public float, not market capitalization or a share price.",
+                  "A forecast is a research output of a model, not advice.",
+                  "Missing values are not zero, and nothing is converted between currencies.",
+                ]
+              : [
+                  "This is not a real company: every name, ticker, CIK and figure is synthetic.",
+                  "Values are not forecasts or scenarios; they stand in for reported history.",
+                  "Missing values are not zero, and nothing is converted between currencies.",
+                ]
+          }
         />
       </div>
     </>

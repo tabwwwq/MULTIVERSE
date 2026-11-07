@@ -16,13 +16,19 @@ const VALTRIX = "/dossier/8d2c6e1a-4f9b-4b70-8e3d-c5a1f7b2e906";
 const TESSARACT = "/dossier/0f6a2c8e-9b1d-4e53-a7c4-58d2e1b9f036";
 
 test.describe("Universe Explorer", () => {
-  test("lists the seven synthetic demo companies", async ({ page }) => {
+  test("lists the real companies, then the seven fictional ones", async ({ page }) => {
     await page.goto("/universe");
     await expect(page.getByRole("status").filter({ hasText: "companies" })).toHaveText(
-      "7 of 7 companies",
+      "507 of 507 companies",
     );
+    await expect(page.getByRole("heading", { level: 3 })).toHaveCount(50);
+    await expect(page.getByText("Seven fictional demo companies follow them")).toBeVisible();
+    await expect(page.getByText("Page 1 of 11: companies 1 to 50")).toBeVisible();
+    await page.getByRole("link", { name: "Next" }).click();
+    await expect(page).toHaveURL(/page=2/);
+    await page.goto("/universe?page=11");
     await expect(page.getByRole("heading", { level: 3 })).toHaveCount(7);
-    await expect(page.getByText("Demo universe of seven fictional companies")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Northwind Semiconductors Inc." })).toBeVisible();
   });
 
   test("searches as you type with the keyboard and keeps focus in the field", async ({ page }) => {
@@ -31,7 +37,7 @@ test.describe("Universe Explorer", () => {
     await field.focus();
     await page.keyboard.type("nwmd");
     await expect(page.getByRole("status").filter({ hasText: "companies" })).toHaveText(
-      "1 of 7 companies",
+      "1 of 507 companies",
     );
     await expect(field).toBeFocused();
     await expect(page).toHaveURL(/q=nwmd/);
@@ -52,7 +58,7 @@ test.describe("Universe Explorer", () => {
   test("shows an empty state for a search without results", async ({ page }) => {
     await page.goto("/universe?q=zzzz");
     await expect(page.getByRole("status").filter({ hasText: "companies" })).toHaveText(
-      "0 of 7 companies",
+      "0 of 507 companies",
     );
     await expect(page.getByText("No company matches “zzzz”")).toBeVisible();
     await expect(
@@ -60,10 +66,14 @@ test.describe("Universe Explorer", () => {
     ).toHaveAttribute("href", "/universe");
   });
 
-  test("explains that a real ticker is not in the demo universe", async ({ page }) => {
+  test("finds a real company by ticker and explains what is not here", async ({ page }) => {
     await page.goto("/universe?q=AAPL");
-    await expect(page.getByText("No company matches “AAPL”")).toBeVisible();
-    await expect(page.getByText(/real tickers such as AAPL are not found yet/)).toBeVisible();
+    await expect(page.getByRole("link", { name: "Apple Inc." })).toBeVisible();
+    await page.goto("/universe?q=TSM");
+    await expect(page.getByText("No company matches “TSM”")).toBeVisible();
+    await expect(
+      page.getByText(/do not\s+file a 10-K with the SEC are not in this universe/),
+    ).toBeVisible();
   });
 
   test("filters by lifecycle and coverage", async ({ page }) => {
@@ -71,8 +81,10 @@ test.describe("Universe Explorer", () => {
     await expect(page.getByRole("heading", { level: 3 })).toHaveText([
       "Aurora Grid Utilities Corp.",
     ]);
-    await page.goto("/universe?coverage=under-8");
-    await expect(page.getByRole("heading", { level: 3 })).toHaveCount(2);
+    await page.goto("/universe?coverage=under-8&q=Tessaract");
+    await expect(page.getByRole("heading", { level: 3 })).toHaveCount(1);
+    await page.goto("/universe?coverage=12-plus&q=Tessaract");
+    await expect(page.getByRole("heading", { level: 3 })).toHaveCount(0);
   });
 
   test("ignores unsafe link parameters without echoing them", async ({ page }) => {
@@ -89,7 +101,7 @@ test.describe("Universe Explorer", () => {
     await expect(page.locator("main")).not.toContainText("<script>");
     expect(dialogOpened).toBe(false);
     await expect(page.getByRole("status").filter({ hasText: "companies" })).toHaveText(
-      "7 of 7 companies",
+      "507 of 507 companies",
     );
   });
 

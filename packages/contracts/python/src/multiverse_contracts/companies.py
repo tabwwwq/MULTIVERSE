@@ -39,6 +39,15 @@ class Sector(StrEnum):
     LOGISTICS = "logistics"
     INSTRUMENTS = "instruments"
     INDUSTRIAL_MACHINERY = "industrial_machinery"
+    TECHNOLOGY_HARDWARE = "technology_hardware"
+    TRANSPORT_EQUIPMENT = "transport_equipment"
+    HEALTHCARE = "healthcare"
+    MEDIA_TELECOM = "media_telecom"
+    ENERGY_MINING = "energy_mining"
+    RETAIL_WHOLESALE = "retail_wholesale"
+    FINANCE = "finance"
+    CONSUMER_GOODS = "consumer_goods"
+    OTHER = "other"
 
 
 class CompanyStatus(StrEnum):

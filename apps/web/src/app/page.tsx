@@ -35,24 +35,24 @@ const PHASES: ReadonlyArray<{ name: string; stages: string; status: string }> = 
   {
     name: "Product and interface foundation",
     stages: "Stages 01 to 08",
-    status: "Done on synthetic data",
+    status: "Done",
   },
   {
-    name: "Point-in-time data from SEC, FRED, ECB and World Bank",
+    name: "Point-in-time data from SEC, Treasury, ECB and World Bank",
     stages: "Stages 09 to 14",
-    status: "Done, outside this app",
+    status: "Done, the 500 largest filers are in the app",
   },
   {
     name: "Baselines, temporal neural networks and calibration",
     stages: "Stages 15 to 18",
-    status: "In review, research only",
+    status: "Done, research only",
   },
   {
     name: "Decision registry, causal research, finance and Monte Carlo",
     stages: "Stages 19 to 23",
-    status: "Planned",
+    status: "Done, results are conditional",
   },
-  { name: "Security, reports and publication", stages: "Stages 24 to 26", status: "Planned" },
+  { name: "Security, reports and publication", stages: "Stages 24 to 26", status: "In progress" },
 ];
 
 export default function OverviewPage() {
@@ -81,8 +81,9 @@ export default function OverviewPage() {
             </ButtonLink>
           </div>
           <p className="text-small text-ink-muted">
-            This prototype runs on fictional companies and fixed mock results; the simulation engine
-            arrives in Stage 22. No page on this site uses real company data so far.
+            The 500 largest filers of the SEC are here with their filings and a research forecast. A
+            decision on one of them runs paired Monte Carlo paths on this computer. Seven fictional
+            companies stay as examples.
           </p>
         </div>
         <figure className="rounded-frame border border-line bg-surface p-4 md:p-6">

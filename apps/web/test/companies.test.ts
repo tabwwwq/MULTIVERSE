@@ -2,7 +2,7 @@ import { DEMO_DOSSIERS } from "@multiverse/contracts/demo";
 import { describe, expect, it } from "vitest";
 import { createFixtureRepository } from "@/companies/fixture-repository";
 import { formatAmount } from "@/companies/format";
-import { parseDossierParams, parseExplorerParams } from "@/companies/params";
+import { explorerHref, pageOf, parseDossierParams, parseExplorerParams } from "@/companies/params";
 import { buildDossierView, cutoffChoices } from "@/companies/pit";
 import { matchCompany, normalizeQuery } from "@/companies/search";
 import { safeExternalUrl } from "@/lib/safe-url";
@@ -194,5 +194,21 @@ describe("safe external URLs", () => {
     ["not a URL", "sec.gov"],
   ])("rejects %s", (_name, url) => {
     expect(safeExternalUrl(url)).toBeNull();
+  });
+});
+
+describe("pages of the universe", () => {
+  it("reads a page of the results and falls back to the first", () => {
+    expect(pageOf({ page: "3" }, 507)).toBe(3);
+    expect(pageOf({ page: "11" }, 507)).toBe(11);
+    expect(pageOf({ page: "12" }, 507)).toBe(1);
+    expect(pageOf({ page: "0" }, 507)).toBe(1);
+    expect(pageOf({ page: "2;drop" }, 507)).toBe(1);
+    expect(pageOf({}, 0)).toBe(1);
+  });
+
+  it("keeps the search in the link of another page", () => {
+    expect(explorerHref({ q: "bank" }, 2)).toBe("/universe?q=bank&page=2");
+    expect(explorerHref({ q: "bank" }, 1)).toBe("/universe?q=bank");
   });
 });

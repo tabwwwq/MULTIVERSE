@@ -24,6 +24,8 @@ YEAR_DAYS = (350, 380)
 QUARTER_DAYS = (80, 100)
 FIFTY_THREE_WEEKS_DAYS = 368
 YTD_SLOTS = {1: "Q1", 2: "H1", 3: "9M"}
+FIRST_YEAR = 1990
+"""XBRL began in 2009: an older year is a long history table or a mistyped date."""
 
 
 @dataclass(frozen=True)
@@ -129,7 +131,7 @@ class FiscalCalendar:
             label = labels.get(end, end.year)
             if label in used:
                 label = end.year
-            if label in used:
+            if label in used or label < FIRST_YEAR:
                 continue
             used.add(label)
             years.append(FiscalYear(label, start, end, _quarter_ends(items, start, end)))

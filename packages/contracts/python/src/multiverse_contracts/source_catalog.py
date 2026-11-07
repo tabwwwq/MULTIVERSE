@@ -772,6 +772,81 @@ ECB = DataSource(
     ),
 )
 
+TREASURY_RATES = doc(
+    "Daily Treasury par yield curve rates",
+    "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve",
+    DocKind.DOCUMENTATION,
+)
+TREASURY = DataSource(
+    source_id="us-treasury",
+    name="U.S. Treasury daily par yield curve",
+    publisher="U.S. Department of the Treasury",
+    region="United States",
+    priority=3,
+    access=AccessCategory.PUBLIC_ACCESS,
+    authentication=Authentication.NONE,
+    key_status=KeyStatus.NOT_REQUIRED,
+    licence=Licence(
+        name="Work of the U.S. Government",
+        summary=(
+            "Rates published by the Treasury as a work of the U.S. Government, which has no "
+            "copyright in the United States (17 U.S.C. 105). They replace the FRED rates, whose "
+            "terms forbid machine learning."
+        ),
+        redistribution=Redistribution.PUBLIC_INFORMATION,
+        resale=Resale.NOT_GRANTED,
+        attribution="Source: U.S. Department of the Treasury.",
+        exceptions="The seal and logos of the Treasury are not free to use.",
+    ),
+    rate_limit=RateLimit(
+        documented="No limit is published.",
+        chosen_requests_per_second="1",
+    ),
+    request_rules=("HTTPS only, one CSV per year, earlier years are not fetched again.",),
+    retry_policy="No automatic retry: a failed year is fetched again by hand.",
+    checksum_policy="The CSV of each year is kept as received in the raw folder.",
+    official_hosts=("home.treasury.gov",),
+    docs=(
+        TREASURY_RATES,
+        doc(
+            "Privacy and legal notices",
+            "https://home.treasury.gov/subfooter/privacy-and-legal-notices",
+            DocKind.TERMS,
+        ),
+    ),
+    datasets=(
+        Dataset(
+            dataset_id="treasury-par-yields",
+            title="Daily par yields",
+            description="3-month and 10-year Treasury par yields, one row per business day.",
+            endpoints=(
+                "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{year}/all",
+            ),
+            formats=(DataFormat.CSV,),
+            update_frequency="Every business day.",
+            knowledge_time="Known at the close of the day it is dated.",
+            revision_semantics="Not revised in normal practice.",
+            coverage="Since 1990; MULTIVERSE reads 2009 onwards.",
+            identifiers=("Date", "Maturity"),
+            provenance=RAW_PROVENANCE,
+            fields=(
+                field("Date", DATE, PER, "Business day, month/day/year."),
+                field("3 Mo", DEC, VAL, "3-month par yield, percent."),
+                field("10 Yr", DEC, VAL, "10-year par yield, percent."),
+            ),
+            docs=(TREASURY_RATES,),
+        ),
+    ),
+    verified_on=TERMS_REVIEWED_ON,
+    download=DownloadDecision(
+        status=DecisionStatus.APPROVED,
+        decided_on=TERMS_REVIEWED_ON,
+        scope=DownloadScope.BULK,
+        note="Decision D-14 (owner in chat, 2026-11-06): collect all the data that can be had. "
+        "Yearly files of the daily par yield curve, 2009 to 2026.",
+    ),
+)
+
 WB_API = doc(
     "Indicators API documentation",
     "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation",
@@ -1676,7 +1751,7 @@ SOURCE_CATALOG = SourceCatalog(
     contracts_version=CONTRACTS_VERSION,
     verified_on=VERIFIED_ON,
     automatic_downloads="disabled",
-    sources=(SEC, FRED, ECB, WORLD_BANK),
+    sources=(SEC, FRED, ECB, TREASURY, WORLD_BANK),
     licensed_needs=LICENSED_NEEDS,
     risks=RISKS,
     sectors=SECTORS,

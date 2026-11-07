@@ -1,6 +1,6 @@
 """Build a case and run it from the command line.
 
-python -m multiverse_simulation case --cik 0000048898 --origin 2025-12-31 --out <file>
+python -m multiverse_simulation companies --universe <file> --db <file> --dataset <folder> ...
 python -m multiverse_simulation run --case <file> --decision <file> --paths 10000 --out <file>
 """
 
@@ -27,11 +27,8 @@ from multiverse_simulation.run import ALTERNATE, METRICS, RISKS, Answer, Frame, 
 from multiverse_simulation.studio import build_studio
 from multiverse_simulation.summary import build_report, ev_change, money
 
-DATASET = "fds-20261028-d9e4acd03365"
-BANDS = "evaluation/stage_17_evaluation/bands/gru_attention_q7.npz"
-MODEL_ID = "model-20261028-9ce4d4180aa9"
-UNIVERSE = "data/universe/sec-1000-20261030.json"
 SENSITIVITY_PATHS = 1000
+GDP_SERIES = "wb:USA.NY.GDP.MKTP.KD.ZG"
 VARIANTS: tuple[tuple[str, str, dict[str, object]], ...] = (
     ("reference", "As run", {}),
     ("short_blocks", "Mean block of 2 quarters", {"mean_block_quarters": 2.0}),
@@ -121,30 +118,40 @@ def run_file(args: argparse.Namespace) -> int:
     return 0
 
 
-def case_file(args: argparse.Namespace) -> int:
+def companies_file(args: argparse.Namespace) -> int:
+    """Files of the screens and cases of the worker, for a ranked universe."""
     # Heavy imports stay here: a run needs neither the warehouse nor scikit-learn.
+    from multiverse_contracts.forecasting import LiveForecast
     from multiverse_forecast.data import load
+    from multiverse_pipelines.macro.store import MacroStore
     from multiverse_pipelines.pit.warehouse import Warehouse
-    from multiverse_simulation.casebuild import build_case
+    from multiverse_pipelines.sec.universe import read_manifest
+    from multiverse_simulation.companies import export
 
     settings = load_settings()
-    data = Path(settings.data_dir)
-    names = {
-        company["cik"]: company["name"]
-        for company in json.loads(Path(UNIVERSE).read_text(encoding="utf-8"))["companies"]
-    }
-    forecast = data / "forecast"
-    case = build_case(
-        Warehouse.open(data / "pit" / "warehouse.sqlite"),
-        load(forecast / DATASET),
-        forecast / BANDS,
-        args.cik,
-        names[args.cik],
-        date.fromisoformat(args.origin),
-        MODEL_ID,
+
+    def show(number: int, total: int) -> None:
+        if number % 50 == 0 or number == total:
+            print(f"companies {number}/{total}", flush=True)
+
+    as_of = datetime.fromisoformat(f"{args.as_of}T23:59:59+00:00")
+    store = MacroStore.open(Path(settings.data_dir) / "macro" / "macro.sqlite")
+    growth = store.as_of(GDP_SERIES, as_of)
+    index = export(
+        read_manifest(Path(args.universe)),
+        Warehouse.open(Path(args.db)),
+        load(Path(args.dataset)),
+        LiveForecast.model_validate_json(Path(args.forecast).read_bytes()),
+        as_of,
+        tuple(date.fromisoformat(origin) for origin in args.origin),
+        Path(args.out),
+        Path(settings.data_dir) / "cases",
+        {day.year: float(item.value) for day, item in growth.items() if item.value is not None},
+        show,
     )
-    write(Path(args.out), case.model_dump_json(indent=2))
-    print(f"{case.case_id}: {len(case.shocks.rows)} quarters of shocks -> {args.out}")
+    cases = sum(row.has_case for row in index.companies)
+    forecasts = sum(row.has_forecast for row in index.companies)
+    print(f"{len(index.companies)} companies, {forecasts} forecasts, {cases} cases -> {args.out}")
     return 0
 
 
@@ -165,10 +172,14 @@ def studio_file(args: argparse.Namespace) -> int:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="multiverse_simulation")
     commands = parser.add_subparsers(dest="command", required=True)
-    case = commands.add_parser("case", help="build a case from local data")
-    case.add_argument("--cik", required=True)
-    case.add_argument("--origin", required=True)
-    case.add_argument("--out", required=True)
+    real = commands.add_parser("companies", help="files of the screens and cases of the worker")
+    real.add_argument("--universe", required=True)
+    real.add_argument("--db", required=True)
+    real.add_argument("--dataset", required=True)
+    real.add_argument("--forecast", required=True)
+    real.add_argument("--as-of", required=True, dest="as_of")
+    real.add_argument("--origin", action="append", required=True, help="repeatable, newest first")
+    real.add_argument("--out", default="data/companies")
     run = commands.add_parser("run", help="run a case and write its report")
     run.add_argument("--case", required=True)
     run.add_argument("--decision", required=True)
@@ -188,5 +199,5 @@ def _parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
-    commands = {"case": case_file, "run": run_file, "studio": studio_file}
+    commands = {"companies": companies_file, "run": run_file, "studio": studio_file}
     return commands[args.command](args)

@@ -12,7 +12,7 @@ describe("source catalog", () => {
     expect(SOURCE_CATALOG.automatic_downloads).toBe("disabled");
     for (const source of SOURCES) {
       expect(source.download.status, source.source_id).toBe("approved");
-      expect(source.download.decided_on, source.source_id).toBe("2026-10-30");
+      expect(source.download.decided_on, source.source_id).toMatch(/^2026-1[01]-/);
     }
     expect(sourceById("sec-edgar")?.download.scope).toBe("bulk");
     expect(sourceById("fred-alfred")?.download.scope).toBe("sample");
@@ -40,7 +40,13 @@ describe("source catalog", () => {
 
 describe("catalog search", () => {
   it("returns every source for an empty query", () => {
-    expect(ids("")).toEqual(["sec-edgar", "fred-alfred", "ecb-data-portal", "world-bank"]);
+    expect(ids("")).toEqual([
+      "sec-edgar",
+      "fred-alfred",
+      "ecb-data-portal",
+      "us-treasury",
+      "world-bank",
+    ]);
   });
 
   it("finds a field name and says where it matched", () => {

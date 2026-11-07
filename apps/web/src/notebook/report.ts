@@ -125,7 +125,9 @@ export function reportMarkdown(
   const company = companies[draft.company_id];
   const manifest = manifestFor(record, revision);
   const lines = [
-    "> SYNTHETIC DEMO DATA. The company and its figures are fictional and no model was run. This is not investment advice.",
+    draft.data_origin === "synthetic"
+      ? "> SYNTHETIC DEMO DATA. The company and its figures are fictional and no model was run. This is not investment advice."
+      : "> A hypothetical decision on a real company, from its SEC filings. It did not happen, and nothing here is a forecast of it. This is not investment advice.",
     "",
     `# ${markdownText(record.name)} (revision ${revision.revision})`,
     "",
@@ -134,7 +136,7 @@ export function reportMarkdown(
     `- Horizon: ${draft.horizon_quarters} quarters`,
     `- Seed: ${draft.seed}`,
     "- Currency: USD",
-    "- Mode: Demo (synthetic data)",
+    draft.data_origin === "synthetic" ? "- Mode: Demo (synthetic data)" : "- Mode: Hypothetical",
     `- Result status: ${revision.result_status === "not_run" ? "not run (the simulation engine arrives in Stage 22)" : revision.result_status}`,
     `- Revision created: ${revision.created_at}${revision.parent_revision ? `, edited from revision ${revision.parent_revision}` : ""}`,
     ...(revision.derived_from

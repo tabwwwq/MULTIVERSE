@@ -29,7 +29,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
             <Badge tone="warning" icon={FlaskConical}>
               <span className="sm:hidden">Prototype</span>
-              <span className="hidden sm:inline">Prototype, demo data only</span>
+              <span className="hidden sm:inline">Prototype, research only</span>
             </Badge>
           </header>
           <main
@@ -42,9 +42,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           <footer className="border-t border-line px-4 py-6 text-small text-ink-muted md:px-8">
             <div className="mx-auto flex max-w-content flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <p>
-                MULTIVERSE is a research prototype. It gives no investment advice, and demo data is
-                synthetic. This product uses the FRED® API but is not endorsed or certified by the
-                Federal Reserve Bank of St. Louis.
+                MULTIVERSE is a research prototype. It gives no investment advice. This product uses
+                the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St.
+                Louis.
               </p>
               <ul className="flex flex-wrap gap-x-5 gap-y-2">
                 <li>

@@ -1,4 +1,4 @@
-import type { CompanyDossier } from "@multiverse/contracts";
+import type { CompanyDossier, RankEvidence } from "@multiverse/contracts";
 import { DEMO_DOSSIERS } from "@multiverse/contracts/demo";
 import type { CoverageFilter, ExplorerQuery } from "@/companies/params";
 import type { CompanyHit, CompanyRepository } from "@/companies/repository";
@@ -20,8 +20,10 @@ function passesCoverage(dossier: CompanyDossier, filter: CoverageFilter | null):
 
 export function createFixtureRepository(
   dossiers: readonly CompanyDossier[] = DEMO_DOSSIERS,
+  evidence: ReadonlyMap<string, RankEvidence> = new Map(),
 ): CompanyRepository {
   const byId = new Map(dossiers.map((dossier) => [dossier.company.company_id, dossier]));
+  const rankOf = (id: string) => evidence.get(id)?.rank ?? Number.MAX_SAFE_INTEGER;
 
   return {
     dataOrigin: "synthetic",
@@ -41,11 +43,13 @@ export function createFixtureRepository(
           supportStatus: dossier.support_status,
           revenueCoverage: dossier.coverage.find((entry) => entry.metric === "revenue") ?? null,
           match,
+          evidence: evidence.get(company.company_id) ?? null,
         });
       }
       return hits.sort(
         (a, b) =>
           compareMatches(a.match, b.match) ||
+          rankOf(a.company.company_id) - rankOf(b.company.company_id) ||
           currentName(a.company).name.localeCompare(currentName(b.company).name),
       );
     },

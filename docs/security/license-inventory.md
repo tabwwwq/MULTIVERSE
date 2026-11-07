@@ -15,6 +15,7 @@
 | SEC EDGAR | [Privacy and dissemination](https://www.sec.gov/privacy), [Accessing EDGAR data](https://www.sec.gov/search-filings/edgar-search-assistance/accessing-edgar-data) | Информация на sec.gov публична, копирование и распространение без разрешения | Указывать SEC как источник, не больше 10 запросов в секунду, User-Agent с контактом, логотипы и знаки не использовать | ✅ Можно. Наша скорость около 2 запросов в секунду |
 | FRED, ALFRED | [Legal notices](https://fred.stlouisfed.org/legal/), [API terms](https://fred.stlouisfed.org/docs/api/terms_of_use.html) | Личное некоммерческое и учебное использование | Уведомление о неодобрении, ссылка на условия, цитирование. **Запреты ниже** | ⛔ **Открытые блоки LIC-001, LIC-002, LIC-003** |
 | ECB Data Portal | [Statistics usage policy](https://www.ecb.europa.eu/stats/ecb_statistics/governance_and_quality_framework/html/usage_policy.en.html) | Бесплатное повторное использование, в том числе коммерческое | Цитировать «Source: ECB statistics», не изменять статистику и метаданные при передаче, данные третьих лиц только с разрешения | ✅ Локально можно. В публичном репозитории значений ECB нет |
+| U.S. Treasury | [Daily Treasury Par Yield Curve Rates](https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve) | Работы федерального правительства США не охраняются авторским правом (17 U.S.C. § 105) | Не выдавать за одобрение Treasury, знаки не использовать | ✅ Можно. Stage 24b, решение D-14. Файлы только в `var/raw/treasury` |
 | World Bank | [Data catalog licences](https://datacatalog.worldbank.org/public-licenses), [Terms and conditions](https://www.worldbank.org/ext/en/legal/terms-conditions) | Наборы под CC BY 4.0: копирование, изменение, распространение, коммерческое использование | Указание авторства. Часть наборов под другими лицензиями, смотреть метку набора | ✅ Можно. В публичном репозитории значений нет |
 
 Старый адрес `worldbank.org/.../terms-of-use-for-datasets` теперь перенаправляет на общие условия, каталог исправлен.
@@ -57,7 +58,8 @@
 - **Новое обучение отказывает.** `blocked_for_training` останавливает датасет с сериями `fred:` в воркере и в каждом входе в обучение (`trainable`). Обход настройкой не предусмотрен: снять блок можно только решением, записанным в каталог.
 - **Новых загрузок нет.** `MULTIVERSE_ALLOW_NETWORK_DOWNLOADS=false`, запланированных загрузок FRED нет.
 - **Экран говорит правду.** Блоки показаны в Data Catalog и на `/models`.
-- **Ничего не удалено и не переобучено.** Это решение владельца.
+- **Ничего не удалено.** Это решение владельца.
+- **Stage 24b обучил новую модель без FRED.** Признаки ставок и макро взяты у Treasury, World Bank и ECB, блок `blocked_for_training` при этом не менялся и проверялся на новом датасете. Прогнозы на экранах идут от этой модели. Старая модель Stages 15–17 и архивы FRED лежат на месте, поэтому LIC-001, LIC-002 и LIC-003 остаются открытыми. Кейс Hubbell Stage 22 тоже считан с серий FRED и остаётся файлом Stage 22.
 
 ### Варианты для владельца
 

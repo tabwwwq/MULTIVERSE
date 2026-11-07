@@ -37,6 +37,8 @@ from multiverse_contracts.normalized import FiscalPeriod
 from multiverse_contracts.pit import KnowledgeView
 from multiverse_pipelines.audit.examples import shift
 from multiverse_pipelines.macro.store import MacroStore
+from multiverse_pipelines.macro.treasury import Yields
+from multiverse_pipelines.macro.treasury import as_of as treasury_as_of
 from multiverse_pipelines.pit.clock import day_end, stamp
 from multiverse_pipelines.pit.panel import build_panel, nearest_quarter_end
 from multiverse_pipelines.pit.warehouse import Warehouse
@@ -64,14 +66,13 @@ MARGINS = {
 }
 # Macro features: (name, series, transform). "level" is the latest period's value;
 # "yoy" compares it with the period a year earlier in the same release.
+# Nothing comes from FRED: its terms forbid machine learning on its content (LIC-001).
 MACRO = (
-    ("macro_fedfunds", "fred:FEDFUNDS", "level"),
-    ("macro_cpi_yoy", "fred:CPIAUCSL", "yoy"),
-    ("macro_unrate", "fred:UNRATE", "level"),
-    ("macro_gdp_yoy", "fred:GDPC1", "yoy"),
-    ("macro_ust10y", "fred:DGS10", "level"),
-    ("macro_term_spread", "fred:T10Y2Y", "level"),
-    ("macro_recession", "fred:USREC", "level"),
+    ("macro_ust3m", "treasury:3M", "level"),
+    ("macro_ust10y", "treasury:10Y", "level"),
+    ("macro_gdp_growth", "wb:USA.NY.GDP.MKTP.KD.ZG", "level"),
+    ("macro_inflation", "wb:USA.FP.CPI.TOTL.ZG", "level"),
+    ("macro_unemployment", "wb:USA.SL.UEM.TOTL.ZS", "level"),
     ("macro_eurusd", "ecb:EXR.D.USD.EUR.SP00.A", "level"),
     ("macro_ecb_dfr", "ecb:FM.D.U2.EUR.4F.KR.DFR.LEV", "level"),
     ("macro_ea10y", "ecb:YC.B.U2.EUR.4F.G_N_A.SV_C_YM.SR_10Y", "level"),
@@ -279,13 +280,20 @@ def company_rows(task: CompanyTask) -> list[Row]:
     return rows
 
 
-def macro_features(store: MacroStore | None, origins: Sequence[date]) -> dict[date, Row]:
+def macro_features(
+    store: MacroStore | None, origins: Sequence[date], yields: Sequence[Yields] = ()
+) -> dict[date, Row]:
     """Each series' latest value available at the end of each origin day."""
     found: dict[date, Row] = {}
     for origin in origins:
         row: Row = {}
+        known = treasury_as_of(yields, origin)
         for name, series, transform in MACRO:
             row[name] = None
+            if series.startswith("treasury:"):
+                if known is not None:
+                    row[name] = known.short if series.endswith("3M") else known.long
+                continue
             if store is None:
                 continue
             available = store.as_of(series, day_end(origin))

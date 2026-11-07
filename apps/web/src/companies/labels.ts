@@ -7,6 +7,15 @@ import type {
 } from "@multiverse/contracts";
 
 export const SECTOR_LABELS: Record<Sector, string> = {
+  technology_hardware: "Technology hardware",
+  transport_equipment: "Transport equipment",
+  healthcare: "Healthcare and pharma",
+  media_telecom: "Media and telecom",
+  energy_mining: "Energy and mining",
+  retail_wholesale: "Retail and wholesale",
+  finance: "Finance and real estate",
+  consumer_goods: "Consumer goods",
+  other: "Other",
   semiconductors: "Semiconductors",
   software: "Software",
   medical_devices: "Medical devices",

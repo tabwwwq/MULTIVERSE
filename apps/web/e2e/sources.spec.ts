@@ -26,14 +26,14 @@ test.describe("Data Catalog", () => {
   }) => {
     await page.goto("/data-catalog");
     await expect(page.getByRole("heading", { level: 1, name: "Data Catalog" })).toBeVisible();
-    await expect(page.getByRole("status")).toHaveText("4 of 4 sources");
+    await expect(page.getByRole("status")).toHaveText("5 of 5 sources");
     await expect(page.getByRole("heading", { level: 3, name: "Public access" })).toBeVisible();
     await expect(page.getByRole("heading", { level: 3, name: "Free API key" })).toBeVisible();
     await expect(page.getByText("Downloads off, awaiting the owner's decision")).toHaveCount(0);
     await expect(page.getByText("Downloads approved by the owner: sample only")).toHaveCount(3);
     await expect(
       page.getByText("Downloads approved by the owner: sample and bulk files"),
-    ).toHaveCount(1);
+    ).toHaveCount(2);
     await expect(page.getByRole("heading", { name: "Licensed data" })).toBeVisible();
     await expect(page.getByText("The catalog shows no source data")).toBeVisible();
     await saveScreen(page, "data-catalog");
@@ -45,14 +45,14 @@ test.describe("Data Catalog", () => {
     await page.getByRole("searchbox", { name: "Search" }).fill("realtime_start");
     await page.getByRole("button", { name: "Search", exact: true }).click();
     await expect(page).toHaveURL(/q=realtime_start/);
-    await expect(page.getByRole("status")).toHaveText("1 of 4 sources");
+    await expect(page.getByRole("status")).toHaveText("1 of 5 sources");
     await expect(page.getByRole("link", { name: "FRED and ALFRED" })).toBeVisible();
     await expect(page.getByText(/Field realtime_start in Series observations/)).toBeVisible();
 
     await page.getByRole("searchbox", { name: "Search" }).fill("");
     await page.getByRole("combobox", { name: "Access" }).selectOption("api_key");
     await page.getByRole("button", { name: "Search", exact: true }).click();
-    await expect(page.getByRole("status")).toHaveText("1 of 4 sources");
+    await expect(page.getByRole("status")).toHaveText("1 of 5 sources");
     await expect(page.getByRole("heading", { name: "Licensed data" })).toHaveCount(0);
     await saveScreen(page, "data-catalog-search");
   });
@@ -132,7 +132,7 @@ test.describe("Data Catalog without JavaScript", () => {
     await page.goto("/data-catalog");
     await page.getByRole("searchbox", { name: "Search" }).fill("sdmx");
     await page.getByRole("button", { name: "Search", exact: true }).click();
-    await expect(page.getByRole("status")).toHaveText("1 of 4 sources");
+    await expect(page.getByRole("status")).toHaveText("1 of 5 sources");
     await expect(page.getByRole("link", { name: "ECB Data Portal (SDMX)" })).toBeVisible();
   });
 });

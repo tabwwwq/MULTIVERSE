@@ -7,11 +7,12 @@ batch in hand, and a resumed run ends in the same numbers: each path has its own
 from datetime import UTC, datetime
 from pathlib import Path
 
+from multiverse_simulation.reportdoc import write_report_files
 from multiverse_simulation.run import Frame, ReconciliationBugError, simulate
 from multiverse_simulation.summary import build_report
 
 from multiverse_contracts.jobs import JobView
-from multiverse_contracts.simulation import SimulationCase, SimulationRequest
+from multiverse_contracts.simulation import SimulationCase, SimulationReport, SimulationRequest
 from multiverse_worker.runner import Decision, RefusedError, Session, Trainer
 
 CASES = Path("data/simulation")
@@ -77,8 +78,21 @@ class SimulationRunner:
         pending = folder / "report.pending"
         pending.write_text(report.model_dump_json(), encoding="utf-8")
         pending.replace(folder / "report.json")
-        session.reason = f"{settings.paths} paths, report {report.manifest.report_id}"
+        studio = write_report_files(folder, report, case, request.decision)
+        session.reason = (
+            f"{settings.paths} paths, report {report.manifest.report_id}, {studio.report_doc_id}"
+        )
         return "continue"
+
+    def write_files(self, job: JobView) -> str | None:
+        """The research report of a finished run, for runs made before Stage 25. Idempotent."""
+        report_path = self.folder(job) / "report.json"
+        if not report_path.exists():
+            return None
+        request = request_of(job)
+        report = SimulationReport.model_validate_json(report_path.read_bytes())
+        studio = write_report_files(self.folder(job), report, self.case(request), request.decision)
+        return studio.report_doc_id
 
 
 class Dispatcher:

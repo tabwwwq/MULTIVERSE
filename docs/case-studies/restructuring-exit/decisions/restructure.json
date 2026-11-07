@@ -1,0 +1,37 @@
+{
+  "type": "workforce_restructure",
+  "magnitude": {
+    "value": "-0.15",
+    "unit": "fraction_of_headcount"
+  },
+  "timing": {
+    "announcement_date": "2026-12-01",
+    "effective_date": "2027-01-01",
+    "lag_quarters": 1,
+    "ramp_quarters": 2
+  },
+  "payroll_to_revenue": "0.25",
+  "one_off_cost_months": {
+    "shape": "triangular",
+    "low": "2",
+    "mode": "4",
+    "high": "8"
+  },
+  "savings_realization": {
+    "shape": "triangular",
+    "low": "0.5",
+    "mode": "0.7",
+    "high": "0.9"
+  },
+  "productivity_loss": {
+    "shape": "triangular",
+    "low": "0",
+    "mode": "0.03",
+    "high": "0.1"
+  },
+  "financing": {
+    "cash": "1",
+    "debt": "0",
+    "equity": "0"
+  }
+}

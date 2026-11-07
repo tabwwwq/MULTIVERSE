@@ -1,0 +1,79 @@
+{
+  "report_doc_id": "rep-20261106-a32ba6b2eda7",
+  "generator_version": "report-studio-1",
+  "contracts_version": "0.23.0",
+  "simulation_report_id": "sim-20261106-f7b7beab18d1",
+  "case_id": "case-12927-20261106",
+  "case_sha256": "a175f7c4a3fe4b50e08579b735fff369821a434f1f5663a30d9bff73e953861b",
+  "decision": {
+    "magnitude": {
+      "value": "15000000000",
+      "unit": "usd"
+    },
+    "timing": {
+      "announcement_date": "2026-12-01",
+      "effective_date": "2027-01-01",
+      "lag_quarters": 2,
+      "ramp_quarters": 8
+    },
+    "type": "acquisition",
+    "target_revenue": "6000000000",
+    "target_ebitda_margin": "0.15",
+    "deal_cost_fraction": "0.02",
+    "integration_cost_fraction": {
+      "shape": "triangular",
+      "low": "0.02",
+      "mode": "0.05",
+      "high": "0.1"
+    },
+    "cost_synergy_fraction": {
+      "shape": "triangular",
+      "low": "0",
+      "mode": "0.03",
+      "high": "0.06"
+    },
+    "completion_probability": "0.9",
+    "new_debt_interest_rate": "0.065",
+    "financing": {
+      "cash": "0.1",
+      "debt": "0.9",
+      "equity": "0"
+    }
+  },
+  "decision_sha256": "819f0401dfea685ff0e72101ba00b7a5bfa58cbb2cd8c42b4c7d41dcc69ae717",
+  "settings": {
+    "paths": 3000,
+    "seed": 20261107,
+    "batch_paths": 250,
+    "max_redraws": 3,
+    "lock_macro": false,
+    "shock_scale": 1.0,
+    "mean_block_quarters": null
+  },
+  "sensitivity": true,
+  "dataset_id": "fds-20261106-05c19bb5643a",
+  "dataset_sha256": "05c19bb5643a8ef46ded1943f79915f69ddbcf2350ab73f580b8ba14870e7591",
+  "model_id": "live-20261106-95a7dc72f773",
+  "finance_version": "0.4.0",
+  "simulation_version": "0.1.0",
+  "artifacts": [
+    {
+      "format": "markdown",
+      "file": "report.md",
+      "sha256": "5b4a3cf2c2f9b7db75166f687941ea34529330ab4d398b5890415682fed435db",
+      "bytes": 12886
+    },
+    {
+      "format": "csv",
+      "file": "report.csv",
+      "sha256": "8d02f4d950cc11e44f1a5fd16a700044519771cbe7485d2f0fa59da43e874bc0",
+      "bytes": 30904
+    },
+    {
+      "format": "document",
+      "file": "document.json",
+      "sha256": "868921c8f2fdf48da729d5724b52533cb1c875aaefa5273fedb6f3dc172bcb77",
+      "bytes": 26784
+    }
+  ]
+}

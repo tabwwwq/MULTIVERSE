@@ -1,0 +1,81 @@
+{
+  "report_doc_id": "rep-20261106-82767eb1bea7",
+  "generator_version": "report-studio-1",
+  "contracts_version": "0.23.0",
+  "simulation_report_id": "sim-20261106-4c7780e9f423",
+  "case_id": "case-1001250-20261106",
+  "case_sha256": "c64adcd5d363258ae4d4a14c4276127f84ade7fa1dfedf7d805cb71a0862e340",
+  "decision": {
+    "magnitude": {
+      "value": "-0.15",
+      "unit": "fraction_of_headcount"
+    },
+    "timing": {
+      "announcement_date": "2026-12-01",
+      "effective_date": "2027-01-01",
+      "lag_quarters": 1,
+      "ramp_quarters": 2
+    },
+    "type": "workforce_restructure",
+    "payroll_to_revenue": "0.25",
+    "one_off_cost_months": {
+      "shape": "triangular",
+      "low": "2",
+      "mode": "4",
+      "high": "8"
+    },
+    "savings_realization": {
+      "shape": "triangular",
+      "low": "0.5",
+      "mode": "0.7",
+      "high": "0.9"
+    },
+    "productivity_loss": {
+      "shape": "triangular",
+      "low": "0",
+      "mode": "0.03",
+      "high": "0.1"
+    },
+    "financing": {
+      "cash": "1",
+      "debt": "0",
+      "equity": "0"
+    }
+  },
+  "decision_sha256": "0c4015ac14361a5a0decd6d040556479a334d760f5c1ae8fffa3bcc00d60272a",
+  "settings": {
+    "paths": 3000,
+    "seed": 20261107,
+    "batch_paths": 250,
+    "max_redraws": 3,
+    "lock_macro": false,
+    "shock_scale": 1.0,
+    "mean_block_quarters": null
+  },
+  "sensitivity": true,
+  "dataset_id": "fds-20261106-05c19bb5643a",
+  "dataset_sha256": "05c19bb5643a8ef46ded1943f79915f69ddbcf2350ab73f580b8ba14870e7591",
+  "model_id": "live-20261106-95a7dc72f773",
+  "finance_version": "0.4.0",
+  "simulation_version": "0.1.0",
+  "artifacts": [
+    {
+      "format": "markdown",
+      "file": "report.md",
+      "sha256": "3e5f0c1967134cd47e28def5dd4ef9c44708dc2906942463054165c8e1fa8c1c",
+      "bytes": 12715
+    },
+    {
+      "format": "csv",
+      "file": "report.csv",
+      "sha256": "4f2b330a587af054f09ba6b2a1fe88a509b1858b63b4d6a44e03ede8c983280b",
+      "bytes": 30327
+    },
+    {
+      "format": "document",
+      "file": "document.json",
+      "sha256": "13bccf9b4c1be008d5cf853a2d09ef7d5e4977bd66b3a0b6b4067ab7d864adee",
+      "bytes": 26610
+    }
+  ]
+}

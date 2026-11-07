@@ -329,6 +329,13 @@ export type Resale = "not_granted" | "allowed_by_licence" | "prohibited";
 export type DefaultSourceKind =
   "accounting_rule" | "statutory_rate" | "design_default" | "placeholder";
 /**
+ * How far the numbers of a report can be trusted, in words a reader can check.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "EvidenceLevel".
+ */
+export type EvidenceLevel = "conditional_simulation" | "synthetic_demo";
+/**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "FinancialStatement".
  */
@@ -468,6 +475,28 @@ export type ValueChange =
  * via the `definition` "TimePrecision".
  */
 export type TimePrecision = "accepted" | "filing_day_start" | "filing_day_end";
+/**
+ * The parts every report has, in this order (prompt 25).
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SectionKey".
+ */
+export type SectionKey =
+  | "objective"
+  | "cutoff"
+  | "sources"
+  | "action"
+  | "models"
+  | "results"
+  | "causal"
+  | "assumptions"
+  | "sensitivity"
+  | "limitations";
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SourceKind".
+ */
+export type SourceKind = "sec_filing" | "data_source" | "dataset" | "model" | "method" | "run";
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema
  * via the `definition` "ResultStatus".
@@ -3738,6 +3767,155 @@ export interface RealIndex {
   forecast_label: string;
   rank_label: string;
   universe_id: string;
+}
+/**
+ * The outcome of building a report again from its manifest.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ReplayCheck".
+ */
+export interface ReplayCheck {
+  artifacts: [unknown, unknown, ...unknown[]][];
+  identical: boolean;
+  report_doc_id: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ReportArtifact".
+ */
+export interface ReportArtifact {
+  bytes: number;
+  file: string;
+  format: "markdown" | "csv" | "document";
+  sha256: string;
+}
+/**
+ * One number of the text, and how to find it again in the run.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ReportClaim".
+ */
+export interface ReportClaim {
+  claim_id: string;
+  /**
+   * JSON pointer into {report, case, decision} of the run.
+   */
+  pointer: string;
+  /**
+   * @minItems 1
+   */
+  sources: [string, ...string[]];
+  statement: string;
+  unit: "usd" | "share" | "quarters" | "paths" | "count" | "date" | "text";
+  value: string;
+}
+/**
+ * Enough to build the report again and to prove it is the same, byte for byte.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ReportManifest".
+ */
+export interface ReportManifest {
+  /**
+   * @minItems 3
+   * @maxItems 3
+   */
+  artifacts: [ReportArtifact, ReportArtifact, ReportArtifact, ...ReportArtifact[]];
+  case_id: string;
+  case_sha256: string;
+  contracts_version: string;
+  dataset_id: string | null;
+  dataset_sha256: string | null;
+  /**
+   * The decision itself: small, and needed to replay.
+   */
+  decision:
+    RndChange | WorkforceRestructure | Acquisition | Divestiture | CapexExpansion | DebtRefinance;
+  decision_sha256: string;
+  finance_version: string;
+  generator_version: string;
+  model_id: string | null;
+  report_doc_id: string;
+  /**
+   * The run also ran the sensitivity variants of the shock model.
+   */
+  sensitivity: boolean;
+  settings: SimulationSettings;
+  simulation_report_id: string;
+  simulation_version: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ReportSection".
+ */
+export interface ReportSection {
+  key: SectionKey;
+  /**
+   * @minItems 1
+   */
+  paragraphs: [string, ...string[]];
+  tables: ReportTable[];
+  title: string;
+}
+/**
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ReportTable".
+ */
+export interface ReportTable {
+  caption: string;
+  /**
+   * @minItems 1
+   */
+  columns: [string, ...string[]];
+  rows: string[][];
+  unit_note: string | null;
+}
+/**
+ * The document: what a reader sees, in Markdown, CSV, print or on screen.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "ResearchReport".
+ */
+export interface ResearchReport {
+  as_of: string;
+  /**
+   * @minItems 1
+   */
+  claims: [ReportClaim, ...ReportClaim[]];
+  company_id: string;
+  company_name: string;
+  contracts_version: string;
+  data_origin: DataOrigin;
+  evidence_level: EvidenceLevel;
+  generator_version: string;
+  label: string;
+  report_doc_id: string;
+  sections: ReportSection[];
+  simulation_report_id: string;
+  /**
+   * @minItems 1
+   */
+  sources: [SourceRef, ...SourceRef[]];
+  title: string;
+}
+/**
+ * Where a statement comes from: a filing, a source, a dataset, a model or a document.
+ *
+ * This interface was referenced by `MultiverseContracts`'s JSON-Schema
+ * via the `definition` "SourceRef".
+ */
+export interface SourceRef {
+  kind: SourceKind;
+  label: string;
+  /**
+   * For a dataset, model or run: the repository file that records the id.
+   */
+  record: string | null;
+  ref_id: string;
+  /**
+   * An https URL, a path in this repository, or an id that one of them records.
+   */
+  target: string;
 }
 /**
  * This interface was referenced by `MultiverseContracts`'s JSON-Schema

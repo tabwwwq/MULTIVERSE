@@ -25,7 +25,7 @@ from multiverse_config import load_settings
 from multiverse_contracts.jobs import JobRequest
 from multiverse_jobs import backup
 from multiverse_jobs.store import JobStore, Limits
-from multiverse_worker.runner import work
+from multiverse_worker.runner import RefusedError, work
 from multiverse_worker.simulation import Dispatcher, SimulationRunner
 from multiverse_worker.training import ForecastTrainer
 
@@ -41,6 +41,7 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--max-jobs", type=int)
     run.add_argument("--ttl", type=float, default=TTL_SECONDS, help="lease in seconds")
     commands.add_parser("status", help="every job and how it stands")
+    commands.add_parser("reports", help="research reports of finished runs that lack them")
     kill = commands.add_parser("kill", help="end the process of a job without a safe point")
     kill.add_argument("job_id")
     kill.add_argument("--yes", action="store_true", help="accept losing the running epoch")
@@ -68,6 +69,20 @@ def _status(store: JobStore) -> int:
             f"{job.job_id} {job.status.value:<16} {job.progress_percent:5.1f}%  {step}"
             f"  {job.elapsed_seconds:.0f} s  {job.reason or ''}"
         )
+    return 0
+
+
+def _reports(store: JobStore, data_dir: Path) -> int:
+    runner = SimulationRunner(data_dir)
+    for job in store.jobs():
+        if job.request.kind != "simulation" or job.status.value != "completed":
+            continue
+        try:
+            made = runner.write_files(job)
+        except RefusedError as error:
+            print(f"{job.job_id}: {error}")
+            continue
+        print(f"{job.job_id}: {made or 'no report'}")
     return 0
 
 
@@ -125,6 +140,8 @@ def main(argv: Sequence[str] = ()) -> int:
         return _backup(args, settings.data_dir)
     if args.command == "status":
         return _status(store)
+    if args.command == "reports":
+        return _reports(store, settings.data_dir)
     if args.command == "kill":
         return _kill(store, args.job_id, args.yes)
     worker = f"{socket.gethostname()}-{os.getpid()}"

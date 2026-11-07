@@ -77,7 +77,7 @@ def audit(credible: bool = False) -> QualityAudit:
         overlap_window_days=365,
         credible_for_causal_work=credible,
         blockers=() if credible else ("0 of 1 events have a human review",),
-        contracts_version="0.22.0",
+        contracts_version="0.23.0",
     )
 
 

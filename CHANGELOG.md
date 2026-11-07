@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Added — 2026-11-07 (Stage 25)
+
+- **Report Studio** (ADR-0034): the research report of a finished run in ten sections, with every number a claim that points into the run and every claim citing its sources; Markdown, CSV, the document as JSON, print to PDF from `/reports`, and a manifest. `python -m multiverse_simulation replay` builds a report again and compares it byte for byte; a real report of Intel replayed identically in 63 s.
+- The worker writes the report after each run (`multiverse-worker reports` for earlier runs); the API serves its files to the owner of the run only.
+- Three case studies in `docs/case-studies`: R&D allocation (Intel), M&A stress (Boeing), restructuring or exit (Estée Lauder), each with two runs, figures, a comparison and what it does not show. All 12 SEC filings they cite resolved.
+- `docs/portfolio`: the write-up with measured results and failures, interview questions, resume bullets flagged after implemented, a demo script and six screenshots; the README shows screenshots below the limitations.
+- Contracts 0.23.0: `ResearchReport`, `ReportManifest`, `ReplayCheck`.
+
 ### Changed — 2026-11-07 (Stages 24 and 24b accepted)
 
 - Stage 24 (security, privacy, licences; CI run 42270739506 green) and Stage 24b (real companies; CI run 42377104890 green) accepted by the owner. The FRED licence blocks stay open, and the model without FRED stays research only.

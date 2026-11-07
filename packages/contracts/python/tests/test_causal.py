@@ -60,7 +60,7 @@ def study(**changes: Any) -> dict[str, Any]:
         ],
         "findings": [],
         "seed": 1,
-        "contracts_version": "0.22.0",
+        "contracts_version": "0.23.0",
         "created_at": "2026-11-06T12:00:00Z",
     } | changes
 

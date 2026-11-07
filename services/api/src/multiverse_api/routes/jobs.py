@@ -8,8 +8,9 @@ Every route names the role it needs. A job belongs to whoever submitted it, and 
 approves an estimate: what a run may cost is the one decision an operator cannot make alone.
 """
 
+import hashlib
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from fastapi.exceptions import RequestValidationError
@@ -18,6 +19,7 @@ from pydantic import ValidationError
 from multiverse_api.security import Access, Principal
 from multiverse_config import Role, Settings
 from multiverse_contracts.jobs import JobDetail, JobEstimate, JobLogLine, JobRequest, JobView
+from multiverse_contracts.reports import ReportManifest
 from multiverse_contracts.simulation import SimulationReport, SimulationRequest
 from multiverse_jobs.estimate import estimate
 from multiverse_jobs.store import JobError, JobStore, LimitError, Limits
@@ -40,6 +42,15 @@ async def simulation_request(request: Request) -> SimulationRequest:
 
 Submitted = Annotated[JobRequest, Depends(job_request)]
 Simulation = Annotated[SimulationRequest, Depends(simulation_request)]
+
+
+ReportPart = Literal["document", "markdown", "csv", "manifest"]
+REPORT_FILES: dict[str, tuple[str, str]] = {
+    "document": ("document.json", "application/json"),
+    "markdown": ("report.md", "text/markdown; charset=utf-8"),
+    "csv": ("report.csv", "text/csv; charset=utf-8"),
+    "manifest": ("manifest.json", "application/json"),
+}
 
 
 def store_of(settings: Settings) -> JobStore:
@@ -192,5 +203,33 @@ def build_simulation_router(settings: Settings, store: JobStore, access: Access)
         if not path.exists():
             raise HTTPException(status.HTTP_404_NOT_FOUND, f"{job_id} has no report yet")
         return SimulationReport.model_validate_json(path.read_bytes())
+
+    @router.get("/{job_id}/report/{part}")
+    def report_file(
+        job_id: str,
+        part: ReportPart,
+        principal: Annotated[Principal, Depends(access.as_(Role.VIEWER, "report_download"))],
+    ) -> Response:
+        """A file of the research report (Stage 25): written by the worker, served as stored."""
+        access.owned(principal, job_id, "report_download")
+        folder = Path(settings.data_dir) / "simulations" / job_id
+        name, media = REPORT_FILES[part]
+        path = folder / name
+        manifest = folder / "manifest.json"
+        if not path.exists() or not manifest.exists():
+            raise HTTPException(status.HTTP_404_NOT_FOUND, f"{job_id} has no research report yet")
+        report_doc_id = ReportManifest.model_validate_json(manifest.read_bytes()).report_doc_id
+        data = path.read_bytes()
+        suffix = name.rsplit(".", 1)[1]
+        stem = "manifest" if part == "manifest" else ""
+        filename = f"{report_doc_id}{'-' + stem if stem else ''}.{suffix}"
+        return Response(
+            content=data,
+            media_type=media,
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"',
+                "ETag": f'"{hashlib.sha256(data).hexdigest()}"',
+            },
+        )
 
     return router

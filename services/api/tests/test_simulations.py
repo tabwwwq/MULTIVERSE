@@ -93,3 +93,44 @@ def test_the_api_process_never_imports_the_simulator() -> None:
     code = "import sys, multiverse_api.main; print('multiverse_simulation' in sys.modules)"
     found = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert json.loads(found.stdout.strip().lower()) is False
+
+
+def test_the_research_report_downloads_as_the_worker_wrote_it(
+    client: TestClient, tmp_path: Path
+) -> None:
+    from multiverse_simulation.cli import run_case
+    from multiverse_simulation.example import default_decision, illustrative_case
+    from multiverse_simulation.reportdoc import write_report_files
+
+    from multiverse_contracts.decisions import DECISION_MODELS
+    from multiverse_contracts.simulation import SimulationSettings
+
+    job_id = client.post("/api/v1/simulations", json=body()).json()["job_id"]
+    url = f"/api/v1/simulations/{job_id}/report"
+    assert client.get(f"{url}/markdown").status_code == 404
+    case = illustrative_case(horizon=8, history_quarters=40)
+    chosen = DECISION_MODELS["rnd_change"].model_validate_json(
+        json.dumps(default_decision("rnd_change"))
+    )
+    report = run_case(case, chosen, SimulationSettings(paths=200, seed=5, batch_paths=100))  # type: ignore[arg-type]
+    folder = tmp_path / "simulations" / job_id
+    manifest = write_report_files(folder, report, case, chosen)  # type: ignore[arg-type]
+
+    markdown = client.get(f"{url}/markdown")
+    assert markdown.status_code == 200
+    assert markdown.headers["content-type"].startswith("text/markdown")
+    disposition = markdown.headers["content-disposition"]
+    assert disposition == f'attachment; filename="{manifest.report_doc_id}.md"'
+    assert markdown.content == (folder / "report.md").read_bytes()
+    table = client.get(f"{url}/csv")
+    assert table.headers["content-type"].startswith("text/csv")
+    assert table.text.splitlines()[0] == "table,metric,scenario,period,statistic,value,unit"
+    assert client.get(f"{url}/document").json()["report_doc_id"] == manifest.report_doc_id
+    assert (
+        client.get(f"{url}/manifest")
+        .headers["content-disposition"]
+        .endswith(f'{manifest.report_doc_id}-manifest.json"')
+    )
+    again = client.get(f"{url}/markdown")
+    assert again.headers["etag"] == markdown.headers["etag"]
+    assert client.get(f"{url}/pdf").status_code == 422

@@ -1,0 +1,69 @@
+{
+  "report_doc_id": "rep-20261106-f02fdd6e65ff",
+  "generator_version": "report-studio-1",
+  "contracts_version": "0.23.0",
+  "simulation_report_id": "sim-20261106-b9592290424b",
+  "case_id": "case-50863-20261106",
+  "case_sha256": "689f6f1b26edf8d0d9436fba042faf6fd09f7da1e5cb75bf84db9e49cab190aa",
+  "decision": {
+    "magnitude": {
+      "value": "0.2",
+      "unit": "fraction_of_previous_rnd_budget"
+    },
+    "timing": {
+      "announcement_date": "2026-12-01",
+      "effective_date": "2027-01-01",
+      "lag_quarters": 0,
+      "ramp_quarters": 2
+    },
+    "type": "rnd_change",
+    "capitalized_fraction": "0",
+    "adoption_delay_quarters": {
+      "shape": "triangular",
+      "low": "4",
+      "mode": "8",
+      "high": "12"
+    },
+    "financing": {
+      "cash": "1",
+      "debt": "0",
+      "equity": "0"
+    }
+  },
+  "decision_sha256": "8440c73a733243817a17a8547daf0bef3b2cadd6ebf0a3a2ad8c4b7336a97732",
+  "settings": {
+    "paths": 3000,
+    "seed": 20261107,
+    "batch_paths": 250,
+    "max_redraws": 3,
+    "lock_macro": false,
+    "shock_scale": 1.0,
+    "mean_block_quarters": null
+  },
+  "sensitivity": true,
+  "dataset_id": "fds-20261106-05c19bb5643a",
+  "dataset_sha256": "05c19bb5643a8ef46ded1943f79915f69ddbcf2350ab73f580b8ba14870e7591",
+  "model_id": "live-20261106-95a7dc72f773",
+  "finance_version": "0.4.0",
+  "simulation_version": "0.1.0",
+  "artifacts": [
+    {
+      "format": "markdown",
+      "file": "report.md",
+      "sha256": "e2b5d0a5b9edba9dad5bb2ff3d2a37d60208a0434137e000682e9475d008464f",
+      "bytes": 12546
+    },
+    {
+      "format": "csv",
+      "file": "report.csv",
+      "sha256": "d7906f495b0b77d86e3029245fb17f5a4aa071039bf7d60f7f6f277bcfba82a2",
+      "bytes": 30832
+    },
+    {
+      "format": "document",
+      "file": "document.json",
+      "sha256": "1519cae0df58bc824d0cc25dc77114868a3bbbbd630d69d333294322f81aa0f3",
+      "bytes": 25987
+    }
+  ]
+}

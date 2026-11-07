@@ -19,3 +19,5 @@ data/companies
 data/universe
 # Locked before scoring: its SHA-256 goes into the evaluation package.
 data/protocols/stage-24b-evaluation.json
+# Report files are hashed by their manifests: byte for byte as generated.
+docs/case-studies

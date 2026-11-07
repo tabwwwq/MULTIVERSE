@@ -68,6 +68,8 @@ licence block of a data source.
 
 0.22.0 (Stage 24b): the ranked universe company, the live forecast, the real company and its
 index, and the sectors of real filers.
+
+0.23.0 (Stage 25): the research report, its claims, sources and manifest, and the replay check.
 """
 
-CONTRACTS_VERSION = "0.22.0"
+CONTRACTS_VERSION = "0.23.0"

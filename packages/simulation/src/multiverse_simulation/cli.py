@@ -2,6 +2,8 @@
 
 python -m multiverse_simulation companies --universe <file> --db <file> --dataset <folder> ...
 python -m multiverse_simulation run --case <file> --decision <file> --paths 10000 --out <file>
+python -m multiverse_simulation report --case <file> --decision <file> --report <file> --out <dir>
+python -m multiverse_simulation replay --manifest <dir>/manifest.json --case <file>
 """
 
 import argparse
@@ -169,6 +171,53 @@ def studio_file(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_case(
+    case: SimulationCase,
+    decision: DecisionModel,
+    settings: SimulationSettings,
+    sensitivity: bool = False,
+) -> SimulationReport:
+    """A run with no clock in what it returns that a report reads (Stage 25 replay)."""
+    frame, _ = simulate(case, decision, settings)
+    rows: tuple[SensitivityRow, ...] = ()
+    if sensitivity:
+        rows = tuple(_sensitivity_row(item, case, decision, settings) for item in VARIANTS)
+    return build_report(
+        case,
+        decision,
+        settings,
+        frame,
+        code_version="replay",
+        created_at=datetime(2000, 1, 1, tzinfo=UTC),
+        seconds=0.0,
+        sensitivity=rows,
+    )
+
+
+def report_file(args: argparse.Namespace) -> int:
+    from multiverse_simulation.reportdoc import write_report_files
+
+    case = SimulationCase.model_validate_json(Path(args.case).read_bytes())
+    report = SimulationReport.model_validate_json(Path(args.report).read_bytes())
+    manifest = write_report_files(Path(args.out), report, case, load_decision(Path(args.decision)))
+    print(f"{manifest.report_doc_id} -> {args.out}")
+    return 0
+
+
+def replay_file(args: argparse.Namespace) -> int:
+    from multiverse_contracts.reports import ReportManifest
+    from multiverse_simulation.reportdoc import replay
+
+    path = Path(args.manifest)
+    manifest = ReportManifest.model_validate_json(path.read_bytes())
+    case = SimulationCase.model_validate_json(Path(args.case).read_bytes())
+    check = replay(manifest, path.parent, case, run_case)
+    for name, same in check.artifacts:
+        print(f"{name}: {'identical' if same else 'DIFFERENT'}")
+    print(f"{check.report_doc_id}: {'identical' if check.identical else 'not identical'}")
+    return 0 if check.identical else 1
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="multiverse_simulation")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -194,10 +243,24 @@ def _parser() -> argparse.ArgumentParser:
     studio.add_argument("--inputs", required=True)
     studio.add_argument("--report", required=True)
     studio.add_argument("--out", required=True)
+    paper = commands.add_parser("report", help="the research report of a run (Stage 25)")
+    paper.add_argument("--case", required=True)
+    paper.add_argument("--decision", required=True)
+    paper.add_argument("--report", required=True)
+    paper.add_argument("--out", required=True, help="a folder")
+    again = commands.add_parser("replay", help="build a report again from its manifest")
+    again.add_argument("--manifest", required=True)
+    again.add_argument("--case", required=True)
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
-    commands = {"companies": companies_file, "run": run_file, "studio": studio_file}
+    commands = {
+        "companies": companies_file,
+        "run": run_file,
+        "studio": studio_file,
+        "report": report_file,
+        "replay": replay_file,
+    }
     return commands[args.command](args)

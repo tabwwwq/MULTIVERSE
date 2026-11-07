@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 216" width="760" height="216" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, Segoe UI, sans-serif">
+<title id="t">Intel: paired change of model EV</title>
+<desc id="d">Intel: paired change of model EV. Dot: median; whiskers: p10 to p90 of paths, USD bn. Conditional on the assumed model, not calibrated.</desc>
+<rect width="760" height="216" fill="#ffffff"/>
+<text x="84" y="28" font-size="16" font-weight="600" fill="#1f2328">Intel: paired change of model EV</text>
+<line x1="204.0" x2="204.0" y1="48" y2="152" stroke="#d0d7de"/>
+<text x="204.0" y="170" font-size="12" text-anchor="middle" fill="#57606a">-60.0</text>
+<line x1="282.3" x2="282.3" y1="48" y2="152" stroke="#d0d7de"/>
+<text x="282.3" y="170" font-size="12" text-anchor="middle" fill="#57606a">-40.0</text>
+<line x1="360.5" x2="360.5" y1="48" y2="152" stroke="#d0d7de"/>
+<text x="360.5" y="170" font-size="12" text-anchor="middle" fill="#57606a">-20.0</text>
+<line x1="438.8" x2="438.8" y1="48" y2="152" stroke="#d0d7de"/>
+<text x="438.8" y="170" font-size="12" text-anchor="middle" fill="#57606a">0.0</text>
+<line x1="517.1" x2="517.1" y1="48" y2="152" stroke="#d0d7de"/>
+<text x="517.1" y="170" font-size="12" text-anchor="middle" fill="#57606a">20.0</text>
+<line x1="595.4" x2="595.4" y1="48" y2="152" stroke="#d0d7de"/>
+<text x="595.4" y="170" font-size="12" text-anchor="middle" fill="#57606a">40.0</text>
+<line x1="438.8" x2="438.8" y1="48" y2="152" stroke="#1f2328" stroke-width="1.5"/>
+<text x="192" y="80" font-size="13" text-anchor="end" fill="#1f2328">R&amp;D +20%</text>
+<line x1="244.2" x2="338.2" y1="76" y2="76" stroke="#0969da" stroke-width="3"/>
+<circle cx="293.6" cy="76" r="6" fill="#0969da"/>
+<text x="346.2" y="80" font-size="12" fill="#57606a">p50 -37.1</text>
+<text x="192" y="128" font-size="13" text-anchor="end" fill="#1f2328">R&amp;D −20%</text>
+<line x1="537.5" x2="630.0" y1="124" y2="124" stroke="#bc4c00" stroke-width="3"/>
+<circle cx="582.7" cy="124" r="6" fill="#bc4c00"/>
+<text x="638.0" y="128" font-size="12" fill="#57606a">p50 36.8</text>
+<text x="204" y="202" font-size="11" fill="#57606a">USD bn. Dot: median; line: p10 to p90 of paths.</text>
+</svg>

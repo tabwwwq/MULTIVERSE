@@ -1,0 +1,72 @@
+{
+  "report_doc_id": "rep-20261106-d123799aaff8",
+  "generator_version": "report-studio-1",
+  "contracts_version": "0.23.0",
+  "simulation_report_id": "sim-20261106-5eba40f63998",
+  "case_id": "case-1001250-20261106",
+  "case_sha256": "c64adcd5d363258ae4d4a14c4276127f84ade7fa1dfedf7d805cb71a0862e340",
+  "decision": {
+    "magnitude": {
+      "value": "0.1",
+      "unit": "fraction_of_revenue"
+    },
+    "timing": {
+      "announcement_date": "2026-12-01",
+      "effective_date": "2027-01-01",
+      "lag_quarters": 2,
+      "ramp_quarters": 2
+    },
+    "type": "divestiture",
+    "segment_ebitda_margin": "0.05",
+    "disposal_proceeds": "0",
+    "separation_cost_fraction": "0.03",
+    "stranded_cost_fraction": {
+      "shape": "triangular",
+      "low": "0.1",
+      "mode": "0.25",
+      "high": "0.4"
+    },
+    "tax_rate_on_gain": "0.21",
+    "use_of_proceeds": {
+      "debt_paydown": "0.5",
+      "cash_retained": "0.5",
+      "shareholder_distribution": "0"
+    }
+  },
+  "decision_sha256": "6fe0733a23907319d2c70234ff3ec859e0510d3606b34d91a316908953589f7e",
+  "settings": {
+    "paths": 3000,
+    "seed": 20261107,
+    "batch_paths": 250,
+    "max_redraws": 3,
+    "lock_macro": false,
+    "shock_scale": 1.0,
+    "mean_block_quarters": null
+  },
+  "sensitivity": true,
+  "dataset_id": "fds-20261106-05c19bb5643a",
+  "dataset_sha256": "05c19bb5643a8ef46ded1943f79915f69ddbcf2350ab73f580b8ba14870e7591",
+  "model_id": "live-20261106-95a7dc72f773",
+  "finance_version": "0.4.0",
+  "simulation_version": "0.1.0",
+  "artifacts": [
+    {
+      "format": "markdown",
+      "file": "report.md",
+      "sha256": "1489014e9702971a6fa57349c8530e5d7dfb628d4d4f21b2332806ec881c9dec",
+      "bytes": 12705
+    },
+    {
+      "format": "csv",
+      "file": "report.csv",
+      "sha256": "273ed5cecc3d4c8a3bea8e03c243d3f371b7925eca8aa14c3ded46c957ee8bb6",
+      "bytes": 30314
+    },
+    {
+      "format": "document",
+      "file": "document.json",
+      "sha256": "d664d4838d1b8be21f6446233a1ff5ed4637b0a195825d09fa4273ff276876c8",
+      "bytes": 26330
+    }
+  ]
+}

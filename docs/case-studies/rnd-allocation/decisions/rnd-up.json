@@ -1,0 +1,25 @@
+{
+  "type": "rnd_change",
+  "magnitude": {
+    "value": "0.2",
+    "unit": "fraction_of_previous_rnd_budget"
+  },
+  "timing": {
+    "announcement_date": "2026-12-01",
+    "effective_date": "2027-01-01",
+    "lag_quarters": 0,
+    "ramp_quarters": 2
+  },
+  "capitalized_fraction": "0",
+  "adoption_delay_quarters": {
+    "shape": "triangular",
+    "low": "4",
+    "mode": "8",
+    "high": "12"
+  },
+  "financing": {
+    "cash": "1",
+    "debt": "0",
+    "equity": "0"
+  }
+}

@@ -388,3 +388,50 @@ dialog::backdrop {
   fill: var(--color-ink);
   font-size: 15px;
 }
+
+/* ---------------------------------------------------------------- print */
+
+/* A report prints as a document: no navigation, dark ink on white paper, full width (Stage 25). */
+@media print {
+  html,
+  body {
+    color-scheme: light;
+    background: #fff;
+    color: #111;
+  }
+
+  #app-frame > :first-child,
+  #app-frame header,
+  #app-frame footer,
+  .skip-link,
+  .print-hidden {
+    display: none !important;
+  }
+
+  main {
+    max-width: none;
+    padding: 0;
+  }
+
+  .report,
+  .report * {
+    color: #111 !important;
+    background: transparent !important;
+    border-color: #999 !important;
+  }
+
+  .report a[href^="http"]::after {
+    content: " <" attr(href) ">";
+    font-size: 0.8em;
+    word-break: break-all;
+  }
+
+  .report section,
+  .report-table {
+    break-inside: avoid-page;
+  }
+
+  .report-table {
+    overflow: visible;
+  }
+}

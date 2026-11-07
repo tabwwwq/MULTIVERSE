@@ -4174,6 +4174,15 @@
       "title": "Evidence",
       "type": "string"
     },
+    "EvidenceLevel": {
+      "description": "How far the numbers of a report can be trusted, in words a reader can check.",
+      "enum": [
+        "conditional_simulation",
+        "synthetic_demo"
+      ],
+      "title": "EvidenceLevel",
+      "type": "string"
+    },
     "ExampleCount": {
       "additionalProperties": false,
       "description": "Trainable examples: company and forecast origin with enough history and a target.",
@@ -8128,6 +8137,308 @@
       "title": "RejectedCandidate",
       "type": "object"
     },
+    "ReplayCheck": {
+      "additionalProperties": false,
+      "description": "The outcome of building a report again from its manifest.",
+      "properties": {
+        "artifacts": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ],
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "identical": {
+          "type": "boolean"
+        },
+        "report_doc_id": {
+          "pattern": "^rep-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_doc_id",
+        "artifacts",
+        "identical"
+      ],
+      "title": "ReplayCheck",
+      "type": "object"
+    },
+    "ReportArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "file": {
+          "pattern": "^[a-z0-9.-]+\\.(md|csv|json)$",
+          "type": "string"
+        },
+        "format": {
+          "enum": [
+            "markdown",
+            "csv",
+            "document"
+          ],
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "format",
+        "file",
+        "sha256",
+        "bytes"
+      ],
+      "title": "ReportArtifact",
+      "type": "object"
+    },
+    "ReportClaim": {
+      "additionalProperties": false,
+      "description": "One number of the text, and how to find it again in the run.",
+      "properties": {
+        "claim_id": {
+          "pattern": "^C[0-9]{1,3}$",
+          "type": "string"
+        },
+        "pointer": {
+          "description": "JSON pointer into {report, case, decision} of the run.",
+          "pattern": "^/(report|case|decision)(/[A-Za-z0-9_.-]+)*$",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "pattern": "^S[0-9]{1,3}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "statement": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "unit": {
+          "enum": [
+            "usd",
+            "share",
+            "quarters",
+            "paths",
+            "count",
+            "date",
+            "text"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 80,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "claim_id",
+        "statement",
+        "value",
+        "unit",
+        "pointer",
+        "sources"
+      ],
+      "title": "ReportClaim",
+      "type": "object"
+    },
+    "ReportManifest": {
+      "additionalProperties": false,
+      "description": "Enough to build the report again and to prove it is the same, byte for byte.",
+      "properties": {
+        "artifacts": {
+          "items": {
+            "$ref": "#/$defs/ReportArtifact"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "case_id": {
+          "pattern": "^case-[0-9a-z-]{1,60}$",
+          "type": "string"
+        },
+        "case_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "dataset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "dataset_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "decision": {
+          "description": "The decision itself: small, and needed to replay.",
+          "discriminator": {
+            "mapping": {
+              "acquisition": "#/$defs/Acquisition",
+              "capex_expansion": "#/$defs/CapexExpansion",
+              "debt_refinance": "#/$defs/DebtRefinance",
+              "divestiture": "#/$defs/Divestiture",
+              "rnd_change": "#/$defs/RndChange",
+              "workforce_restructure": "#/$defs/WorkforceRestructure"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/RndChange"
+            },
+            {
+              "$ref": "#/$defs/WorkforceRestructure"
+            },
+            {
+              "$ref": "#/$defs/Acquisition"
+            },
+            {
+              "$ref": "#/$defs/Divestiture"
+            },
+            {
+              "$ref": "#/$defs/CapexExpansion"
+            },
+            {
+              "$ref": "#/$defs/DebtRefinance"
+            }
+          ]
+        },
+        "decision_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "finance_version": {
+          "type": "string"
+        },
+        "generator_version": {
+          "type": "string"
+        },
+        "model_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "report_doc_id": {
+          "pattern": "^rep-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "sensitivity": {
+          "default": false,
+          "description": "The run also ran the sensitivity variants of the shock model.",
+          "type": "boolean"
+        },
+        "settings": {
+          "$ref": "#/$defs/SimulationSettings"
+        },
+        "simulation_report_id": {
+          "pattern": "^sim-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "simulation_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_doc_id",
+        "generator_version",
+        "contracts_version",
+        "simulation_report_id",
+        "case_id",
+        "case_sha256",
+        "decision",
+        "decision_sha256",
+        "settings",
+        "sensitivity",
+        "dataset_id",
+        "dataset_sha256",
+        "model_id",
+        "finance_version",
+        "simulation_version",
+        "artifacts"
+      ],
+      "title": "ReportManifest",
+      "type": "object"
+    },
+    "ReportSection": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/SectionKey"
+        },
+        "paragraphs": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "tables": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ReportTable"
+          },
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 80,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "title",
+        "paragraphs",
+        "tables"
+      ],
+      "title": "ReportSection",
+      "type": "object"
+    },
     "ReportSnapshot": {
       "additionalProperties": false,
       "description": "One exported report. Never edited, never replaced (PRD FR-RP-02, FR-RP-03).",
@@ -8174,6 +8485,53 @@
         "manifest"
       ],
       "title": "ReportSnapshot",
+      "type": "object"
+    },
+    "ReportTable": {
+      "additionalProperties": false,
+      "properties": {
+        "caption": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "columns": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "unit_note": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "caption",
+        "columns",
+        "rows",
+        "unit_note"
+      ],
+      "title": "ReportTable",
       "type": "object"
     },
     "ReproducibilityManifest": {
@@ -8276,6 +8634,90 @@
       ],
       "title": "Resale",
       "type": "string"
+    },
+    "ResearchReport": {
+      "additionalProperties": false,
+      "description": "The document: what a reader sees, in Markdown, CSV, print or on screen.",
+      "properties": {
+        "as_of": {
+          "format": "date",
+          "type": "string"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/ReportClaim"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "company_id": {
+          "type": "string"
+        },
+        "company_name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "contracts_version": {
+          "type": "string"
+        },
+        "data_origin": {
+          "$ref": "#/$defs/DataOrigin"
+        },
+        "evidence_level": {
+          "$ref": "#/$defs/EvidenceLevel"
+        },
+        "generator_version": {
+          "type": "string"
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "report_doc_id": {
+          "pattern": "^rep-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/ReportSection"
+          },
+          "type": "array"
+        },
+        "simulation_report_id": {
+          "pattern": "^sim-[0-9]{8}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "contracts_version",
+        "generator_version",
+        "report_doc_id",
+        "simulation_report_id",
+        "title",
+        "company_id",
+        "company_name",
+        "as_of",
+        "data_origin",
+        "evidence_level",
+        "label",
+        "sections",
+        "claims",
+        "sources"
+      ],
+      "title": "ResearchReport",
+      "type": "object"
     },
     "ResultFailure": {
       "additionalProperties": false,
@@ -9274,6 +9716,23 @@
         "not_applicable"
       ],
       "title": "SeasonalAdjustment",
+      "type": "string"
+    },
+    "SectionKey": {
+      "description": "The parts every report has, in this order (prompt 25).",
+      "enum": [
+        "objective",
+        "cutoff",
+        "sources",
+        "action",
+        "models",
+        "results",
+        "causal",
+        "assumptions",
+        "sensitivity",
+        "limitations"
+      ],
+      "title": "SectionKey",
       "type": "string"
     },
     "Sector": {
@@ -10541,6 +11000,64 @@
         "sign"
       ],
       "title": "SourceFact",
+      "type": "object"
+    },
+    "SourceKind": {
+      "enum": [
+        "sec_filing",
+        "data_source",
+        "dataset",
+        "model",
+        "method",
+        "run"
+      ],
+      "title": "SourceKind",
+      "type": "string"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "description": "Where a statement comes from: a filing, a source, a dataset, a model or a document.",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/SourceKind"
+        },
+        "label": {
+          "maxLength": 400,
+          "minLength": 1,
+          "type": "string"
+        },
+        "record": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For a dataset, model or run: the repository file that records the id."
+        },
+        "ref_id": {
+          "pattern": "^S[0-9]{1,3}$",
+          "type": "string"
+        },
+        "target": {
+          "description": "An https URL, a path in this repository, or an id that one of them records.",
+          "maxLength": 300,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "ref_id",
+        "kind",
+        "label",
+        "target",
+        "record"
+      ],
+      "title": "SourceRef",
       "type": "object"
     },
     "SourceTiming": {
@@ -12542,9 +13059,9 @@
       "type": "object"
     }
   },
-  "$id": "urn:multiverse:contracts:0.22.0",
+  "$id": "urn:multiverse:contracts:0.23.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Generated from packages/contracts/python. Do not edit by hand.",
   "title": "MultiverseContracts",
-  "x-contracts-version": "0.22.0"
+  "x-contracts-version": "0.23.0"
 }

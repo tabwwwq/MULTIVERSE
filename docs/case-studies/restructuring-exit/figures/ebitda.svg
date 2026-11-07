@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" width="760" height="420" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, Segoe UI, sans-serif">
+<title id="t">Estée Lauder: EBITDA after a restructuring or a segment exit</title>
+<desc id="d">Estée Lauder: EBITDA after a restructuring or a segment exit. Median and p10 to p90 across paths, USD bn, by quarter after the cutoff of 2026-11-06. Conditional on the assumed model, not calibrated.</desc>
+<rect width="760" height="420" fill="#ffffff"/>
+<text x="84" y="28" font-size="16" font-weight="600" fill="#1f2328">Estée Lauder: EBITDA after a restructuring or a segment exit</text>
+<line x1="84" x2="570" y1="364.0" y2="364.0" stroke="#d0d7de" stroke-width="1"/>
+<text x="76" y="368.0" font-size="12" text-anchor="end" fill="#57606a">-0.3</text>
+<line x1="84" x2="570" y1="312.7" y2="312.7" stroke="#d0d7de" stroke-width="1"/>
+<text x="76" y="316.7" font-size="12" text-anchor="end" fill="#57606a">0.0</text>
+<line x1="84" x2="570" y1="261.3" y2="261.3" stroke="#d0d7de" stroke-width="1"/>
+<text x="76" y="265.3" font-size="12" text-anchor="end" fill="#57606a">0.3</text>
+<line x1="84" x2="570" y1="210.0" y2="210.0" stroke="#d0d7de" stroke-width="1"/>
+<text x="76" y="214.0" font-size="12" text-anchor="end" fill="#57606a">0.6</text>
+<line x1="84" x2="570" y1="158.7" y2="158.7" stroke="#d0d7de" stroke-width="1"/>
+<text x="76" y="162.7" font-size="12" text-anchor="end" fill="#57606a">0.9</text>
+<line x1="84" x2="570" y1="107.3" y2="107.3" stroke="#d0d7de" stroke-width="1"/>
+<text x="76" y="111.3" font-size="12" text-anchor="end" fill="#57606a">1.2</text>
+<line x1="84" x2="570" y1="56.0" y2="56.0" stroke="#d0d7de" stroke-width="1"/>
+<text x="76" y="60.0" font-size="12" text-anchor="end" fill="#57606a">1.5</text>
+<text x="84.0" y="384" font-size="12" text-anchor="middle" fill="#57606a">2026 Q4</text>
+<text x="186.3" y="384" font-size="12" text-anchor="middle" fill="#57606a">2027 Q4</text>
+<text x="288.6" y="384" font-size="12" text-anchor="middle" fill="#57606a">2028 Q4</text>
+<text x="390.9" y="384" font-size="12" text-anchor="middle" fill="#57606a">2029 Q4</text>
+<text x="493.3" y="384" font-size="12" text-anchor="middle" fill="#57606a">2030 Q4</text>
+<text x="20" y="210.0" font-size="12" fill="#57606a" transform="rotate(-90 20 210.0)" text-anchor="middle">USD bn</text>
+<polygon points="84.0,183.2 109.6,188.3 135.2,183.5 160.7,176.8 186.3,142.6 211.9,161.2 237.5,166.3 263.1,158.8 288.6,128.2 314.2,146.9 339.8,153.6 365.4,150.6 390.9,117.9 416.5,136.6 442.1,142.1 467.7,142.2 493.3,102.9 518.8,126.9 544.4,131.9 570.0,128.0 570.0,283.2 544.4,280.3 518.8,280.6 493.3,273.7 467.7,277.3 442.1,281.2 416.5,279.4 390.9,280.5 365.4,285.6 339.8,283.9 314.2,282.8 288.6,279.2 263.1,287.1 237.5,286.8 211.9,284.3 186.3,288.4 160.7,287.0 135.2,292.4 109.6,293.1 84.0,294.7" fill="#6e7781" fill-opacity="0.12"/>
+<polyline points="84.0,210.7 109.6,217.9 135.2,218.8 160.7,212.5 186.3,193.8 211.9,208.1 237.5,210.8 263.1,206.0 288.6,185.4 314.2,202.2 339.8,204.8 365.4,202.4 390.9,185.9 416.5,198.5 442.1,200.1 467.7,197.8 493.3,178.3 518.8,192.2 544.4,197.6 570.0,195.7" fill="none" stroke="#6e7781" stroke-width="2" stroke-dasharray="2 3"/>
+<polygon points="84.0,183.2 109.6,224.2 135.2,187.4 160.7,159.1 186.3,118.8 211.9,140.3 237.5,145.4 263.1,139.1 288.6,102.9 314.2,125.3 339.8,131.7 365.4,128.8 390.9,90.9 416.5,112.4 442.1,119.1 467.7,118.5 493.3,75.2 518.8,101.2 544.4,106.2 570.0,103.0 570.0,264.5 544.4,261.6 518.8,262.2 493.3,252.4 467.7,258.8 442.1,262.0 416.5,261.1 390.9,259.2 365.4,267.9 339.8,265.9 314.2,263.6 288.6,256.9 263.1,268.6 237.5,269.5 211.9,266.9 186.3,267.0 160.7,270.3 135.2,296.6 109.6,325.9 84.0,294.7" fill="#0969da" fill-opacity="0.12"/>
+<polyline points="84.0,210.7 109.6,262.1 135.2,225.5 160.7,195.0 186.3,172.7 211.9,189.8 237.5,192.5 263.1,187.5 288.6,164.2 314.2,183.5 339.8,186.7 365.4,183.5 390.9,163.9 416.5,179.6 442.1,180.5 467.7,178.5 493.3,156.1 518.8,172.5 544.4,178.0 570.0,175.4" fill="none" stroke="#0969da" stroke-width="2"/>
+<polygon points="84.0,183.2 109.6,188.3 135.2,183.5 160.7,217.8 186.3,160.2 211.9,177.8 237.5,180.4 263.1,175.0 288.6,147.5 314.2,165.1 339.8,170.6 365.4,167.9 390.9,139.2 416.5,156.8 442.1,160.4 467.7,160.7 493.3,125.6 518.8,148.8 544.4,151.0 570.0,149.3 570.0,299.6 544.4,297.4 518.8,297.1 493.3,293.1 467.7,291.5 442.1,297.4 416.5,295.5 390.9,299.3 365.4,301.2 339.8,298.9 314.2,298.2 288.6,297.2 263.1,301.5 237.5,301.9 211.9,299.0 186.3,303.7 160.7,324.6 135.2,292.4 109.6,293.1 84.0,294.7" fill="#bc4c00" fill-opacity="0.12"/>
+<polyline points="84.0,210.7 109.6,217.9 135.2,218.8 160.7,252.7 186.3,210.6 211.9,222.5 237.5,224.9 263.1,220.6 288.6,203.6 314.2,217.5 339.8,219.6 365.4,217.8 390.9,203.7 416.5,214.7 442.1,215.4 467.7,213.6 493.3,197.2 518.8,208.8 544.4,213.9 570.0,211.9" fill="none" stroke="#bc4c00" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="578" y="179.4" font-size="12" fill="#1f2328"><tspan fill="#0969da">■</tspan> 15% fewer staff</text>
+<text x="578" y="199.7" font-size="12" fill="#1f2328"><tspan fill="#6e7781">■</tspan> Baseline</text>
+<text x="578" y="215.9" font-size="12" fill="#1f2328"><tspan fill="#bc4c00">■</tspan> Exit 10% of revenue</text>
+<text x="84" y="408" font-size="11" fill="#57606a">Lines: median. Bands: p10 to p90 of paths. Conditional on the assumed model, not calibrated.</text>
+</svg>

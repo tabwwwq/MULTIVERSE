@@ -1,0 +1,35 @@
+{
+  "type": "acquisition",
+  "magnitude": {
+    "value": "15000000000",
+    "unit": "usd"
+  },
+  "timing": {
+    "announcement_date": "2026-12-01",
+    "effective_date": "2027-01-01",
+    "lag_quarters": 2,
+    "ramp_quarters": 8
+  },
+  "target_revenue": "6000000000",
+  "target_ebitda_margin": "0.15",
+  "deal_cost_fraction": "0.02",
+  "integration_cost_fraction": {
+    "shape": "triangular",
+    "low": "0.02",
+    "mode": "0.05",
+    "high": "0.1"
+  },
+  "cost_synergy_fraction": {
+    "shape": "triangular",
+    "low": "0",
+    "mode": "0.03",
+    "high": "0.06"
+  },
+  "completion_probability": "0.9",
+  "new_debt_interest_rate": "0.065",
+  "financing": {
+    "cash": "0.1",
+    "debt": "0.4",
+    "equity": "0.5"
+  }
+}

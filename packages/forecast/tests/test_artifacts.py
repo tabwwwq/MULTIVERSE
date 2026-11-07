@@ -27,7 +27,7 @@ MANIFEST: dict[str, Any] = {
     "features": ["rev_growth_l1"],
     "rows": 1,
     "companies": 1,
-    "contracts_version": "0.22.0",
+    "contracts_version": "0.23.0",
     "created_at": "2026-10-28T00:00:00Z",
 }
 RAN: list[str] = []

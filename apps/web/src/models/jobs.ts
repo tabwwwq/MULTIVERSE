@@ -1,5 +1,6 @@
 import type {
   JobEstimate,
+  ResearchReport,
   JobLogLine,
   JobRequest,
   JobStatus,
@@ -145,4 +146,18 @@ export function act(jobId: string, action: JobAction): Promise<JobView> {
     headers: { "Content-Type": "application/json" },
     body: "{}",
   });
+}
+
+export type ReportPart = "document" | "markdown" | "csv" | "manifest";
+
+/** A file of the research report of a run, served by the API of this computer (Stage 25). */
+export function reportFileUrl(jobId: string, part: ReportPart): string {
+  return `${API_URL}/simulations/${jobId}/report/${part}`;
+}
+
+export function fetchDocument(jobId: string, signal?: AbortSignal): Promise<ResearchReport> {
+  return read<ResearchReport>(
+    `/simulations/${jobId}/report/document`,
+    signal ? { signal } : undefined,
+  );
 }

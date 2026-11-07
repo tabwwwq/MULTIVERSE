@@ -1,0 +1,28 @@
+{
+  "type": "divestiture",
+  "magnitude": {
+    "value": "0.1",
+    "unit": "fraction_of_revenue"
+  },
+  "timing": {
+    "announcement_date": "2026-12-01",
+    "effective_date": "2027-01-01",
+    "lag_quarters": 2,
+    "ramp_quarters": 2
+  },
+  "segment_ebitda_margin": "0.05",
+  "disposal_proceeds": "0",
+  "separation_cost_fraction": "0.03",
+  "stranded_cost_fraction": {
+    "shape": "triangular",
+    "low": "0.1",
+    "mode": "0.25",
+    "high": "0.4"
+  },
+  "tax_rate_on_gain": "0.21",
+  "use_of_proceeds": {
+    "debt_paydown": "0.5",
+    "cash_retained": "0.5",
+    "shareholder_distribution": "0"
+  }
+}

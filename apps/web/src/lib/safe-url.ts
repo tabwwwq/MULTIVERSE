@@ -19,6 +19,8 @@ const ALLOWED_HOSTS = new Set([
   "datahelpdesk.worldbank.org",
   "datacatalog.worldbank.org",
   "datatopics.worldbank.org",
+  // The repository of this project: methods and records that a report cites.
+  "github.com",
 ]);
 
 export function safeExternalUrl(raw: string | null | undefined): string | null {

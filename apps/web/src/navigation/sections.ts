@@ -328,7 +328,7 @@ export const SECTIONS: readonly Section[] = [
     group: "record",
     icon: FileText,
     summary: "Reproducible reports with sources, versions and limitations.",
-    status: "planned",
+    status: "available",
     stage: 25,
     stageName: "Reports and portfolio",
     plans: [

@@ -187,6 +187,16 @@ def test_someone_elses_report_does_not_exist(client: TestClient, alices_job: str
     assert "no report yet" in client.get(url, headers=bearer("alice")).json()["detail"]
 
 
+@pytest.mark.parametrize("part", ["document", "markdown", "csv", "manifest"])
+def test_someone_elses_research_report_does_not_exist(
+    client: TestClient, alices_job: str, part: str
+) -> None:
+    url = f"/api/v1/simulations/{alices_job}/report/{part}"
+    assert client.get(url, headers=bearer("bob")).json()["detail"] == f"no job {alices_job}"
+    assert client.get(url).status_code == 401
+    assert "no research report yet" in client.get(url, headers=bearer("alice")).json()["detail"]
+
+
 def test_a_list_holds_only_the_jobs_of_its_reader(client: TestClient, alices_job: str) -> None:
     assert client.get("/api/v1/jobs", headers=bearer("bob")).json() == []
     found = client.get("/api/v1/jobs", headers=bearer("alice")).json()

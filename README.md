@@ -18,8 +18,8 @@ Read the limitations above first: every screen below shows conditional research 
 
 | | |
 |---|---|
-| ![Universe Explorer: the largest SEC filers](docs/portfolio/screens/01-universe.png) | ![Dossier with the research forecast](docs/portfolio/screens/02-dossier-forecast.png) |
-| ![Run of a decision through the local queue](docs/portfolio/screens/03-run-dialog.png) | ![Report Studio](docs/portfolio/screens/05-report-studio.png) |
+| ![Overview: the largest companies on file and the five steps to a report](docs/portfolio/screens/00-overview.png) | ![Dossier with key figures and the research forecast](docs/portfolio/screens/02-dossier-forecast.png) |
+| ![Time Machine: what was public on two dates](docs/portfolio/screens/07-time-machine.png) | ![Result of a run: the change of value and of each risk first](docs/portfolio/screens/04-run-result.png) |
 
 Three case studies on Intel, Boeing and Estée Lauder are in [`docs/case-studies`](docs/case-studies/README.md); the portfolio write-up, with measured results and failures, is in [`docs/portfolio`](docs/portfolio/README.md).
 

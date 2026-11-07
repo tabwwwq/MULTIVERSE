@@ -23,10 +23,10 @@ test.describe("keyboard", () => {
     await expect(page.locator("#main")).toBeFocused();
   });
 
-  test("the scenario link opens the Decision Builder", async ({ page }) => {
+  test("the first call to action opens the Universe Explorer", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("link", { name: "Build a scenario" }).click();
-    await expect(page.getByRole("heading", { level: 1, name: "Decision Builder" })).toBeVisible();
+    await page.getByRole("link", { name: "Start with a company" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Universe Explorer" })).toBeVisible();
   });
 });
 
@@ -45,7 +45,9 @@ test.describe("desktop sidebar", () => {
       "aria-current",
       "page",
     );
-    await expect(nav.getByRole("link", { name: "Time Machine planned, Stage 12" })).toBeVisible();
+    await expect(
+      nav.getByRole("link", { name: "Explainability Room planned, Stage 17" }),
+    ).toBeVisible();
   });
 
   test("collapses, keeps labels for screen readers and remembers the choice", async ({ page }) => {
@@ -119,27 +121,21 @@ test.describe("dialog", () => {
 });
 
 test.describe("motion", () => {
-  test("the hero draws in once when motion is allowed", async ({ page }) => {
+  const bar = (page: import("@playwright/test").Page) =>
+    page.getByTestId("largest-companies").locator(".float-bar").first();
+
+  test("the bars of the overview grow once when motion is allowed", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("/");
-    const name = await page
-      .getByTestId("timeline-motif")
-      .locator(".motif-observed")
-      .evaluate((element) => getComputedStyle(element).animationName);
-    expect(name).toBe("motif-draw");
+    const name = await bar(page).evaluate((element) => getComputedStyle(element).animationName);
+    expect(name).toBe("float-grow");
   });
 
-  test("the hero is static with reduced motion", async ({ page }) => {
+  test("the bars of the overview are still with reduced motion", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
-    const style = await page
-      .getByTestId("timeline-motif")
-      .locator(".motif-observed")
-      .evaluate((element) => {
-        const computed = getComputedStyle(element);
-        return { animation: computed.animationName, dash: computed.strokeDasharray };
-      });
-    expect(style).toEqual({ animation: "none", dash: "none" });
+    const name = await bar(page).evaluate((element) => getComputedStyle(element).animationName);
+    expect(name).toBe("none");
   });
 });
 

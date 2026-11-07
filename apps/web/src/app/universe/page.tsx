@@ -31,6 +31,11 @@ export default async function UniversePage({ searchParams }: PageProps) {
   const from = (page - 1) * PAGE_SIZE;
   const shown = hits.slice(from, from + PAGE_SIZE);
   const real = realData();
+  const rows = new Map(real?.index.companies.map((row) => [row.company_id, row]));
+  const largestFloat = Math.max(
+    0,
+    ...(real?.index.companies ?? []).map((row) => row.evidence.public_float_usd),
+  );
   const filtered =
     query.q !== "" || query.sector || query.country || query.status || query.coverage;
 
@@ -93,8 +98,12 @@ export default async function UniversePage({ searchParams }: PageProps) {
         ) : (
           <ul className="grid gap-4 lg:grid-cols-2">
             {shown.map((hit) => (
-              <li key={hit.company.company_id}>
-                <CompanyResult hit={hit} />
+              <li key={hit.company.company_id} className="flex">
+                <CompanyResult
+                  hit={hit}
+                  largestFloat={largestFloat}
+                  real={rows.get(hit.company.company_id)}
+                />
               </li>
             ))}
           </ul>

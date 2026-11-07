@@ -48,5 +48,5 @@ EBITDA flows to FCFF, FCFF to a model DCF, and every quarter of every path recon
 ## Reproduce
 
 ```bash
-python -m multiverse_simulation replay --manifest docs/case-studies/ma-stress/debt-financed/manifest.json --case var/data/cases/case-12927-20261106.json
+python -m multiverse_simulation replay --manifest docs/case-studies/ma-stress/debt-financed/manifest.json --case var/data/case-studies/cases/case-12927-20261106.json
 ```

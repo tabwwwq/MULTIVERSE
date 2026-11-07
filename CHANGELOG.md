@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+### Changed — 2026-11-07 (interface after release)
+
+- **Time Machine** is a page: two dates of a company, a timeline from the end of each quarter to the day its filing was published, and the figures that became public in between.
+- **Simulation Monitor** is a page: every run of this computer live, with its company, progress, heartbeat, stop and resume, and links to its result and report.
+- The overview opens with the largest companies on file, three counts and the five steps from a company to a report; the result of a run opens with the paired change of value and of each risk; a dossier opens with four key figures of the last four quarters; company cards show their rank, size, forecast and whether they can run.
+
+### Fixed — 2026-11-07
+
+- Dossier filings carry the period they report, read from the warehouse: a 10-K was dated by the year of the values it was cited for, a year too early. Each quarter now also lists the 10-Q or 10-K that first reported it.
+- A figure of the dossier that is hidden at an earlier cutoff says when it was last reported and when its quarter was first published.
+- The cases of the case studies are frozen in `var/data/case-studies/cases`: a new export wrote them with the next contracts version and broke their replay.
+
 ### Changed — 2026-11-07 (Stage 26 accepted)
 
 - Stage 26 (final review; CI runs 42409086930 and 42409902813 green) accepted by the owner. All 26 stages are accepted; the open items are the owner's decisions listed in the issue register.

@@ -126,7 +126,7 @@ export const SECTIONS: readonly Section[] = [
     group: "explore",
     icon: History,
     summary: "Compare what was public about companies at different historical cutoffs.",
-    status: "planned",
+    status: "available",
     stage: 12,
     stageName: "Point-in-time warehouse",
     plans: [
@@ -191,7 +191,7 @@ export const SECTIONS: readonly Section[] = [
     group: "build",
     icon: Activity,
     summary: "Follow long-running jobs: queued, running, paused, stopped, failed or completed.",
-    status: "planned",
+    status: "available",
     stage: 18,
     stageName: "Training operations",
     plans: [

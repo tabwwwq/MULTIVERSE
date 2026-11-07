@@ -8,7 +8,9 @@ const PAGES = [
   { path: "/", name: "overview", heading: "What if business took another path?" },
   { path: "/methodology", name: "methodology", heading: "Methodology" },
   { path: "/design-system", name: "design-system", heading: "Design system" },
-  { path: "/time-machine", name: "planned-section", heading: "Time Machine" },
+  { path: "/time-machine", name: "time-machine", heading: "Time Machine" },
+  { path: "/monitor", name: "monitor", heading: "Simulation Monitor" },
+  { path: "/explainability", name: "planned-section", heading: "Explainability Room" },
   { path: "/universe", name: "explorer", heading: "Universe Explorer" },
   {
     path: "/dossier/5b1f3c2e-8a4d-4e7b-9c61-2f0d7a9e4b13",
@@ -99,7 +101,7 @@ for (const target of PAGES) {
 
 test("every planned section shows an honest placeholder without data", async ({ page }) => {
   const planned = SECTIONS.filter((section) => section.status === "planned");
-  expect(planned.length).toBe(3);
+  expect(planned.length).toBe(1);
   for (const section of planned) {
     const response = await page.goto(section.href);
     expect(response?.status(), section.href).toBe(200);

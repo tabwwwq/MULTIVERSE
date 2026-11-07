@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { CoverageChart, ErrorChart } from "@/components/models/evaluation-charts";
 import { JobBoard } from "@/components/models/job-board";
+import { BENCHMARK_ID, EVALUATION_ID } from "@/models/evaluation";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader, Section } from "@/layouts/page-header";
@@ -67,6 +69,14 @@ export default function ModelsPage() {
             scoring, 2 of 15 target and horizon pairs pass: revenue growth over 4 and 8 quarters.
           </p>
         </Alert>
+        <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+          <ErrorChart />
+          <CoverageChart />
+        </div>
+        <p className="mt-3 text-micro text-ink-muted">
+          From {BENCHMARK_ID} and {EVALUATION_ID}, as recorded in the Stage 24b report. Past years,
+          not the accuracy of a forecast of today.
+        </p>
       </Section>
     </>
   );

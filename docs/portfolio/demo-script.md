@@ -12,5 +12,5 @@ npm run app
 4. **Decision (30 s).** Build a decision for it: an R&D change of 20% of the previous budget. Validate: the builder shows the decision in dollars at the cutoff.
 5. **Run (30 s).** Press Run, then Run simulation. The estimate, approval and progress go through the local queue; the worker computes 1 000 paired paths and the result opens.
 6. **Report (30 s).** Open Report Studio for the run: ten sections, every number with a claim number, every claim with a pointer and sources, SEC filings linked. Download the Markdown, print to PDF.
-7. **Replay (15 s).** In a terminal: `python -m multiverse_simulation replay --manifest docs/case-studies/rnd-allocation/rnd-up/manifest.json --case var/data/cases/case-50863-20261106.json` prints `identical` for each file.
+7. **Replay (15 s).** In a terminal: `python -m multiverse_simulation replay --manifest docs/case-studies/rnd-allocation/rnd-up/manifest.json --case var/data/case-studies/cases/case-50863-20261106.json` prints `identical` for each file.
 8. **Honest failure (15 s).** Open [the R&D case study](../case-studies/rnd-allocation/README.md): raising R&D only costs value in the model, because the return on R&D could not be estimated. That is the result, and the report says so.

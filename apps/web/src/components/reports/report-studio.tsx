@@ -1,16 +1,23 @@
 "use client";
 
-import type { ResearchReport } from "@multiverse/contracts";
+import type { ResearchReport, SimulationReport } from "@multiverse/contracts";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ReportView } from "@/components/reports/report-view";
+import { RunSummary } from "@/components/simulation/run-summary";
 import { Alert } from "@/components/ui/alert";
-import { fetchDocument, fetchJobs, isSimulation, type SimulationJob } from "@/models/jobs";
+import {
+  fetchDocument,
+  fetchJobs,
+  fetchReport,
+  isSimulation,
+  type SimulationJob,
+} from "@/models/jobs";
 
 type Load =
   | { state: "loading" }
-  | { state: "ready"; report: ResearchReport }
+  | { state: "ready"; report: ResearchReport; run: SimulationReport | null }
   | { state: "failed"; message: string };
 
 const JOB = /^job-[0-9a-f]{12}$/;
@@ -77,8 +84,13 @@ export function ReportStudio() {
   useEffect(() => {
     if (!valid || !job) return undefined;
     const controller = new AbortController();
-    fetchDocument(job, controller.signal)
-      .then((report) => setLoad({ state: "ready", report }))
+    Promise.all([
+      fetchDocument(job, controller.signal),
+      fetchReport(job, controller.signal).catch(() => null),
+    ])
+      .then(([report, run]) =>
+        setLoad({ state: "ready", report, run: Array.isArray(run?.values) ? run : null }),
+      )
       .catch((error: unknown) => {
         if (controller.signal.aborted) return;
         const message = error instanceof Error ? error.message : "The service did not answer.";
@@ -99,5 +111,10 @@ export function ReportStudio() {
       </Alert>
     );
   }
-  return <ReportView report={load.report} jobId={job} onPrint={() => window.print()} />;
+  return (
+    <div className="flex flex-col gap-10">
+      {load.run ? <RunSummary report={load.run} /> : null}
+      <ReportView report={load.report} jobId={job} onPrint={() => window.print()} />
+    </div>
+  );
 }

@@ -51,7 +51,7 @@ Monte Carlo errors of the shares are below one percentage point (see the risk ta
 ## Reproduce
 
 ```bash
-python -m multiverse_simulation replay --manifest docs/case-studies/rnd-allocation/rnd-up/manifest.json --case var/data/cases/case-50863-20261106.json
+python -m multiverse_simulation replay --manifest docs/case-studies/rnd-allocation/rnd-up/manifest.json --case var/data/case-studies/cases/case-50863-20261106.json
 ```
 
 On 2026-11-07 this rebuilt all three files of `rep-20261106-f02fdd6e65ff` byte for byte in 63 s. The case lives in `var/`, built by `python -m multiverse_simulation companies` ([Stage 24b](../../stages/24b-real-companies.md)).

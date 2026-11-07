@@ -59,6 +59,11 @@ async function shoot(page: Page, name: string) {
 test("screens of the portfolio", async ({ page }) => {
   test.setTimeout(120_000);
   await engine(page);
+  await page.goto("/");
+  await expect(page.getByTestId("largest-companies")).toBeVisible();
+  await page.waitForTimeout(900);
+  await shoot(page, "00-overview");
+
   await page.goto("/universe");
   await expect(page.getByRole("heading", { level: 3 }).first()).toContainText("NVIDIA");
   await shoot(page, "01-universe");
@@ -85,7 +90,15 @@ test("screens of the portfolio", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Sources" })).toBeAttached();
   await shoot(page, "05-report-studio");
 
+  await page.goto(`/time-machine?company=${NVIDIA}`);
+  await page
+    .getByRole("heading", { name: /the lag between a quarter and its filing/ })
+    .scrollIntoViewIfNeeded();
+  await shoot(page, "07-time-machine");
+
   await page.goto("/models");
-  await page.getByRole("heading", { name: "Forecast of real companies" }).scrollIntoViewIfNeeded();
+  await page
+    .getByText("Error against persistence, test years 2020 to 2026")
+    .scrollIntoViewIfNeeded();
   await shoot(page, "06-models");
 });

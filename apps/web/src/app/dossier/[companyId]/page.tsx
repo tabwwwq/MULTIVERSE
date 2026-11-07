@@ -13,6 +13,7 @@ import {
   SyntheticBadge,
 } from "@/components/companies/company-badges";
 import { ForecastPanel } from "@/components/companies/forecast-panel";
+import { KeyFigures } from "@/components/companies/key-figures";
 import {
   CoverageList,
   DossierControls,
@@ -105,6 +106,8 @@ export default async function CompanyDossierPage({ params, searchParams }: PageP
           </Alert>
         ) : null}
       </div>
+
+      {hasFinancials ? <KeyFigures view={view} currency={company.reporting_currency} /> : null}
 
       {hasFinancials ? (
         <div className="mb-10">

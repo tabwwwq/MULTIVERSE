@@ -80,7 +80,12 @@ export function buildDossierView(dossier: CompanyDossier, asOf: string | null): 
     let reason = value.missing_reason ?? null;
     if (filing && !isPublic(filing)) {
       state = "not_public";
-      reason = `Not public on ${cutoff}: filed on ${dateOnly(filing.filed_at)}.`;
+      const first = dossier.filings
+        .filter((item) => item.period_end === value.period.end_date && isPublic(item))
+        .sort((x, y) => x.filed_at.localeCompare(y.filed_at))[0];
+      reason = first
+        ? `Not public on ${cutoff} in this figure: it was last reported on ${dateOnly(filing.filed_at)}. The quarter itself was first published on ${dateOnly(first.filed_at)}, and its figure then may have differed.`
+        : `Not public on ${cutoff}: filed on ${dateOnly(filing.filed_at)}.`;
       notPublicCount += 1;
     }
     row.cells[value.metric] = {

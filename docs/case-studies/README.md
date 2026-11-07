@@ -31,4 +31,4 @@ python -m multiverse_simulation run --case var/data/cases/<case>.json --decision
 python -m multiverse_simulation report --case var/data/cases/<case>.json --decision docs/case-studies/<study>/decisions/<run>.json --report var/data/case-studies/<study>/<run>.json --out docs/case-studies/<study>/<run>
 ```
 
-The cases are built from SEC filings by `python -m multiverse_simulation companies` ([Stage 24b](../stages/24b-real-companies.md)) and stay in `var/`. Each run took about 65 s on a laptop CPU.
+The cases are built from SEC filings by `python -m multiverse_simulation companies` ([Stage 24b](../stages/24b-real-companies.md)). A report depends on the exact bytes of its case, so the three cases of the studies are frozen in `var/data/case-studies/cases`: a later export, which writes `var/data/cases` again, cannot change them. Each run took about 65 s on a laptop CPU.

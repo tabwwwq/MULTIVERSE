@@ -9,6 +9,12 @@ const DOCUMENT = JSON.parse(readFileSync(new URL("document.json", RUN), "utf8"))
   sources: { ref_id: string; kind: string; target: string }[];
 };
 const MARKDOWN = readFileSync(new URL("report.md", RUN));
+const SIMULATION: unknown = JSON.parse(
+  readFileSync(
+    new URL("../../../data/simulation/report-48898-acquisition.json", import.meta.url),
+    "utf8",
+  ),
+);
 const CSV = readFileSync(new URL("report.csv", RUN));
 const JOB = "job-0123456789ab";
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
@@ -30,6 +36,7 @@ async function engine(page: Page) {
   await page.route("**/api/v1/**", (route) => {
     const url = route.request().url();
     if (url.endsWith("/report/document")) return route.fulfill({ json: DOCUMENT });
+    if (url.endsWith("/report")) return route.fulfill({ json: SIMULATION });
     if (url.endsWith("/report/markdown")) {
       return route.fulfill(attachment(MARKDOWN, "text/markdown", `${DOCUMENT.report_doc_id}.md`));
     }
@@ -63,10 +70,18 @@ test.describe("Report Studio", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Report Studio" })).toBeVisible();
     await page.getByRole("link", { name: `Report of ${JOB}` }).click();
     await expect(page).toHaveURL(new RegExp(`/reports\\?job=${JOB}$`));
-    await expect(page.getByRole("heading", { level: 2 })).toContainText("INTEL CORP");
+    await expect(page.getByRole("heading", { level: 2, name: /INTEL CORP/ })).toBeVisible();
     await expect(page.getByText(/^Conditional on the assumed model, not validated/)).toBeVisible();
     await expect(page.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(page.getByText(DOCUMENT.report_doc_id)).toBeVisible();
+  });
+
+  test("opens with the answer of the run before the report", async ({ page }) => {
+    await engine(page);
+    await page.goto(`/reports?job=${JOB}`);
+    await expect(
+      page.getByText("Paired change of model enterprise value, median path"),
+    ).toBeVisible();
   });
 
   test("links each number to its claim and each claim to its sources", async ({ page }) => {
@@ -101,7 +116,7 @@ test.describe("Report Studio", () => {
   test("prints as a document without the navigation", async ({ page }, info) => {
     await engine(page);
     await page.goto(`/reports?job=${JOB}`);
-    await expect(page.getByRole("heading", { level: 2 })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: /INTEL CORP/ })).toBeVisible();
     await page.emulateMedia({ media: "print" });
     await expect(page.getByRole("button", { name: "Print or save as PDF" })).toBeHidden();
     await expect(page.getByRole("banner").first()).toBeHidden();

@@ -47,5 +47,5 @@ The payroll share, the segment and its margin are assumptions: the filings in th
 ## Reproduce
 
 ```bash
-python -m multiverse_simulation replay --manifest docs/case-studies/restructuring-exit/restructure/manifest.json --case var/data/cases/case-1001250-20261106.json
+python -m multiverse_simulation replay --manifest docs/case-studies/restructuring-exit/restructure/manifest.json --case var/data/case-studies/cases/case-1001250-20261106.json
 ```

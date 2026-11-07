@@ -92,7 +92,7 @@ def test_the_links_of_a_study_resolve(study: Path) -> None:
 def test_every_claim_matches_the_run_where_the_run_exists(run: Path) -> None:
     manifest = ReportManifest.model_validate_json((run / "manifest.json").read_bytes())
     stored = ROOT / "var" / "data" / "case-studies" / run.parent.name / f"{run.name}.json"
-    case_path = ROOT / "var" / "data" / "cases" / f"{manifest.case_id}.json"
+    case_path = ROOT / "var" / "data" / "case-studies" / "cases" / f"{manifest.case_id}.json"
     if not stored.exists() or not case_path.exists():
         pytest.skip("the runs and cases of the studies live in var/ on the machine that made them")
     report = SimulationReport.model_validate_json(stored.read_bytes())

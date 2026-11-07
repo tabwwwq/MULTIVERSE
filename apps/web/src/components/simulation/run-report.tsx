@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { TimelineExplorer } from "@/components/results/timeline-explorer";
+import { RunSummary } from "@/components/simulation/run-summary";
 import { Alert } from "@/components/ui/alert";
 import { type Column, DataTable } from "@/components/ui/data-table";
 import { Section } from "@/layouts/page-header";
@@ -89,6 +90,7 @@ export function RunReport() {
         inputs of a case are assumed, and each says so in the case. This is not a forecast of what
         will happen, and not advice.
       </Alert>
+      <RunSummary report={report} />
       <Section id="paths" title="Paths">
         <TimelineExplorer result={report.result} initialMetric="revenue" initialMode="absolute" />
       </Section>

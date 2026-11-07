@@ -43,6 +43,7 @@ from multiverse_contracts.universe import UniverseCompany, UniverseManifest
 from multiverse_forecast.data import Dataset
 from multiverse_forecast.probabilistic import median_of
 from multiverse_pipelines.pit.clock import day_end
+from multiverse_pipelines.pit.filings import FilingIndex
 from multiverse_pipelines.pit.panel import Panel, build_panel
 from multiverse_pipelines.pit.warehouse import Warehouse
 from multiverse_simulation.casebuild import build_case
@@ -203,6 +204,36 @@ def _money(value: Decimal | str) -> Quantity:
     return Quantity(value=str(value), unit=MeasureUnit.CURRENCY, currency="USD")
 
 
+def _add_first_reports(
+    filings: dict[str, FilingReference],
+    index: FilingIndex,
+    values: Sequence[MetricValue],
+    cik: str,
+    as_of: datetime,
+) -> None:
+    """The 10-Q or 10-K that first reported each quarter, cited by a value or not: a value points
+    to its latest source, and the first publication is what a point-in-time reader needs."""
+    ends = {
+        value.period.end_date for value in values if value.period.type is PeriodType.FISCAL_QUARTER
+    }
+    for filing in index.filings:
+        late = filing.known_at > as_of
+        if filing.report_date not in ends or filing.form not in FORMS or late:
+            continue
+        key = _filing_id(filing.accession)
+        if key in filings:
+            continue
+        filings[key] = FilingReference(
+            filing_id=key,
+            form=FORMS[filing.form],
+            accession_number=filing.accession,
+            period_end=filing.report_date,
+            filed_at=filing.known_at,
+            url=_url(cik, filing.accession),
+            data_origin=DataOrigin.EMPIRICAL,
+        )
+
+
 def dossier_of(
     warehouse: Warehouse, item: UniverseCompany, as_of: datetime, extra: Sequence[DataQualityFlag]
 ) -> CompanyDossier:
@@ -213,6 +244,7 @@ def dossier_of(
     filings: dict[str, FilingReference] = {}
     values: list[MetricValue] = []
     cells = {(cell.metric, cell.lag): cell for cell in panel.cells}
+    index = warehouse.filings(item.cik)
 
     def cite(cell: PanelCell, form: str) -> str | None:
         if cell.accession is None or cell.known_from is None or cell.period_end is None:
@@ -221,7 +253,16 @@ def dossier_of(
             return None
         key = _filing_id(cell.accession)
         known = filings.get(key)
-        end = max(cell.period_end, known.period_end) if known else cell.period_end
+        filed = index.get(cell.accession)
+        # The period the filing reports, not that of the values it is cited for: a 10-K is often the
+        # latest source of the year before, through its comparative column.
+        end = (
+            filed.report_date
+            if filed is not None and filed.report_date is not None
+            else max(cell.period_end, known.period_end)
+            if known
+            else cell.period_end
+        )
         filings[key] = FilingReference(
             filing_id=key,
             form=FORMS[form],
@@ -294,6 +335,7 @@ def dossier_of(
                 ),
             )
         )
+    _add_first_reports(filings, index, values, item.cik, as_of)
     known = {metric: sum(v.metric == metric for v in values) for metric in SHOWN.values()}
     revenue = known["revenue"]
     supported = revenue >= MIN_QUARTERS

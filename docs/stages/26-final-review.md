@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 26 — final gate, production hardening and publication (терминальный) |
 | Дата | 2026-11-07 |
-| Статус | REVIEW (CI run 42409086930: 8/8 задач зелёные, commit `22f45f0`); ждёт приёмки владельца и его решения о публикации |
+| Статус | ACCEPTED 2026-11-07 (владелец: «Принять»; CI run 42409086930 на `22f45f0` и run 42409902813 на коммите тега `8292d77` — 8/8 зелёные). Проект завершён: этапов больше нет |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/26_FINAL_REVIEW_DEPLOYMENT.md` |
 | Основание | Команда владельца «Принять и Stage 26» |
 | Опубликовано | **Тег `v2.0.0-research`** по разрешению владельца 2026-11-07 («Да, поставь тег»): <https://github.com/tabwwwq/MULTIVERSE/tree/v2.0.0-research>. Сайт не развёрнут, страницы GitHub Release нет |

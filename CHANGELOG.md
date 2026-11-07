@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-11-07 (Stage 26 accepted)
+
+- Stage 26 (final review; CI runs 42409086930 and 42409902813 green) accepted by the owner. All 26 stages are accepted; the open items are the owner's decisions listed in the issue register.
+
 ## [v2.0.0-research] — 2026-11-07
 
 Research preview, local only: the git tag the owner approved on 2026-11-07. Release note: `docs/releases/v2-research-preview.md`. It holds everything below down to Stage 15; the empirical tier is not met, and no site is deployed.

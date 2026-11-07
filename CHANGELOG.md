@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed — 2026-11-07 (Stages 24 and 24b accepted)
+
+- Stage 24 (security, privacy, licences; CI run 42270739506 green) and Stage 24b (real companies; CI run 42377104890 green) accepted by the owner. The FRED licence blocks stay open, and the model without FRED stays research only.
+
 ### Added — 2026-11-07 (Stage 24b, decision D-14)
 
 - **Real companies on the screens** (ADR-0033): the 500 largest SEC filers by the public float on the cover of their 10-K, NVIDIA first. The rank is labelled as not market capitalization; companies without a 10-K (Saudi Aramco, Samsung, TSMC) are not there. The seven fictional companies follow them, labelled.

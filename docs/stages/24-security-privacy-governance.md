@@ -4,7 +4,7 @@
 |---|---|
 | Этап | 24 — app security, privacy and license review |
 | Дата | 2026-11-06 |
-| Статус | REVIEW (CI run 42270739506: 8/8 задач зелёные, commit `73f6d86`); ждёт приёмки владельца |
+| Статус | ACCEPTED 2026-11-07 (владелец: «Принять оба»; CI run 42270739506: 8/8 задач зелёные, commit `73f6d86`). Блоки FRED LIC-001–003 остаются открытыми: приёмка этапа их не решает |
 | Промпт | `MULTIVERSE_Documentation_Kit/prompts/24_SECURITY_PRIVACY_GOVERNANCE.md` |
 | Основание | `docs/12_SECURITY_AND_GOVERNANCE.md`, команда владельца «Принять и Stage 24» |
 | Решение | ADR-0032 — локальный режим и токены, владелец объекта, лимиты в очереди |

@@ -1,11 +1,11 @@
-# Release note — v2 research preview (draft, not published)
+# Release note — v2 research preview
 
 | Field | Value |
 |---|---|
-| Version | v2.0.0-research (proposed tag, not created) |
+| Version | v2.0.0-research (git tag) |
 | Date | 2026-11-07 |
 | Tier | Research preview, local only ([release criteria](release-criteria.md)); the empirical tier is not met |
-| Published URL | None. Publication needs the owner's approval, which has not been given |
+| Published | Tag on GitHub, approved by the owner on 2026-11-07: <https://github.com/tabwwwq/MULTIVERSE/tree/v2.0.0-research>. No hosted site and no GitHub Release page |
 | Previous release | [v1 interactive prototype](v1-interactive-prototype.md) (demo tier) |
 
 ## Supported features

@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+## [v2.0.0-research] — 2026-11-07
+
+Research preview, local only: the git tag the owner approved on 2026-11-07. Release note: `docs/releases/v2-research-preview.md`. It holds everything below down to Stage 15; the empirical tier is not met, and no site is deployed.
+
 ### Added — 2026-11-07 (Stage 26, final review)
 
 - Acceptance audit against docs/17 with the evidence of each requirement: 25 of 31 met, 5 partial, 1 blocked. The six gaps (live screen reader, user study, second human reviewer of events, placebo diagnostics, cold rebuild from raw data, Safari and Firefox on phones) are in the issue register, now 42 entries.

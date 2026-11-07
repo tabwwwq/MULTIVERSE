@@ -27,7 +27,7 @@ Not supported: a hosted service, accounts in the browser, market prices, a price
 
 ## Evidence
 
-- Final gate of Stage 26: see [Stage 26](../stages/26-final-review.md); CI green on the release commit.
+- Final gate of Stage 26: pytest 1 100, vitest 4 + 296, Playwright 726 passed and 21 skipped; CI run 42409086930 green 8/8 on `22f45f0` ([Stage 26](../stages/26-final-review.md)).
 - [Acceptance audit](acceptance-audit.md): 25 of 31 requirements met, 5 partial, 1 blocked.
 - A fresh clone ran its smoke tests and report replays in 148 s.
 
